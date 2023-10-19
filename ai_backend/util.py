@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 import pandas as pd
 
@@ -20,3 +22,11 @@ def add_array_column(dataframe: pd.DataFrame, column_name: str, value_array: np.
     else:
         dataframe[column_name] = value_array
     return dataframe
+
+
+def fast_read_jsonline(path_to_file: str) -> pd.DataFrame:
+    with open(path_to_file) as file:
+        lines = file.read().splitlines()
+        dataframe = pd.DataFrame(lines)
+    dataframe.columns = ["source"]
+    return pd.json_normalize(dataframe["source"].apply(json.loads))

@@ -1,9 +1,12 @@
+import time
+
 import nltk
 import os
 import pandas as pd
 import numpy as np
+import scipy
 import torch
-from util import add_array_column
+from util import *
 from sentence_transformers import SentenceTransformer, util
 from LexRank import degree_centrality_scores
 from annoy import AnnoyIndex
@@ -15,48 +18,64 @@ class Summarizer:
 
     def __init__(self, transformer: str | SentenceTransformer = "all-MiniLM-L6-v2", debug=False):
         self.debug = debug
-        try:
-            nltk.data.find('tokenizers/punkt')
-        except LookupError:
-            nltk.download('punkt')
 
         if isinstance(transformer, str):
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
 
-    def run(self, input_data: str | np.ndarray, amount=1) -> np.ndarray[str]:
+    @staticmethod
+    def tokenize(input_text: str, check_download=True) -> List[str]:
+        if check_download:
+            try:
+                nltk.data.find('tokenizers/punkt')
+            except LookupError:
+                nltk.download('punkt')
+        return list(nltk.sent_tokenize(input_text))
+
+    def run(self, input_data: str | pd.Series, amount=1, tokenize: bool = True) -> np.ndarray[str]:
         if amount < 1:
             raise Exception("The desired sentence amount must be greater than 1")
         if isinstance(input_data, str):
-            sentence_tokens = nltk.sent_tokenize(input_data)
-            if len(sentence_tokens) < amount:
-                raise Exception(fr"Found less tokens than desired output sentence amount." +
-                                "\n" + str(input_data) +
-                                "\n" + str(sentence_tokens))
-            embeddings = self.transformer.encode(sentence_tokens, convert_to_tensor=True)
-            cos_scores = util.cos_sim(embeddings, embeddings).cpu().numpy()
-            centrality_scores = degree_centrality_scores(cos_scores, threshold=None)
-            most_central_sentence_indices = np.argsort(-centrality_scores)
-
-            most_central_sentence_indices = most_central_sentence_indices[0:amount]
-            most_central_sentence_indices = np.array(most_central_sentence_indices, dtype=int)
-
-            sentence_tokens = np.array(sentence_tokens)
-            sentence_tokens = np.vectorize(lambda x: x.strip())(sentence_tokens)
-            most_central_sentences = sentence_tokens[most_central_sentence_indices]
-
-            if self.debug:
-                print(fr"Found {len(sentence_tokens)} tokens -> Ranking: {most_central_sentence_indices}")
-
-            return most_central_sentences
+            input_data = pd.Series([input_data])
+        dataframe = pd.DataFrame(data={"input": input_data})
+        print("Data loaded" + "\n" + str(dataframe.info()))
+        if tokenize:
+            dataframe["token"] = dataframe["input"].apply(Summarizer.tokenize)
         else:
-            output_data = []
-            for index, current_input in enumerate(input_data):
-                output_data.append(self.run(current_input, amount))
-                if self.debug:
-                    print(fr"[{round((index + 1) / len(input_data) * 100, 3)}%] " +
-                          fr"-> Summarized input {index + 1} of {len(input_data)} inputs")
-            return np.array(output_data, dtype=str)
+            dataframe["token"] = input_data
+
+        dataframe["token_amount"] = dataframe["token"].apply(len)
+        print(fr"Tokens: {str(dataframe.token_amount.to_list())}")
+
+        def encode(token: list):
+            embedding = self.transformer.encode(token, convert_to_numpy=True)
+            return embedding
+        dataframe["embedding"] = dataframe["token"].apply(encode)
+        dataframe["embedding_amount"] = dataframe["embedding"].apply(len)
+        print(fr"Embeddings (len: {str(len(dataframe.iloc[0].embedding[0]))}): "
+              fr"{str(dataframe.embedding_amount.to_list())}")
+
+        def cos_sim(vectors: list):
+            tensor = torch.tensor(vectors, dtype=torch.float)
+            c = util.cos_sim(tensor, tensor).cpu().numpy()
+            return c
+        dataframe["cosine"] = dataframe["embedding"].apply(cos_sim)
+
+        def rank_tokens(cosine_vector: list, token_list: list):
+            score_mask = degree_centrality_scores(cosine_vector, threshold=None)
+            significance_mask = np.argsort(-score_mask)
+            significance_mask = significance_mask[0:amount]
+            significance_mask = np.array(significance_mask, dtype=int)
+
+            token_vector = np.array(token_list)
+            token_vector = np.vectorize(lambda x: x.strip())(token_vector)
+            token_ranking = token_vector[significance_mask]
+            return list(token_ranking)
+        dataframe["ranking"] = dataframe[["cosine", "token"]].apply(
+            lambda x: rank_tokens(x["cosine"], x["token"]),
+            axis=1)
+
+        return dataframe["ranking"].tolist()
 
 
 class Recommender:
@@ -124,20 +143,30 @@ class Recommender:
 
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    data = pd.read_pickle("./data/datasets/arxiv-metadata-oai-snapshot.pkl")
-    data = data.sample(50000)
-    data.to_pickle("./data/datasets/arxiv-metadata-oai-snapshot_rand-test.pkl")
+    data = fast_read_jsonline("./data/datasets/arxiv_full/test.txt")
+    data = pd.read_pickle("./data/datasets/abstracts/arxiv-metadata-oai-snapshot.pkl")
+    data = data.iloc[0:100]
+    print(data.info())
+    print(data.iloc[0]["abstract"])
+
     summy = Summarizer(debug=True)
-    recommender_system = Recommender(summy)
+    start = time.time()
+    print(summy.run(data["abstract"]))
+    print("time: " + str(time.time() - start))
+#    data = pd.read_pickle("./data/datasets/arxiv-metadata-oai-snapshot.pkl")
+#    data = data.sample(50000)
+#    data.to_pickle("./data/datasets/arxiv-metadata-oai-snapshot_rand-test.pkl")
+#    summy = Summarizer(debug=True)
+#    recommender_system = Recommender(summy)
 #    recommender_system.build_annoy(data, "abstract")
 #    recommender_system.save()
-    recommender_system.load(model_name="rand-test")
+#    recommender_system.load(model_name="rand-test")
 
-    chosen_publication = data.sample()
-    recommendations = recommender_system.get_match(chosen_publication["id"].tolist()[0], amount=4)
-    chosen_title = chosen_publication.title.tolist()[0]
-    print("\"" + chosen_title + "\"" + "\n" + "====================")
-    for current in recommendations:
-        recommended_title = data[data.id == current].title.tolist()[0]
-        print("\"" + recommended_title + "\"")
-    print("====================")
+#    chosen_publication = data.sample()
+#    recommendations = recommender_system.get_match(chosen_publication["id"].tolist()[0], amount=4)
+#    chosen_title = chosen_publication.title.tolist()[0]
+#    print("\"" + chosen_title + "\"" + "\n" + "====================")
+#    for current in recommendations:
+#        recommended_title = data[data.id == current].title.tolist()[0]
+#        print("\"" + recommended_title + "\"")
+#    print("====================")
