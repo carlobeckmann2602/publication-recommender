@@ -4,13 +4,14 @@ import nltk
 import os
 import pandas as pd
 import numpy as np
-import scipy
 import torch
 from util import *
 from sentence_transformers import SentenceTransformer, util
 from LexRank import degree_centrality_scores
 from annoy import AnnoyIndex
 from typing import Literal, List
+from tqdm.auto import tqdm
+# More models: https://www.sbert.net/docs/pretrained_models.html
 
 
 class Summarizer:
@@ -38,28 +39,28 @@ class Summarizer:
         if isinstance(input_data, str):
             input_data = pd.Series([input_data])
         dataframe = pd.DataFrame(data={"input": input_data})
-        print("Data loaded" + "\n" + str(dataframe.info()))
         if tokenize:
-            dataframe["token"] = dataframe["input"].apply(Summarizer.tokenize)
+            tqdm.pandas(desc="Tokenizing")
+            dataframe["token"] = dataframe["input"].progress_apply(Summarizer.tokenize)
         else:
             dataframe["token"] = input_data
 
         dataframe["token_amount"] = dataframe["token"].apply(len)
-        print(fr"Tokens: {str(dataframe.token_amount.to_list())}")
 
         def encode(token: list):
             embedding = self.transformer.encode(token, convert_to_numpy=True)
             return embedding
-        dataframe["embedding"] = dataframe["token"].apply(encode)
+        tqdm.pandas(desc="Creating Embeds")
+        dataframe["embedding"] = dataframe["token"].progress_apply(encode)
         dataframe["embedding_amount"] = dataframe["embedding"].apply(len)
-        print(fr"Embeddings (len: {str(len(dataframe.iloc[0].embedding[0]))}): "
-              fr"{str(dataframe.embedding_amount.to_list())}")
 
         def cos_sim(vectors: list):
             tensor = torch.tensor(vectors, dtype=torch.float)
             c = util.cos_sim(tensor, tensor).cpu().numpy()
             return c
-        dataframe["cosine"] = dataframe["embedding"].apply(cos_sim)
+
+        tqdm.pandas(desc="Calculating Cosine")
+        dataframe["cosine"] = dataframe["embedding"].progress_apply(cos_sim)
 
         def rank_tokens(cosine_vector: list, token_list: list):
             score_mask = degree_centrality_scores(cosine_vector, threshold=None)
@@ -71,11 +72,13 @@ class Summarizer:
             token_vector = np.vectorize(lambda x: x.strip())(token_vector)
             token_ranking = token_vector[significance_mask]
             return list(token_ranking)
-        dataframe["ranking"] = dataframe[["cosine", "token"]].apply(
+
+        tqdm.pandas(desc="Ranking Tokens")
+        dataframe["ranking"] = dataframe[["cosine", "token"]].progress_apply(
             lambda x: rank_tokens(x["cosine"], x["token"]),
             axis=1)
 
-        return dataframe["ranking"].tolist()
+        return np.array(dataframe["ranking"].tolist(), dtype=str)
 
 
 class Recommender:
@@ -89,31 +92,37 @@ class Recommender:
                  transformer: str | SentenceTransformer = "all-MiniLM-L6-v2",
                  annoy_mode: Literal["angular", "euclidean", "manhattan", "hamming", "dot"] = "angular",
                  annoy_input_length: int = 384,
+                 token_amount=1,
                  debug=False):
         self.debug = debug
         self.summarizer = summarization
         if isinstance(transformer, str):
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
+        self.token_amount = token_amount
         self.annoy_database = AnnoyIndex(annoy_input_length, annoy_mode)
 
     def build_annoy(self, dataset: pd.DataFrame, input_key):
-        summarizations = self.summarizer.run(np.array(dataset[input_key]), amount=1)
+        summarizations = self.summarizer.run(dataset[input_key], amount=self.token_amount)
         summarization_df = pd.DataFrame()
         # TODO: Handle multiple sentences as summaries
         summarization_df["id"] = dataset["id"]
         summarization_df = add_array_column(summarization_df, "summary", summarizations)
-        summarization_df["embed"] = summarization_df["summary"].apply(
-            lambda x: self.transformer.encode(x, convert_to_numpy=True)
-        )
+
+        def encode(token: list):
+            embedding = self.transformer.encode(token, convert_to_numpy=True)
+            return embedding
+        tqdm.pandas(desc="Creating Embeds")
+        summarization_df["embed"] = summarization_df["summary"].progress_apply(encode)
+        summarization_df.explode("embed")
         summarization_df.reset_index(inplace=True)
 
         def add_to_annoy(row: pd.Series):
             index = row["index"]
             embed = np.array(row["embed"]).flatten()
             self.annoy_database.add_item(index, embed)
-
-        summarization_df[["index", "embed"]].apply(add_to_annoy, axis=1)
+        tqdm.pandas(desc="Adding to Annoy")
+        summarization_df[["index", "embed"]].progress_apply(add_to_annoy, axis=1)
         self.annoy_database.build(n_trees=10)
         self.mapping = summarization_df
 
@@ -129,29 +138,30 @@ class Recommender:
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")
 
-    def get_match(self, publication_id: str, amount: int = 1) -> List:
+    def get_match(self, publication_id: str, amount: int = 1) -> np.ndarray:
         annoy_index = self.mapping[self.mapping["id"] == publication_id]["index"].tolist()[0]
         # TODO: Check if nns always include themself first
-        neighbours = self.annoy_database.get_nns_by_item(annoy_index, amount+1)
+        neighbours = self.annoy_database.get_nns_by_item(annoy_index, (amount * self.token_amount)+1)
         neighbours = neighbours[1:]
-        nearest_publications = []
-        for current_neighbour in neighbours:
-            corresponding_id = self.mapping[self.mapping["index"] == current_neighbour]["id"].tolist()[0]
-            nearest_publications.append(corresponding_id)
-        return nearest_publications
+        neighbours = pd.merge(
+            pd.DataFrame(data={"index": neighbours}), self.mapping,
+            how="left", on="index"
+        )
+        neighbours = neighbours[neighbours["id"] != publication_id].copy()
+        neighbours = np.unique(neighbours["id"].tolist())
+        neighbours = neighbours[0:amount]
+        return neighbours
 
 
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("Running on " + device)
     data = fast_read_jsonline("./data/datasets/arxiv_full/test.txt")
-    data = pd.read_pickle("./data/datasets/abstracts/arxiv-metadata-oai-snapshot.pkl")
-    data = data.iloc[0:100]
-    print(data.info())
-    print(data.iloc[0]["abstract"])
+    data = data.iloc[0:30]
 
     summy = Summarizer(debug=True)
     start = time.time()
-    print(summy.run(data["abstract"]))
+    print(summy.run(data["article_text"], tokenize=False))
     print("time: " + str(time.time() - start))
 #    data = pd.read_pickle("./data/datasets/arxiv-metadata-oai-snapshot.pkl")
 #    data = data.sample(50000)
