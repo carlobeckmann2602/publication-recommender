@@ -12,20 +12,23 @@ from annoy import AnnoyIndex
 from typing import Literal, List
 from tqdm.auto import tqdm
 # More models: https://www.sbert.net/docs/pretrained_models.html
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class Summarizer:
     transformer: SentenceTransformer
 
-    def __init__(self, transformer: str | SentenceTransformer = "all-MiniLM-L6-v2", debug=False):
+    def __init__(self, transformer: str | SentenceTransformer = "all-MiniLM-L6-v2", tokenize: bool = True,
+                 debug=False):
         self.debug = debug
+        self.tokenize = tokenize
 
         if isinstance(transformer, str):
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
 
     @staticmethod
-    def tokenize(input_text: str, check_download=True) -> List[str]:
+    def tokenize_input(input_text: str, check_download=True) -> List[str]:
         if check_download:
             try:
                 nltk.data.find('tokenizers/punkt')
@@ -33,19 +36,21 @@ class Summarizer:
                 nltk.download('punkt')
         return list(nltk.sent_tokenize(input_text))
 
-    def run(self, input_data: str | pd.Series, amount=1, tokenize: bool = True) -> np.ndarray[str]:
+    def run(self, input_data: str | pd.Series, amount=1) -> np.ndarray[str]:
         if amount < 1:
             raise Exception("The desired sentence amount must be greater than 1")
         if isinstance(input_data, str):
             input_data = pd.Series([input_data])
         dataframe = pd.DataFrame(data={"input": input_data})
-        if tokenize:
+        if self.tokenize:
             tqdm.pandas(desc="Tokenizing")
-            dataframe["token"] = dataframe["input"].progress_apply(Summarizer.tokenize)
+            dataframe["token"] = dataframe["input"].progress_apply(Summarizer.tokenize_input)
         else:
             dataframe["token"] = input_data
 
         dataframe["token_amount"] = dataframe["token"].apply(len)
+        if dataframe["token_amount"].min() < amount:
+            raise Exception("Not enough tokens" + "\n" + str(dataframe["token_amount"].idxmin()))
 
         def encode(token: list):
             embedding = self.transformer.encode(token, convert_to_numpy=True)
@@ -105,7 +110,6 @@ class Recommender:
     def build_annoy(self, dataset: pd.DataFrame, input_key):
         summarizations = self.summarizer.run(dataset[input_key], amount=self.token_amount)
         summarization_df = pd.DataFrame()
-        # TODO: Handle multiple sentences as summaries
         summarization_df["id"] = dataset["id"]
         summarization_df = add_array_column(summarization_df, "summary", summarizations)
 
@@ -141,6 +145,7 @@ class Recommender:
     def get_match(self, publication_id: str, amount: int = 1) -> np.ndarray:
         annoy_index = self.mapping[self.mapping["id"] == publication_id]["index"].tolist()[0]
         # TODO: Check if nns always include themself first
+        # TODO: Surely there is a better way to this
         neighbours = self.annoy_database.get_nns_by_item(annoy_index, (amount * self.token_amount)+1)
         neighbours = neighbours[1:]
         neighbours = pd.merge(
@@ -151,32 +156,3 @@ class Recommender:
         neighbours = np.unique(neighbours["id"].tolist())
         neighbours = neighbours[0:amount]
         return neighbours
-
-
-if __name__ == '__main__':
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print("Running on " + device)
-    data = fast_read_jsonline("./data/datasets/arxiv_full/test.txt")
-    data = data.iloc[0:30]
-
-    summy = Summarizer(debug=True)
-    start = time.time()
-    print(summy.run(data["article_text"], tokenize=False))
-    print("time: " + str(time.time() - start))
-#    data = pd.read_pickle("./data/datasets/arxiv-metadata-oai-snapshot.pkl")
-#    data = data.sample(50000)
-#    data.to_pickle("./data/datasets/arxiv-metadata-oai-snapshot_rand-test.pkl")
-#    summy = Summarizer(debug=True)
-#    recommender_system = Recommender(summy)
-#    recommender_system.build_annoy(data, "abstract")
-#    recommender_system.save()
-#    recommender_system.load(model_name="rand-test")
-
-#    chosen_publication = data.sample()
-#    recommendations = recommender_system.get_match(chosen_publication["id"].tolist()[0], amount=4)
-#    chosen_title = chosen_publication.title.tolist()[0]
-#    print("\"" + chosen_title + "\"" + "\n" + "====================")
-#    for current in recommendations:
-#        recommended_title = data[data.id == current].title.tolist()[0]
-#        print("\"" + recommended_title + "\"")
-#    print("====================")
