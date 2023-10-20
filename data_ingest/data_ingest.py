@@ -1,3 +1,4 @@
+import csv, re
 from dataclasses import dataclass
 from crawler import ArxivCrawler, PdfCrawler
 
@@ -14,10 +15,21 @@ class ArxivConfig:
 
 if __name__ == '__main__':
     arxiv_crawler = ArxivCrawler()
-    #arxiv_crawler.crawl_target_dir_pdf_links(r_new_dir, new_csv_name)
+    #arxiv_crawler.crawl_target_dir_pdf_links(ArxivConfig.dir_new, ArxivConfig.output_file_new)
     #arxiv_crawler.crawl_target_dir_pdf_links(ArxivConfig.dir_recent, ArxivConfig.output_file_recent)
-
+    
     pdf_crawler = PdfCrawler()
-    if pdf_crawler.pull(url="https://arxiv.org/pdf/2310.10764", filename="2310.10764"):
-        pdf_crawler.read()
-        #pdf_crawler.delete()
+    file_path = "/home/julian/devel/publikationsempfehlung/data_ingest/_data/urls/recent_papers.csv"
+    id_pattern = r"\d{4}\.\d{5}$"
+    with open(file_path, 'r', newline='') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            pdf_link = row[0]
+            
+            id_part = re.search(id_pattern, pdf_link)
+            if id_part:
+                file_id = id_part.group()
+            
+                if pdf_crawler.pull(url=pdf_link, filename=file_id):
+                    pdf_crawler.read()
+                    #pdf_crawler.delete()

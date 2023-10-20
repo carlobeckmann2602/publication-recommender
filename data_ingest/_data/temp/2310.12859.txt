@@ -1,0 +1,585 @@
+IFT-UAM/CSIC-23-132
+The Universe is not statistically isotropic
+Joann Jones,1,∗Craig J. Copi,1,†Glenn D. Starkman,1,‡and Yashar Akrami2, 1,§
+1CERCA/ISO, Department of Physics, Case Western Reserve University,
+10900 Euclid Avenue, Cleveland, OH 44106, USA
+2Instituto de F´ ısica Te´ orica (IFT) UAM-CSIC, C/ Nicol´ as Cabrera 13-15,
+Campus de Cantoblanco UAM, 28049 Madrid, Spain
+(Dated: October 20, 2023)
+The standard cosmological model predicts statistically isotropic cosmic microwave background
+(CMB) fluctuations. However, several summary statistics of CMB isotropy have anomalous values,
+including: the low level of large-angle temperature correlations, S1/2; the excess power in odd versus
+even low- ℓmultipoles, RTT; the (low) variance of large-scale temperature anisotropies in the ecliptic
+north, but not the south, σ2
+16; and the alignment and planarity of the quadrupole and octopole
+of temperature, SQO. Individually, their low p-values are weak evidence for violation of statistical
+isotropy. The correlations of the tail values of these statistics have not to this point been studied. We
+show that the joint probability of all four of these happening by chance in ΛCDM is likely ≤3×10−8.
+This constitutes more than 5 σevidence for violation of statistical isotropy.
+Introduction. — Observations of the cosmic mi-
+crowave background (CMB) temperature and polarization
+anisotropies can rightfully be regarded as the strongest
+evidence in support of a nearly spatially flat, statisti-
+cally isotropic Λ Cold Dark Matter (ΛCDM) model of
+the Universe. However, there are several large-angle fea-
+tures of the CMB, known as the large-angle anomalies,
+that suggest violations of statistical isotropy (see, e.g., [ 1–
+5]). Each feature is characterized by an anomaly-specific
+statistic Sahaving a p-value (the probability of making an
+observation at least as extreme as that actually observed)
+low enough to excite notice. Typically p(Sa)<0.01 in
+an appropriate ensemble of ΛCDM realizations. Each
+anomaly was first identified in either the Cosmic Back-
+ground Explorer (COBE) [ 6] or Wilkinson Microwave
+Anisotropy Probe (WMAP) data (e.g., Ref. [ 7]), and has
+subsequently been confirmed in more recent Planck data
+(starting from Ref. [ 2]). (Within ΛCDM these anomalies
+are separate from the parameter “tensions” that have
+received much attention, especially the H0tension, the
+statistically significant difference between the values of the
+Hubble constant determined from high and low redshift
+probes; see, e.g., Ref. [5].)
+Though each anomaly has a low p-value, they are often
+excused as statistical flukes, especially as they were each
+identified a posteori . While this may be convincing if the
+anomalies are all highly correlated, their joint p-value may
+actually be far smaller than their individual ones, and far
+harder to excuse. In this Letter, we consider four of these
+anomalies: the absence of large-angle correlations, char-
+acterized by S1/2; the parity asymmetry ( RTT); the low
+northern variance ( σ2
+16, as a way of characterizing hemi-
+spherical asymmetry); and the quadrupole-octopole align-
+ment ( SQO). We explore whether or not these anomalies
+are correlated, i.e., how their joint probability distribution
+compares to the products of their individual probability
+distributions.
+While the correlations between anomaly statistics havepreviously been studied [ 8], because each observation has
+a low p-value, we are less interested in how the peaks
+of the distributions correlate than in how the tails do.
+This is not captured by standard correlation measures.
+We show here that the joint p-values of all pairs of these
+four anomalies in an ensemble of realizations of best-fit
+ΛCDM are much less than the minimum of the pair,
+p(SA, SB)≪min[p(SA), p(SB)], (1)
+for any pair of anomaly statistics SAandSB, i.e., the
+statistics are only weakly correlated in their tails.
+We find that for three of the four Planck foreground-
+subtracted maps – Commander ,NILC,SMICA – the joint
+p-value of all four anomalies
+p(S1/2, RTT, σ2
+16, SQO)≤3×10−8. (2)
+The outlier SEVEM map still has p= 1.8×10−7.
+In those three maps, the p-value of the large-angle
+anomalies is less than that of a 5 .4σGaussian fluctuation.
+While there are undoubtedly look-elsewhere penalties to
+be paid for this collection of mostly a posteori statistical
+anomalies, it is clear that there is very strong evidence in
+the CMB for the violation of statistical isotropy.
+It is conventional to express both the predicted and
+observed CMB temperature on the sky in terms of an
+expansion in spherical harmonics:
+T(θ, ϕ) =∞X
+ℓ=0ℓX
+m=−ℓaℓmYℓm(θ, ϕ). (3)
+Theℓ= 0 term represents the average temperature, while
+ℓ≥1 are the temperature anisotropies, ∆ T(θ, ϕ). The
+ℓ= 1 term is dominated by a large “Doppler” contribution
+due to our motion relative to some appropriate average
+frame of rest, thus we conventionally focus our attention
+on the cosmologically relevant terms ℓ≥2.
+ΛCDM as conventionally constructed predicts that the
+aℓmare statistically independent Gaussian (or nearly so)arXiv:2310.12859v1  [astro-ph.CO]  19 Oct 20232
+random variables of zero mean that reflect the rotation
+and translation invariance of both the underlying theory
+and the background geometry, so that their expected
+correlations are purely diagonal (they are uncorrelated)
+and their variance depends only on ℓ,
+⟨aℓma∗
+ℓ′m′⟩=Cℓδℓℓ′δmm′. (4)
+Here⟨···⟩ denotes an average over a hypothetical ensem-
+ble of realizations of the underlying theory. The anomalies
+we discuss in this paper call into question the assumptions
+and expectations encoded in Eq. (4).
+TheCℓin Eq. (4) are the theoretical angular power
+spectrum. In ΛCDM, they encode (nearly) all relevant
+cosmological information. They depend on the 7 cos-
+mological parameters that characterize the homogeneous
+background geometry and its evolution, the stress-energy
+content of the Universe, and the phenomenological power
+spectrum of primordial fluctuations in the stress-energy
+and geometry. Similar descriptions apply to polarization,
+but this work is confined to temperature fluctuations.
+Enormous effort has been invested in building and
+operating CMB experiments so as (primarily) to extract
+estimates of the underlying Cℓ. Simplistically, this is done
+by obtaining a full-sky map T(θ, ϕ), extracting the aℓm,
+and computing the angular power spectrum
+Cℓ≡1
+2ℓ+ 1ℓX
+m=−ℓ|aℓm|2. (5)
+In practice, there are many subtleties [ 9,10] including
+the presence of foregrounds and the consequent need to
+mask out parts of the sky where foreground removal is
+unreliable.
+The real-space angular correlation function is an alter-
+native to the angular power spectrum:
+C(θ) =⟨T(ˆn1)T(ˆn2)⟩=X
+ℓ=22ℓ+ 1
+4πCℓPℓ(cosθ),(6)
+where ˆn1andˆn2are two directions on the sky, with
+cosθ=ˆn1·ˆn2, and Pℓare the Legendre polynomials.
+Strictly, the sum should start from ℓ= 0, but for the
+reasons given above we consider the monopole-and-dipole-
+subtracted angular correlation function. In a statistically
+isotropic universe or on a full sky the Cℓin Eq. (6) are
+the same as the Cℓin Eq. (5) .
+Maps and masks. — We make use of the data maps,
+masks, and best-fit theoretical power spectrum provided
+by the Planck 2018 data release found on the Planck
+Legacy Archive [ 11]. We use the component-separated
+Commander ,NILC,SEVEM , and SMICA maps and apply the
+‘common mask’ to all maps. Since the calculation of one
+of the anomalies discussed below, σ2
+16, is based on the
+northern ecliptic sky, all maps and the mask are rotated to
+ecliptic coordinates before calculating any statistic. Sincewe are interested in large-scale features, we work with
+maps downgraded to HEALPix [12] resolution Nside= 64
+or to Nside= 16. The rotating and downgrading process
+is as follows. The Planck maps are provided at Nside=
+2048. We first rotate each map to ecliptic coordinates
+using the healpy routine healpy.rotator.Rotator . We
+then downgrade the map to Nside= 64 (for S1/2and
+RTT) or to Nside= 16 (for σ2
+16) including smoothing
+with the appropriate Gaussian beams and applying the
+corresponding pixel window functions as described in
+Ref. [ 8], i.e., we employ Gaussian beams with FWHM of
+0.0465421 arcseconds and 0 .186168 arcseconds for Nside=
+64 and Nside= 16, respectively. We follow the same
+procedure for the masks, and choose a cutoff value of 0 .9
+for resetting pixel values to 0 or 1.
+Creating realizations. — We create 108ΛCDM realiza-
+tions of the CMB temperature using the Planck best-fit
+cosmological parameters [ 13] [14] up to ℓmax= 200. To
+remain consistent with the data maps, we generate our
+simulated maps in ecliptic coordinates at Nside= 64 or
+Nside= 16, as required, including the pixel window func-
+tion and Gaussian beam smoothing appropriate for each
+Nside. Here we work with CMB-only simulated sky maps,
+i.e., we do not add simulated noise nor foreground to
+our realizations of the CMB sky. (See below for detailed
+discussions.)
+The anomalies. — Broadly, the CMB anomalies are
+statistics other than the Cℓthat have values far into
+the tails of their distribution in the ensemble of ΛCDM
+realizations. Many statistics have been studied and many
+have been found to be anomalous, i.e., have a small p-
+value. Typically the anomalous statistics that get reported
+have p-values less than a few percent, though none have
+individual p-values smaller than approximately 10−4.
+Each of these anomalies is evidence against the validity
+of Eq. (4), i.e., against statistical isotropy of the Universe.
+However, they are all a posteori – invented after looking
+at the data set in which they were first found to be
+anomalous. This situation has led to something of a
+standoff – there are now many examples of anomalies that
+cast statistical isotropy into doubt; however, there is not
+yet a comprehensive fundamental model that post-dicts
+these anomalies and makes other testable predictions.
+(Cosmic topology may be an exception [ 15].) Further,
+some of us have argued that physical models for anomalies
+are likely to make certain generic testable predictions for
+CMB polarization [ 16,17] and other observables [ 18,19].
+Meanwhile, scant attention has been given to the collec-
+tive statistical strength of the anomalies. The authors of
+Ref. [ 8] did study the correlations of certain CMB anomaly
+statistics, but their attention was focused on the peaks
+of those distributions. Below, we first recall a selection
+of four CMB anomalies and then determine the correla-
+tion in the tails of their distributions. The four statistics
+we have chosen are not exhaustive. We have selected3
+one representative statistic for each of four apparently
+unrelated phenomena – lack of large-angle correlations,
+preference for odd parity, difference between northern and
+southern hemispheres, and alignment of the quadrupole
+and octopole. We follow closely the choices of Ref. [ 8] so
+as to ameliorate any suspicion that we have cherry-picked
+our results, and we refer the reader to Ref. [ 8] for in-depth
+discussions of many observational and statistical issues
+associated with these statistics and the maps on which
+they are calculated. Other statistics might certainly be
+added to this suite (e.g., the ones in Refs. [ 20,21]) and
+might also be found to be largely uncorrelated in ΛCDM
+with our four choices, strengthening the case for statistical
+anisotropy.
+Lack of large-angle correlations, S1/2:The lack
+of large-angle correlations in the CMB temperature
+anisotropies was first observed by COBE [ 22], quanti-
+fied by WMAP [ 7,23,24], and most precisely measured
+and characterized with Planck [1–4,19]. This deficit is
+quantified by the S1/2statistic: the squared distance of
+the two point angular correlation function C(θ) from zero
+for points on the sky with angular separations from 60◦
+to 180◦,
+S1/2≡Z1/2
+−1[C(θ)]2d(cos θ). (7)
+Though, S1/2can be calculated on full or masked skies,
+we only consider the masked sky statistic in this work.
+In practice, S1/2is calculated based on pseudo- Cℓex-
+tracted from Nside= 64 maps in ecliptic coordinates
+with the common mask applied using NaMaster [25][26]
+up to ℓmax= 40. See Ref. [ 24] for a discussion of its
+computation.
+Parity asymmetry, RTT:The parity asymmetry can
+be characterized in a number of ways. Here we choose
+RTT, a statistic characterizing the odd-parity preference
+at low- ℓin the CMB [27],
+RTT≡D+(ℓmax)
+D−(ℓmax), (8)
+where (choosing ℓmaxto be odd),
+D±≡2
+ℓmax−1ℓmaxX
+ℓ=2ℓ(ℓ+ 1)
+2π(1±(−1)ℓ)
+2Cℓ.(9)
+Following Ref. [ 8], we choose ℓmax= 27 and calculate
+RTTon unmasked Nside= 64 skies.
+Low northern variance, σ2
+16:There are several indi-
+cations that there is a statistically significant difference
+between the northern and southern hemispheres of the
+CMB sky. This was possibly first noted as an asymmetry
+in power [ 28] that was maximized when the plane sep-
+arating the hemispheres was approximately the ecliptic,
+and independently using genus statistics in Ref. [ 29]. The
+anomaly was also characterized as “dipole modulation” ofthe power [ 30] and as “variance asymmetry” [ 31].Planck
+2013 [ 2] showed, using both full-resolution ( Nside= 2048)
+and low-resolution ( Nside= 16) maps that the low vari-
+ance was localized in the northern ecliptic hemisphere,
+with a p-value of ∼0.1%, while the p-value for the south-
+ern hemisphere was ∼45%. We adopt the Nside= 16
+northern variance measure
+σ2
+16=(T−¯T)2, (10)
+where the overbar denotes an average over the pixels of
+anNside= 16 masked, northern ecliptic sky.
+Quadrupole-octopole alignment, SQO:There have been
+at least three ways presented to describe the alignment of
+the quadrupole and octopole [ 32–34]. Following Ref. [ 8],
+we adopt the approach of Ref. [ 33], which uses the multi-
+pole vector representation of CMB temperature [ 35,36].
+The quadrupole is represented by two multipole vectors
+v(2;j), with j= 1,2, and the octopole by three multipole
+vectors v(3;j), with j= 1,2,3. This allows the quadrupole
+to be associated with a single plane and the octopole to be
+associated with three planes. These planes have oriented
+areas
+w(ℓ;i,j)≡v(ℓ;i)×v(ℓ;j). (11)
+It has been known since Ref. [ 32] that the octopole
+is unusually planar – its three planes are unexpectedly
+aligned with one another – and that those planes are
+unusually aligned with that of the quadrupole. A statistic
+used to quantify the alignment of these four planes is
+SQO≡1
+32X
+i=13X
+j=i+1|w(2;1,2)·w(3;i,j)|. (12)
+Results. — The value of each of S1/2,RTT,σ2
+16, and
+SQOfor the four Planck maps is given in the second col-
+umn of Table I. Along the diagonal of columns 3–6 and for
+rows 1–4 of each component-separated map we present the
+p-values of those statistics from an ensemble of 108theo-
+retical Planck -best-fit ΛCDM CMB skies. Each of those p-
+values is ≲5%. In the off-diagonal entries below the diago-
+nal we present the p-values of pairs of statistics; in the off-
+diagonal entries above the diagonal (blue) we present the
+factors by which these exceed the products of individual p-
+values. For example, in SMICA p(S1/2, RTT) = 2.8×10−5,
+while p(S1/2, RTT)/(p(S1/2)p(RTT)) = 0 .6. Note that
+consistently, only p(S1/2, σ2
+16)/(p(S1/2)p(σ2
+16))≃30≫1;
+all other pairs have factors which are relatively close to
+1.RTT, in particular, is very weakly correlated, or even
+anti-correlated, with the other three. This is our first
+indication that the joint probability of all four statistics,
+is much less than the smallest of them.
+In Table II, we examine the correlations between the
+most correlated pair of statistics, S1/2andσ2
+16, and the
+next-most correlated statistic SQO. We find that there4
+Stat. Value S1/2 RTTσ2
+16 SQO
+Commander
+S1/21272 1 .5×10−3×0.6 ×27 ×1.3
+RTT0.7896 2 .8×10−53.0×10−2×1.1 ×1.0
+σ2
+16 617.6 1 .2×10−41.0×10−43.1×10−3×1.7
+SQO0.7630 8 .3×10−61.3×10−42.3×10−54.4×10−3
+NILC
+S1/21218 1 .3×10−3×0.4 ×29 ×1.3
+RTT0.7448 4 .8×10−61.0×10−2×1.0 ×1.0
+σ2
+16 605.9 9 .2×10−52.4×10−52.5×10−3×1.9
+SQO0.8203 6 .3×10−73.8×10−61.8×10−63.9×10−4
+SEVEM
+S1/21215 1 .3×10−3×0.8 ×33 ×1.2
+RTT0.8194 5 .6×10−55.4×10−2×1.2 ×1.0
+σ2
+16 583.4 6 .5×10−51.0×10−41.6×10−3×1.5
+SQO0.6547 6 .3×10−52.2×10−39.8×10−54.1×10−2
+SMICA
+S1/21257 1 .4×10−3×0.6 ×25 ×1.3
+RTT0.7906 2 .8×10−53.0×10−2×1.1 ×1.0
+σ2
+16 631.0 1 .4×10−41.3×10−43.9×10−3×1.8
+SQO0.8048 1 .7×10−62.9×10−56.6×10−69.2×10−4
+TABLE I. p-values of the four anomaly statistics ( S1/2,RTT,
+σ2
+16,SQO) for the four Planck component-separated CMB
+temperature maps ( Commander ,NILC,SEVEM , and SMICA ). For
+each map: the second column shows the values of the statistics
+calculated with S1/2given in µK4,σ2
+16given in µK2, and RTT
+andSQOboth dimensionless; the “diagonal” entries of the
+four rows and columns 3–6 are the individual p-values of the
+anomaly statistics in an ensemble of 108realizations of best-fit
+ΛCDM; each off-diagonal entry below the diagonal is the joint
+p-value of the statistic in that row and column; the off-diagonal
+entries above the diagonal (blue) are the factors by which the
+joint p-values exceed the products of the individual p-values,
+i.e.,p(SA, SB)/(p(SA)p(SB)).
+is little additional correlation among them, in particular
+0.6≤p(S1/2, σ2
+16, SQO)/(p(S1/2, σ2
+16)p(SQO))≤2.1.
+Finally, Table III gives the joint p-values of all four
+anomaly statistics
+p4≡p(S1/2, RTT, σ2
+16, SQO) (13)
+for the four component-separated maps and the “corre-
+lation factors” by which they exceed the products of the
+four individual p-values,
+p(S1/2, RTT, σ2
+16, SQO)
+p(S1/2)p(RTT)p(σ2
+16)p(SQO). (14)
+We see in Table III that p4forCommander ,NILC, and
+SMICA are all ≤3×10−8, corresponding to >5.4σsig-
+nificance! Even the one outlier, SEVEM , has a p4corre-
+sponding to ∼5.1σ. There is no particular reason to
+trust the SEVEM result over the others, and if it were theS1/2andσ2
+16 SQO
+Commander
+S1/2andσ2
+16 1.2×10−4×1.7
+SQO 9.1×10−74.4×10−3
+NILC
+S1/2andσ2
+16 9.1×10−5×0.6
+SQO 2.0×10−83.9×10−4
+SEVEM
+S1/2andσ2
+16 6.5×10−5×1.3
+SQO 3.6×10−64.1×10−2
+SMICA
+S1/2andσ2
+16 1.4×10−4×2.1
+SQO 2.7×10−79.2×10−4
+TABLE II. For each of the four Planck component-separated
+CMB temperature maps ( Commander ,NILC,SEVEM , and SMICA ),
+along the diagonal are the joint p-value of S1/2andσ2
+16,
+p(S1/2, σ2
+16), and the p-value of SQO,p(SQO). In the off-
+diagonal below the diagonal is the joint p-value of all three
+statistics p(S1/2, σ2
+16, SQO), while above the diagonal (blue) is
+the ratio p(S1/2, σ2
+16, SQO)/(p(S1/2, σ2
+16)p(SQO)).
+Map p4 Correlation Factor
+Commander 3×10−851
+NILC <1×10−8N/A
+SEVEM 18×10−840
+SMICA 1×10−864
+TABLE III. The joint p-values, p4ofS1/2,RTT,σ2
+16, and
+SQO, and the correlation factors by which the joint p-values
+exceed the products of the four individual p-values, estimated
+on ensembles of 108realizations of Planck best-fit ΛCDM for
+the four Planck component-separated CMB temperature maps
+(Commander ,NILC,SEVEM , and SMICA ).
+correct value the other three would be extremely unlikely
+(<1/1018) to have happened by chance – there would
+have to be some reason why all three of them come out
+so much smaller.
+The correlation factor – the factor by which p4ex-
+ceeds the product of the four individual p-values – is
+thus consistently less than 100, so that p4is vastly
+smaller than the minimum of the individual p-values.
+Most of that correlation factor is accounted for by the
+correlation between S1/2andσ2
+16, but recall that even
+p(S1/2, σ2
+16)<1
+10min(p(S1/2), p(σ2
+16)).
+As remarked above, here we have worked with CMB-
+only simulated sky maps, i.e., we did not add simulated
+noise to our realizations of the CMB sky. This is motivated
+by the fact that the Planck (and WMAP) measurements
+of large-scale CMB temperature fluctuations are almost
+completely cosmic-variance-limited so that we do not
+expect the noise to significantly affect our results and5
+conclusions. This is further supported by the fact that
+when we calculated p-values of anomaly statistics and
+compared them to the corresponding Planck values they
+agreed.
+Working with noise-free simulations makes it possible to
+create ensembles of 108realizations, which would not have
+been possible if we had added noise to the simulations,
+as not more than 1000 noise simulations are available for
+thePlanck sky maps. Additionally, WMAP and Planck ,
+with very different noise structures and properties, have
+both detected the large-scale anomalies with very similar
+individual p-values, showing that the anomalies are very
+unlikely to be due to experimental noise. Given that, it
+is very hard to see how the noise would be responsible
+for all the anomalies together or how the noise would
+significantly affect the joint p-values, i.e., the correlations
+between anomalies.
+We have also not attempted to simulate residual fore-
+grounds. The Commander ,NILC,SEVEM , and SMICA teams
+have done that better than we can hope to. It seems
+extraordinarily unlikely that all four of these foreground
+removal methodologies would leave behind the identi-
+cal anomalies, with nearly the same values on all of the
+Planck maps (and similarly for all the foreground-removed
+WMAP maps).
+Conclusions. — The joint significance of the four statis-
+tics we chose to consider much exceeds 5 σ, and for three
+of four maps exceeds 5 .5σ. We should certainly mitigate
+this by the effect of some look-elsewhere penalty. At the
+same time a more comprehensive study of all of the many
+statistics that point toward the violation of statistical
+isotropy would very likely increase the significance of this
+result. We conclude that it is very unlikely that we just
+live in a rare realization of a statistically isotropic universe.
+It is much more likely that the Universe is statistically
+anisotropic.
+This work made use of the High Performance Com-
+puting Resource in the Core Facility for Advanced Re-
+search Computing at Case Western Reserve University.
+Some of the results in this paper have been derived us-
+ing the healpy and HEALPix packages [ 37,38]. J.J.,
+C.J.C., and G.D.S. acknowledge partial support from
+NASA ATP grant RES240737; G.D.S. from DOE grant
+DESC0009946. Y.A. acknowledges support by the Span-
+ish Research Agency (Agencia Estatal de Investigaci´ on)’s
+grant RYC2020-030193-I/AEI/10.13039/501100011033,
+by the European Social Fund (Fondo Social Europeo)
+through the Ram´ on y Cajal program within the State
+Plan for Scientific and Technical Research and Innova-
+tion (Plan Estatal de Investigaci´ on Cient´ ıfica y T´ ecnica
+y de Innovaci´ on) 2017-2020, and by the Spanish Re-
+search Agency through the grant IFT Centro de Exce-
+lencia Severo Ochoa No CEX2020-001007-S funded by
+MCIN/AEI/10.13039/501100011033.∗joann.jones@case.edu
+†craig.copi@case.edu
+‡glenn.starkman@case.edu
+§yashar.akrami@csic.es
+[1]D. J. Schwarz, C. J. Copi, D. Huterer, and G. D. Starkman,
+Class. Quant. Grav. 33, 184001 (2016), arXiv:1510.07929
+[astro-ph.CO].
+[2]P. A. R. Ade et al. (Planck), Astron. Astrophys. 571, A23
+(2014), arXiv:1303.5083 [astro-ph.CO].
+[3]P. A. R. Ade et al. (Planck), Astron. Astrophys. 594, A16
+(2016), arXiv:1506.07135 [astro-ph.CO].
+[4]Y. Akrami et al. (Planck), Astron. Astrophys. 641, A7
+(2020), arXiv:1906.02552 [astro-ph.CO].
+[5]E. Abdalla et al. , JHEAp 34, 49 (2022), arXiv:2203.06142
+[astro-ph.CO].
+[6]G. Hinshaw, A. J. Banday, C. L. Bennett, K. M. Gorski,
+A. Kogut, C. H. Lineweaver, G. F. Smoot, and E. L.
+Wright, Astrophys. J. Lett. 464, L25 (1996), arXiv:astro-
+ph/9601061.
+[7]D. N. Spergel et al. (WMAP), Astrophys. J. Suppl. 148,
+175 (2003), arXiv:astro-ph/0302209.
+[8]J. Muir, S. Adhikari, and D. Huterer, Phys. Rev. D 98,
+023521 (2018), arXiv:1806.02354 [astro-ph.CO].
+[9]N. Aghanim et al. (Planck), Astron. Astrophys. 641, A5
+(2020), arXiv:1907.12875 [astro-ph.CO].
+[10]Y. Akrami et al. (Planck), Astron. Astrophys. 641, A4
+(2020), arXiv:1807.06208 [astro-ph.CO].
+[11] Available from https://pla.esac.esa.int/#maps .
+[12] See http://healpix.sourceforge.net .
+[13]N. Aghanim et al. (Planck), Astron. Astrophys. 641, A6
+(2020), [Erratum: Astron.Astrophys. 652, C4 (2021)],
+arXiv:1807.06209 [astro-ph.CO].
+[14]Available from https://pla.esac.esa.int/#cosmology .
+[15]Y. Akrami et al. (COMPACT), The Search for the
+Topology of the Universe Has Just Begun (2022),
+arXiv:2210.11426 [astro-ph.CO].
+[16]C. Dvorkin, H. V. Peiris, and W. Hu, Phys. Rev. D 77,
+063008 (2008), arXiv:0711.2321 [astro-ph].
+[17]A. Yoho, S. Aiola, C. J. Copi, A. Kosowsky, and
+G. D. Starkman, Phys. Rev. D 91, 123504 (2015),
+arXiv:1503.05928 [astro-ph.CO].
+[18]A. Yoho, C. J. Copi, G. D. Starkman, and A. Kosowsky,
+Mon. Not. Roy. Astron. Soc. 442, 2392 (2014),
+arXiv:1310.7603 [astro-ph.CO].
+[19]C. J. Copi, D. Huterer, D. J. Schwarz, and G. D. Stark-
+man, Mon. Not. Roy. Astron. Soc. 451, 2978 (2015),
+arXiv:1310.3831 [astro-ph.CO].
+[20]A. Yoho, F. Ferrer, and G. D. Starkman, Phys. Rev. D
+83, 083525 (2011), arXiv:1005.5389 [astro-ph.CO].
+[21]P. Pranav and T. Buchert, Homology reveals signifi-
+cant anisotropy in the cosmic microwave background,
+arXiv:2308.10738 [astro-ph.CO].
+[22]C. L. Bennett, N. W. Boggess, E. S. Cheng, M. G. Hauser,
+T. Kelsall, J. C. Mather, J. Moseley, S. H., T. L. Murdock,
+R. A. Shafer, R. F. Silverberg, G. F. Smoot, R. Weiss,
+and E. L. Wright, Proceedings of the National Academy
+of Science 90, 4766 (1993).
+[23]C. Copi, D. Huterer, D. Schwarz, and G. Starkman, Phys.
+Rev. D 75, 023507 (2007), arXiv:astro-ph/0605135.
+[24]C. J. Copi, D. Huterer, D. J. Schwarz, and G. D. Stark-
+man, Mon. Not. Roy. Astron. Soc. 399, 295 (2009),6
+arXiv:0808.3767 [astro-ph].
+[25]Code available from https://github.com/LSSTDESC/
+NaMaster .
+[26]D. Alonso, J. Sanchez, and A. Slosar (LSST Dark Energy
+Science), Mon. Not. Roy. Astron. Soc. 484, 4127 (2019),
+arXiv:1809.09603 [astro-ph.CO].
+[27]J. Kim and P. Naselsky, The Astrophysical Journal 714,
+L265 (2010).
+[28]H. K. Eriksen, F. K. Hansen, A. J. Banday, K. M. Gorski,
+and P. B. Lilje, Astrophys. J. 605, 14 (2004), [Erratum:
+Astrophys.J. 609, 1198 (2004)], arXiv:astro-ph/0307507.
+[29]C.-G. Park, Mon. Not. Roy. Astron. Soc. 349, 313 (2004),
+arXiv:astro-ph/0307469.
+[30]C. Gordon, W. Hu, D. Huterer, and T. M. Crawford,
+Phys. Rev. D 72, 103002 (2005), arXiv:astro-ph/0509301.
+[31]Y. Akrami, Y. Fantaye, A. Shafieloo, H. K. Eriksen, F. K.
+Hansen, A. J. Banday, and K. M. G´ orski, Astrophys. J.
+Lett. 784, L42 (2014), arXiv:1402.0870 [astro-ph.CO].
+[32]A. de Oliveira-Costa, M. Tegmark, M. Zaldarriaga, andA. Hamilton, Phys. Rev. D 69, 063516 (2004), arXiv:astro-
+ph/0307282.
+[33]D. J. Schwarz, G. D. Starkman, D. Huterer, and C. J.
+Copi, Phys. Rev. Lett. 93, 221301 (2004), arXiv:astro-
+ph/0403353.
+[34]K. Land and J. Magueijo, Phys. Rev. Lett. 95, 071301
+(2005), arXiv:astro-ph/0502237.
+[35]J. C. Maxwell, Phil. Trans. Roy. Soc. Lond. 155, 459
+(1865).
+[36]C. J. Copi, D. Huterer, and G. D. Starkman, Phys. Rev.
+D70, 043515 (2004), arXiv:astro-ph/0310511.
+[37]K. M. G´ orski, E. Hivon, A. J. Banday, B. D. Wandelt,
+F. K. Hansen, M. Reinecke, and M. Bartelman, Astrophys.
+J.622, 759 (2005), arXiv:astro-ph/0409513.
+[38]A. Zonca, L. Singer, D. Lenz, M. Reinecke, C. Rosset,
+E. Hivon, and K. Gorski, Journal of Open Source Software
+4, 1298 (2019).

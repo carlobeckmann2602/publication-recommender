@@ -49,7 +49,7 @@ class PdfCrawler:
                         #abstract = abstract.split('\n', 1)[0].strip()
                         #break  # Exit the loop once the abstract is found
 
-            print(file_content)
+            #print(file_content)
                 # crawl pdf for id, author, and abstract
                 #author_names = self._read_author(self.response.content)
     

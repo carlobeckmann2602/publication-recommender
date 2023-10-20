@@ -1,0 +1,1436 @@
+Astronomy & Astrophysics manuscript no. paper © ESO 2023
+October 20, 2023
+Convective scale and subadiabatic layers in
+simulations of rotating compressible convection
+P. J. K ¨apyl¨a1,2
+1Leibniz-Institute for Solar Physics (KIS), Sch ¨oneckstr. 6, D-79104 Freiburg, Germany email: pkapyla@leibniz-kis.de
+2Georg-August-University G ¨ottingen, Institute for Astrophysics and Geophysics, Friedrich-Hund-Platz 1, D-37077 G ¨ottingen,
+Germany
+October 20, 2023
+ABSTRACT
+Context. Rotation is thought to influence the size of convective eddies and the efficiency of convective energy transport in the
+deep convection zones of stars. Rotationally constrained convection has been invoked to explain the lack of large-scale power in
+observations of solar flows.
+Aims. The main aims are to quantify the effects of rotation on the scale of convective eddies and velocity, the depths of convective
+overshoot, and the subadiabatic Deardorff layers.
+Methods. Moderately turbulent three-dimensional hydrodynamic simulations of rotating convection in local Cartesian domains were
+run. The rotation rate and luminosity of the simulations are varied to probe the dependency of the results on Coriolis, Mach, and
+Richardsson numbers measuring the incluences of rotation, compressibility, and stiffness of the radiative layer. The results were
+compared with theoretical scaling results that assume a balance between Coriolis, inertial, and buoyancy (Archemedean) forces,
+which is also referred to as the CIA balance.
+Results. The horizontal scale of convective eddies decreases as rotation increases, and ultimately reaches a rotationally constrained
+regime consistent with the CIA balance. Using a new measure of the rotational influence on the system, it is shown that even the
+deep parts of the solar convection zone are not in the rotationally constrained regime. The simulations capture the slowly and rapidly
+rotating scaling laws predicted by theory, and the Sun appears to be in between these two regimes. Both, the overshooting depth and
+the extent of the Deardorff layer, decrease as rotation becomes more rapid. For sufficiently rapid rotation the Deardorff layer is absent
+due to the symmetrization of up- and downflows. However, for the most rapidly rotating cases the overshooting increases again due
+to unrealistically large Richardsson numbers that allow convective columns penetrate deep into the radiative layer.
+Conclusions. Relating the simulations with the Sun suggests that the convective scale even in the deep parts of the Sun is only mildly
+affected by rotation and that some other mechanism is needed to explain the lack of strong large-scale flows in the Sun. Taking the
+current results at face value, the overshoot and Deardorff layers are estimated to span roughly five per cent of the pressure scale height
+at the base of the convection zone in the Sun.
+Key words. turbulence – convection
+1. Introduction
+The theoretical understanding of solar and stellar convection was
+shaken roughly a decade ago when helioseismic analysis sug-
+gested that the velocity amplitudes in the deep solar convection
+zone are orders of magnitude smaller than anticipated from theo-
+retical and numerical models (Hanasoge et al. 2012). Significant
+effort has been put in refining these estimates but a gaping dis-
+crepancy between numerical models and helioseismology re-
+mains (e.g. Hanasoge et al. 2016; Proxauf 2021); see, however
+Greer et al. (2015). This issue is now refererred to as the convec-
+tive conundrum (O’Mara et al. 2016).
+Several solutions to this conundrum have been proposed, in-
+cluding high effective Prandtl number (e.g. Karak et al. 2018),
+rotationally constrained convection (Featherstone & Hindman
+2016), and that the superadiabatic layer in the Sun is much thin-
+ner than thus far thought (Brandenburg 2016); see also K ¨apyl¨a
+et al. (2023) and references therein. The two latter ideas are ex-
+plored further in the current study. The idea that convection is
+rotationally constrained in the deep convection zone (CZ) is al-
+ready borne out of mixing length models of solar convection
+that imply velocity amplitudes uconv of about 10m s−1for thedeep convection zone, while the convective length scale ℓconv,
+which is the mixing length, is of the order of 100Mm, yielding a
+Coriolis number Co⊙= 2Ω ⊙ℓconv/uconvof the order of 10 (e.g.
+Ossendrijver 2003; Schumacher & Sreenivasan 2020). However,
+this estimate does not take into account the decreasing length
+scale due to the rotational influence on convection. Assuming
+that the Coriolis, inertial, and buoyancy (Archimedean) forces
+balance, also known as the CIA balance (e.g. Stevenson 1979;
+Ingersoll & Pollard 1982; King & Buffett 2013; Barker et al.
+2014; Aurnou et al. 2020; Vasil et al. 2021), implies that the
+convective scale is given by ℓconv∝Co−1/2, where Co =
+2ΩH/u conv is a global Coriolis number, where Ωis the rotation
+rate and where His a length scale corresponding to the system
+size (e.g. Aurnou et al. 2020). This idea has been explored re-
+cently by Featherstone & Hindman (2016) and Vasil et al. (2021)
+who suggested that the largest convectively driven scale in the
+Sun coincides with that of supergranulation due to rotationally
+constrained convection in the deep CZ. These studies assumed
+from the outset that convection is strongly rotationally affected.
+Here a somewhat different perspective is taken in that an attempt
+is made to assess whether this assumption holds for the deep so-
+lar CZ. Furthermore, in addition to ℓconv, the scalings of various
+1arXiv:2310.12855v1  [astro-ph.SR]  19 Oct 2023K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+quantities based on predictions from the CIA balance are studied
+over a wide range of rotation rates.
+Simulations of stratified overshooting convection have re-
+vealed that deep parts of CZs are often weakly stably stratified
+(e.g. Roxburgh & Simmons 1993; Tremblay et al. 2015; Hotta
+2017; Bekki et al. 2017; K ¨apyl¨a et al. 2017; K ¨apyl¨a 2019). This
+is interpreted such that convection is driven by the cooling at the
+surface that induces cool downflow plumes which pierce through
+the entire convection zone and penetrate deep into the stable
+layers below. This process has been named entropy rain (e.g.
+Brandenburg 2016) and goes back to ideas presented by Spruit
+(1997) and the simulations of Stein and Nordlund (e.g. Stein
+& Nordlund 1989, 1998). This picture of convection is a clean
+break from the canonical view in which convection is driven
+throughout the convection zone by a superadiabatic temperature
+gradient, an idea which is also encoded into the mixing length
+concept (e.g. Vitense 1953; B ¨ohm-Vitense 1958). Theoretically
+this can be understood such that the convective energy flux that
+is traditionally proportional to the entropy gradient is supple-
+mented by a non-gradient term proportional to the variance of
+entropy fluctuations (Deardorff 1961, 1966).
+Analysis of the force balance of up- and downflows in non-
+rotating hydrodynamic simulations supports the idea of surface-
+driven non-local convection (e.g. K ¨apyl¨a et al. 2017; K ¨apyl¨a
+2019, 2021). Thus far these studies have mostly concentrated
+on non-rotating convection (see, however K ¨apyl¨a et al. 2019;
+Viviani & K ¨apyl¨a 2021). Here rotation is included to study its
+impact on the formation and extent of stably stratified Deardorff
+layers where the convective flux runs counter to the entropy
+gradient. Another aspect of interest in astrophysics is convec-
+tive overshooting (see, e.g. Anders & Pedersen 2023, for a re-
+cent review). Numerical studies targeting specifically overshoot-
+ing have largely concentrated on non-rotating cases (e.g. Singh
+et al. 1995, 1998; Saikia et al. 2000; Brummell et al. 2002;
+Hotta 2017; K ¨apyl¨a 2019; Anders et al. 2022), and the effects
+of rotation have received much less attention (e.g. Ziegler &
+R¨udiger 2003; K ¨apyl¨a et al. 2004; Brun et al. 2017). It is gen-
+erally thought that rotation leads to reduction of overshooting
+depth (e.g. Ziegler & R ¨udiger 2003) but a comprehensive study
+of this is still lacking.
+The remainder of the paper is organized as follows: the
+model is described in Section 2, whereas the results and con-
+clusions of the study are presented in Sections 3 and 4, respec-
+tively. The derivations related to the CIA balance are presented
+in Appendix A.
+2. The model
+The model is the same as that used in K ¨apyl¨a (2019, 2021).
+The P ENCIL CODE (Pencil Code Collaboration et al. 2021)1
+was used to produce the simulations. Convection is modeled in
+a Cartesian box with dimensions (Lx, Ly, Lz) = (4 ,4,1.5)d,
+where dis the depth of the initially convectively unstable layer.
+The equations for compressible hydrodynamics are solved:
+Dlnρ
+Dt=−∇ ·u, (1)
+Du
+Dt=g−1
+ρ(∇p−∇ ·2νρS)−2Ω×u, (2)
+TDs
+Dt=−1
+ρ[∇ ·(Frad+FSGS)− C] + 2νS2, (3)
+1https://github.com/pencil-code/where D/Dt =∂/∂t +u·∇is the advective derivative, ρis
+the density, uis the velocity, g=−gˆezis the acceleration due
+to gravity with g > 0,pis the pressure, Tis the temperature,
+sis the specific entropy, νis the constant kinematic viscosity,
+andΩ= Ω 0(−sinθ,0,cosθ)Tis the rotation vector, where θ
+is the colatitude. FradandFSGSare the radiative and turbulent
+subgrid scale (SGS) fluxes, respectively, and Cdescribes cooling
+near the surface. Sis the traceless rate-of-strain tensor with
+Sij=1
+2(ui,j+uj,i)−1
+3δij∇ ·u. (4)
+The gas is assumed to be optically thick and fully ionized, where
+radiation is modeled via the diffusion approximation. The ideal
+gas equation of state p= (cP−cV)ρT=RρTapplies, where
+Ris the gas constant, and cPandcVare the specific heats at
+constant pressure and volume, respectively. The radiative flux is
+given by
+Frad=−K∇T, (5)
+where Kis the radiative heat conductivity
+K=16σSBT3
+3κρ, (6)
+where σSBis the Stefan-Boltzmann constant and κis the opac-
+ity. Assuming that the opacity is a power law of the form
+κ=κ0(ρ/ρ0)a(T/T 0)b, where ρ0andT0are reference values
+of density and temperature, the heat conductivity is
+K(ρ, T) =K0(ρ/ρ0)−(a+1)(T/T 0)3−b. (7)
+The choice a= 1 andb=−7/2corresponds to the Kramers
+opacity law (Weiss et al. 2004), which was used in convection
+simulations by Edwards (1990) and Brandenburg et al. (2000).
+Additional turbulent SGS diffusivity is applied for the en-
+tropy fluctuations with
+FSGS=−ρTχ SGS∇s′, (8)
+where s′(x) =s(x)−swith the overbar indicating horizontal
+averaging. The coefficient χSGSis constant in the whole domain
+andFSGS has a negligible contribution to the net energy flux
+such that FSGS≈0.
+The cooling at the surface is described by
+C=ρcPTcool−T
+τcoolfcool(z), (9)
+where τcoolis a cooling time, T=e/cVis the temperature
+where eis the internal energy, and where Tcool=Ttopis a ref-
+erence temperature corresponding to the fixed value at the top
+boundary.
+The advective terms in Equations (1) to (3) are written in
+terms of a fifth-order upwinding derivative with a hyperdiffusive
+sixth-order correction with a local flow-dependent diffusion co-
+efficient; see Appendix B of Dobler et al. (2006).
+2.1. Geometry, initial and boundary conditions
+The computational domain is a rectangular box where the ver-
+tical coordinate is zbot≤z≤ztopwith zbot/d=−0.45,
+ztop/d= 1.05. The horizontal coordinates xandyrun from
+−2dto2d. The initial stratification consists of three layers. The
+two lower layers are polytropic with polytropic indices n1=
+3.25(zbot/d≤z/d≤0) and n2= 1.5(0≤z/d≤1). The
+former follows from a radiative solution that is a polytrope with
+2K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+index n= (3−b)/(1 +a); see Barekat & Brandenburg (2014),
+Appendix A of Brandenburg (2016), and Figure 1. The latter cor-
+responds to a marginally stable isentropic stratification. Initially
+the uppermost layer above z/d= 1 is isothermal, mimicking
+a photosphere where radiative cooling is efficient. Convection
+ensues because the system is not in thermal equilibrium due
+to the cooling near the surface and due to the inefficient radia-
+tive diffusion in the layers above z/d= 0. The velocity field is
+initially seeded with small-scale Gaussian noise with amplitude
+10−5√dg.
+The horizontal boundaries are periodic and the vertical
+boundaries are impenetrable and stress free according to
+∂ux
+∂z=∂uy
+∂z=uz= 0. (10)
+A constant energy flux is imposed at the lower boundary by set-
+ting
+∂T
+∂z=−Fbot
+Kbot, (11)
+where Fbotis the fixed input flux and Kbot=K(x, y, z bot).
+Constant temperature T=Ttopis imposed on the upper vertical
+boundary.
+2.2. Units and control parameters
+The units of length, time, density, and entropy are given by
+[x] =d,[t] =p
+d/g, [ρ] =ρ0,[s] =cP, (12)
+where ρ0is the initial value of density at z=ztop. The models
+are fully defined by choosing the values of ν,Ω0,θ g,a,b,K0,
+ρ0,T0,τcool, and the SGS Prandtl number
+PrSGS=ν
+χSGS, (13)
+along with the cooling profile fcool(z). The values of K0,ρ0,T0
+are subsumed into another constant eK0=K0ρa+1
+0Tb−3
+0which
+is fixed by assuming the radiative flux at zbotto equal Fbotat
+t= 0. The cooling profile fcool(z) = 1 above z/d= 1 and
+fcool(z) = 0 below z/d= 1, connecting smoothly across the
+interface over a width of 0.025d. The quantity ξ0=Htop
+p/d=
+RTtop/gdsets the initial pressure scale height at the surface and
+determining the initial density stratification. All of the current
+simulations have ξ0= 0.054.
+Prandtl number based on the radiative heat conductivity is
+Pr(x) =ν
+χ(x), (14)
+where χ(x) =K(x)/cPρ(x), quantifies the relative importance
+of viscous to temperature diffusion. Unlike many other simu-
+lations, Pris not an input parameter because of the non-linear
+dependence of the radiative diffusivity on the ambient thermo-
+dynamics. The dimensionless normalized flux is given by
+Fn=Fbot
+ρ(zbot)c3s(zbot), (15)
+where ρ(zbot)andcs(zbot)are the density and the sound speed,
+respectively, at z=zbotatt= 0. At the base of the solar CZ
+Fn≈4·10−11(e.g. Brandenburg et al. 2005), whereas in the
+current fully compressible simulations several orders of magni-
+tude larger values are used.The effect of rotation is quantified by the Taylor number
+Ta =4Ω2
+0d4
+ν2, (16)
+which is related to the Ekman number via Ek = Ta−1/2.
+The Rayleigh number based on the energy flux is given by
+RaF=gd4Fbot
+cPρTνχ2. (17)
+This can be used to construct a flux-based diffusion-free mod-
+ified Rayleigh number (e.g. Christensen 2002; Christensen &
+Aubert 2006)
+Ra⋆
+F=RaF
+Pr2Ta3/2, (18)
+In the current set-up Ra⋆
+Fis given by
+Ra⋆
+F=gFbot
+8cPρTΩ3
+0d2. (19)
+A reference depth needs to be chosen because Ra⋆
+F= Ra⋆
+F(z).
+Furthermore, H≡cPT/g is a length scale related to the pres-
+sure scale height. The choice d=H=Hp, where Hp≡
+−(∂lnp/∂z)−1is the pressure scale height at the base of the
+convection zone, leads to
+Ra⋆
+F=Fbot
+8ρΩ3H3p. (20)
+2.3. Diagnostics quantities
+The global Reynolds and SGS P ´eclet numbers describe the
+strength of advection versus viscosity and SGS diffusion
+Re =urms
+νk1,PeSGS=urms
+χSGSk1, (21)
+where urmsis the volume averaged rms-velocity, and where
+k1= 2π/d is an estimate of the largest eddies in the system.
+The Reynolds and P ´eclet number based on the actual convective
+length scale ℓare given by
+Reℓ=urmsℓ
+ν,Peℓ=urmsℓ
+χSGS. (22)
+Hereℓ=k−1
+mean is chosen, where kmean =kmean(z)is the mean
+wavenumber (e.g. Christensen & Aubert 2006; Schrinner et al.
+2012), and which is computed from
+kmean(z) =R
+kE(k, z)dkR
+E(k, z)dk, (23)
+where E(k, z)is the power spectrum of the velocity field with
+u2(z) =R
+E(k, z)dk.
+In general the total thermal diffusivity is given by
+χeff(x) =χSGS+χ(x). (24)
+However, in all of the current simulations χ≪χSGSin the CZ
+such that the Prandtl and P ´eclet numbers based on χeffdiffer
+very little from PrSGSandPeSGS. The Rayleigh number is de-
+fined as
+Ra =gd4
+νχ
+−1
+cPds
+dz
+hs, (25)
+3K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+which varies as a function of height and is quoted near the
+surface at z/d = 0.85. The Rayleigh number in the hydro-
+static, non-convecting, state is measured from a one-dimensional
+model that is run to thermal equilibrium, and where the con-
+vectively unstable layer is confined to the near-surface layers
+(Brandenburg 2016); see also Figure 1. In the hydrostatic case
+χ=χ(z)andχSGS, which affects only the fluctuations, plays
+no role. The turbulent Rayleigh number is quoted from the sta-
+tistically stationary state using the horizontally averaged mean
+state,
+Rat=gd4
+νχeff
+−1
+cPds
+dz
+z/d=0.85, (26)
+where the overbar denotes temporal and horizontal averaging.
+Rotational influence on the flow is measured by several ver-
+sions of the Coriolis number. First, the global Coriolis number is
+defined as
+Co =2Ω0
+urmsk1, (27)
+where k1= 2π/d is the wavenumber corresponding to the sys-
+tem scale. This definition neglects the changing length scale as
+a function of rotation and overestimates the rotational influence
+when rotation is rapid and the convective scale is smaller. A def-
+inition that takes the changing length scale into account is given
+by the vorticity-based Coriolis number
+Coω=2Ω0
+ωrms, (28)
+where ωrmsis the volume-averaged rms-value of the vorticity
+ω=∇×u. Another definition of the Coriolis number taking
+into account the changing integral length scale is given by
+Coℓ=2Ω0ℓ
+urms, (29)
+where ℓ= (kmean)−1where the overbar denotes averaging over
+time and CZ. This is a commonly used choice in simulations
+of convection in spherical shells (Schrinner et al. 2012; Gastine
+et al. 2014); see also Aurnou et al. (2020) who considered con-
+vection in the limits of slow rotation and rapid rotation.
+Let us further define a flux Coriolis number CoF2as
+CoF≡2Ω0Hp
+uflux= 2Ω 0Hpρ⋆
+Fbot1/3
+, (30)
+where ufluxis a reference velocity obtained from
+Ftot=ρ⋆u3
+⋆, (31)
+where ρ⋆is a reference density, taken here at the bottom of the
+CZ.ufluxdoes not, and does not need to, correspond to any ac-
+tual velocity and it rather represents the available energy flux.
+Therefore CoFdoes not depend on any dynamical flow speed or
+length scale which are set by complicated interactions of con-
+vection, rotation, magnetism, and other relevant physics. On the
+other hand, CoFdepends only on quantities that can either be
+measured ( Ftot,Ω0) or deduced from stellar structure models
+with relatively little ambiguity ( Hp,ρ⋆). The significance of CoF
+is seen when rearranging Eq. (20) to yield
+(2Ω0Hp)3ρ
+Fbot= (Ra⋆
+F)−1. (32)
+2The same quantity was referred to as stellar Coriolis number in
+K¨apyl¨a (2023).Identifying the lhs with Co3
+F, Eq. (30), gives
+CoF= (Ra⋆
+F)−1/3. (33)
+An often used phrase in the context of convection simulations
+targeting the Sun is that while all the other system parameters
+are beyond the reach of current simulations, the rotational influ-
+ence on the flow can be reproduced (e.g. K ¨apyl¨a et al. 2023).
+Equation (33) gives this a more precise meaning in that the solar
+value of Ra⋆
+Fneeds to be matched by any simulation claiming to
+model the Sun.
+The net vertical energy flux consists of contributions due
+to radiative diffusion, enthalpy, kinetic energy flux, and viscous
+fluxes as well as the surface cooling:
+Frad=−KdT
+dz, (34)
+Fenth=cP(ρuz)′T′, (35)
+Fkin=1
+2ρu2u′z, (36)
+Fvisc=−2νρuiSiz (37)
+Fcool=−Zztop
+zbotCdz. (38)
+Here the primes denote fluctuations and overbars horizontal av-
+erages. The total convected flux (Cattaneo et al. 1991) is the sum
+of the enthalpy and kinetic energy fluxes:
+Fconv=Fenth+Fkin, (39)
+which corresponds to the convective flux in, for example, mixing
+length models of convection.
+Another useful diagnostic is buoyancy or Brunt-V ¨ais¨al¨a fre-
+quency, which is given by
+N2=g
+cPds
+dz, (40)
+and describes the stability of an atmosphere with respect to
+buoyancy fluctuations if N2>0. Finally, the Richardson num-
+ber related to rotation in the stably stratified layers is defined as
+RiΩ=N2
+Ω2
+0. (41)
+Averages denoted by overbars are typically taken over the hori-
+zontal directions and time, unless specifically stated otherwise.
+3. Results
+Three sets of simulations with varying Fnand approximately
+the same values of CoFare presented. These will be referred to
+as Sets A, B, and C. The non-rotating runs in these sets corre-
+spond respectively to Runs K3, K4, and K5 in K ¨apyl¨a (2019) in
+terms of Fn, although lower values of νandχSGS were used
+in the runs of the present study. Note that when Fnis varied
+between the sets of simulations, the rotation rate Ω0, and the dif-
+fusivities νandχSGS are varied at the same time proportional
+toF1/3
+n(see, e.g. K ¨apyl¨a et al. 2020, and Appendix A for more
+details). Furthermore, the cooling time τcoolis varied propor-
+tional to Fn. The current simulations have modest Reynolds
+and P ´eclet numbers in comparison to astrophysically relevant
+parameter regimes (e.g. Ossendrijver 2003; Kupka & Muthsam
+2017; K ¨apyl¨a et al. 2023); see Table 1. Earlier studies from non-
+rotating convection suggest that results obtained at such mod-
+estly turbulent regimes remain robust also at the highest res-
+olutions affordable (K ¨apyl¨a 2021). This is due to the fact that
+4K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Table 1. Summary of the runs.
+Run RaF[1013] Ra⋆
+F TaFn[10−6] Co Co ωCoℓCoFRe Ra t[106] RiRZ
+Ω grid
+A0 0.5 − 0 4 .6 0 .00 0.00 0.00 0.00 38 .7 4 .1 − 2883
+A1 0.5 2 .5·1021.0·1044.6 0 .07 0.02 0.08 0.28 38 .9 4 .3 1 .4·1042883
+A2 0.5 31 4 .0·1044.6 0 .13 0.03 0.16 0.55 39 .6 4 .3 3 .3·1032883
+A3 0.5 3 .9 1 .6·1054.6 0 .26 0.06 0.31 1.04 39 .4 4 .6 8 .0·1022883
+A4 0.5 0 .25 1 .0·1064.6 0 .63 0.15 0.71 2.38 40 .0 5 .1 1 .2·1022883
+A5 0.5 0 .11 1 .7·1064.6 0 .82 0.19 0.87 3.04 40 .0 5 .5 7 .1·1012883
+A6 0.5 3 .1·10−24.0·1064.6 1 .27 0.29 1.26 4.56 39 .8 6 .1 30 2883
+A7 0.6 3 .9·10−31.6·1074.6 2 .62 0.57 2.17 9.17 38 .7 7 .5 7 .5 2883
+A8 0.6 2 .5·10−41.0·1084.6 7 .21 1.38 3.88 25 .1 35.1 10 .9 1 .2 2883
+A9 0.7 3 .0·10−54.0·1084.6 16 .5 2.67 6.31 52 .9 30.7 16 .0 0 .32 2883
+B0 1.9 − 0 1 .8 0 .00 0.00 0.00 0.00 38 .3 4 .4 − 2883
+B1 1.9 2 .5·1021.0·1041.8 0 .07 0.02 0.08 0.27 38 .5 4 .4 2 .5·1042883
+B2 1.9 32 4 .0·1041.8 0 .13 0.03 0.17 0.54 38 .9 4 .5 6 .2·1032883
+B3 1.8 4 .0 1 .6·1051.8 0 .26 0.06 0.32 1.03 39 .0 4 .8 1 .5·1032883
+B4 1.8 0 .26 1 .0·1061.8 0 .65 0.15 0.70 2.34 39 .3 5 .3 2 .2·1022883
+B5 1.8 9 .3·10−22.0·1061.8 0 .90 0.20 0.97 3.21 39 .4 5 .7 1 .1·1022883
+B6 1.8 3 .2·10−24.0·1061.8 1 .30 0.29 1.27 4.49 39 .1 6 .3 55 2883
+B7 1.9 4 .0·10−31.6·1071.8 2 .69 0.56 2.09 8.98 37 .7 7 .8 14 2883
+B8 2.0 2 .6·10−41.0·1081.8 7 .32 1.36 3.90 24 .4 34.6 11 .4 2 .3 2883
+B9 2.2 3 .1·10−54.0·1081.8 16 .6 2.67 6.32 51 .4 30.5 16 .2 0 .58 2883
+C0 5.0 − 0 0 .9 0 .00 0.00 0.00 0.00 38 .1 4 .7 − 2883
+C1 5.0 2 .6·1021.0·1040.9 0 .07 0.01 0.08 0.27 38 .2 4 .8 4 .0·1042883
+C2 4.9 32 4 .0·1040.9 0 .13 0.03 0.16 0.53 38 .4 4 .9 9 .8·1032883
+C3 4.8 4 .0 1 .6·1050.9 0 .26 0.06 0.31 1.01 38 .7 5 .0 2 .3·1032883
+C4 4.7 0 .26 1 .0·1060.9 0 .65 0.14 0.73 2.31 39 .2 5 .5 3 .5·1022883
+C5 4.7 1 .2·10−11.7·1060.9 0 .84 0.19 0.91 2.96 39 .1 5 .7 2 .1·1022883
+C6 4.7 3 .2·10−24.0·1060.9 1 .31 0.28 1.27 4.47 38 .7 6 .3 87 2883
+C7 4.8 4 .1·10−31.6·1070.9 2 .71 0.55 2.14 8.93 37 .3 8 .1 22 2883
+C8 5.0 2 .6·10−41.0·1080.9 7 .43 1.35 4.03 23 .8 34.1 11 .6 3 .5 2883
+C9 5.3 3 .2·10−54.0·1080.9 16 .8 2.65 6.44 50 .5 30.1 16 .7 0 .91 2883
+A1m 1.1 2 .5·1024.0·1044.6 0 .06 0.01 0.07 0.29 83 .2 20 .6 1 .4·1045763
+A3m 1.0 3 .9 6 .4·1054.6 0 .24 0.04 0.27 1.05 84 .3 21 .1 8 .0·1025763
+A5m 1.1 0 .12 6 .8·1064.6 0 .79 0.14 0.78 3.00 83 .3 23 .1 71 5763
+A6m 1.1 3 .2·10−21.6·1074.6 1 .21 0.21 1.08 4.53 83 .5 24 .8 30 5763
+A7m 1.1 4 .0·10−36.4·1074.6 2 .50 0.40 1.88 9.06 81 .1 31 .6 7 .5 5763
+A8m 1.2 2 .5·10−44.0·1084.6 6 .83 0.99 3.51 24 .8 74.2 45 .4 1 .2 5763
+A9m 1.3 3 .1·10−51.6·1094.6 15 .5 1.96 5.59 53 .6 65.6 59 .5 0 .31 5763
+A5h 2.1 0 .11 2 .7·1074.6 0 .76 0.10 0.68 3.00 174 91 .4 71 11523
+A9h 2.5 3 .0·10−56.4·1094.6 14 .2 1.43 8.36 54 .5 143 245 0 .31 11523
+Notes. Summary of the runs. PrSGS= 1in all runs such that PeSGS= Re . Runs with rotation were made with θ= 0, corresponding to the north
+pole of the star. τcool= 2.5(Fn/FA
+n)p
+d/g, whereFA
+n= 4.6·10−6is the normalized flux in the runs in Set A.
+the main energy transport mechanism (convection) and the main
+driver of convection (surface cooling) are not directly coupled
+to the diffusivities. However, the current cases with rotation are
+more complicated because the supercriticality of convection de-
+creases with increasing rotation rate (e.g. Chandrasekhar 1961;
+Roberts 1968). The effects of decreasing supercriticality are not
+studied systematically here, but subsets of the runs in Set A were
+repeated with higher resolutions ( 5763and11523) and corre-
+spondingly higher RaF,Re, and Pe; see Sets Am and Ah in
+Table 1.
+3.1. Hydrostatic solution
+Earlier studies have shown that a purely radiative hydrostatic
+solution with the Kramers opacity law is a polytrope with in-dexnrad= 3.25(Barekat & Brandenburg 2014; Brandenburg
+2016). Such a solution arises in the case where K= const .and
+∇zT= const .To see if this configuration is recovered with the
+current set-up, Equations (1) to (3) were solved numerically in
+a one-dimensional z-dependent model with otherwise the same
+parameters as in the 3D simulations corresponding to the runs
+in Set A. The resulting temperature profile is shown in Fig. 1(a)
+along with a corresponding horizontally averaged profile from
+convecting Runs A0, A6, and A9. The stratification is consis-
+tent with a polytrope corresponding to nradup to a height of
+roughly z/d= 0.75. Near the nominal surface of the convec-
+tion zone, z/d= 1, the temperature gradient steepens sharply
+because the cooling term relaxes the temperature toward a con-
+stant ( z-independent) value near the surface. Therefore, neither
+Knor∇zTare constants in this transition region between the
+5K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 1. (a)Temperature as a function of height from a 1D hydro-
+static model (black solid line) as well as convective runs Run A0
+(red dashed), A6 (blue dashed), and A9 (orange dashed). The
+black (red) dotted line shows a polytropic gradient correspond-
+ing to index nrad= 3.25(nad= 1.5) for reference. (b)Absolute
+value of the superadiabatic temperature gradient ∆∇from the
+same runs as indicated by the legend. Red (blue) indicates con-
+vectively unstable (stable) stratification. The dotted vertical lines
+atz= 0 andz/d= 1 denote the base and top of the initially
+isentropic layer.
+radiative and the cooling layers. In the initial state the stratifica-
+tion is isothermal above z/d= 1, but because the cooling pro-
+filefcoolhas a finite width, cooling also occurs below z/d= 1
+and the isothermal layer is wider in the final thermally saturated
+state. This also depends on the value of τcool. In the convective
+runs the stratification is nearly polytropic with index nradnear
+the base of the radiative layer and nearly isentropic with nadin
+the bulk of the convection zone.
+The superadiabatic temperature gradient is defined as
+∆∇ ≡ ∇ − ∇ ad=−Hp
+cPds
+dz, (42)
+where ∇= d ln T/d lnpis the logarithmic temperature gradi-
+ent and ∇ad= 1−1/γis the corresponding adiabatic gradient.
+Comparison of the hydrostatic profile and the non-rotating con-
+vective model A0 shows that the convectively unstable layer in
+the former is much thinner than in the latter. This is a direct con-
+sequence of the strong temperature and density dependence of
+the Kramers opacity law. A similar conclusion applies also to the
+Sun, where the hypothetical non-convecting hydrostatic equilib-
+rium solution has a very thin superadiabatic layer (Brandenburg
+2016). The steepness of the temperature gradient near the sur-
+face is characterized by the maximum value of (∆∇)hyd, whichis 23.4. By comparison, in the convective Run A0 ∆∇= 0.12.
+The Rayleigh number – measured at z/d= 0.85– in the hy-
+drostatic case is Ra = 5 .4·107, which is about an order of
+magnitude greater than Ratin Run A0.
+3.2. Qualitative flow characteristic as a function of rotation
+Figure 2 shows representative flow fields from runs with slow,
+intermediate, and rapid rotation, corresponding to Coriolis num-
+bers0.13,1.3, and 16.5, respectively. The effects of rotation are
+hardly discernible in the slowly rotating case A2 with Co =
+0.13. In the run with intermediate rotation, Run A6 with Co =
+1.3, the convection cells are somewhat smaller than in the slowly
+rotating case and more vortical structures are visible near the sur-
+face. For the most rapidly rotating case, Run A9 with Co = 16 .5,
+the size of the convection cells is drastically reduced in compar-
+ison to the other two runs and clear alignment of the convection
+cells with the rotation vector is seen.
+3.3. Convective scale as function of rotation
+Power spectra E(k)of the velocity fields for the runs in Set A
+are shown in Fig. 3 from depths near the surface, at the mid-
+dle and near the base of the CZ. As was already evident from
+visual inspection of the flow fields, the dominant scale of the
+flow decreases as the rotation rate increases. Quantitatively, the
+wavenumber kmax, where E(k)has its maximum, increases
+roughly in proportion to Co1/2. The mean wavenumber kmean ,
+computed from Eq. (23), shows the same scaling for Co≳2.
+This is explained by the broader distribution of power at dif-
+ferent wavenumbers at slow rotation in comparison to the rapid
+rotation cases where fewer – or just a single – convective modes
+are dominant; see Figure 3.
+A decreasing length scale of the onset of linear instability
+under the influence of rotation was derived in (Chandrasekhar
+1961) with konset∝Ta2/3. With Ta∝Co2Re2, and with Re
+being approximately constant, konset∝Co1/3is obtained. On
+the other hand, considering the CI part of the CIA balance in
+the Navier–Stokes equation gives (e.g. Aurnou et al. 2020, see
+Eq. (A.10) in Appendix A) gives
+kmax
+k12
+∝2Ω
+k1u= Co , (43)
+orkmax∝Co1/2. This is consistent with the current simula-
+tions; see the inset in the left panel of Fig. 3. The same result
+was obtained in Featherstone & Hindman (2016). Some non-
+linear convection simulations show scalings that are similar but
+somewhat shallower than that obtained from the CIA balance;
+see, e.g., Viviani et al. (2018) and Currie et al. (2020).
+To estimate the convective length scale in the Sun based on
+the current results requires that the value of CoFmatches that
+of the deep solar CZ. The quantities on the rhs of Eq. (30) at
+the base of the solar convection zone are Hp≈5·107m,
+ρ⋆≈200kg m−3,Fbot=L⊙/(4πr2
+CZ)≈1.27·108kg s−3,
+withrCZ= 0.7R⊙≈4.9·108m and L⊙= 3.83·1026W,
+andΩ⊙= 2.7·10−6s−1. Inserting this data into Eq. (30)
+yields Co⊙
+F≈3.1. The values of CoFare listed for all runs
+in the eight column of Table 1. The moderately rotating runs
+[A,B,C]5 correspond to the rotational constraint at the base of
+the solar CZ with CoF= 3.0. . .3.2. The mean wavenumber
+kmean/k1≈7in these simulations corresponds to a horizon-
+tal scale of ℓconv =Lx(k1/kmean)≈0.57d. The pressure
+6K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 2. Flow fields from Runs A2 with Co = 0 .13(left), A6 with Co = 1 .3(middle), and A9 Co = 16 .5(right) at the north pole
+(θ= 0◦). The colours indicate vertical velocity and the contours indicate streamlines.
+Fig. 3. Normalized velocity power spectra near the surface (left panel), middle (middle), and base (right) of the CZ from runs in Set
+A with Covarying between 0and16.5. The inset in the left panel shows the mean scale kmean and wavenumber of the where E(k)
+has its maximum ( kmax) as functions of Coforz/d= 0.85. The error bars indicate the standard deviation. The gray dashed line
+shows a power law proportional to Co1/2.
+scale height at zDZis about 0.49dsuch that ℓconv≈1.16Hp.
+Converting this to physical units using H⊙
+p≈5·106m yields
+ℓconv≈58Mm. Following the procedure of Featherstone &
+Hindman (2016) and using kmaxinstead of kmean ,kmax/k1= 3
+andℓconv≈130Mm. Both of these estimates are significantly
+larger that the supergranular scale of 20. . .30Mm which was
+suggested to be the largest convectively driven scale in the Sun
+by Featherstone & Hindman (2016) and Vasil et al. (2021).
+On the other hand, a rapidly rotating run of Featherstone &
+Hindman (2016) with ℓconv≈30Mm, had Rossby number
+RoFH=˜U/(2ΩH) = 0 .011, where ˜Uis a typical velocity am-
+plitude and His the shell thickness. This corresponds to a global
+Coriolis number Co = 2 πRo−1
+FH≈14.5in the conventions of
+the current study. In the current runs A9, B9, and C9, Co≈17
+andkmax≈kmean≈17, corresponding to ℓconv≈26Mm.
+Therefore the current simulations give a very similar estimate
+forℓconv at comparable values of Codespite all of the differ-
+ences between the model set-ups. However, the values of CoF
+in runs A9, B9, and C9 are at least 16 times higher than in the
+Sun, suggesting that the simulations of Featherstone & Hindman
+(2016) were also rotating much faster than the Sun3. Therefore
+3For example, their run with Ro = 0 .011hasRaF= 6.81·106,
+Ek = 1 .91·10−4, and Pr = 1 , and corresponds to Ra⋆
+F=
+RaFEk3/(8Pr) = 5 .9·10−6, orCoF= (Ra⋆
+F)−1/3≈55. This yieldsthe current results suggest that rotationally constrained convec-
+tion cannot explain the appearance of supergranular scale as the
+largest convective scale in the Sun.
+Figure 4 shows the velocity power spectra for the most
+rapidly rotating runs with Co≈17forRe = 30 . . .142from
+Runs A9, A9m, and A9h. There is a marked increase in the
+power at large scales, which begins to affect kmean at the highest
+Reor Run A9h. This is due to the gradual onset of large-scale
+vorticity production, most likely due to two-dimensionalisation
+of turbulence, that has been observed in various earlier studies
+of rapidly rotating convection (e.g. Chan 2003, 2007; Chan &
+Mayr 2013; K ¨apyl¨a et al. 2011; Guervilly et al. 2014). Despite
+the rapid rotation with Coriolis numbers exceeding 16, the large-
+scale vorticity generated in the current simulations is relatively
+modest apart from Run A9h. A difference to many of the pre-
+vious studies is that here the relevant thermal Prandtl number
+(PrSGS) is of the order of unity whereas in many of the ear-
+lier studies Prwas lower. Large-scale vorticity production was
+indeed observed in an additional run which is otherwise identi-
+cal to A9 except that PrSGS= 0.2instead of PrSGS= 1 (not
+shown).
+Ω/Ω⊙≈[(Ra⋆
+F)⊙/Ra⋆
+F]1/3≈17.6, which is approximate because
+different length scales are used.
+7K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 4. Normalized velocity power spectra near the surface of
+simulations with Co≈17andRe = 30 . . .142(Runs A9, A9m,
+and A9h). The dotted line shows a Kolmogorov k−5/3scaling
+for reference.
+3.4. Measures of rotational influence
+3.4.1. Velocity-based Co
+The suitability of different measures of rotational influence on
+the flow has been discussed in various works in the literature
+(e.g. K ¨apyl¨a 2023). A common – and justified – critique regard-
+ing the Coriolis number as defined in Equation (27) is that it
+does not appreciate the fact that ℓconv =ℓconv(Ω)(e.g. Vasil
+et al. 2021). The most straightforward way is to measure the
+mean wavenumber and use Eq. (29). Figure 5 shows Coℓas
+a function of Cofor all run listed in Table 1. For slow rota-
+tion, Co≲1,Coℓ∝Cobecause uconv andℓconv are almost
+unaffected by rotation. For sufficiently rapid rotation this is no
+longer true because kmean≈kmax∝Co1/2as indicated by
+Eq. (A.10) and the simulation results; see the inset of Figure 3.
+This implies that for rapid rotation Coℓ∝Co1/2; see also
+Eq. (A.12). This is consistent with the numerical results found
+in the most rapidly rotating cases; see Fig. 5. The higher reso-
+lution runs in Set Am have somewhat lower Coℓthan the corre-
+sponding runs in Set A because the convective velocities in the
+higher resolution cases are higher. This shows that the simula-
+tions are not yet in an asymptotic regime where the results are
+independent of the diffusivities. This is further demonstrated by
+the high resolution runs of Set Ah: Run A5h follows the trend
+set by Run A5m. The Run A9h with a significantly higher Coℓ
+than in Runs A9 and A9m is explained by the increasing kmean
+due to the large-scale vorticity generation in that case. Aurnou
+et al. (2020) showed that the dynamical Rossby number is related
+to the diffusion-free modified flux Rayleigh number Ra⋆
+F, with
+different powers for slow and rapid rotation. The correspond-
+ing derivations for the Coriolis number Coℓare presented in
+Appendix A, and which show that Coℓ= (Ra⋆
+F)−1/3(slow ro-
+tation) and Coℓ= (Ra⋆
+F)−1/5(rapid rotation). Both scalings are
+also supported by the simulation results; see the inset of Figure 5.
+3.4.2. Vorticity-based Co
+Another commonly-used definition, Equation (28), is used to
+take the changing length scale automatically into account.
+However, Coωcomes with a caveat which has apparently not
+been discussed hitherto in the astrophysical literature. This is
+demonstrated by considering a set of rotating systems at asymp-
+Fig. 5. Dynamical Coriolis number Coℓas a function of Cofor
+all of the runs in Table 1. Power laws proportional to Co(slow
+rotation; Co<1) and Co1/2(rapid rotation; Co>2) are shown
+for reference. The inset shows Coℓas a function of Ra⋆
+Fwith
+power laws proportional to (Ra⋆
+F)−1/5(rapid rotation; Ra⋆
+F<
+3·10−3), and (Ra⋆
+F)−1/3(slow rotation; Ra⋆
+F>0.03).
+totically high Rewhere urmsis independent of Re. The forc-
+ing is assumed fixed by a constant energy flux through the sys-
+tem, and the asymptotic value of urmswhen Re→ ∞ asu∞.
+Furthermore, in this regime the mean kinetic energy dissipation
+rate
+ϵK= 2νS2, (44)
+where the overbar denotes a suitably defined average, tends to a
+constant value when normalized by mean length and correspond-
+ing rms-velocity (e.g. Sreenivasan 1984; Vassilicos 2015). This
+value is denoted as ϵ∞. In low-Mach number turbulence, which
+is a good approximation of stellar interiors, as well as the current
+simulations with Ma∼ O(10−2),
+ϵK=νω2=νω2
+rms. (45)
+From the definition of system scale Reynolds number it follows
+that
+Re =u∞
+νk1∝ν−1, (46)
+and from Eq. (45) that
+ωrms=ϵK
+ν1/2
+=ϵ∞
+ν1/2
+∝ν−1/2∝Re1/2. (47)
+Using Eq. (28) it is found that
+Coω∝Re−1/2,orCo∝Re1/2Coω. (48)
+This means that Coω→0asRe→ ∞ at constant Co, while
+the dynamics at large (integral) scales are unaffected. Therefore
+Coωunderestimates the rotational influence at the mean scale
+kmean which dominates the dynamics, as opposed to Eq. (27)
+overestimating it.
+Equation (47) can also be written as
+ωrms≡kωurms∝Re1/2. (49)
+For sufficiently large Re, the theoretical prediction is that
+urms→u∞=const. and kω∝Re1/2. This has been con-
+firmed from numerical simulations of isotropically forced ho-
+mogeneous turbulence (e.g. Brandenburg & Petrosyan 2012;
+8K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 6. Normalized velocity power spectra near the surface of
+simulations with Co≈1.3andRe = 40 . . .174(Runs A6, A6b,
+and A6c). The dotted line shows Kolmogorov k−5/3scaling for
+reference. The inset shows kmean (black symbols) and kω(red)
+as functions of Re. The dotted lines are proportional to powers
+0, and 1/2ofRe.
+Fig. 7. Root-mean-square velocity in the convection zone nor-
+malized by u⋆. The dotted line is proportional to Co1/6as indi-
+cated by the theoretical CIA scaling; see Eq. (51).
+Candelaresi & Brandenburg 2013). Here the dependence of kω
+onReis shown in the inset of Figure 6 for runs with Co≈1.3
+andReranging between 40and174. Here the results for kωfall
+somewhat below theoretical Re1/2expectation. This is likely be-
+cause the asymptotic regime requires still higher Reynolds num-
+bers. On the other hand, the mean wavenumber kmean is essen-
+tially constant around kmean/k1= 7in this range of Rebecause
+the dominating contribution to the velocity spectrum come from
+large scales that are almost unaffected by the increase in Re.
+3.5. Convective velocity as a function of total flux and
+rotation
+The scalings of convective velocity as a function of rotation
+are derived in Appendix A following the same arguments as in
+Aurnou et al. (2020). For slow rotation the convective velocity
+depends only on the energy flux:
+urms∼Ftot
+ρ1/3
+=u⋆, (50)
+Fig. 8. Filling factor of downflows as a function of height f(z)
+for three runs with no (black), moderate (blue), and rapid (red)
+rotation.
+where u⋆is defined via Eq. (31). This scaling is altered in the
+rapidly rotating regime, where
+urms∝F
+ρ1/3
+Co−1/6. (51)
+This results agrees with Eq. (50d) Aurnou et al. (2020) and
+Table 2 of Vasil et al. (2021). Therefore the velocity amplitude in
+the rapidly rotating regime is expected to depend not only on the
+available flux but also on rotation. Fig. 7 shows the correspond-
+ing numerical results for the Sets A, B, C, and Am. For slow rota-
+tion,Co≲0.3,urmsis roughly constant around urms≈1.55u⋆
+for Sets A, B, and C, and urms≈1.65u⋆for Set Am. In the
+rapid rotation regime urmsfollows a trend which is similar to
+that indicated in Eq. (51), but the agreement is not perfect. The
+simulations in this regime may suffer from the fact the supercrit-
+icality of convection decreases with Co. However, the medium
+resolution runs, visualized by the grey symbols in Fig. 7, do not
+show a significantly better agreement with theory. Nevertheless,
+the evidence for CIA balance being reached in the current simu-
+lations with rapid rotation is fairly convincing.
+3.6. Flow statistics
+Compressible non-rotating convection is characterized by broad
+upflows and narrow downflows (Stein & Nordlund 1989;
+Cattaneo et al. 1991); see also Figure 2. This can be described
+by the filling factor fof downflows as
+uz(z) =f(z)u↓
+z+ [1−f(z)]u↑
+z(z), (52)
+where uzis the mean vertical velocity, whereas u↑
+zandu↓
+zare the
+corresponding mean up- and downflow velocities. It was shown
+in K¨apyl¨a (2021) that fis sensitive to the effective Prandtl num-
+ber of the fluid such that a lower Prleads to a lower filling fac-
+tor. Here a similar study is done as a function of rotation; see
+Fig. 8. The main result is that fapproaches 1/2in the rapid ro-
+tation regime. This is because in rapidly rotating convection the
+broad upwellings of non-rotating convection are broken up and
+the flow consist mostly of smaller scale helical columns where
+the up- and downflows are almost invariant. This is due to the
+Taylor-Proudmann constraint such that derivatives along the ro-
+tation axis vanish. Hence the tendency for larger structures to
+appear at greater depths is inhibited and the average size of con-
+vection cells as a function of depth is almost constant; see right-
+most panel of Figure 2.
+9K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 9. Probability density functions P(ui)forux(left), uy(middle), and uz(right) for depths z/d= 0.85(black), z/d= 0.49
+(blue), and z/d= 0.13(red) for runs with Co = 0 (Run A0, top row), Co = 1 .3(Run A6, middle), and Co = 16 .5(Run A9,
+bottom). The tildes refer to normalization by the respective rms-values.
+This is also apparent from the probability density functions
+(PDFs) of the velocity components ui, defined via
+Z
+P(ui, z)dui= 1. (53)
+Figure 9 shows representative examples of PDFs for the extreme
+cases (Run A0 with Co = 0 and Run A9 with Co≈16.5) and
+at an intermediate rotation rate (Run A6, Co = 1 .3). In non-
+rotating convection the PDFs of the horizontal components of
+the velocity are nearly Gaussian near the surface whereas for
+uzthe distributions are highly skewed due to the up-/downflow
+asymmetry. In deeper parts also the horizontal velocities devi-
+ate from a Gaussian distribution in agreement with earlier works
+(e.g. Brandenburg et al. 1996; Hotta et al. 2015; K ¨apyl¨a 2021)As the rotation increases the asymmetry of the vertical ve-
+locity decreases such that in the most rapidly rotating cases con-
+sidered here with Co≈17,uzalso approaches a Gaussian dis-
+tribution. Only near the surface ( z/d= 0.85) a weak asymmetry
+remains. The horizontal components of velocity continue to have
+Gaussian distribution as rotation is increased, although there is
+not enough data to say anything concrete concerning the tails of
+the distributions at high velocity amplitudes. To further quantify
+the statistics of the flow, skewness Sand kurtosis Kare com-
+puted from:
+S=M3
+σ3u,K=M4
+σ4u, (54)
+10K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 10. Skewness ( S, dashed lines) and kurtosis ( K, solid) from the same runs as in Figure 9. Black, blue, and red colour indicates
+data corresponding to ux,uy, anduz, respectively. Note the difference in scale between each of the panels. The insets show a zoom
+in of the region z/d≥0.
+where σu= (M2)1/2, with
+Mn(ui, z) =Z
+[ui(x)−ui(z)]nP(ui, z)dui. (55)
+Figure 10 shows SandKfor all uifor the same runs as in
+Figure 9. The skewness in consistent with zero for the horizon-
+tal velocities which is expected as there is not anisotropy in the
+horizontal plane. The negative values of Sforuzare a signature
+of the asymmetry between up- and downflows. As rotation is in-
+creased, Sapproaches zero also for uz. Kurtosis Kis a measure
+of non-Gaussianity or intermittency. In the non-rotating case K
+increases from roughly three – indicating Gaussian statistics –
+to roughly five for horizontal flows as a function of depth within
+the CZ. For uzthe increase of Kis much more dramatic be-
+lowz/d≲0.3. This is because downflows merge at deeper
+depths such that only a few of them survive deep in the CZ
+and especially in the overshoot region below roughly z= 0,
+where Kreaches a peak value of rouhgly 65 for Run A0. A
+similar, albeit lower, maximum appears also for the horizontal
+flows. At intermediate rotation (Run A6; Co = 1 .3),uzstill ex-
+hibits strong intermittency below z≈0.1with max (K)≈54
+whereas Kfor the horizontal flows is significantly reduced in
+comparison to the non-rotating case. This indicates that espe-
+cially the vertical flows in this regime are not qualitatively dif-
+ferent from those in the non-rotating regime, such that the down-
+flows in the overshoot region are rather abruptly decelerated
+and diverted horizontally. For the most rapidly rotating case
+(Run A9; Co = 16 .5),K ≈3. . .4throughout the simulation do-
+main for both vertical and horizontal flows. This is explained by
+the almost complete wiping out of the up-/downflow asymme-
+try also in the deep parts of the CZ and in the overshoot region.
+The absence of a peak in the kurtosis in the overshoot region in
+the most rapidly rotating cases is likely due to the deeply pen-
+etrating vertical flows in those cases due to the unrealistically
+small Richardson number. This is discussed in more detail in
+Section 3.7.
+The average vertical rms-velocities from the same represen-
+tative runs as in Figure 9 are shown in Figure 11. The aver-
+age rms-velocity of the downflows (upflows) is always larger
+(smaller) than the average total vertical rms-velocity. However,
+the difference between the up- and downflows and the total rms-
+velocity diminish monotonically as a function of rotation such
+that for the most rapidly rotating case the three are almost the
+Fig. 11. Horizontally averaged vertical rms-velocity for the same
+runs as in Figure 9. The overall vertical velocity ( ˜urms
+z) is shown
+in black, and the corresponding quantities for up- ( ˜u↑rms
+z) and
+downflows ( ˜u↓rms
+z) are shown in red and blue, respectively. The
+tildes refers to normalization by√gd.
+same. This is another manifestation of the symmetrization of up-
+and downflows.
+Another consequence of the symmetrization of the verti-
+cal flows is that the forces on the up- and downflows also ap-
+proach each other; see Fig. 12, where fz=ρDu z/Dt. In ac-
+cordance with earlier studies (K ¨apyl¨a et al. 2017; K ¨apyl¨a 2019),
+in non-rotating convection the downflows are accelerated near
+the surface and decelerated roughly when the stratification turns
+Schwarzschild stable, whereas the upflows are accelerated ev-
+erywhere except near the surface. This is interpreted such that
+the upflows are not driven by buoyancy but by pressure forces
+due to the deeply penetrating downflow plumes. This qualitative
+picture remains unchanged for slow rotation, but starts to change
+when Cois of the order of unity although the region near the
+surface where the downflows are accelerated is shallower; see
+Fig. 12(b). For rapid rotation the forces on the up- and down-
+flows are nearly identical. However, the situation continues to
+qualitatively deviate from the mixing length picture also in the
+rapidly rotating cases in that the downflows are accelerated only
+near the surface and braked throughout their descent through the
+superadiabatic CZ; see Fig. 12(c).
+11K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 12. Horizontally averaged total force (black), and separately
+for up- (red) and downflows (blue). The dotted red/blue line
+shows the superadiabatic temperature gradient. Data is shown
+for(a)a non-rotating run A0, (b)an intermediate rotation rate
+(Co = 1 .3, Run A6), and (c)for rapid rotation ( Co = 16 .5,
+Run A9).
+3.7. Overshooting and Deardorff layers
+The depths of the overshooting and Deardorff layers are studied
+as functions of rotation using the same definitions of overshoot-
+ing and Deardorff layers as in previous studies (K ¨apyl¨a 2019,
+2021). The bottom of the CZ is situated at the depth zCZwhere
+Fconv changes from negative to positive with increasing z. The
+top of the Deardorff zone (DZ) – or the bottom of the buoyancy
+zone (BZ) – zBZ, is where the superadiabatic temperature gra-
+dient changes from negative to positive with increasing z. Then
+the depth of the DZ is
+dDZ=1
+∆tZt1
+t0[zBZ(t)−zCZ(t)]dt, (56)
+where ∆t=t1−t0is the length of the statistically steady part
+of the time series. A reference value of the kinetic energy flux
+(Fref
+kin) is measured at zCZ. The base of the overshoot layer is
+taken to be the location ( zkin
+OS) where |Fkin|falls below 0.01Fref
+kin,and
+dkin
+os=1
+∆tZt1
+t0[zCZ(t)−zkin
+OS(t)]dt, (57)
+This criterion breaks down in the current models when rota-
+tion begins to dominate the dynamics and where Fkin→0.
+Therefore the convected flux Fconvwas also used to estimate the
+depth of overshooting. The criterion involving Fconv takes the
+overshoot layer to end at the location ( zconv
+OS) where |Fconv|falls
+below 0.02Ftot. The corresponding overshooting depth ( dconv
+os)
+is computed analogously to Eq. (57). The layer below the OZ is
+the radiative zone (RZ).
+Figure 13 shows the energy fluxes from representative runs
+at different Coriolis numbers from Set A. For slow and moder-
+ate rotation up to Co≈1the situation is qualitatively similar:
+the positive (upward) enthalpy flux exceeds Fbotin the bulk of
+the CZ, and it is compensated by a negative (downward) kinetic
+energy flux Fkin. As rotation increases the maxima of Fenthand
+|Fkin|decrease monotonically. Similarly, the extents of the over-
+shoot and Deardorff layers diminish with rotation. For the most
+rapidly rotation case, Run A9 with Co = 16 .5, the kinetic en-
+ergy flux is almost zero, and Fconv≈Fenth. This is yet an-
+other manifestation of the decreasing asymmetry between the
+up- and downflows. Moreover, the Deardorff layer vanishes in
+the rapidly rotating cases.
+The positions of the boundaries of the different layers and
+their depths are summarized for all runs in Table 2, and Fig. 14
+shows a summary of the overshooting and Deardorff layer depths
+as a function of rotation from Sets A, B, and C. The main differ-
+ence between the sets of simulations of the applied flux Fn. The
+overshooting depth measured from the kinetic helicity flux de-
+creases with increasing rotation as in earlier studies (e.g. Ziegler
+& R¨udiger 2003; K ¨apyl¨a et al. 2004). However, the lowermost
+panel of Fig. 13 shows that the upper part of the radiative layer is
+mixed far beyond the regions where Fkinis non-negligible in the
+rapidly rotating cases. This is confirmed when the convected flux
+is used to estimate the overshooting depth. Furthermore, dconv
+os
+increases with rotation for Co≳1. This is explained by the fact
+that the Mach number, and therefore also the rotation rate Ω0, in
+the current simulations are much larger than in real stars. This
+means that the convective, rotation, and Brunt-V ¨ais¨al¨a frequen-
+cies are closer to each other in the simulations in comparison to,
+for example, the overshoot region of the Sun. For example, in
+the most rapidly rotating runs the Richardson number based on
+the rotation rate RiΩis smaller than unity; see the 11th panel of
+Table 1. This, in addition to the smooth transition from convec-
+tive to radiative region, can lead gravity waves breaking in the
+radiative layer, thus contributing to the burrowing of the flows
+into the RZ (e.g. Lecoanet & Quataert 2013). As a comparison,
+RiΩin the upper part of the solar radiative zone is expected of
+the order of 104. Another possibility is that shear due to the rota-
+tionally constrained convective columns lowers the correspond-
+ing shear Richardson number close to the limit where turbulence
+can occur also in thermally stable stratification.
+Lowering the luminosity in Sets B and C shows that both
+measures of dosdecrease with Fnin qualitative accordance with
+earlier results (e.g. K ¨apyl¨a 2019). Even though RiΩis modestly
+increased in these runs (see the 11th column in Table 1), the most
+rapidly rotating cases even in the runs with the lowest luminosi-
+ties continue to show deep mixing which is most likely due to
+the still unrealistically low RiΩ. It is numerically very expensive
+to increase the Richardson number in fully compressible simula-
+tions much further, at least without accelerated thermal evolution
+12K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 13. Time-averaged mean energy fluxes as defined in
+Equations (34) to (38) (apart from the negligibly small viscous
+fluxFvisc) as a functions of zfrom Runs A0, A6, and A9. The
+red circles indicate (from left to right) the bottoms of OZ, DZ,
+BZ, and the top of the BZ. The grey (orange) shaded areas indi-
+cate mixed (radiative) regions.
+methods (e.g. Anders et al. 2018, 2020). Comparing the over-
+shooting depths between Runs [A,B,C]5 with solar CoFand the
+non-rotating Runs [A,B,C]0 shows a reduction between about a
+third to a half; see the seventh and eight columns in Table 2. In
+K¨apyl¨a (2019) the overshooting depth extrapolated to the solar
+value of Fnwas found to be roughly 0.1Hp, and the current re-
+sults including rotation reduce this to 0.05. . .0.07Hp. However,
+the dependence of the overshooting depth on Fnis here steeper
+([˜dkin
+os,˜dconv
+os]∝F0.15
+n) than in the nonrotating cases where
+K¨apyl¨a (2019) found dos∝F0.08
+n.
+On the other hand, the thickness of the Deardorff layer dDZ
+decreases monotonously as a function of Co. In the most rapidlyTable 2. Summary of the buoyancy, Deardorff, and overshoot
+zones.
+Run zBZ/d z DZ/d zkin
+OS/d zconv
+OS/d˜dDZ˜dkin
+os˜dconv
+os
+A0 0.355 0 .134−0.096−0.204 0 .221 0 .230 0 .338
+A1 0.338 0 .128−0.103−0.205 0 .210 0 .231 0 .333
+A2 0.333 0 .124−0.088−0.185 0 .209 0 .212 0 .309
+A3 0.318 0 .130−0.065−0.134 0 .189 0 .195 0 .264
+A4 0.290 0 .131−0.028−0.054 0 .159 0 .159 0 .185
+A5 0.278 0 .132−0.021−0.039 0 .146 0 .153 0 .171
+A6 0.255 0 .131−0.007−0.021 0 .123 0 .138 0 .152
+A7 0.211 0 .134 0 .026−0.025 0 .077 0 .108 0 .159
+A8 0.154 0 .154 0 .065−0.103 0 .001 0 .088 0 .257
+A9 0.161 0 .183 0 .120−0.150 0 .000 0 .064 0 .333
+B0 0.338 0 .124−0.094−0.185 0 .214 0 .218 0 .309
+B1 0.329 0 .121−0.090−0.179 0 .208 0 .211 0 .299
+B2 0.326 0 .117−0.082−0.166 0 .209 0 .200 0 .284
+B3 0.321 0 .124−0.054−0.122 0 .197 0 .179 0 .246
+B4 0.280 0 .125−0.012−0.039 0 .154 0 .138 0 .164
+B5 0.264 0 .124−0.005−0.024 0 .140 0 .128 0 .147
+B6 0.252 0 .125 0 .007−0.009 0 .127 0 .119 0 .134
+B7 0.204 0 .128 0 .036−0.008 0 .076 0 .092 0 .136
+B8 0.138 0 .136 0 .090−0.075 0 .002 0 .046 0 .212
+B9 0.133 0 .156 0 .156−0.126 0 .000 0 .000 0 .281
+C0 0.323 0 .116−0.086−0.166 0 .206 0 .203 0 .283
+C1 0.336 0 .119−0.084−0.166 0 .216 0 .204 0 .285
+C2 0.316 0 .115−0.074−0.150 0 .201 0 .188 0 .265
+C3 0.304 0 .116−0.047−0.105 0 .189 0 .163 0 .221
+C4 0.278 0 .118−0.007−0.031 0 .160 0 .124 0 .149
+C5 0.259 0 .119 0 .001−0.020 0 .140 0 .118 0 .139
+C6 0.240 0 .119 0 .011−0.005 0 .120 0 .108 0 .124
+C7 0.196 0 .121 0 .043−0.002 0 .074 0 .079 0 .124
+C8 0.129 0 .129 0 .106−0.056 0 .000 0 .023 0 .185
+C9 0.118 0 .140 0 .140−0.106 0 .000 0 .000 0 .247
+A1m 0.321 0 .128−0.101−0.232 0 .193 0 .229 0 .359
+A3m 0.309 0 .130−0.056−0.143 0 .178 0 .187 0 .274
+A5m 0.264 0 .133−0.009−0.032 0 .131 0 .143 0 .165
+A6m 0.250 0 .131−0.002−0.017 0 .119 0 .133 0 .148
+A7m 0.218 0 .133 0 .018−0.015 0 .085 0 .115 0 .148
+A8m 0.165 0 .147 0 .064−0.093 0 .018 0 .083 0 .240
+A9m 0.163 0 .177 0 .052−0.163 0 .000 0 .126 0 .340
+A5h 0.254 0 .134−0.010−0.031 0 .120 0 .144 0 .165
+A9h 0.170 0 .170 0 .060−0.183 0 .000 0 .110 0 .353
+Notes. The tildes for refer to normalization by the pressure scale height
+at the base of the convection zone.
+rotating cases the Deardorff layer vanishes altogether and even
+reverses such that at the base of the CZ the stratification is un-
+stably stratified but the convective flux is inward; see the low-
+ermost panel of Figure 13. This is not significantly changed in
+more supercritical Runs A9m and A9h. In the entropy rain pic-
+ture (e.g. Brandenburg 2016) cool material from the surface is
+brought down deep into otherwise stably stratified layers. This
+is mediated by relatively few fast downflows with filling fac-
+torf(z)<1/2, that also produce a strong net downward ki-
+netic energy flux as seen in the top panel of Figure 13; see also
+Fig. 8, and Table 1 and Sect. 3.3 in Brandenburg (2016). If, on
+the other hand, the up- and downflows are symmetrized such that
+f(z) = 1 /2and their velocities are nearly the same, Fkinvan-
+ishes and non-local transport due to downflows is no longer sig-
+nificant. Therefore the kinetic energy flux is a proxy of the non-
+local transport due to downflows and its absence signifies the
+absence of a Deardorff layer. The depth of the Deardorff layer is
+13K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Fig. 14. Depth of the overshoot layer from kinetic energy ( dkin
+os;
+black lines) and convective fluxes fluxes ( dconv
+os; red), and depth
+of the Deardorff layer ( dDZ; blue) as functions of rotation mea-
+sured by Co. All quantities are normalized by the pressure scale
+height at the base of the CZ. The different lines correspond to the
+three different values of Fnor Sets A (solid lines), B (dashed),
+and C (dotted).
+independent of the energy flux Fn. This further illustrates that
+the DZ is caused by surface effects which are kept independent
+ofFnin the current simulations. A reduction of dDZof about a
+third between the non-rotating runs [A,B,C]0 and the runs with
+the solar value of CoF(Runs [A,B,C]5) was found; see the sixth
+column of Table 2.
+4. Conclusions
+Simulations of compressible convection were used to study the
+convective scale and scalings of quantitites such as the Coriolis
+number and convective velocity as functions of rotation. The
+results were compared to those expected from scalings ob-
+tained for incompressible convection with slow and fast rotation
+(Aurnou et al. 2020). The actual length scale is almost unaffected
+by rotation for Co≲1and decreases proportional to Co1/2for
+rapid rotation. Correspondingly, the dynamical Coriolis number
+Coℓis proportional to Cofor slow, and ∝Co1/2for rapid ro-
+tation. Furthermore, Coℓis proportional to (Ra⋆
+F)−1/3for slow
+and∝(Ra⋆
+F)−1/5for rapid rotation, where Ra⋆
+Fis the diffusion-
+free flux-based modified Rayleigh number. Finally, the convec-
+tive velocity is compatible with proportionality to (Ftot/ρ)1/3
+for slow and ∝(Ftot/ρ)1/3Co−1/6for rapid rotation. All of
+these scalings are consistent with those derived by Aurnou et al.
+(2020) and Vasil et al. (2021). Therefore the simulations seem to
+follow the CIA scaling at sufficiently rapid rotation.
+In an earlier work (K ¨apyl¨a 2023) several measures were used
+to characterise the rotational influence on convection. A com-
+monly used definition where the changing length scale of con-
+vection is taken into account is Coω= 2Ω /ωrms. It is shown that
+this quantity cannot be used to characterise the effects of rotation
+on the mean scale because ωrmsis expected to increase with the
+Reynolds number as Re1/2. Therefore the only reliable way to
+account for the changing convective length scale as a function of
+rotation is to compute the mean wavenumber. This was not cor-
+rectly identified in K ¨apyl¨a (2023), and it is now clear that Coω
+will diverge as Reincreases. On the other hand, K ¨apyl¨a (2023)
+introduced a stellar Coriolis number Co⋆which depends on lu-
+minosity and rotation rate which are observable and a referencedensity which is available from stellar structure models, but not
+on any dynamical lenght or velocity scale. Here this quantity is
+renamed as CoFand it is furthermore shown that with a suit-
+able choice of length scale, CoF= (Ra⋆
+F)−1/3. Matching CoF
+(or equivalently Ra⋆
+F) with the target star gives a more concrete
+meaning to the often-used phrase that it is possible to match the
+Coriolis number of, for example, the Sun with 3D simulations
+while most other dimensionless parameters are out of reach (cf.
+K¨apyl¨a et al. 2023).
+The current simulations suggest that convection even in the
+deep parts of the CZ in the Sun is not strongly rotationally con-
+strained and that the CIA balance is therefore inapplicable there.
+The latter has been argued to be the case by Featherstone &
+Hindman (2016) and Vasil et al. (2021) to argue that the largest
+convectively driven scale in the Sun is the supergranular scale.
+The current results seem to refute this conjecture and that the
+actual scales may be larger.
+Finally, the effects of rotation on convective overshooting
+and subadiabatic Deardorff zones were studied. The effects of
+rotation are relatively mild such that for the case with the so-
+lar value of CoF, the overshooting depth and the extent of the
+Deardorff layer are reduced by between 30 and 50 per cent in
+comparison to the non-rotating case. Therefore the current re-
+sults suggest an overshooting depth of about five per cent of the
+pressure scale height at the base of the solar CZ. Taking the cur-
+rent results at face value, a similar depth is estimated for the
+Deardorf zone. However, the latter is still subject to the caveat
+that the current simulations do not capture the near-surface layer
+very accurately and that the driving of entropy rain can be sig-
+nificantly stronger in reality. Another aspect which needs to be
+revisited in the future is the effect of magnetic fields.
+Acknowledgements. I thank Axel Brandenburg for his comments on an earlier
+version of the manuscript. The simulations were performed using the resources
+granted by the Gauss Center for Supercomputing for the Large-Scale computing
+project “Cracking the Convective Conundrum” in the Leibniz Supercomputing
+Centre’s SuperMUC-NG supercomputer in Garching, Germany. This work was
+supported in part by the Deutsche Forschungsgemeinschaft Heisenberg pro-
+gramme (grant No. KA 4825/4-1).
+References
+Anders, E. H., Brown, B. P., & Oishi, J. S. 2018, Physical Review Fluids, 3,
+083502
+Anders, E. H., Jermyn, A. S., Lecoanet, D., & Brown, B. P. 2022, ApJ, 926, 169
+Anders, E. H. & Pedersen, M. G. 2023, Galaxies, 11, 56
+Anders, E. H., Vasil, G. M., Brown, B. P., & Korre, L. 2020, Physical Review
+Fluids, 5, 083501
+Aurnou, J. M., Horn, S., & Julien, K. 2020, Physical Review Research, 2, 043115
+Barekat, A. & Brandenburg, A. 2014, A&A, 571, A68
+Barker, A. J., Dempsey, A. M., & Lithwick, Y . 2014, ApJ, 791, 13
+Bekki, Y ., Hotta, H., & Yokoyama, T. 2017, ApJ, 851, 74
+B¨ohm-Vitense, E. 1958, ZAp, 46, 108
+Brandenburg, A. 2016, ApJ, 832, 6
+Brandenburg, A., Chan, K. L., Nordlund, ˚A., & Stein, R. F. 2005, AN, 326, 681
+Brandenburg, A., Jennings, R. L., Nordlund, ˚A., et al. 1996, J. Fluid Mech., 306,
+325
+Brandenburg, A., Nordlund, A., & Stein, R. F. 2000, in Geophysical and
+Astrophysical Convection, Contributions from a workshop sponsored by the
+Geophysical Turbulence Program at the National Center for Atmospheric
+Research, October, 1995. Edited by Peter A. Fox and Robert M. Kerr.
+Published by Gordon and Breach Science Publishers, The Netherlands, 2000,
+p. 85-105, ed. P. A. Fox & R. M. Kerr, 85–105
+Brandenburg, A. & Petrosyan, A. 2012, Astronomische Nachrichten, 333, 195
+Brummell, N. H., Clune, T. L., & Toomre, J. 2002, ApJ, 570, 825
+Brun, A. S., Strugarek, A., Varela, J., et al. 2017, ApJ, 836, 192
+Candelaresi, S. & Brandenburg, A. 2013, Phys. Rev. E, 87, 043104
+Cattaneo, F., Brummell, N. H., Toomre, J., Malagoli, A., & Hurlburt, N. E. 1991,
+ApJ, 370, 282
+Chan, K. L. 2003, in Astron. Soc. Pac. Conf. Ser., V ol. 293, 3D Stellar Evolution,
+ed. S. Turcotte, S. C. Keller, & R. M. Cavallo, 168
+14K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+Chan, K. L. 2007, Astron. Nachr., 328, 1059
+Chan, K. L. & Mayr, H. G. 2013, Earth and Planetary Science Letters, 371, 212
+Chandrasekhar, S. 1961, Hydrodynamic and hydromagnetic stability
+Christensen, U. R. 2002, Journal of Fluid Mechanics, 470, 115
+Christensen, U. R. & Aubert, J. 2006, Geophys. J. Int., 166, 97
+Currie, L. K., Barker, A. J., Lithwick, Y ., & Browning, M. K. 2020, MNRAS,
+493, 5233
+Deardorff, J. W. 1961, J. Atmosph. Sci., 18, 540
+Deardorff, J. W. 1966, J. Atmosph. Sci., 23, 503
+Dobler, W., Stix, M., & Brandenburg, A. 2006, ApJ, 638, 336
+Edwards, J. M. 1990, MNRAS, 242, 224
+Featherstone, N. A. & Hindman, B. W. 2016, ApJ, 830, L15
+Gastine, T., Yadav, R. K., Morin, J., Reiners, A., & Wicht, J. 2014, MNRAS,
+438, L76
+Greer, B. J., Hindman, B. W., Featherstone, N. A., & Toomre, J. 2015, ApJ, 803,
+L17
+Guervilly, C., Hughes, D. W., & Jones, C. A. 2014, J. Fluid Mech., 758, 407
+Hanasoge, S., Gizon, L., & Sreenivasan, K. R. 2016, Annual Review of Fluid
+Mechanics, 48, 191
+Hanasoge, S. M., Duvall, T. L., & Sreenivasan, K. R. 2012, Proc. Natl. Acad.
+Sci., 109, 11928
+Hotta, H. 2017, ApJ, 843, 52
+Hotta, H., Rempel, M., & Yokoyama, T. 2015, ApJ, 803, 42
+Ingersoll, A. P. & Pollard, D. 1982, Icarus, 52, 62
+K¨apyl¨a, P. J. 2019, A&A, 631, A122
+K¨apyl¨a, P. J. 2021, A&A, 655, A78
+K¨apyl¨a, P. J. 2023, A&A, 669, A98
+K¨apyl¨a, P. J., Browning, M. K., Brun, A. S., Guerrero, G., & Warnecke, J. 2023,
+Space Sci. Rev., 219, 58
+K¨apyl¨a, P. J., Gent, F. A., Olspert, N., K ¨apyl¨a, M. J., & Brandenburg, A. 2020,
+Geophysical and Astrophysical Fluid Dynamics, 114, 8
+K¨apyl¨a, P. J., Korpi, M. J., & Tuominen, I. 2004, A&A, 422, 793
+K¨apyl¨a, P. J., Mantere, M. J., & Hackman, T. 2011, ApJ, 742, 34
+K¨apyl¨a, P. J., Rheinhardt, M., Brandenburg, A., et al. 2017, ApJ, 845, L23
+K¨apyl¨a, P. J., Viviani, M., K ¨apyl¨a, M. J., Brandenburg, A., & Spada, F. 2019,
+Geophysical and Astrophysical Fluid Dynamics, 113, 149
+Karak, B. B., Miesch, M., & Bekki, Y . 2018, Physics of Fluids, 30, 046602
+King, E. M. & Buffett, B. A. 2013, Earth and Planetary Science Letters, 371, 156
+Kupka, F. & Muthsam, H. J. 2017, Liv. Rev. Comp. Astrophys., 3, 1
+Lecoanet, D. & Quataert, E. 2013, MNRAS, 430, 2363
+O’Mara, B., Miesch, M. S., Featherstone, N. A., & Augustson, K. C. 2016, Adv.
+Space Res., 58, 1475
+Ossendrijver, M. 2003, A&A Rev., 11, 287
+Pencil Code Collaboration, Brandenburg, A., Johansen, A., et al. 2021, The
+Journal of Open Source Software, 6, 2807
+Proxauf, B. 2021, PhD thesis, Georg August University of Gottingen, Germany
+Roberts, P. H. 1968, Philosophical Transactions of the Royal Society of London
+Series A, 263, 93
+Roxburgh, L. W. & Simmons, J. 1993, A&A, 277, 93
+Saikia, E., Singh, H. P., Chan, K. L., Roxburgh, I. W., & Srivastava, M. P. 2000,
+ApJ, 529, 402
+Schrinner, M., Petitdemange, L., & Dormy, E. 2012, ApJ, 752, 121
+Schumacher, J. & Sreenivasan, K. R. 2020, Reviews of Modern Physics, 92,
+041001
+Singh, H. P., Roxburgh, I. W., & Chan, K. L. 1995, A&A, 295, 703
+Singh, H. P., Roxburgh, I. W., & Chan, K. L. 1998, A&A, 340, 178
+Spruit, H. 1997, Mem. Soc. Astron. Italiana, 68, 397
+Sreenivasan, K. R. 1984, Physics of Fluids, 27, 1048
+Stein, R. F. & Nordlund, A. 1989, ApJ, 342, L95
+Stein, R. F. & Nordlund, ˚A. 1998, ApJ, 499, 914
+Stevenson, D. J. 1979, Geophysical and Astrophysical Fluid Dynamics, 12, 139
+Tremblay, P.-E., Ludwig, H.-G., Freytag, B., et al. 2015, ApJ, 799, 142
+Vasil, G. M., Julien, K., & Featherstone, N. A. 2021, Proceedings of the National
+Academy of Science, 118, e2022518118
+Vassilicos, J. C. 2015, Annual Review of Fluid Mechanics, 47, 95
+Vitense, E. 1953, ZAp, 32, 135
+Viviani, M. & K ¨apyl¨a, M. J. 2021, A&A, 645, A141
+Viviani, M., Warnecke, J., K ¨apyl¨a, M. J., et al. 2018, A&A, 616, A160
+Weiss, A., Hillebrandt, W., Thomas, H.-C., & Ritter, H. 2004, Cox and
+Giuli’s Principles of Stellar Structure (Cambridge, UK: Cambridge Scientific
+Publishers Ltd)
+Ziegler, U. & R ¨udiger, G. 2003, A&A, 401, 433Appendix A: Convective scalings as function of
+rotation
+The scalings of relevant dynamical quantities in convection are
+shortly summarized following the studies of Barker et al. (2014),
+Aurnou et al. (2020), and Vasil et al. (2021). In the rapidly rotat-
+ing regime the Coriolis-inertial-Archimedean (CIA) balance is
+assumed to hold.
+A.1. No or slow rotation ( Co≪1)
+For slow rotation the convective length scale ℓconvis of the order
+of the pressure scale height Hp=−(∂lnp/∂z)−1, and the ver-
+tical and horizontal extents of convection cells are of the same
+order of magnitude. When rotation is slow, the dominant bal-
+ance in the Navier–Stokes equation is between the advection and
+buoyancy terms:
+u· ∇u∼T′
+Tg−→u2
+H∼T′
+Tg, (A.1)
+where His the convective scale T′is the temperature fluctu-
+ation. Assuming that convection transports most of the energy
+gives
+Ftot∼cPρuT′, (A.2)
+and therefore
+u3∼gH
+cPTFtot
+ρ,oru∼gH
+cPT1/3Ftot
+ρ1/3
+. (A.3)
+Choosing H=cPT/g gives:
+u∼Ftot
+ρ1/3
+≡u⋆, (A.4)
+where u⋆is a hypothetical velocity that is a measure of the avail-
+able energy flux. Therefore, for slow rotation,
+Co = Co ℓ=2ΩH
+u= 2Ω Hρ
+Ftot1/3
+= (Ra⋆
+F)−1/3.(A.5)
+Temperature fluctuation can be computed from the convective
+flux
+Fconv=cPρuT′,−→ cPT′=F
+ρu. (A.6)
+Using ufrom Eq. (A.4) yields:
+cPT′=F
+ρ2/3
+. (A.7)
+A.2. Rapid rotation ( Co≫1)
+The CIA balance means that
+2Ω0∂∥u∼u· ∇ω∼∇×T′
+Tg
+, (A.8)
+which results from the curl of the Navier–Stokes equation (e.g.
+Aurnou et al. 2020), and where ∂∥is a derivative along the rota-
+tion vector. Considering first the CI part of CIA balance gives
+u· ∇ω∼2Ω∂zu−→ k2
+⊥u2∼2Ωuk∥, (A.9)
+15K¨apyl¨a: Convective scale and subadiabatic layers in rotating convection
+where k⊥andk∥are the wavenumbers perpendicular and par-
+allel to the rotation vector. Identifying k⊥as the dominant hori-
+zontal scale of convection ( kmax∼ℓ−1) and k∥ask1∼H−1,
+leads to
+H
+ℓ2
+∝kmax
+k12
+∝2Ω
+k1u= Co ,orℓ
+H= Co−1/2.(A.10)
+Furthermore,
+Co =2ΩH
+u=2Ωℓ
+uH
+ℓ= Co ℓCo1/2, (A.11)
+or
+Coℓ= Co1/2. (A.12)
+The convective length scale in terms of uand global quantities
+is
+ℓ=Hu
+2Ω1/2
+. (A.13)
+To derive the convective velocity, CA part of the CIA balance is
+used:
+2Ω0∂∥u∼∇×T′
+Tg
+,−→2Ωu
+H∼gFtot
+cPρTuℓ. (A.14)
+Substitute ℓfrom Eq. (A.13) and rearrange to get:
+u=gFtot
+cPρT2/5H
+2Ω1/5
+=Ftot
+ρ2/5
+(2ΩH)−1/5,(A.15)
+where H=cPT/g was additionally used. This is equivalent to:
+u=Ftot
+ρ1/3
+Co−1/6. (A.16)
+The length scale ℓis obtained from Eq. (A.14) with substitution
+ofufrom Eq. (A.15):
+ℓ
+H=Ftot
+ρ1/5
+(2ΩH)−3/5, (A.17)
+where H=cPT/g was again used. Now,
+Coℓ=2Ωℓ
+u= (2Ω H)3/5ρ
+Ftot1/5
+. (A.18)
+Bearing Eq. (20) in mind gives:
+Coℓ=8Ω3H3ρ
+F1/5
+= (Ra⋆
+F)−1/5. (A.19)
+Finally, the temperature fluctuation using Eq. (A.16) is:
+cPT′=Ftot
+ρu=Ftot
+ρ2/3
+Co1/6. (A.20)
+16

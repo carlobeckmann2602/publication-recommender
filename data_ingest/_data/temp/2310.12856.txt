@@ -1,0 +1,1219 @@
+arXiv:2310.12856v1  [astro-ph.HE]  19 Oct 2023Draft version October 20, 2023
+Typeset using L ATEXtwocolumn style in AASTeX631
+A Two-component Jet Model for the TeV and Multi-wavelength A fterglows of GRB 221009A
+Jian-He Zheng ,1,2Xiang-Yu Wang ,1,2Ruo-Yu Liu ,1,2andBing Zhang3,4
+1School of Astronomy and Space Science, Nanjing University, Nanjing 210023, People’s Republic of China
+2Key laboratory of Modern Astronomy and Astrophysics (Nanji ng University),
+Ministry of Education, Nanjing 210023, People’s Republic o f China
+3Nevada Center for Astrophysics, University of Nevada Las Ve gas, Las Vegas, NV 89154, USA
+4Department of Physics and Astronomy, University of Nevada L as Vegas, Las Vegas, NV 89154, USA
+ABSTRACT
+The TeV afterglow detected by LHAASO has been interpreted as ar ising from a narrow jet while
+the radio to X-ray afterglows are explained as arising from a wide str uctured jet. However, there is
+no model explaining the TeV and lower-energy multi-wavelength afte rglows simultaneously. We here
+investigate a two-component jet model, including an inner narrow co re and an outer wide wing with
+an angular structure, to explain both the early TeV afterglow and m ulti-wavelength afterglows that
+last up to 100 days. We ﬁnd that the radio afterglow and the TeV upp er limit imposed by H.E.S.S.
+observationscombineto constrainthe circum-burstdensityto be lowatlargerradii. Thus, adecreasing
+density proﬁle with radius is favored. Considering that the rising TeV light curve during the afterglow
+onset favors a constant-density medium, we invoke a stratiﬁed de nsity proﬁle, including a constant-
+density proﬁle at small radii and a wind density proﬁle at large radii. We ﬁnd that the two-component
+jet model with such a stratiﬁed density proﬁle can explain the TeV, X -ray and optical afterglows of
+GRB 221009A, although the radio ﬂuxes exceed the observed ones by a factor of two at later epochs.
+The discrepancy in the radio afterglow could be resolved by invoking s ome non-standard assumption
+about the microphysics of afterglow shocks, such as a decreasing fraction of accelerated particles with
+time. The total kinetic energy of the two components in our model is /lessorsimilar1052erg, signiﬁcantly smaller
+than that in the single structured jet models.
+Keywords: Gamma-ray burst (629) — Gamma-ray astronomy (628) — High ener gy astrophysics (739)
+1.INTRODUCTION
+GRB 221009A is the brightest burst ever observed.
+Due to its enormous energy ( Eiso= 1055erg) (An et al.
+2023;Lesage et al. 2023 ) and proximity ( z= 0.151)
+(Castro-Tirado et al. 2022 ), GRB 221009A is an ex-
+ceptionally rare event( Burns et al. 2023 ). The Large
+High Altitude Air Shower Observatory (LHAASO) ob-
+served GRB 221009A at the earliest epoch, cover-
+ing both the prompt emission phase and the early
+afterglow in the TeV band, and revealed the onset
+of afterglow emission in the TeV band for the ﬁrst
+time(LHAASO Collaboration 2023 ).
+xywang@nju.edu.cnIn addition, the temporal slope of the TeV light curve
+in the decaying phase steepens from α=−1.12+0.01
+−0.01to
+α=−2.21+0.30
+−0.83attb= 670+230
+−110s after the afterglow on-
+set time T∗=T0+226s, where T0is the trigger time of
+this GRB1, indicating that the opening angle of the jet
+ofGRB 221009Aisonly ∼0.8◦(LHAASO Collaboration
+2023). This reduces the beaming-corrected energy
+in gamma-rays to a level of 1050−1051erg for GRB
+221009A, which agrees well with the standard energy
+reservoir of GRB jets ( Frail et al. 2001 ).
+It has been suggested that jets of GRBs may not be
+uniform, but characterized by a signiﬁcant anisotropy
+of the angular distribution of the ﬁreball energy around
+the axis ( Rossi et al. 2002 ;Zhang & M´ esz´ aros 2002 ). In
+1We note Fν∝νβtαthroughout this paper2 Zheng et al.
+the assumption of a structured jet model, the small half
+opening angle of GRB 221009A implies a narrow core
+component, which is only responsible for the early af-
+terglow emission before 104s (LHAASO Collaboration
+2023), while the late-time ( >104s) afterglow emission
+may require other jet components.
+The X-ray afterglow of GRB 221009A features an
+initial power-law decay index of α1=−1.52±0.01,
+steepening to α2=−1.66±0.01 after 0 .82±0.07
+days after the trigger, which is not consistent with
+standard predictions for the emission from a top-
+hat jet ( O’Connor et al. 2023 ;Williams et al. 2023 ).
+O’Connor et al. (2023) interpreted the X-ray afterglow
+as due to a structured jet expanding into a constant-
+density medium, where the jet is composed by an inner
+component of angular size θbwith a shallow energy pro-
+ﬁledE/dΩ∝θ−a1and slightly steeper lateral structure
+atθ > θbwithdE/dΩ∝θ−a2(a2> a1).Gill & Granot
+(2023) also explored a structured jet model to explain
+the multi-waveband afterglow of GRB 221009A, but
+assuming a wind density proﬁle for the surrounding
+medium. In both models, the early radio emission is
+attributed to electrons accelerated by the reverse shock,
+whiletheopticalandX-rayafterglows,aswellasthelate
+radio afterglow, arise from the forward shock. A two-
+component jet model consisting of a narrow top-hat jet
+and a broader top-hat jet has been proposed to explain
+the multi-wavelength data from radio to GeV afterglows
+of GRB 221009A ( Sato et al. 2023 ). Besides the two-
+component jet models, various other types of models
+werealso proposedto explain the multi-wavelengthdata
+of GRB 221009A ( Ren et al. 2023 ;Zhang et al. 2023 ).
+The above models, however, did not take into account
+the early TeV data observed by LHAASO, which were
+not available at that time. In this work, we explore
+a two-component jet model, including a narrow top-hat
+jet (core)and a wider wingwith an angularstructure, to
+explain both the TeV afterglow measured by LHAASO
+and lower energy multi-wavelength afterglows of GRB
+221009A.
+2.THE SET-UP OF A TWO-COMPONENT JET
+MODEL
+The afterglow of GRB 221109A exhibits two breaks
+in light curves. The early sharp break in the TeV
+band is consistent with a jet break from a top hat
+jet(LHAASO Collaboration 2023 ), while the later shal-
+low break could be due to the change of the angular
+proﬁledE/dΩ∝θ−aof a structured jet( O’Connor et al.
+2023;Gill & Granot 2023 ). This complex behaviour
+suggests a jet composed of a inner, narrow top-hat
+core component and a outer, wide wing componentwith an angular structure, which can be described by
+(Zhang & Wang 2023 )
+ǫ≡dE
+dΩ=/braceleftBigg
+ǫI, θ < θ j,
+ǫIIf(θ),θj< θ <Θ,(1)
+whereθjis the openingangleofthe narrowcore, Θis the
+maximum angle of the structured wing, and f(θ) is the
+function form of the wing. The isotropic energy of the
+wing could be much smaller than that of the core ( ǫI≫
+ǫII), whichcanonlybedeterminedbytheafterglowdata.
+We assume a smooth broken power-law function for the
+structure of the wing, as given by ( Granot & Kumar
+2003)
+f(θ) =/bracketleftBigg/parenleftbiggθ
+θc,w/parenrightbigg2a1
++/parenleftbiggθ
+θc,w/parenrightbigg2a2/bracketrightBigg−1/2
+,(2)
+whereθc,wis the transition angle from a shallowangular
+proﬁle to a steeper ( a2> a1) angular proﬁle of the wide
+wing. The structured function decline as f(θ)∝θ−a1
+fromθjtoθc,wand then transfer into f(θ)∝θ−a2after
+θc,w. The shallow jet break happens when the observers
+see the edge of θc,w.
+Correspondingly, one could also deﬁne a jet structure
+of the angle-dependent initial Lorentz factor, i.e.
+Γ0(θ) =/braceleftBigg
+ΓI,0, θ < θ j
+ΓII,0g(θ),θj< θ <Θ,(3)
+where Γ I,0≫ΓII,0andg(θ) is the structure function of
+the Lorentz factor proﬁle.
+The narrow jet core could be a Poynting-ﬂux dom-
+inated jet ( Dai et al. 2023 ;Yang et al. 2023 ) and the
+wide wing could be matter-dominated, as argued in
+Zhang & Wang (2023).
+3.A STRATIFIED DENSITY PROFILE
+The slopes of afterglows produced by forward shocks
+depend on the density proﬁle of the circum-burst
+medium. The density proﬁle of the circum-burst
+medium is usually described by n(R)∝R−k, where
+k= 0 corresponds to a homogeneous medium, while
+k= 2 corresponds to a stellar wind from the
+GRB progenitor ( Dai & Lu 1998 ;Chevalier & Li 2000 ;
+Panaitescu & Kumar 2000 ). In the wind case, for a
+constant mass loss rate ˙Mand wind velocity vw, one
+hasn=Ar−2, whereA= 3×1035A⋆cm−1, scaled to
+A⋆= (˙M/10−5M⊙yr−1)(vw/103Kms−1)−1.
+The TeV light curve of GRB 221009A rises
+with a slope of α= 1.82+0.21
+−0.18before the peak
+(LHAASO Collaboration 2023 ). This rising phase isTwo-Component jet for GRB 221009A 3
+interpreted as the onset of the TeV afterglow, where
+the ejecta is coasting before deceleration. During the
+coasting phase, the bulk Lorentz factor of the after-
+glow shock is roughly a constant. The ﬂux resulted
+from the synchrotron self-Compton process (SSC) rises
+with a slope as α=8−(p+2)k
+4if the observed fre-
+quency lies above the peak frequency of the SSC spec-
+trum (LHAASO Collaboration 2023 ). The rising slope
+α= 1.82+0.21
+−0.18of the TeV light curve is consistent with
+the constant-density medium (i.e., k= 0). Note that
+this conclusion applies only to the small radius where
+the early ( t <18s) TeV emission is produced.
+The density at a larger distance could be diﬀerent and
+can only be constrained by late-time multi-wavelength
+data. Fermi-LAT measurement of GeV emission at T0+
+20000s suggests a low density at large radii, as we show
+below. TheHighEnergyStereoscopicSystem(H.E.S.S.)
+began observations 2.5 days after the trigger, yielding
+an upper limit on the TeV ﬂux ( Aharonian et al. 2023 ).
+This upper limit implies a small TeV to keV ﬂux ratio
+at 2.5 days, which also supports a low density at larger
+radii.
+3.1.Lower Limit on the Density at Small Radii
+We assume that the TeV emissions observed by
+LHAASO are produced by the afterglow synchrotron
+self-Compton (SSC) process. Then we can use the TeV
+ﬂuxto constrainthe densityofthe surroundingmedium.
+The SSC ﬂux without considering the Klein-Nishina
+(KN) eﬀect can be expressed as ( Sari & Esin 2001 ).
+Fν=
+
+FIC
+m(ν
+νICm)1
+3, ν < νIC
+m
+FIC
+m/parenleftBig
+ν
+νICm/parenrightBig−p−1
+2, νIC
+m< ν < νIC
+c
+FIC
+m(νIC
+c
+νICm)1
+2(ν
+νICm)−p
+2, ν > νIC
+c(4)
+whereFIC
+m=τICFν,maxis the peak ﬂux density for
+SSC, which scales as FIC
+m∝n5/4
+0in a constant-density
+medium, pis the spectral index for shock-accelerated
+elections ( dNe/dγe∝γ−p
+e),νIC
+mandνIC
+care the charac-
+teristic inverse Compton frequency for minimal Lorentz
+factorγmandcoolingLorentzfactor γc, respectively(see
+the Appendix A.1for more details).
+We assume that only a fraction ξeof shock-heated
+electrons are accelerated into a power-law form. The
+minimum break frequency in the SSC spectra is
+hνIC
+m= 1GeVE3/4
+I,iso,55ǫ4
+e,−1.5ξ−4
+e,0n11−p
+8
+0,−0.5ǫp+1
+4
+B,−4t−9/4
+1.5,(5)
+whereǫeis the energy equipartition factor for non-
+thermal electrons, ǫBis the energy equipartition factors
+for the magnetic ﬁeld (we use p= 2.3 to derive the co-
+eﬃcient in the equation).LHAASO observations show the spectral index in 0.2-
+7 TeV is β≃ −1.4, suggesting νIC
+m/lessorsimilar200GeV. This
+imposes a limit on ke≡ǫe/ξe,
+ke≤0.15E−3/16
+I,iso,55ǫ−1/8
+B,−4n1/8
+0,−0.5. (6)
+In the spectral region ν≥νIC
+m, the ﬂux density at hν=
+300GeV at 30s is given by
+Fν(300GeV) = 0 .005µJyE7+3p
+8
+I,iso,55k2(p−1)
+e,−1.5ξe,0n11−p
+8
+0,−0.5ǫp+1
+4
+B,−4.
+(7)
+Since the KN eﬀect will only suppress the SSC
+process, the ﬂux given by Equation 7can be re-
+garded as an upper limit for the observed ﬂux den-
+sity, which is Fν,obs(300GeV) = 0 .0052µJy atT∗+
+30s(LHAASO Collaboration 2023 ). Note that, if νIC
+c<
+300GeV, the spectrum is steeper than Fν∝ν(1−p)/2,
+then the inequality Fν(300GeV) ≥Fν,obs(300GeV) is
+still applicable.
+Considering that the afterglow synchrotron ﬂux
+should not be greater than the observed ﬂux by
+Fermi/LAT at 100 MeV at T∗+ 100s, we obtain
+ξe,0kp−1
+e,−1.5≤E−(p+2)
+4
+iso,55ǫ−(p−2)
+4
+B,−4(LHAASO Collaboration
+2023). Utilizingtheabovemaximumvalueof ξekp−1
+eand
+ke, we obtain a lower limit on the circum-burst density
+at the shock radius corresponding to t=T∗+30s,
+n0≥0.1cm−3E−(9−p)
+20
+I,iso,55ǫ−(7−p)
+10
+B,−4. (8)
+Below we will show that the radio afterglow, GeV emis-
+sion observed by Fermi/LAT and the H.E.S.S. TeV up-
+per limit combine to constrain the circum-burst density
+to be lower than Equation ( 8) at larger radii.
+3.2.Upper Limit on the Density at Large Radii
+The observed ﬂux at 1 GeV is Fobs,GeV∼2×
+10−10ergcm−2s−1atT0+ 20000s ( Liu et al. 2023 ) and
+the ﬂux at 1 keV at the same time is Fobs,keV∼
+10−9ergcm−2s−1. Considering that the GeV ﬂux of the
+afterglow is contributed by both the SSC emission and
+synchrotronemission while the ﬂux at 1 keVis fully con-
+tributed by the synchrotron emission, the ﬂux ratio be-
+tween the SSC component and the synchrotron compo-
+nent should be smaller than 0.2, i.e., FIC
+GeV/Fsyn
+keV≤0.2.
+Using this ﬂux ratio, we can obtain an upper limit on
+the circum-burst density, in combination with the radio
+afterglow data.
+The characteristic cooling break in the SSC spectrum
+arehνIC
+c= 100PeV E−5/4
+II,iso,54ǫ−7/2
+B,−4n−9/4
+0,−0.5t−1/4
+4.3while the
+KN peak EIC
+c,KN= 0.26TeVE−1/4
+II,iso,54ǫ−1
+B,−4n−3/4
+0,−0.5t−1/4
+4.3is
+around TeV. So the GeV band probably lies between
+νIC
+mandνIC
+catT0+20000s. The spectral index of X-ray4 Zheng et al.
+1010101510201025
+Frequency (Hz)10-1510-1410-1310-1210-1110-1010-9Flux (erg cm-2 s-1)
+XRT,2.2-2.6days
+optical,2.3days
+radio,2.5days
+H.E.S.S.,2.2daysn=0.1cm-3
+n=0.01cm-3
+n=0.001cm-3
+Figure 1. Spectra energy distribution of the afterglow emis-
+sion atT0+ 2.5 days. The red points denote the 95% C.L.
+upper limits from H.E.S.S. Collaborations. The blue, red
+and black lines represent the afterglow models with density
+n0= 0.1cm−3,n0= 0.01cm−3andn0= 0.001cm−3, respec-
+tively. The corresponding values of ǫBare 3×10−4, 1×10−3
+and 4×10−3, respectively for the three lines. Other pa-
+rameters are EII,iso= 2.2×1053erg,p= 2.4,ǫe= 0.1, and
+ξe= 0.1.
+emission measured by Swift XRT is β=−0.78±0.011
+atT0+26000s, consistent with the slow cooling phase.
+With the spectra regimes of νm< νkeV< νcandνIC
+m<
+νGeV< νIC
+c, the expected ratio between the SSC ﬂux at
+1 GeV and the synchrotron ﬂux at 1 keV is
+FIC
+GeV
+Fsyn
+keV= 0.019Ep+1
+8
+II,iso,54kp−1
+e,−1.5n7−p
+8
+0,−0.5.(9)
+The value of kecan be constrained by the spectral
+energy distribution at T0+ 2.5d, as shown in Figure
+1. The radio to X-ray afterglows are produced by the
+synchrotron mission of accelerated electrons. From Fig-
+ure1, one can see that the radio to X-ray emissions do
+not follow a single power law, indicating the presence
+of a spectral break between radio and X-ray frequen-
+cies. A plausible explanation is that the break νmlies
+atνm≥3×1012Hz (The possibility that the break is
+the self-absorption frequency νais disfavored, see the
+Appendix B). The inequality arises from that the radio
+emission could include contributions from both forward
+shockemissionand reverseshockemission. As the break
+frequency νmis given by
+νm= 2.3GHzE1/2
+II,iso,54k2
+e,−1.5ǫ1/2
+B,−4t−3/2
+5.3,(10)
+we obtain
+ke≥1.1E−1/4
+II,iso,54ǫ−1/4
+B,−4. (11)Withthislowerlimitof ke, wethenobtainanupperlimit
+on the circum-burst density by using Equation ( 9),
+n0≤0.007cm−3E−(3−p)
+7−p
+II,iso,54ǫ2(p−1)
+7−p
+B,−4.(12)
+Such a low density is dramatically diﬀerent from
+the constraint we derived from the early TeV after-
+glown0≥0.1cm−3E−0.33
+I,iso,55ǫ−0.47
+B,−4. It is hard to recon-
+cile the discrepancy by increasing ǫB, because hνc∝
+E−1/2
+I,isoǫ−3/2
+Bn−1
+0is more sensitive to ǫBand the require-
+menthνc≥10keV at T0+4000s leads to
+n0≤0.25cm−3E−1/2
+I,iso,55ǫ−3/2
+B,−4. (13)
+The H.E.S.S. upper limit at 2.5 day also implies a
+low circum-burst density. In TeV band, the ﬂux is
+suppressed by the KN eﬀect and internal absorption,
+so it can only be studied numerically. We model the
+SED of afterglows at 2.5 days in Figure 1with the syn-
+chrotron plus SSC emission, and ﬁnd that only when
+n0<0.01cm−3the model can ﬁt the data.
+3.3.A Stratiﬁed Density Proﬁle: Transition from a
+Constant-density Medium to a Wind Medium
+Therefore,weconsiderastratiﬁeddensityproﬁlegiven
+by
+n(r) =/braceleftBigg
+n0, r < r c
+Ar−2. r≥rc(14)
+The transition radius from constant-density region to
+the wind region occurs at rc=/radicalbig
+A/n0= 5.5×
+1017cmA1/2
+⋆,−1n−1/2
+0,−1, corresponding to a transition time
+tc= 210E−1
+I,iso,55A2
+⋆,−1n−1
+0,−1s. We assume the transition
+time is later than the jet break time T∗+670s, so the
+wind parameter should satisfy
+A⋆≥0.17E1/2
+I,iso,55n1/2
+0,−1. (15)
+The standard wind-like proﬁle ( k= 2) is based on the
+assumption of a constant mass loss rate ˙Mand wind
+velocityvw. However, the dynamics of the stellar wind
+right before the death of the massive star is highly un-
+certain. Strong deviations from a density slope of k= 2
+may be expected in the region very close to the GRB
+progenitor, due to the short evolutionary timescales af-
+tercoreheliumexhaustionandtheeﬀectsofnear-critical
+rotation, which can signiﬁcantly alter wind properties.
+For example, if ˙M∝taand and vw∝tb, we have
+ρ∝r−2+(a−b)/(1+b). A special mass loss rate and wind
+velocity ( a= 3b+2) during the last few hundreds years
+of the star’s life can lead to k= 0 in the region close to
+the GRB progenitor ( Yoon et al. 2006 ;De Colle et al.
+2012). In addition, if the GRB occurs in massive stellarTwo-Component jet for GRB 221009A 5
+100102104106
+Time since GBM trigger + 226s (s)10-1210-1010-810-610-4Flux (erg cm-2 s-1)A0.3 - 5  TeV( 20)
+0.3 - 10 keV
+0.1 - 10 GeV( 0.1)
+10-1100101
+Energy (TeV)10-910-810-710-610-510-410-3Flux (erg cm-2 s-1)B T0+[231, 240]s ( 10)
+T0+[240, 248]s
+T0+[248, 326]s ( 0.25)T0+[326, 900]s ( 0.2)
+T0+[900, 2000]s ( 0.3)
+10-1100101102
+Time since GBM trigger + 226s (days)10-1510-1410-1310-1210-1110-1010-9Flux (erg cm-2 s-1)
+Cr band(5)
+i band(1)
+z band(0.1)
+10-1100101102
+Time since GBM trigger + 226s (day)10-1810-1710-1610-1510-1410-1310-12Flux (erg cm-2 s-1)
+Dnu=230.0GHz( 2)
+nu=97.5GHz
+nu=15.8GHz( 0.3)
+nu=1.3GHz( 0.5)
+Figure 2. Modeling of the multi-wavelength data of GRB 221009A with th e standard afterglow theory. Panel A displays
+the light curves in the energy band of TeV (0.3-5TeV), keV (0. 3-10keV) and GeV (0.1-10GeV). The upper limits after 105s
+show the H.E.S.S. data in the energy range 0.65-10 TeV. The so lid lines represent the sum of forward shock emission from th e
+narrow core (dot-dashed lines) and the wide wing (dashed lin es). Panel B displays the spectra between 0.2-7 TeV measured by
+LHAASO in diﬀerent time intervals( LHAASO Collaboration 2023 ). The light blue band and grey band denote the systematic
+uncertainties and EBL-related uncertainties, respective ly. The solid line represents the sum of forward shock SSC emi ssion of
+the narrow core and wide wing. Panel C displays the optical li ght curves in r band (red), i band (blue) and z band (purple). A ll
+optical data points are corrected only by the galactic extin ction (Schlaﬂy & Finkbeiner 2011 ). The solid lines represent the sum
+of forward shock emission from the narrow core and the wide wi ng (dashed lines). For brevity, the lines for the emission fo rm
+the narrow core are not shown. Panel D shows the radio light cu rves at 230GHz (pink square), 97.5GHz (green star), 15.8GHz
+(black circle) and 1.5GHz (red diamond). The solid lines rep resent the sum of forward shock emission from the narrow core ,
+the forward shock emission from the wide wing, and the revers e shock emission of the wide wing. The dotted line represents
+the reverse shock emission of the wide wing.
+clusters, the circum-burst medium is much more compli-
+cated due to colliding wind eﬀect ( Mimica & Giannios
+2011). In this case, one would expect an enhanced den-
+sity due to the shocked colliding winds and a freely ex-
+panding wind at larger distance.
+4.MODEL FITS OF THE MULTI-WAVELENGTH
+AFTERGLOW DATA
+We consider an on-axistwo-component jet model with
+the angular distribution described in Equation ( 1) ex-
+panding into a stratiﬁed circum-burst medium (Equa-
+tion (14)). The model uses shock dynamics given in the
+Appendix A.2. We assume that a fraction ξeof shock-
+heated electrons are accelerated into a power law dis-
+tribution with a spectral index of p:dNe/dγe∝γ−p
+e,
+whereγeis the electron Lorentz factor. The complete
+KN cross section for the inverse Compton scattering has
+been considered and the internal γγabsorption withinthe emitting region has been taken into account (see the
+Appendix A.2).
+For the narrow core, we use the isotropic energy
+EI,iso= 4πǫIto solve the shock dynamics. For the wing
+component, since the energy has an angular distribu-
+tion, it is reasonable to use the average isotropic energy
+in the solid angle between θjandθin the calculation,
+which is given by
+¯EII,iso(θ) =4π/integraltextθ
+θjǫIIf(θ′)sinθ′dθ′
+/integraltextθ
+θjsinθ′dθ′.(16)
+¯EII,iso(θ) starts to increase from θjand decreases as a
+power-law ¯EII,iso∝θ−awhenθ≫θj.
+4.1.The Optical to TeV Afterglows
+The parametersofthe angularproﬁleofthe wide wing
+can be estimated from the X-ray afterglow light curve
+analytically. For a wing with angular proﬁle dE/dΩ∝6 Zheng et al.
+θ−a, the light curve of the synchrotron emission from
+the forward shock is given by ( Beniamini et al. 2022 ;
+Zhang & Wang 2023 )
+Fν∝
+
+t−a
+3(4−a), ν < ν m
+t−2(3p−1)−a(p−1)
+2(4−a), νm< ν < ν c
+t−2(3p−2)−a(p−2)
+2(4−a). ν > ν c(17)
+Before 0.8 d, the power-law slope of the X-ray afterglow
+isα=−1.52, suggesting an angular proﬁle index of
+a= 0.2. After 0.8 d, the slope becomes steeper with
+α=−1.66, leading to a= 0.7.
+The bulk Lorentz factor is Γ = 20 E1/4
+II,iso,54A−1/4
+⋆,−1
+at 0.8 d, suggesting that the transition angle from a
+shallow angular proﬁle to a steeper angular proﬁle is
+θc,w∼Γ−1≈3◦E−1/4
+II,iso,54A1/4
+⋆,−1.
+We model the multi-wavelength afterglow data of
+GRB221009Awiththetwo-componentjetmodel, which
+is shown in Figure 2. We ﬁrst assume that there is no
+lateral expansion for both jet components. We ﬁnd that
+this model can explain the TeV, X-ray and optical after-
+glows, with the model parameter values given in Table
+1. The early TeV afterglow emission originates from the
+SSC emission of the narrow jet component.
+At times later than 104s, the SSC emission from the
+wing componentbecomes dominated, and its ﬂux is con-
+sistent the upper limits imposed by H.E.S.S. observa-
+tions. The X-ray afterglow at times later than 104s
+is produced by the wing component through the syn-
+chrotron emission. The optical afterglow is also pro-
+duced by the synchrotron emission of the wing compo-
+nent. Themodelﬂuxisinsuﬃcienttoexplaintheoptical
+data after tens of days, which could be attributed to ex-
+tra contribution from a supernova ( Fulton et al. 2023 ).
+The isotropic energy of the narrow core is 4 πǫI=
+9×1054erg, while the isotropic energy of the wing at
+θ=θc,wis 4πǫII/√
+2 = 2.8×1053erg. The indices of
+the angular proﬁle of the wing, a1= 0 and a2= 0.8,
+are consistent with the above analytical estimate. The
+acceleration fraction ξe= 0.15 for the wide wing is an
+order of magnitude higher than that in O’Connor et al.
+(2023) andGill & Granot (2023), which avoids to over-
+produce the TeV ﬂux measured by H.E.S.S. at 2.5 days.
+The theoretical ﬂux at GeV band slightly exceeds
+the observational data at ∼104s, during which both
+the narrow jet and wide wing contribute to the ﬂux.
+Semi-analytical models and numerical simulations have
+showedthatlateralexpansionmaybe importantfornar-
+row jets ( Granot & Piran 2012 ;Lu et al. 2020 ), so our
+calculation may overestimate the emission ﬂux from the
+narrow core component after its jet break time if the
+later expansion occurs in structured jets ( Gottlieb et al.
+2021). The modelling considering the lateral expansionfor the narrow core is shown in Figure 3, where one can
+see thatthe model nowagreesbetter with theGeVdata.
+4.2.The Radio Afterglow
+The radio afterglow of GRB 221009A may be pro-
+duced by both the forward shock emission and reverse
+shock emission. Since the narrow jet is likely to be
+Poynting-ﬂux-dominated,we donot considerthe reverse
+shock emission from this component. The wide wing
+is likely to be matter-dominated, and its reverse shock
+emission may be important.
+The early radio data around 0.2 d exhibit a spectral
+shapeFν∝ν5/2, indicating the observed frequency ( ∼
+15GHz)isbetweenthe self-absorptionfrequencyandthe
+minimum frequency, i.e., νm< ν < ν a. This feature is
+inconsistent with the the forward shock emission, which
+has a much higher νm. Therefore, the early radio is
+probably from the reverse shock.
+Since the onset time of the wide jet is ∼3000s, the
+wide jet can be regarded as a thin shell. After the decel-
+eration, the Lorentz factor of reverse shock follows the
+relation Γ 3∝R−g. In the wind environment, we usu-
+ally take g= 1, and the rising slope of reverse shock
+emission in the spectral regime of νm,rs< ν < ν a,rsis
+α=5(8+5g)
+14(1+2g)= 1.55 (Zou et al. 2005 ), which is close to
+the observed rising slope α= 1.4 (Bright et al. 2023 ).
+However, the observed decay slope of the radio after-
+glow,α=−0.8, is much shallower than the prediction
+by the reverse shock in a top-hat jet, which is α≈ −2.
+Zhang & Wang (2023) studied the reverse shock evolu-
+tion in a structured jet and ﬁnd the decay slope can be
+shallower when the initial Lorentz factor of the jet has
+an angular structure, i.e., Γ 0∝θ−kΓ(see Appendix C).
+Considering this eﬀect, the decaying slope of the reverse
+shock emission is α=−1.35 fora= 0 and α=−1.54
+fora= 0.8, as discussed in the Appendix C.
+From Figure 2and3, we can see that the model does
+not explain the radio afterglow data satisfactorily. The
+forwardshockemissionexceedsthe high-frequencyradio
+data at some late epochs by a factor of about 2 in the
+case assuming no lateral expansion for the narrow jet
+and by a factor of 1 .5 assuming lateral expansion.
+Indeed, it is found that the light curves of radio af-
+terglows of many GRBs can not be explained satisfacto-
+rily by the standard afterglow theory (e.g. Levine et al.
+2023). This could indicate our lack of knowledge
+about the radio afterglow. Below we discuss some non-
+standard scenarios that could possibly resolve the dis-
+crepancy in the radio afterglows of GRB 221009A.
+5.NON-STANDARD AFTERGLOW MODELTwo-Component jet for GRB 221009A 7
+100102104106
+Time since GBM trigger + 226s (s)10-1210-1010-810-610-4Flux (erg cm-2 s-1)A0.3 - 5  TeV( 20)
+0.3 - 10 keV
+0.1 - 10 GeV( 0.1)
+10-1100101
+Energy (TeV)10-910-810-710-610-510-410-3Flux (erg cm-2 s-1)B T0+[231, 240]s ( 10)
+T0+[240, 248]s
+T0+[248, 326]s ( 0.25)T0+[326, 900]s ( 0.2)
+T0+[900, 2000]s ( 0.3)
+10-1100101102
+Time since GBM trigger + 226s (days)10-1510-1410-1310-1210-1110-1010-9Flux (erg cm-2 s-1)
+Cr band(5)
+i band(1)
+z band(0.1)
+10-1100101102
+Time since GBM trigger + 226s (day)10-1810-1710-1610-1510-1410-1310-12Flux (erg cm-2 s-1)
+Dnu=230.0GHz( 2)
+nu=97.5GHz
+nu=15.8GHz( 0.3)
+nu=1.3GHz( 0.5)
+Figure 3. Same as Figure 2, but assuming that the narrow core has lateral expansion whe n the bulk Lorentz factor drops to
+ΓI≤θ−1
+j.
+In the standard model of afterglows, the micro-
+physical parameters ǫe,ǫB,ξeandpare usually assumed
+to be aconstantin the whole afterglow. The assumption
+simpliﬁes the modelling and can explains the afterglows
+of many GRBs. However, for those GRBs which are
+thoroughly investigated (e.g. GRB 130427A & GRB
+170817A), time-evolving microphysics parameters are
+proposed to explain some unusual behaviour of after-
+glows (e.g. Maselli et al. 2014 ;Takahashi et al. 2022 ).
+For GRB 221009A, the radio observations after 10
+days impose a stringent limit on νmandke. AtT0+54
+days, the spectrum between X-ray and radio is not a
+single power-law, so νmis required to be higher than
+3×1011Hz, which gives
+ke≥1.7E−1/4
+II,iso,54ǫ−1/4
+B,−3. (18)
+On the other hand, we obtain an upper limit of ke/lessorsimilar0.4
+at 2.5 d from the SED modelling for A⋆= 0.17 and
+EII,iso= 1054erg. The discrepancy of keat the two
+times can not be solved by increasing ǫBin Equation
+(18), because the X-ray spectra at T0+26000s requires
+hνc≥10keV, resultingin ǫB≤1.2×10−3E1/4
+II,iso,54A−4/3
+⋆,−1.
+Furthermore, the isotropic equivalent energy decreases
+with the time as EII,iso∝t−a
+4−afor a structured jet (see
+the Appendix C), then a higher value of keis needed at
+54 days. Thus, we speculate that kemay increase with
+time in GRB 221009A. As ke=ǫe/ξe, the increase of ke
+can be due to a decrease of ξeor a increase of ǫe.5.1.Decreasing Acceleration Fraction ξe
+The fractionofparticlesbeing acceleratedin afterglow
+shocks depends on the conditions of the shock, includ-
+ing the bulk Lorentz factor, the magnetization parame-
+ter and the direction of the magnetic ﬁeld ( Sironi et al.
+2015). Particle in cell (PIC) simulations ﬁnd that the
+fraction of non-thermal electrons is about ξe∼1−10%
+(Spitkovsky 2008 ;Sironi et al. 2013 ). These simulations
+are conducted with the bulk Lorentz factor Γ = 10 −20,
+which is diﬀerent from the condition at early time when
+Γ0≥100. On the other hand, the magnetization degree
+can inﬂuence the direction of magnetic ﬁeld, possibly
+changing the acceleration fraction as well ( Sironi et al.
+2013). Thus the acceleration fraction ξecould be time-
+varying.
+The high-frequency radio data ( ν >90GHz) is above
+the power-law extrapolation Fν∝ν−0.2from 1-20 GHz
+(see Figure 5 in Laskar et al. (2023)), implying that the
+forward shock may contribute to these bands. A de-
+creasing ξeis helpful to avoid the overshoot in the radio
+ﬂuxatlatetimes, becausethesynchrotronemissionfrom
+the forward shock, Fν∝ǫ−2/3
+eξ5/3
+e, is sensitive to ξein
+the spectral regime of ν < νm. For the X-ray and opti-
+cal band, the evolution of ξeaﬀects the light curve only
+slightly, as Fν∝ǫp−1
+eξ2−p
+e.
+We assume the fraction of accelerated electrons de-
+crease with time as ξe∝t−αξ. In a wind environment,8 Zheng et al.
+100102104106
+Time since GBM trigger + 226s (s)10-1210-1010-810-610-4Flux (erg cm-2 s-1)A0.3 - 5  TeV( 20)
+0.3 - 10 keV
+0.1 - 10 GeV( 0.1)
+10-1100101
+Energy (TeV)10-910-810-710-610-510-410-3Flux (erg cm-2 s-1)B T0+[231, 240]s ( 10)
+T0+[240, 248]s
+T0+[248, 326]s ( 0.25)T0+[326, 900]s ( 0.2)
+T0+[900, 2000]s ( 0.3)
+10-1100101102
+Time since GBM trigger + 226s (days)10-1510-1410-1310-1210-1110-1010-9Flux (erg cm-2 s-1)
+Cr band(5)
+i band(1)
+z band(0.1)
+10-1100101102
+Time since GBM trigger + 226s (day)10-1810-1710-1610-1510-1410-1310-12Flux (erg cm-2 s-1)
+Dnu=230.0GHz( 2)
+nu=97.5GHz
+nu=15.8GHz( 0.3)
+nu=1.3GHz( 0.5)
+Figure 4. Same as Figure 2, but assuming that the acceleration fraction ξein the two components is decreasing with time.
+the light curve of the structured jet is
+Fν∝
+
+t−a
+3(4−a)−5
+3αξ, ν < ν m
+t−2(3p−1)−a(p−1)
+2(4−a)+αξ(p−2), νm< ν < ν c
+t−2(3p−2)−a(p−2)
+2(4−a)+αξ(p−2). ν > ν c(19)
+The spectralindex ofX-rayafterglowmeasuredbySwift
+XRT at later epochs is β≈ −0.78, suggesting a power-
+law index of p≃2.5. After 0.8 d, the decay slopes of X-
+ray and high-frequency radio afterglows are α=−1.66
+andα=−0.78 respectively. To ﬁt the multi-wavelength
+data simultaneously, we need a= 0.9 andαξ= 0.4.
+Because the bulk Lorentz factor of the afterglow shock
+decreases with time as Γ ∝t−1/(4−a), we then derive
+ξe∝Γ−1.24. Before 0.8 d, the decay slope of the X-ray
+afterglowis α=−1.52,suggestsan angularproﬁleindex
+ofa= 0.2. We assume ξe= 1 when the Lorentz factor
+is greater than 60.
+We model the multi-wavelength afterglows with a
+time-varying ξe, which is shown in Figure 4. The ﬁt
+in the radio band is improved. For low-frequency ra-
+dio afterglows, the model ﬂux is still below the data at
+later times. The excess could arise from some extra low-
+velocity components in this GRB, which may produce
+mostly the radio emission.
+Sinceǫeandξeare coupled in the afterglow modeling,
+an alternative model is that ǫeis increasing with time.
+The main diﬀerence lies in that the X-ray and optical
+ﬂux depends on ǫeasFν∝ǫp−1
+e. To ﬁt the X-ray andoptical light curves, we would need a steeper angular
+proﬁle for the jet structure with a≈2.
+5.2.Decaying Magnetic Field
+In the standard afterglow shock model, we assume a
+homogeneous magnetic ﬁeld in the downstream of the
+shock. Nonetheless, the realistic magnetic ﬁeld may
+have a spatial distribution behind the shock. PIC sim-
+ulations and theoretical analyses of relativistic colli-
+sionless shocks both suggest that the coherent length
+of magnetic ﬁelds is much smaller than the shock size
+of GRB afterglows ( Chang et al. 2008 ;Lemoine 2015 ;
+Sironi et al. 2015 ).
+Since the cooling time of radio-emitting electrons is
+much longer than the shock dynamic time these elec-
+trons may radiate most of their energy at the back of
+the blast wave, where the magnetic ﬁeld has decayed
+to a low value ( Lemoine 2013 ;Wang et al. 2013 ). The
+standard model assuming a constant ǫBmay overesti-
+mate the radio ﬂux at later times. Taking a realistic
+magnetic ﬁeld might reduce the radio ﬂux and solve the
+discrepancy.
+6.CONCLUSIONS AND DISCUSSIONS
+GRB 221009A, as the Brightest of All Time (BOAT)
+event, provides rich multi-wavelength data spanning
+from GHz to TeV. We ﬁnd that the late-time multi-
+wavelength observations, including radio, X-ray, GeV
+andTeV,combinetoconstrainthedensityofthecircum-Two-Component jet for GRB 221009A 9
+Table 1. Parameter values used in the modeling of the multi-waveleng th afterglow data. The subscript I and II represent the
+parameters for the narrow core and wide wing, respectively. Forward shock1 (FS1) denotes the standard forward shock mod el
+shown in Figure 2, while Forward shock2 (FS2) denotes the non-standard forwa rd shock model with a time-varying ξe, which
+was shown in Figure 4. We use αI,Γ= 1.35 andαII,Γ= 1.25 in the non-standard case. The parameter values for the den sity
+proﬁle are n0= 0.2cm−3andA⋆= 0.17.
+4πǫI(erg) θjΓI,0ǫI,eǫI,B,−3ξI,epI4πǫII(erg)θc,wΓII,0a1a2ǫII,eǫII,B,−3ξII,epII
+FS1 9 ×10540.6◦560 0.04 1 1 2.2 4 ×10533◦60 0 0.8 0.06 2 0.15 2.4
+FS2 9 ×10540.6◦560 0.04 1 — 2.2 4 ×10533◦60 0 0.8 0.06 2 — 2.5
+RS — — — — — — — 4 ×10533◦60 0 0.8/1.0a0.04 0.5 0.01 2.2
+aThis parameter follows the forward shock.
+burst medium to be lower than n0<0.01cm−3. How-
+ever, the LHAASO observation at early time requires a
+constant medium before the afterglow onset and n0≥
+0.1cm−3E−(9−p)
+20
+I,iso,55ǫ−(7−p)
+10
+B,−4. Therefore, we propose a strati-
+ﬁed density proﬁle that incorporates a constant medium
+at small radii and a wind-like medium at large radii to
+explain the afterglows of GRB 221009A.
+Motivated by the multi-wavelength data, we employ a
+two-component jet model, comprising a uniform narrow
+jet core and a structured wing. This model can explain
+the afterglows from optical to TeV bands, although the
+ﬂux at high-frequency radiobands exceeds the data by a
+factor of two after the second day. We suggest that the
+discrepancy could be resolved by invoking time-varying
+micro-physical parameters of afterglow shocks.
+The model ﬂux is lower than the observed ﬂux at low-
+frequency radio bands (e.g., ν= 1.3GHz) after ∼2 days.
+The excess could be due to another extra electron com-
+ponent, resulting from low-velocity ejecta components
+or other acceleration mechanisms in the jet. The hard
+spectra of low-frequency radio data β≈ −0.2 is unusual
+in GRB afterglows, suggesting a hard injection spectra
+p= 1.4 for electrons, which is contradictory to standard
+diﬀusive shock acceleration theory. Such a hard spec-
+trum could result from some other acceleration mecha-
+nism, such as shear acceleration ( Liu et al. 2017 ).Compared to a single structured jet model
+(O’Connor et al. 2023 ;Gill & Granot 2023 ), the
+beaming-corrected kinetic energy in our two-component
+jet model is an order of magnitude lower. In our
+model, the beaming-corrected kinetic energy in the
+narrow core is EI,b=EI,iso(1−cosθj) = 5×1050erg
+(LHAASO Collaboration 2023 ). The kinetic energy
+in the structured wing is EII,b= 2/integraltextθ
+θjdE
+dΩdΩ, where
+θis the angle corresponding to the last observing
+timetbefore seeing the maximum angle Θ. The
+beaming-corrected energy increase as EII,b∝θ2∝
+t(2−a)(3−k)
+(8−2k−a)(Beniamini et al. 2022 ). We ﬁnd the beaming-
+corrected energy of the structured wing is EII,b= 6.1×
+1051t3/8
+7erg fora2= 0.8 andEII,b= 5.5×1051t1/3
+7erg for
+a2= 1. These values are signiﬁcantly lower than the en-
+ergy budget required by a single structured jet model,
+which is 8 ×1052(t/80days)0.372erg for the model in
+O’Connor et al. (2023) and 4×1052(t/100days)0.375erg
+for the model in Gill & Granot (2023).
+The authors thank Katsuaki Asano, Hai-Ming Zhang,
+Liang-Duan Liu and Yu-Jia Wei for useful discussions.
+This work is supported by the National Key R&D Pro-
+gram of China under the Grant No. 2018YFA0404203,
+the National Natural Science Foundation of China
+(grant numbers 12121003, U2031105), China Manned
+Spaced Project (CMS-CSST-2021-B11).
+APPENDIX
+A.METHODS
+A.1.Analytical Methods
+The analytical solution of the bulk Lorentz factor Γ and the radius Rof relativistic blast wave in an arbitrary
+power-law density proﬁle n=Ar−kare give by ( Granot & Sari 2002 )
+Γ = 1.152−k/parenleftBigg
+(17−4k)Eiso
+45−k(4−k)3−kπAmpc5−kt3−kz/parenrightBigg1
+2(4−k)
+, R= 1.3−k−1/parenleftbigg(17−4k)(4−k)Eisotz
+4πAmpc/parenrightbigg1
+4−k
+,(A1)10 Zheng et al.
+wheretz=t/(1+z) is the time corrected by redshift, 1.15 and 1.3 are numerical corre ction factors. Assuming the
+injection spectra ofelectronsis a singlepowerlaw dNe/dγe∝γ−p
+e, the minimum Lorentzfactorand the coolingLorentz
+factor are
+γm=ǫe
+ξep−2
+p−1mp
+me(Γ−1), γ c=6πmec
+σTΓB′2tz, (A2)
+whereǫeis the equapartition factor of electrons, and ξeis the fraction of accelerated electrons. The magnetic ﬁeld
+in the comoving frame is B′=/radicalbig
+8πǫBnmpc2(Γ−1)(ˆγΓ+1)/(ˆγ−1), where ˆ γis the adiabatic index of the shock.
+The prime marks the comoving frame of the shock. We use the ﬁtting formula for ˆ γfromPe’er(2012), which is
+(5−1.21937z+ 0.18203z2−0.96583z3+ 2.32513z4−2.39332z5+ 1.07136z6)/3, where z=ζ/(0.24 +ζ) andζ=
+(Γβ
+3)(Γβ+1.07(Γβ)2
+1+Γβ+1.07(Γβ)2).
+In a constant medium( k= 0), the characteristic break frequencies in the synchrotron em ission spectrum are
+νm=Γγ2
+mνL
+1+z= 2.4×1011HzE1/2
+iso,55k2
+e,−1ǫ1/2
+B,−4t−3/2
+5, νc=Γγ2
+cνL
+1+z= 6.7×1017HzE−1/2
+iso,55n−1
+0,−0.5ǫ−3/2
+B,−4t−1/2
+5,(A3)
+whereνLis the Lamour frequency of electrons. The characteristic break e nergies for SSC emission are
+hνIC
+m= 2γ2
+mhνm= 65GeV E3/4
+iso,55k4
+e,−1ǫ1/2
+B,−4n−1/2
+0,−0.5t−9/4
+1.5, hνIC
+c= 2γ2
+chνc= 28PeV E−5/4
+iso,55ǫ−7/2
+B,−4n−9/4
+0,−0.5t−1/4
+1.5.(A4)
+IfhνIC
+c/greaterorsimilarΓγcmec2, the peak of SSC ﬂux is EIC
+c,KN= 0.2Γγcmec2= 0.75TeVE−1/4
+iso,55ǫ−1
+B,−4n−3/4
+0,−0.5t−1/4
+1.5due to the KN
+eﬀect (Nakar et al. 2009 ).
+In the observer frame, the peak ﬂux density of the synchrotron and SSC emission are
+Fν,max= (1+z)NePν
+4πD2
+L= 22JyEiso,55ξe,0ǫ1/2
+B,−4n1/2
+0,−0.5, FIC
+m=τICFν,max= 0.63µJyE5/4
+iso,55ξe,0ǫ1/2
+B,−4n5/4
+0,−0.5t1/4
+1.5,(A5)
+wherePν=√
+3e3ΓB′/mec2is the spectral power of synchrotron, Ne=/integraltext
+4πr2ξen(r)dris the number of accelerated
+electrons, DL= 716Mpc is the luminosity distance, τIC=n0σTR/3 is the optical depth of Inverse Compton.
+A.2.Numerical Methods
+The dynamical equations of blast wave is described by ( Huang et al. 1999 )
+dΓ
+dmsw=−Γ2−1
+M0+[f+2Γ(1−f)]msw,dR
+dt=βc
+1−β, (A6)
+whereM0=Eiso/(Γ0−1)c2is the initial mass of the ejcta, msw=/integraltext
+4πr2ρ(r)dris the swept-up mass and fis the
+radiative eﬃciency. We employ a constant isotropic energy Eiso= 4πǫIfor the narrow jet and the average isotropic
+energyEiso=¯EII,iso(θ) for the wide jet.
+We adopt f=ǫet′−1
+syn/(t′−1
+syn+t′−1
+ad) in our calculations, where t′
+synandt′
+adare cooling timescale of synchrontron
+cooling and adiabatic cooling. For electron spectra, we include the co oling of synchrontron and inverse Compton in
+the calculation γc= 6πmec/σΓB′2tz(1+fKNY), whereY≡PSSC/Psynis the ratiobetweenSSC powerand synchrotron
+power. The KN suppress factor is deﬁned as fKN≡PKN
+SSC/PT
+SSC, where the PT
+SSC=4
+3πσTcγ2U′
+syn. The total energy
+loss rate of Compton scattering in KN regime is ( Blumenthal & Gould 1970 )
+PKN
+IC= 12γ2σTc/integraldisplay∞
+0ε′dn′
+dε′dε′/integraldisplay1
+0qG(q,Γe)
+(1+Γ eq)3dq, (A7)
+where Γ e= 4γε′/mec2,G(q,Γe) is a function of KN cross section and dn′/dε′is the diﬀerential number density of
+synchrotron photons.
+G(q,Γe) = 2qlnq+(1+2q)(1−q)+Γ2
+eq2(1−q)
+2(1+Γ eq). (A8)
+The spectral power of synchrontron emission is
+P′
+ν(ν′) =√
+3eB′
+mec2/integraldisplay∞
+γm/parenleftBigg
+ν′
+ν′c/integraldisplay∞
+ν′/ν′cK5/3(z)dz/parenrightBigg
+dNe
+dγ′edγ′
+e, (A9)Two-Component jet for GRB 221009A 11
+whereν′
+c= 3eB′(γ′
+e)2/4πmecandK5/3(z) is the modiﬁed Bessel function. The spectra of SSC emission is calcu lated
+by the strict expressions from Blumenthal & Gould (1970).
+dN
+dE′γ=3σTc
+4/integraldisplay∞
+γm/parenleftbigg/integraldisplaydn
+dε′dε′
+ε′G(q,Γe)
+γ′e2/parenrightbiggdNe
+dγ′edγ′
+e (A10)
+whereq=w/Γe(1−w),w=E′
+γ/γ′
+emec.
+We also consider the internal γ−γabsorption for VHE photons in this code. The optical depth due to in ternal
+absorption is given by
+τγγ,int(ε′
+γ,ε′
+t) =/integraldisplay
+εthσγγ(ε′
+γ,ε′)R
+Γdn′
+dε′dε′dΩ, (A11)
+whereσγγis the cross section, εth= 2m2
+ec4/ε′
+γ(1−cosθ) is the threshold energy of pair production. The cross section
+is
+σγγ(ε′
+γ,ε′) =3
+16σT/parenleftbig
+1−β2
+cm/parenrightbig/bracketleftbigg
+2βcm/parenleftbig
+β2
+cm−2/parenrightbig
++/parenleftbig
+3−β4
+cm/parenrightbig
+ln/parenleftbigg1+βcm
+1−βcm/parenrightbigg/bracketrightbigg
+, (A12)
+whereβcm=/radicalBig
+1−2m2ec4/ε′γε′(1−cosθ).
+For the Figure 1, we use analytic methods from Eq A1&A2to compute dynamics and electron spectra, and then
+obtain the ﬂux numerically with consideration of KN eﬀects and intern al absorption.
+B.ABOSORPTION FREQUENCY AS THE BREAK FREQUENCY
+In the main text we use νmas the break frequency between radio (97.5GHz) and X-ray (keV) . Here we discuss the
+situation that νais the break frequency. The spectra of synchrotron emission are also aﬀected by self-absorption.
+Frequency below absorption frequency νadrops rapidly as Fν∝ν5/2. If the frequency break between X-ray and radio
+is attributed to self-absorption, νais required to be νa≥400GHz at T0+105s. The expression of νadepends on the
+values of νmandνc. We deﬁne νa1is the absorption frequency when νais in the regime νa< νm< νc. The values of
+νa1are given by
+νa1=/braceleftBigg
+5.3GHzE1/5
+k,55n3/5
+0,−1k−1
+e,−1ǫ1/5
+B,−4, k = 0
+0.09GHzE−2/5
+k,55A6/5
+⋆,−1k−1
+e,−1ǫ1/5
+B,−4t−3/5
+5. k= 2(B13)
+Apparently, νa1dissatisfy the condition νa≥400GHz unless we employ a very small ke∼10−3in constant medium
+andke∼10−5in wind-like medium. However, such parameters are extremely small a nd fail to produce suﬃcient ﬂux
+when the isotropic energy is 1055erg. Although νa1is more sensitive to the density in wind proﬁle νa1∝A6/5
+⋆, large
+wind density A⋆>1 enhances the TeV-keV ratio in later epoch, resulting over-produ ction for the TeV ﬂux.
+Moreover, applying such a small value of kewould yield a very small νm. Whenνmis smaller than νa, expressions of
+νa1is not applicable. We deﬁne νa2as the absorption frequency when νa> νm. The absorption frequency νa2evolve
+asνa2∝t−3p+2
+2(p+4)in constant medium and νa2∝t−3(p+2)
+2(p+4)in wind-like medium. Since νa2is decreasing with respect to
+time, we must have a larger νa1, which correspond to more extreme parameters.
+C.REVERSE SHOCK IN A STRUCTURED JET
+In a structured jet, the angular energy distribution is dE/dΩ∝θ−aand the initial Lorentz factor Γ 0may have
+an angular distribution Γ 0∝θ−kΓ(Zhang & Wang 2023 ). If the kΓ≤1, the angular edges seen by observers are all
+decelerated since the radiative cone is θ∼Γ−1. Hence, the forward shock dynamics in independent of the distribu tion
+of Γ0. In this case, emissions from the forward shock can be described b y Equation ( 17). For the wind medium, the
+angular proﬁle of the Lorentz factor of the shocked shell follows
+Γ3(θ) = Γ0(θ)/parenleftbiggR(θ)
+Rdec(θ)/parenrightbigg−g
+(C14)
+whereg= 1 (Zou et al. 2005 ;Gao et al. 2013 ) for a reverse shock in the thin-shell approximation and Rdecis the
+deceleration radius of the ejecta, which scales as Rdec(θ)∝EII,iso(θ)Γ0(θ)−2.
+Our model used kΓ= 1, so Γ 3∝θ−1. Using R(θ) = 2Γ 3(θ)2t, one obtains Γ 3(θ)∝t−1
+4−a, Γ0(θ)∝t−1
+4−a,
+EII,iso(θ)∝t−1
+4−a. The self-absorption frequency of reverse shock is νa,rs∝E6p−4
+7(p+4)
+II,iso(θ)Γ−24p−16
+7(p+4)
+0(θ)t−13p+24
+7(p+4)(νm,rs<12 Zheng et al.
+νa,rs). We ﬁnd νa,rs∝t−1whenkΓ= 1, which is closed to the observed scaling relation νa,rs∝t−1.08±0.04from
+Bright et al. (2023). Correspondingly, the minimum frequency is νm,rs∝E6
+7
+II,iso(θ)Γ−24
+7
+0(θ)t−13
+7∝t−1and peak ﬂux
+density is Fν,max,rs∝E23
+21
+II,iso(θ)Γ−29
+21
+0(θ)t−23
+21∝t−3
+4−a, respectively.
+Thus the peak ﬂux density of self-absorption Fν,a=Fν,max(νa,rs
+νm,rs)1−p
+2∝t−3
+4−ais consistent with the observed values
+Fν,a∝t−0.70±0.02when the jet structure is ﬂat with a= 0. After the crossing of absorption frequency, the reverse
+shock emission decline as Fν=Fν,max(ν
+νm,rs)1−p
+2∝t−3
+4−a−p−1
+2. Assuming p= 2.2, the slopes of decaying phase are
+Fν∝t−1.35fora= 0 and Fν∝t−1.54fora= 0.8.
+REFERENCES
+Aharonian, F., Benkhali, F. A., Aschersleben, J., et al.
+2023, ApJL, 946, L27, doi: 10.3847/2041-8213/acc405
+An, Z.-H., Antier, S., Bi, X.-Z., et al. 2023, arXiv e-prints ,
+arXiv:2303.01203, doi: 10.48550/arXiv.2303.01203
+Beniamini, P., Gill, R., & Granot, J. 2022, MNRAS, 515,
+555, doi: 10.1093/mnras/stac1821
+Blumenthal, G. R., & Gould, R. J. 1970, Reviews of
+Modern Physics, 42, 237,
+doi:10.1103/RevModPhys.42.237
+Bright, J. S., Rhodes, L., Farah, W., et al. 2023, Nature
+Astronomy, 7, 986, doi: 10.1038/s41550-023-01997-9
+Burns, E., Svinkin, D., Fenimore, E., et al. 2023, ApJL,
+946, L31, doi: 10.3847/2041-8213/acc39c
+Castro-Tirado, A. J., Sanchez-Ramirez, R., Hu, Y. D.,
+et al. 2022, GRB Coordinates Network, 32686, 1
+Chang, P., Spitkovsky, A., & Arons, J. 2008, ApJ, 674, 378,
+doi:10.1086/524764
+Chevalier, R. A., & Li, Z.-Y. 2000, ApJ, 536, 195,
+doi:10.1086/308914
+Dai, C.-Y., Wang, X.-Y., Liu, R.-Y., & Zhang, B. 2023,
+arXiv e-prints, arXiv:2307.14113,
+doi:10.48550/arXiv.2307.14113
+Dai, Z. G., & Lu, T. 1998, MNRAS, 298, 87,
+doi:10.1046/j.1365-8711.1998.01681.x
+De Colle, F., Ramirez-Ruiz, E., Granot, J., &
+Lopez-Camara, D. 2012, ApJ, 751, 57,
+doi:10.1088/0004-637X/751/1/57
+Frail, D. A., Kulkarni, S. R., Sari, R., et al. 2001, ApJL,
+562, L55, doi: 10.1086/338119
+Fulton, M. D., Smartt, S. J., Rhodes, L., et al. 2023, ApJL,
+946, L22, doi: 10.3847/2041-8213/acc101
+Gao, H., Lei, W.-H., Zou, Y.-C., Wu, X.-F., & Zhang, B.
+2013, NewAR, 57, 141, doi: 10.1016/j.newar.2013.10.001
+Gill, R., & Granot, J. 2023, MNRAS, 524, L78,
+doi:10.1093/mnrasl/slad075
+Gottlieb, O., Nakar, E., & Bromberg, O. 2021, MNRAS,
+500, 3511, doi: 10.1093/mnras/staa3501
+Granot, J., & Kumar, P. 2003, ApJ, 591, 1086,
+doi:10.1086/375489Granot, J., & Piran, T. 2012, MNRAS, 421, 570,
+doi:10.1111/j.1365-2966.2011.20335.x
+Granot, J., & Sari, R. 2002, ApJ, 568, 820,
+doi:10.1086/338966
+Huang, Y. F., Dai, Z. G., & Lu, T. 1999, MNRAS, 309,
+513, doi: 10.1046/j.1365-8711.1999.02887.x
+Laskar, T., Alexander, K. D., Margutti, R., et al. 2023,
+ApJL, 946, L23, doi: 10.3847/2041-8213/acbfad
+Lemoine, M. 2013, MNRAS, 428, 845,
+doi:10.1093/mnras/sts081
+—. 2015, Journal of Plasma Physics, 81, 455810101,
+doi:10.1017/S0022377814000920
+Lesage, S., Veres, P., Briggs, M. S., et al. 2023, ApJL, 952,
+L42, doi: 10.3847/2041-8213/ace5b4
+Levine, D., Dainotti, M., Fraija, N., et al. 2023, MNRAS,
+519, 4670, doi: 10.1093/mnras/stac3730
+LHAASO Collaboration. 2023, Science, 380, 1390,
+doi:10.1126/science.adg9328
+Liu, R.-Y., Rieger, F. M., & Aharonian, F. A. 2017, ApJ,
+842, 39, doi: 10.3847/1538-4357/aa7410
+Liu, R.-Y., Zhang, H.-M., & Wang, X.-Y. 2023, ApJL, 943,
+L2, doi: 10.3847/2041-8213/acaf5e
+Lu, W., Beniamini, P., & McDowell, A. 2020, arXiv
+e-prints, arXiv:2005.10313,
+doi:10.48550/arXiv.2005.10313
+Maselli, A., Melandri, A., Nava, L., et al. 2014, Science,
+343, 48, doi: 10.1126/science.1242279
+Mimica, P., & Giannios, D. 2011, MNRAS, 418, 583,
+doi:10.1111/j.1365-2966.2011.19507.x
+Nakar, E., Ando, S., & Sari, R. 2009, ApJ, 703, 675,
+doi:10.1088/0004-637X/703/1/675
+O’Connor, B., Troja, E., Ryan, G., et al. 2023, Science
+Advances, 9, eadi1405, doi: 10.1126/sciadv.adi1405
+Panaitescu, A., & Kumar, P. 2000, ApJ, 543, 66,
+doi:10.1086/317090
+Pe’er, A. 2012, ApJL, 752, L8,
+doi:10.1088/2041-8205/752/1/L8
+Ren, J., Wang, Y., Zhang, L.-L., & Dai, Z.-G. 2023, ApJ,
+947, 53, doi: 10.3847/1538-4357/acc57dTwo-Component jet for GRB 221009A 13
+Rossi, E., Lazzati, D., & Rees, M. J. 2002, MNRAS, 332,
+945, doi: 10.1046/j.1365-8711.2002.05363.x
+Sari, R., & Esin, A. A. 2001, ApJ, 548, 787,
+doi:10.1086/319003
+Sato, Y., Murase, K., Ohira, Y., & Yamazaki, R. 2023,
+MNRAS, 522, L56, doi: 10.1093/mnrasl/slad038
+Schlaﬂy, E. F., & Finkbeiner, D. P. 2011, ApJ, 737, 103,
+doi:10.1088/0004-637X/737/2/103
+Sironi, L., Keshet, U., & Lemoine, M. 2015, SSRv, 191, 519,
+doi:10.1007/s11214-015-0181-8
+Sironi, L., Spitkovsky, A., & Arons, J. 2013, ApJ, 771, 54,
+doi:10.1088/0004-637X/771/1/54
+Spitkovsky, A. 2008, ApJL, 682, L5, doi: 10.1086/590248
+Takahashi, K., Ioka, K., Ohira, Y., & van Eerten, H. J.
+2022, MNRAS, 517, 5541, doi: 10.1093/mnras/stac3022Wang, X.-Y., Liu, R.-Y., & Lemoine, M. 2013, ApJL, 771,
+L33, doi: 10.1088/2041-8205/771/2/L33
+Williams, M. A., Kennea, J. A., Dichiara, S., et al. 2023,
+ApJL, 946, L24, doi: 10.3847/2041-8213/acbcd1
+Yang, J., Zhao, X.-H., Yan, Z., et al. 2023, ApJL, 947, L11,
+doi:10.3847/2041-8213/acc84b
+Yoon, S. C., Langer, N., & Norman, C. 2006, A&A, 460,
+199, doi: 10.1051/0004-6361:20065912
+Zhang, B., & M´ esz´ aros, P. 2002, ApJ, 571, 876,
+doi:10.1086/339981
+Zhang, B., & Wang, X. Y. 2023, in preparation
+Zhang, B. T., Murase, K., Ioka, K., et al. 2023, ApJL, 947,
+L14, doi: 10.3847/2041-8213/acc79f
+Zou, Y. C., Wu, X. F., & Dai, Z. G. 2005, MNRAS, 363,
+93, doi:10.1111/j.1365-2966.2005.09411.x
