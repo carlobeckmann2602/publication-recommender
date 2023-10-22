@@ -2,6 +2,7 @@ import json
 
 import numpy as np
 import pandas as pd
+import re
 
 
 def add_array_column(dataframe: pd.DataFrame, column_name: str, value_array: np.ndarray) -> pd.DataFrame:
@@ -30,3 +31,14 @@ def fast_read_jsonline(path_to_file: str) -> pd.DataFrame:
         dataframe = pd.DataFrame(lines)
     dataframe.columns = ["source"]
     return pd.json_normalize(dataframe["source"].apply(json.loads))
+
+
+def get_arxiv_url(arxiv_id: str):
+    match = re.match(r"([a-z-]+)([0-9]+)", arxiv_id, re.I)
+    if match:
+        items = match.groups()
+        access = str(items[0]) + "/" + str(items[1])
+    else:
+        access = arxiv_id
+    return "https://arxiv.org/abs/" + access
+

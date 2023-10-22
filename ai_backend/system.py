@@ -43,7 +43,7 @@ class Summarizer:
             input_data = pd.Series([input_data])
         dataframe = pd.DataFrame(data={"input": input_data})
         if self.tokenize:
-            tqdm.pandas(desc="Tokenizing")
+            tqdm.pandas(desc="(Summarizing) Tokenizing")
             dataframe["token"] = dataframe["input"].progress_apply(Summarizer.tokenize_input)
         else:
             dataframe["token"] = input_data
@@ -55,7 +55,7 @@ class Summarizer:
         def encode(token: list):
             embedding = self.transformer.encode(token, convert_to_numpy=True)
             return embedding
-        tqdm.pandas(desc="Creating Embeds")
+        tqdm.pandas(desc="(Summarizing) Creating Embeds")
         dataframe["embedding"] = dataframe["token"].progress_apply(encode)
         dataframe["embedding_amount"] = dataframe["embedding"].apply(len)
 
@@ -64,7 +64,7 @@ class Summarizer:
             c = util.cos_sim(tensor, tensor).cpu().numpy()
             return c
 
-        tqdm.pandas(desc="Calculating Cosine")
+        tqdm.pandas(desc="(Summarizing) Calculating Cosine")
         dataframe["cosine"] = dataframe["embedding"].progress_apply(cos_sim)
 
         def rank_tokens(cosine_vector: list, token_list: list):
@@ -78,7 +78,7 @@ class Summarizer:
             token_ranking = token_vector[significance_mask]
             return list(token_ranking)
 
-        tqdm.pandas(desc="Ranking Tokens")
+        tqdm.pandas(desc="(Summarizing) Ranking Tokens")
         dataframe["ranking"] = dataframe[["cosine", "token"]].progress_apply(
             lambda x: rank_tokens(x["cosine"], x["token"]),
             axis=1)
@@ -87,48 +87,74 @@ class Summarizer:
 
 
 class Recommender:
-    summarizer: Summarizer
-    transformer: SentenceTransformer
-    mapping: pd.DataFrame
+    ANNOY_INDEX_KEY = "annoy_index"
+    PUB_ID_KEY = "publication_id"
+    SUMMARY_KEY = "summary"
+    VECTOR_KEY = "embed"
+
+    mapping: pd.DataFrame = None
     annoy_database: AnnoyIndex
 
     def __init__(self,
                  summarization: Summarizer,
                  transformer: str | SentenceTransformer = "all-MiniLM-L6-v2",
-                 annoy_mode: Literal["angular", "euclidean", "manhattan", "hamming", "dot"] = "angular",
                  annoy_input_length: int = 384,
-                 token_amount=1,
+                 annoy_mode: Literal["angular", "euclidean", "manhattan", "hamming", "dot"] = "angular",
+                 token_amount: int = 1,
+                 annoy_n_trees: int = 10,
                  debug=False):
         self.debug = debug
+        self.annoy_input_length = annoy_input_length
+        self.annoy_mode = annoy_mode
+        self.token_amount = token_amount
+        self.annoy_n_trees = annoy_n_trees
+
         self.summarizer = summarization
         if isinstance(transformer, str):
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
-        self.token_amount = token_amount
-        self.annoy_database = AnnoyIndex(annoy_input_length, annoy_mode)
+        self.instantiate_annoy()
 
-    def build_annoy(self, dataset: pd.DataFrame, input_key):
-        summarizations = self.summarizer.run(dataset[input_key], amount=self.token_amount)
-        summarization_df = pd.DataFrame()
-        summarization_df["id"] = dataset["id"]
-        summarization_df = add_array_column(summarization_df, "summary", summarizations)
+    def instantiate_annoy(self):
+        self.annoy_database = AnnoyIndex(self.annoy_input_length, self.annoy_mode)
+
+    def add_to_mapping(self, dataset: pd.DataFrame, data_key: str, id_key: str = "id"):
+        summarizations = self.summarizer.run(dataset[data_key], amount=self.token_amount)
+        new_data = pd.DataFrame()
+        new_data[self.PUB_ID_KEY] = dataset[id_key]
+        new_data = add_array_column(new_data, "summary", summarizations)
+        new_data[self.ANNOY_INDEX_KEY] = np.full(len(new_data), -1)
+        new_data = new_data.explode("summary")
+        new_data.reset_index(inplace=True, drop=True)
 
         def encode(token: list):
             embedding = self.transformer.encode(token, convert_to_numpy=True)
             return embedding
-        tqdm.pandas(desc="Creating Embeds")
-        summarization_df["embed"] = summarization_df["summary"].progress_apply(encode)
-        summarization_df.explode("embed")
-        summarization_df.reset_index(inplace=True)
+        tqdm.pandas(desc="(Mapping Annoy) Creating Embeds")
+        new_data[self.VECTOR_KEY] = new_data[self.SUMMARY_KEY].progress_apply(encode)
+        if self.mapping is None:
+            self.mapping = new_data
+        else:
+            self.mapping = pd.concat([self.mapping, new_data], ignore_index=True)
 
-        def add_to_annoy(row: pd.Series):
-            index = row["index"]
-            embed = np.array(row["embed"]).flatten()
+    def build_annoy(self):
+        if self.mapping is None:
+            raise Exception("No mapping data found. Use add_to_mapping first")
+        if self.mapping.empty:
+            raise Exception("No mapping data found (Mapping is empty). Use add_to_mapping first")
+
+        def add_to_annoy(index: int, vector: list):
+            embed = np.array(vector).flatten()
             self.annoy_database.add_item(index, embed)
-        tqdm.pandas(desc="Adding to Annoy")
-        summarization_df[["index", "embed"]].progress_apply(add_to_annoy, axis=1)
-        self.annoy_database.build(n_trees=10)
-        self.mapping = summarization_df
+
+        self.instantiate_annoy()
+        tqdm.pandas(desc="(Building Annoy) Adding to Annoy")
+        self.mapping.drop(columns=self.ANNOY_INDEX_KEY, inplace=True)
+        self.mapping.reset_index(inplace=True, names=self.ANNOY_INDEX_KEY)
+        self.mapping[[self.ANNOY_INDEX_KEY, self.VECTOR_KEY]].progress_apply(
+            lambda row: add_to_annoy(index=row[self.ANNOY_INDEX_KEY], vector=row[self.VECTOR_KEY]),
+            axis=1)
+        self.annoy_database.build(n_trees=self.annoy_n_trees)
 
     def save(self, path="./data/generated_data", model_name="current"):
         path = path + "/" + model_name + "/"
@@ -141,18 +167,52 @@ class Recommender:
         path = path + "/" + model_name + "/"
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")
+        print(self.mapping.info())
 
-    def get_match(self, publication_id: str, amount: int = 1) -> np.ndarray:
-        annoy_index = self.mapping[self.mapping["id"] == publication_id]["index"].tolist()[0]
-        # TODO: Check if nns always include themself first
-        # TODO: Surely there is a better way to this
-        neighbours = self.annoy_database.get_nns_by_item(annoy_index, (amount * self.token_amount)+1)
-        neighbours = neighbours[1:]
-        neighbours = pd.merge(
-            pd.DataFrame(data={"index": neighbours}), self.mapping,
-            how="left", on="index"
+    def get_match_by_token(self, token: str | List[float], amount: int = 1) -> np.ndarray:
+        if isinstance(token, str):
+            token = self.transformer.encode(token, convert_to_numpy=True)
+        neighbours, distances = self.annoy_database.get_nns_by_vector(token, amount, include_distances=True)
+        nns_output = pd.DataFrame(data={
+            self.ANNOY_INDEX_KEY: neighbours,
+            "distance": distances
+        })
+
+        nns_output = pd.merge(
+            nns_output, self.mapping[[self.ANNOY_INDEX_KEY, self.PUB_ID_KEY]],
+            how="left", on=self.ANNOY_INDEX_KEY
         )
-        neighbours = neighbours[neighbours["id"] != publication_id].copy()
-        neighbours = np.unique(neighbours["id"].tolist())
+        nns_output.sort_values(by="distance", ascending=True, inplace=True)
+        neighbours = np.unique(nns_output[self.PUB_ID_KEY].tolist())
+        neighbours = neighbours[0:amount]
+        return neighbours
+
+    def get_match_by_id(self, publication_id: str, amount: int = 1) -> np.ndarray:
+        publication_df = self.mapping[self.mapping[self.PUB_ID_KEY] == publication_id].copy()
+        publication_df = publication_df[publication_df[self.ANNOY_INDEX_KEY] != -1]
+        search_items = publication_df[self.ANNOY_INDEX_KEY].tolist()
+
+        nns_output = None
+        nns_amount = (amount + 1) * self.token_amount  # TODO: Find better way
+        for item in search_items:
+            neighbours, distances = self.annoy_database.get_nns_by_item(item, nns_amount, include_distances=True)
+            if nns_output is None:
+                nns_output = pd.DataFrame(data={
+                    self.ANNOY_INDEX_KEY: neighbours,
+                    "distance": distances
+                })
+            else:
+                nns_output = pd.concat([nns_output, pd.DataFrame(data={
+                    self.ANNOY_INDEX_KEY: neighbours,
+                    "distance": distances
+                })], ignore_index=True)
+
+        nns_output = pd.merge(
+            nns_output, self.mapping[[self.ANNOY_INDEX_KEY, self.PUB_ID_KEY]],
+            how="left", on=self.ANNOY_INDEX_KEY
+        )
+        nns_output = nns_output[nns_output[self.PUB_ID_KEY] != publication_id].copy()
+        nns_output.sort_values(by="distance", ascending=True, inplace=True)
+        neighbours = np.unique(nns_output[self.PUB_ID_KEY].tolist())
         neighbours = neighbours[0:amount]
         return neighbours
