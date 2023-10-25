@@ -7,24 +7,23 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mongo
+      - postgres
     stdin_open: true
     tty: true
     working_dir: /usr/src/app
     networks:
       - network
 
-  mongo:
-    image: mongo:7.0.2
-    volumes:
-      - ./mongo:/data/db
-    restart: always
+  postgres:
+    image: postgres:16.0-alpine3.18
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
     ports:
-        - "27017:27017"
+      - "${DB_HOST_PORT}:${DB_PORT}"
     networks:
       - network
 
