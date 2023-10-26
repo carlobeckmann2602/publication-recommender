@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 from ai_backend.util import *
-from system import *
+from system import Recommender, Summarizer
 from prettytable import PrettyTable
 
 
@@ -14,9 +14,9 @@ def filter_short_texts(key) -> pd.DataFrame:
 
 
 def build_and_save():
-    recommender_system.add_to_mapping(dataset=data, data_key="article_text", id_key="id")
+    recommender_system.add_to_mapping(dataset=data, data_key="article_text", id_key="article_id")
     recommender_system.build_annoy()
-    recommender_system.save(model_name="arxiv_6k-v1")
+    recommender_system.save(model_name="arxiv_6k-v2")
 
 
 def sample_test():
@@ -62,11 +62,12 @@ def sample_test():
 if __name__ == '__main__':
     data: pd.DataFrame = pd.read_pickle("./data/datasets/arxiv_full/test_id.pkl")
     print(data.info())
+    print(data.sample().iloc[0]["article_id"])
     summy = Summarizer(transformer="all-mpnet-base-v2", debug=True, tokenize=False)
     recommender_system = Recommender(summy,
                                      transformer="all-mpnet-base-v2",
                                      token_amount=5,
                                      annoy_input_length=768,
                                      annoy_n_trees=100)
-#    build_and_save()
-    sample_test()
+    build_and_save()
+#    sample_test()

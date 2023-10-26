@@ -5,9 +5,9 @@ import os
 import pandas as pd
 import numpy as np
 import torch
-from util import *
+from .util import *
 from sentence_transformers import SentenceTransformer, util
-from LexRank import degree_centrality_scores
+from .LexRank import degree_centrality_scores
 from annoy import AnnoyIndex
 from typing import Literal, List
 from tqdm.auto import tqdm
@@ -167,27 +167,31 @@ class Recommender:
         path = path + "/" + model_name + "/"
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")
-        print(self.mapping.info())
 
-    def get_match_by_token(self, token: str | List[float], amount: int = 1) -> np.ndarray:
+    def get_match_by_token(self, token: str | List[float], amount: int = 1) -> pd.DataFrame:
+        original_token = token
         if isinstance(token, str):
             token = self.transformer.encode(token, convert_to_numpy=True)
-        neighbours, distances = self.annoy_database.get_nns_by_vector(token, amount, include_distances=True)
+
+        nns_amount = amount * self.token_amount
+        neighbours, distances = self.annoy_database.get_nns_by_vector(token, nns_amount, include_distances=True)
         nns_output = pd.DataFrame(data={
             self.ANNOY_INDEX_KEY: neighbours,
-            "distance": distances
+            "distance": distances,
+            "input_token": np.full(len(neighbours), original_token)
         })
 
         nns_output = pd.merge(
-            nns_output, self.mapping[[self.ANNOY_INDEX_KEY, self.PUB_ID_KEY]],
+            nns_output, self.mapping[[self.ANNOY_INDEX_KEY, self.PUB_ID_KEY, self.SUMMARY_KEY]],
             how="left", on=self.ANNOY_INDEX_KEY
         )
+        nns_output.rename(inplace=True, columns={self.SUMMARY_KEY: "matching_token"})
         nns_output.sort_values(by="distance", ascending=True, inplace=True)
-        neighbours = np.unique(nns_output[self.PUB_ID_KEY].tolist())
-        neighbours = neighbours[0:amount]
-        return neighbours
+        nns_output.drop_duplicates(subset=self.PUB_ID_KEY, keep="first", inplace=True)
 
-    def get_match_by_id(self, publication_id: str, amount: int = 1) -> np.ndarray:
+        return nns_output.iloc[0:amount].reset_index(drop=True)
+
+    def get_match_by_id(self, publication_id: str, amount: int = 1) -> pd.DataFrame:
         publication_df = self.mapping[self.mapping[self.PUB_ID_KEY] == publication_id].copy()
         publication_df = publication_df[publication_df[self.ANNOY_INDEX_KEY] != -1]
         search_items = publication_df[self.ANNOY_INDEX_KEY].tolist()
@@ -195,24 +199,27 @@ class Recommender:
         nns_output = None
         nns_amount = (amount + 1) * self.token_amount  # TODO: Find better way
         for item in search_items:
+            input_token = publication_df[publication_df[self.ANNOY_INDEX_KEY] == item][self.SUMMARY_KEY].tolist()[0]
             neighbours, distances = self.annoy_database.get_nns_by_item(item, nns_amount, include_distances=True)
             if nns_output is None:
                 nns_output = pd.DataFrame(data={
                     self.ANNOY_INDEX_KEY: neighbours,
-                    "distance": distances
+                    "distance": distances,
+                    "input_token": np.full(len(neighbours), input_token)
                 })
             else:
                 nns_output = pd.concat([nns_output, pd.DataFrame(data={
                     self.ANNOY_INDEX_KEY: neighbours,
-                    "distance": distances
+                    "distance": distances,
+                    "input_token": np.full(len(neighbours), input_token)
                 })], ignore_index=True)
 
         nns_output = pd.merge(
-            nns_output, self.mapping[[self.ANNOY_INDEX_KEY, self.PUB_ID_KEY]],
+            nns_output, self.mapping[[self.ANNOY_INDEX_KEY, self.PUB_ID_KEY, self.SUMMARY_KEY]],
             how="left", on=self.ANNOY_INDEX_KEY
         )
+        nns_output.rename(inplace=True, columns={self.SUMMARY_KEY: "matching_token"})
         nns_output = nns_output[nns_output[self.PUB_ID_KEY] != publication_id].copy()
         nns_output.sort_values(by="distance", ascending=True, inplace=True)
-        neighbours = np.unique(nns_output[self.PUB_ID_KEY].tolist())
-        neighbours = neighbours[0:amount]
-        return neighbours
+        nns_output.drop_duplicates(subset=self.PUB_ID_KEY, keep="first", inplace=True)
+        return nns_output.iloc[0:amount].reset_index(drop=True)

@@ -8,3 +8,4 @@ torch~=2.1.0
 annoy~=1.17.3
 tqdm~=4.66.1
 prettytable~=3.9.0
+fastapi~=0.104.0
