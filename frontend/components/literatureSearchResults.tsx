@@ -17,5 +17,9 @@ export default async function LiteratureSearchResults({
     variables: { query: query },
   });
 
-  return <ApolloWrapper>{JSON.stringify(data.data.characters?.results, undefined, 2)}</ApolloWrapper>;
+  return (
+    <ApolloWrapper>
+      {JSON.stringify(data.data.characters?.results, undefined, 2)}
+    </ApolloWrapper>
+  );
 }

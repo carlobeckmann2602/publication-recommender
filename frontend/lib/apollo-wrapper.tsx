@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
 
 function makeClient() {
   const httpLink = new HttpLink({
-    uri: "https://rickandmortyapi.com/graphql",
+    uri: process.env.BACKEND_GRAPHQL_ENDPOINT,
   });
 
   return new NextSSRApolloClient({
