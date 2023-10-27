@@ -2,7 +2,13 @@
 
 ## Starting the Project
 
+1. run 
 
+```bash 
+npm install
+ ```
+
+in ./frontend and ./backend
 
 ### Dev Mode
 
