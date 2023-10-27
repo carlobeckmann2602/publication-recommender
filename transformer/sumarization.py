@@ -502,26 +502,26 @@ tensorflow/tensor2tensor.
 Acknowledgements We are grateful to Nal Kalchbrenner and Stephan Gouws for their fruitful
 comments, corrections and inspiration.
 """
-#Split the document into sentences
-sentences = nltk.sent_tokenize(document)
-print(sentences[2])
-exit()
-print("Num sentences:", len(sentences))
+# Split the document into sentences
+if __name__ == '__main__':
+    sentences = nltk.sent_tokenize(document)
+    print(np.array(sentences).shape)
+#    exit()
+    print("Num sentences:", len(sentences))
 
-#Compute the sentence embeddings
-embeddings = model.encode(sentences, convert_to_tensor=True)
+    # Compute the sentence embeddings
+    embeddings = model.encode(sentences, convert_to_tensor=True)
 
-#Compute the pair-wise cosine similarities
-cos_scores = util.cos_sim(embeddings, embeddings).cpu().numpy()
+    # Compute the pair-wise cosine similarities
+    cos_scores = util.cos_sim(embeddings, embeddings).cpu().numpy()
 
-#Compute the centrality for each sentence
-centrality_scores = degree_centrality_scores(cos_scores, threshold=None)
+    # Compute the centrality for each sentence
+    centrality_scores = degree_centrality_scores(cos_scores, threshold=None)
 
-#We argsort so that the first element is the sentence with the highest score
-most_central_sentence_indices = np.argsort(-centrality_scores)
+    # We argsort so that the first element is the sentence with the highest score
+    most_central_sentence_indices = np.argsort(-centrality_scores)
 
-
-#Print the 5 sentences with the highest scores
-print("\n\nSummary:")
-for idx in most_central_sentence_indices[0:10]:
-    print("-", sentences[idx].strip())
+    # Print the 5 sentences with the highest scores
+    print("\n\nSummary:")
+    for idx in most_central_sentence_indices[0:10]:
+        print("-", sentences[idx].strip())
