@@ -5,10 +5,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     volumes:
-      - ./backend:/usr/src/app
-      - ignore:/usr/src/app/node_modules
+      - ./backend:/usr/src/app/backend
+      - ignore_backend:/usr/src/app/backend/node_modules
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - postgres
     stdin_open: true
@@ -25,5 +25,20 @@ services:
     ports:
       - "${DB_HOST_PORT}:${DB_PORT}"
 
+  next:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/usr/src/app/frontend
+      - ignore_frontend:/usr/src/app/frontend/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    stdin_open: true
+    tty: true
+
 volumes:
-  ignore:
+  ignore_backend:
+  ignore_frontend:

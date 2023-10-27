@@ -1,5 +1,5 @@
 import LiteratureSearchResults from "@/components/literatureSearchResults";
-import { Searchbar } from "@/components/searchbar";
+import { Searchbar } from "@/components/Searchbar";
 import { Suspense } from "react";
 
 interface SearchParams {

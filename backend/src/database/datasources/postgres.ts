@@ -3,7 +3,8 @@ import { SeederOptions } from 'typeorm-extension';
 import { EnvironmentReader } from 'safe-env-vars';
 import { Publications1698190282922 } from '../seeders/1698190282922-publications';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
-const env = new EnvironmentReader();
+const env = new EnvironmentReader({ dotEnvPath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.prod' });
+console.log(process.env.NODE_ENV === 'dev' ? 0 : 1);
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
