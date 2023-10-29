@@ -1,2 +1,8 @@
+# General
 __pycache__
-.idea
+**/.idea
+./venv
+
+# AI Backend
+ai_backend/data/datasets/*
+ai_backend/data/generated_data/*
