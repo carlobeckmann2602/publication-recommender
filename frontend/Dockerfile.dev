@@ -1,6 +1,6 @@
 FROM node:18-alpine3.17
 WORKDIR /usr/src/app/frontend
+EXPOSE 3000
 COPY package.json package-lock.json ./
 RUN npm install
-EXPOSE 3000
-CMD ["/bin/sh","-c","npm run dev"]
+CMD ["/bin/sh","-c","npm run codegen && npm run dev"]
