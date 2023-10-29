@@ -3,4 +3,4 @@ WORKDIR /usr/src/app/frontend
 COPY package.json package-lock.json ./
 RUN npm install
 EXPOSE 3000
-CMD ["npm","run", "dev"]
+CMD ["/bin/sh","-c","npm run dev"]

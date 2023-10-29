@@ -1,11 +1,6 @@
 query GetSearchResults($query: String) {
-  characters(filter: { name: $query }) {
-    info {
-      pages
-    }
-    results {
-      name
-      gender
-    }
+  publications(filter: { title: $query }) {
+    title,
+    publisher
   }
 }

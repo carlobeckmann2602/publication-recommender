@@ -18,6 +18,6 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_DATABASE}
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - backend_db:/var/lib/postgresql/data
     ports:
       - "${DB_HOST_PORT}:${DB_PORT}"

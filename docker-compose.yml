@@ -21,7 +21,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_DATABASE}
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - backend_database:/var/lib/postgresql/data
     ports:
       - "${DB_HOST_PORT}:${DB_PORT}"
 
@@ -36,9 +36,16 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
+      - nest
     stdin_open: true
     tty: true
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
 volumes:
   ignore_backend:
   ignore_frontend:
+  backend_database:

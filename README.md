@@ -17,7 +17,6 @@ in ./frontend and ./backend
 
 ```bash
 docker compose --env-file ./backend/.env.dev  up --build
-
 ```
 
 ### Prodduction Mode

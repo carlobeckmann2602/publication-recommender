@@ -1,8 +1,11 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./.env"})
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "https://rickandmortyapi.com/graphql",
+  schema: process.env.BACKEND_GRAPHQL_ENDPOINT,
   documents: ["graphql/**/*.{gql, graphql}"],
   generates: {
     "graphql/types.generated.ts": { plugins: ["typescript"] },
