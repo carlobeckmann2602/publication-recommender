@@ -1,8 +1,7 @@
-import numpy as np
 import pandas as pd
-import torch
-from ai_backend.util import *
-from system import Recommender, Summarizer
+import re
+from app.util.misc import get_arxiv_url
+from app.engine import Recommender, Summarizer
 from prettytable import PrettyTable
 
 
@@ -23,7 +22,7 @@ def sample_test():
     title_key = "article_id"
     text_key = "abstract_text"
     id_key = "id"
-    recommender_system.load(model_name="arxiv_6k-v1")
+    recommender_system.load(model_name="arxiv_6k-v2")
 
     def subject(arxiv_id):
         match = re.match(r"([a-z-]+)([0-9]+)", arxiv_id, re.I)
@@ -36,7 +35,6 @@ def sample_test():
     temp_data = data.copy()
     temp_data["subject"] = temp_data["article_id"].apply(subject)
     temp_data = temp_data[temp_data["subject"] == "cs"]
-    print(len(temp_data))
 
     chosen_publication = temp_data.sample().iloc[0]
     table = PrettyTable()
@@ -47,9 +45,9 @@ def sample_test():
                    chosen_publication[text_key]]
     table.add_row(initial_row)
 
-    recommendations = recommender_system.get_match_by_id(chosen_publication["id"], amount=5)
-    for index, current_recommendation in enumerate(recommendations):
-        publication = data[data[id_key] == current_recommendation].iloc[0]
+    recommendations = recommender_system.get_match_by_id(chosen_publication["article_id"], amount=5)
+    for index, current_recommendation in recommendations.iterrows():
+        publication = data[data[title_key] == current_recommendation["publication_id"]].iloc[0]
         current_row = ["Top " + str(index+1),
                        publication[id_key],
                        get_arxiv_url(publication[title_key]),
@@ -69,5 +67,6 @@ if __name__ == '__main__':
                                      token_amount=5,
                                      annoy_input_length=768,
                                      annoy_n_trees=100)
-    build_and_save()
-#    sample_test()
+#    build_and_save()
+    sample_test()
+

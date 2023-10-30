@@ -1,17 +1,14 @@
-import time
-
 import nltk
 import os
 import pandas as pd
 import numpy as np
 import torch
-from .util import *
+from .util.misc import add_array_column
 from sentence_transformers import SentenceTransformer, util
-from .LexRank import degree_centrality_scores
+from .util.LexRank import degree_centrality_scores
 from annoy import AnnoyIndex
 from typing import Literal, List
 from tqdm.auto import tqdm
-# More models: https://www.sbert.net/docs/pretrained_models.html
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
