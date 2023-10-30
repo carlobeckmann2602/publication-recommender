@@ -1,9 +1,9 @@
+import { EnvironmentReader } from 'safe-env-vars';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
-import { EnvironmentReader } from 'safe-env-vars';
-import { Publications1698190282922 } from '../seeders/1698190282922-publications';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
-const env = new EnvironmentReader({ dotEnvPath: '.env.dev'});
+import { Publications1698190282922 } from '../seeders/1698190282922-publications';
+const env = new EnvironmentReader({ dotEnvPath: '.env.dev' });
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',

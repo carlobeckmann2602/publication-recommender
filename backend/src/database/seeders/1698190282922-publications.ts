@@ -1,8 +1,8 @@
+import { faker } from '@faker-js/faker';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import { Publication } from '../../modules/core/publication/entities/publication.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { faker } from '@faker-js/faker';
+import { Publication } from '../../modules/core/publication/entities/publication.entity';
 
 export class Publications1698190282922 implements Seeder {
   track = false;
