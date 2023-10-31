@@ -1,0 +1,6 @@
+query GetSearchResults($query: String) {
+  publications(filter: { title: $query }) {
+    title,
+    publisher
+  }
+}
