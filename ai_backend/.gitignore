@@ -1,0 +1,3 @@
+# AI Backend
+ai_backend/data/datasets/*
+ai_backend/data/generated_data/*

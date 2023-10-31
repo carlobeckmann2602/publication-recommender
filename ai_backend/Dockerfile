@@ -2,9 +2,9 @@ FROM python:3.10
 
 WORKDIR /code
 
-COPY ./requirements.txt /code/requirements.txt
-
 RUN pip install --no-cache-dir --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+COPY ./requirements.txt /code/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 

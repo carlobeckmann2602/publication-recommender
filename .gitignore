@@ -1,8 +1,5 @@
 # General
-__pycache__
+**/__pycache__
 **/.idea
 **/venv
-
-# AI Backend
-ai_backend/data/datasets/*
-ai_backend/data/generated_data/*
+**/.vscode
