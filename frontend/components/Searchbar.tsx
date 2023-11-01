@@ -29,13 +29,11 @@ export function Searchbar() {
     },
   });
 
-  const [query, setQuery] = useState("");
-
   const router = useRouter();
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(query);
-    router.push(`/search?q=${query}`);
+    console.log(data.query);
+    router.push(`/search?q=${data.query}`);
   }
 
   return (
@@ -47,12 +45,7 @@ export function Searchbar() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Search Term"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
+                <Input type="text" placeholder="Search Term" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
