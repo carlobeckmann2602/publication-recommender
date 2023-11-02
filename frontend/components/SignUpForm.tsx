@@ -16,7 +16,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const FormSchema = z
   .object({
@@ -54,6 +57,14 @@ export function SignUpForm() {
   });
 
   const router = useRouter();
+  const [showPassword, setPasswordVisibility] = useState(false);
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility(!showPassword);
+  };
+  const [showConfirmPassword, setConfirmPasswordVisibility] = useState(false);
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisibility(!showConfirmPassword);
+  };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
@@ -108,7 +119,26 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="*****" {...field} type="password" />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    {...field}
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                    {showPassword ? (
+                      <EyeSlashIcon
+                        className="h-6 w-6"
+                        onClick={togglePasswordVisibility}
+                      />
+                    ) : (
+                      <EyeIcon
+                        className="h-6 w-6"
+                        onClick={togglePasswordVisibility}
+                      />
+                    )}
+                  </div>
+                </div>
               </FormControl>
               <FormDescription>Your Password to login.</FormDescription>
               <FormMessage />
@@ -122,7 +152,26 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input placeholder="*****" {...field} type="password" />
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    {...field}
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                    {showConfirmPassword ? (
+                      <EyeSlashIcon
+                        className="h-6 w-6"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    ) : (
+                      <EyeIcon
+                        className="h-6 w-6"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    )}
+                  </div>
+                </div>
               </FormControl>
               <FormDescription>
                 Please reenter your password here.
