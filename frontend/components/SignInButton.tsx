@@ -1,8 +1,8 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 function SignInButton() {
   const { data: session } = useSession();
@@ -12,20 +12,15 @@ function SignInButton() {
     return (
       <div className="flex gap-4 p-8 items-center">
         <p className="text-black">{session.user.name}</p>
-        <Link
-          href={"/api/auth/signout"}
-          className={buttonVariants({ variant: "secondary" })}
-        >
+        <Button variant="secondary" onClick={() => signOut()}>
           Sign Out
-        </Link>
+        </Button>
       </div>
     );
 
   return (
     <div className="flex gap-4 p-8 items-center">
-      <Link href={"/api/auth/signin"} className={buttonVariants()}>
-        Sign In
-      </Link>
+      <Button onClick={() => signIn()}>Sign In</Button>
       <Link
         href={"/signup"}
         className={buttonVariants({ variant: "secondary" })}

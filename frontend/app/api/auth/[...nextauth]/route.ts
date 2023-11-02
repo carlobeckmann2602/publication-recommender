@@ -75,10 +75,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
+  pages: {
+    signIn: "/signin",
+    signOut: "/signout",
+  },
+
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
-        console.log(profile?.email);
         account.access_token = "GoogleJWTToken";
         account.refresh_token = "GoogleJWTRefreshToken";
         //account.expires_at = 1200000000;
@@ -109,12 +113,7 @@ export const authOptions: NextAuthOptions = {
       return true; // Do different verification for other providers that don't have `email_verified`
     },
     async jwt({ token, user, account }) {
-      console.log("JWT Token");
-      console.log(token);
-
       if (account?.provider === "google") {
-        console.log("JWT Account");
-        console.log(account);
         token.token = {
           jwtToken: account.access_token,
           jwtRefreshToken: account.refresh_token,
@@ -130,8 +129,6 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (user) {
-        console.log("JWT User");
-        console.log(user);
         return { ...token, ...user };
       }
 
