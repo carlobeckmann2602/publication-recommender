@@ -1,27 +1,17 @@
 "use client"
 import React from "react";
-import Link from 'next/link';
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import { MainNav } from "./MainNav"
+import { UserNav } from "./UserNav"
 
 export function Navbar(){
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-        <NavigationMenuLink href="/">
-            Home
-          </NavigationMenuLink>
-          <NavigationMenuLink href="/profile">
-            Profil
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+    <div className="border-b">
+      <div className="flex h-16 items-center px-4">
+        <MainNav className="mx-6" />
+        <div className="ml-auto flex items-center space-x-4">
+          <UserNav />
+        </div>
+      </div>
+    </div>
   )
 }
