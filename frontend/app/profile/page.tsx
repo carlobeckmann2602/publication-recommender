@@ -1,3 +1,9 @@
+import { Header } from "@/components/Header"
+
 export default function Profile() {
-  return <h1>Profil</h1>;
+  return (
+    <div>
+      <Header title="Profil" subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit"/>
+    </div>
+  );
 }
