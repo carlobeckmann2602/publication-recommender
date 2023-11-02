@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 async function refreshToken(token: JWT): Promise<JWT> {
   /*const res = await fetch(Backend_URL + "/auth/refresh", {
@@ -43,7 +44,12 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.username || !credentials?.password) return null;
         const { username, password } = credentials;
 
-        const user = { id: "1", name: "J Smith", email: credentials?.username };
+        const user = {
+          id: "1",
+          name: "J Smith",
+          email: credentials?.username,
+          image: "imageURL",
+        };
         // accessing the jwt returned by server
         const token = {
           jwtToken: "parsedResponse.access_token",
@@ -63,18 +69,85 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) return { ...token, ...user };
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google") {
+        console.log(profile?.email);
+        account.access_token = "GoogleJWTToken";
+        account.refresh_token = "GoogleJWTRefreshToken";
+        //account.expires_at = 1200000000;
+        //TODO! Check if mail exists in Backend if not sign user up
+        /*
+        const response = await axios.post(
+        "http://localhost:9000/v1/auth/userExists",
+        { email: profile.email }
+        );
+        if (response && response.data?.value === true) {        
+            return true;
+        } else {
+          const data = {
+            firstName: profile.given_name,
+            lastName: profile.family_name,
+            email: profile.email,
+            profileUrl: profile.picture,
+          };
+          const response = await axios.post(
+            "http://localhost:9000/v1/auth/signup",
+            data
+          );
+          return true;
+        }
+        */
+        return true;
+      }
+      return true; // Do different verification for other providers that don't have `email_verified`
+    },
+    async jwt({ token, user, account }) {
+      console.log("JWT Token");
+      console.log(token);
 
-      if (new Date().getTime() < token.token.jwtExpiresIn) return token;
+      if (account?.provider === "google") {
+        console.log("JWT Account");
+        console.log(account);
+        token.token = {
+          jwtToken: account.access_token,
+          jwtRefreshToken: account.refresh_token,
+          //jwtExpiresIn: account.expires_at,
+        };
+        if (user.name && user.email)
+          token.user = {
+            id: user.id as unknown as number,
+            name: user.name,
+            email: user.email,
+            image: user.image as string,
+          };
+      }
 
-      return await refreshToken(token);
+      if (user) {
+        console.log("JWT User");
+        console.log(user);
+        return { ...token, ...user };
+      }
+
+      return token;
+
+      /*
+      if (
+        token.token.jwtExpiresIn &&
+        new Date().getTime() < token.token.jwtExpiresIn
+      )
+        return token;
+
+      return await refreshToken(token);*/
     },
 
-    async session({ token, session }) {
+    async session({ token, session, user }) {
       session.user = token.user;
       session.token = token.token;
 

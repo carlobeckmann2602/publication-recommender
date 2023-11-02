@@ -6,10 +6,11 @@ declare module "next-auth" {
       id: number;
       name: string;
       email: string;
+      image: string;
     };
     token: {
-      jwtToken: string;
-      jwtRefreshToken: string;
+      jwtToken: string | undefined;
+      jwtRefreshToken: string | undefined;
     };
   }
 }
@@ -22,11 +23,12 @@ declare module "next-auth/jwt" {
       id: number;
       name: string;
       email: string;
+      image: string;
     };
     token: {
-      jwtToken: string;
-      jwtRefreshToken: string;
-      jwtExpiresIn: number;
+      jwtToken: string | undefined;
+      jwtRefreshToken: string | undefined;
+      //jwtExpiresIn: number | undefined;
     };
   }
 }
