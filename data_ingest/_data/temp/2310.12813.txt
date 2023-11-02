@@ -1,0 +1,1566 @@
+Probing modified gravitational-wave propagation with extreme mass-ratio inspirals
+Chang Liu,1, 2, 3Danny Laghi,3and Nicola Tamanini3
+1Department of Astronomy, School of Physics, Peking University, Beijing 100871, China
+2Kavli Institute for Astronomy and Astrophysics, Peking University, Beijing 100871, China
+3Laboratoire des 2 Infinis - Toulouse (L2IT-IN2P3), Universit ´e de Toulouse, CNRS, UPS, F-31062 Toulouse Cedex 9, France
+Extreme mass-ratio inspirals (EMRIs), namely binary systems composed of a massive black hole and a
+compact stellar-mass object, are anticipated to be among the gravitational wave (GW) sources detected by the
+Laser Interferometer Space Antenna (LISA). Similarly to compact binary mergers detected by current GW
+detectors, EMRIs can be used as cosmic rulers to probe the expansion of the Universe. Motivated by tensions
+in current cosmological observations as well as by alternative models of dark energy, modified gravity theories
+can affect the propagation of GWs across cosmological distances, with modifications commonly parametrised in
+terms of two phenomenological parameters, Ξ0and𝑛. In this work we adopt a Bayesian approach to constrain
+for the first time parametrised deviations from General Relativity using the loudest simulated EMRIs detected
+by LISA as dark sirens with a simulated galaxy catalog. Assuming all the cosmological parameters except Ξ0
+are already tightly constrained, our forecasts show that Ξ0can be constrained to a few percent level (90% C.I.)
+with 4 years of LISA observations, unless EMRI detection rates turn out to be closer to current pessimistic
+expectations. These results quickly degrade if additional cosmological parameters are inferred simultaneously,
+but become more robust with an extended LISA observation period of 10 years. Overall, we find that EMRIs
+with LISA are better at constraining modified GW propagation than current second-generation ground-based
+GW detectors, but they will only be comparable to third-generation detectors in the most optimistic scenarios.
+I. INTRODUCTION
+Probing the expansion history of our Universe is crucial for
+testing both general relativity (GR) at large scales and alter-
+natives toΛCDM, our current standard cosmological model
+describing the evolution of the Universe. Although ΛCDM de-
+scribes very well all the cosmological observations collected so
+far, growing statistical tensions between measurements taken
+with different astronomical datasets may constitute a signal
+for new physics, possibly beyond GR (see e.g. [1] for a recent
+review). Furthermore, the elusive nature of dark energy, the
+cosmological entity evoked to explain the observed cosmic
+acceleration, calls for alternative proposals beyond the simple
+cosmological constant Λprescribed by ΛCDM [2].
+Gravitational waves (GWs) from compact binary coales-
+cences provide a unique way to measure the luminosity dis-
+tance to the source with high precision. If complementary
+redshift information can be retrieved, compact binaries can be
+accurate tracers of the cosmic expansion [3, 4]. This has been
+clearly demonstrated in several recent works, using different
+approaches to retrieve redshift information [5–12].
+Extreme mass-ratio inspirals (EMRIs) are systems consist-
+ing of a stellar-mass compact object orbiting around a massive
+black hole with mass in the range 𝑀∈[104,107]𝑀⊙, so that
+they are characterised by a small mass-ratio 𝑞=𝑀2/𝑀1∈
+[10−6,10−3][13]. These systems are one of the target GW
+sources that will be detected by the Laser Interferometer Space
+Antenna (LISA) [14, 15] and, if used as dark sirens, i.e. by
+employing complementary redshift information collected by
+cross-correlating sky-localisation with with galaxy catalogs,
+they have the potential to place stringent constraints on cos-
+mological parameters within the framework of GR [16, 17] and
+complement other LISA cosmological measurements [18–25].
+GWs can be used to study general extensions of gravity that
+differ from GR on cosmological scales, a possibility that could
+help explain (some of) the cosmological tensions as well as theorigin of dark energy [26–30]. Modified gravity theories can
+produce deviations at the level of cosmological perturbations,
+giving rise to modifications in the tensor perturbations which
+can affect the luminosity distance measured by standard sirens
+at cosmological distances [29, 31–33]. One possible general
+way of describing these deviations from GR, which mainly
+originate from an additional damping of the GW amplitude,
+is by introducing two phenomenological parameters ( Ξ0,𝑛) in
+the luminosity distance-redshift relation [29, 33–35].
+Recent measurements on Ξ0from the GW data of GWTC-3
+binary black holes [36], the latest catalog of GW detections by
+the LIGO-Virgo-KAGRA (LVK) Collaboration, yield order
+one constraints at the 90% confidence intervals (CIs) level
+[37, 38], over an expected GR value of Ξ0=1. Bright siren
+constraints on Ξ0from GW170817, the only multi-messenger
+binary neutron star merger detected by the LVK Collaboration
+so far, are at least one order of magnitude worse [33, 39].
+In this work, we explore LISA capability to constrain pos-
+sible deviations from GR at cosmological distances for 3 dif-
+ferent EMRI populations, 2 EMRI waveforms, and 2 different
+mission durations. In particular, we study the constraints on
+modified GW propagation effect and provide limits on cos-
+mological parameters Ω={ℎ,Ω𝑀,Ξ0, 𝑛}. The constraints
+onΞ0range from 1.3% in the most optimistic scenario (M6,
+10yrs, AKK) to no constraint in the most pessimistic scenario
+(M5, 4yrs, AKS). We also report updated EMRI forecasts for
+theΛCDM model.
+The paper is organised as follows. In Sec. II we introduce
+the (Ξ0,𝑛) parametrisation to describe deviation from GR in
+the cosmological propagation of GWs. In Sec. III we outline
+our simulated EMRI observations and Bayesian methodology
+employed to constrain cosmological parameters. In Sec. IV we
+present our results under different assumptions for the EMRI
+population, the waveform model, and the LISA observation
+time period. Finally, we compare our results with current
+literature and draw our conclusions in Sec. V.arXiv:2310.12813v1  [astro-ph.CO]  19 Oct 20232
+II. MODIFIED GW PROPAGATION
+In extensions of the ΛCDM model which generate a dy-
+namical dark energy (DE) sector, the luminosity distance to
+standard sirens is:
+𝑑𝐿=𝑐
+𝐻0(1+𝑧)∫𝑧
+0𝑑˜𝑧√︁
+Ω𝑀(1+˜𝑧)3+𝜌DE(˜𝑧)/𝜌0,(1)
+where𝐻0is the value of the Hubble constant today, Ω𝑀is
+the present fraction of matter energy density, 𝜌DEis the DE
+energy density, 𝜌0is the critical energy density defined as 𝜌0=
+3𝐻2
+0/(8𝜋𝐺), and𝑐is the speed of light. In ΛCDM, dark energy
+is nothing but the cosmological constant Λ, meaning𝜌DE/𝜌0=
+ΩΛ=1−Ω𝑀(assuming flatness), where the constant ΩΛis
+the present fraction of vacuum energy density.
+In modified gravity theories, both the cosmological back-
+ground evolution and the dynamics of cosmological pertur-
+bations can deviate from what the standard ΛCDM model
+predicts. The modification to the background evolution is usu-
+ally recast in a (dynamical) change of the dark energy equation
+of state, providing a non-constant 𝜌DE(𝑧). At the perturbation
+level instead, both scalar perturbations, which affect the prop-
+agation of photons and the evolution of large-scale structures,
+and tensor perturbations, which correspond to GWs propagat-
+ing through cosmological distances, are modified by beyond-
+ΛCDM corrections. Under very general conditions, in most
+modified gravity scenarios, GW propagation through a homo-
+geneous and isotropic universe obeys the following equation
+of motion [31, 32]:
+˜ℎ′′
+𝐴+2H[1−𝛿(𝜂)]˜ℎ′
+𝐴+𝑐2
+GW𝑘2˜ℎ𝐴=0, (2)
+where ˜ℎ𝐴(𝜂,𝑘)is the Fourier transformed GW amplitude and
+𝐴denotes the polarization mode +or×,H=𝑎′/𝑎is the
+conformal Hubble parameter, while the prime′denotes dif-
+ferentiation with respect to the conformal time 𝜂. Here the
+function𝛿(𝜂)modifies the friction term, changing how the
+GW amplitude dampens across cosmological distances with
+respect to GR (where 𝛿(𝜂)=0). In the third term, the coeffi-
+cient𝑐GWis the speed of propagation of GWs [40], which in
+GR equals the speed of light: 𝑐GW=𝑐. This parameter has
+already been constrained at the level1−𝑐GW
+𝑐≤3×10−15in
+the LIGO-Virgo frequency band ( ∼kHz) by the joint observa-
+tion of GW170817 and GRB170817A [41] and could be tested
+also in the LISA frequency band [42]. In what follows we will
+therefore assume 𝑐GW=𝑐.
+In this study we will assume that DE is represented by the
+cosmological constant and focus on the friction term: when
+𝛿(𝜂)≠0, the luminosity distance extracted from GW obser-
+vations𝑑GW
+𝐿deviates from the standard luminosity distance
+𝑑EM
+𝐿measured by electromagnetic (EM) observations, which
+is given by Eq. (1) with 𝜌DE/𝜌0=ΩΛ. The relation between
+𝑑GW
+𝐿and𝑑EM
+𝐿can be expressed as:
+𝑑GW
+𝐿(𝑧)=𝑑EM
+𝐿(𝑧)exp
+−∫𝑧
+0𝑑𝑧′
+1+𝑧′𝛿(𝑧′)
+. (3)
+Therefore we see that GWs can test modified theories of grav-
+ity through the function 𝛿(𝑧). For most modified gravitytheories, it is usually difficult to reconstruct a full relation
+between redshift and 𝛿(𝑧)from the data. Nevertheless a con-
+venient phenomenological two-parameter parametrization has
+been proposed in the literature [29]:
+𝑑GW
+𝐿(𝑧)
+𝑑EM
+𝐿(𝑧)=Ξ 0+1−Ξ0
+(1+𝑧)𝑛, (4)
+whereΞ0and𝑛are the only two beyond- ΛCDM parameters
+of the model. The ratio 𝑑GW
+𝐿(𝑧)/𝑑EM
+𝐿(𝑧) → 1 as𝑧→0,
+as we expect no deviations in the local Universe, while
+𝑑GW
+𝐿(𝑧)/𝑑EM
+𝐿(𝑧)→Ξ0as𝑧→∞ , since the main hypothesis
+behind most theories assumes that GW deviations should pre-
+dominantly affect the recent cosmological epoch, thus at large
+𝑧,𝛿(𝑧)→ 0, and from Eq. (3) the ratio 𝑑GW
+𝐿(𝑧)/𝑑EM
+𝐿(𝑧)should
+deviate from unity and tend to a constant value as redshift in-
+creases.Ξ0is a more important parameter to be constrained,
+as it determines by how much the ratio 𝑑GW
+𝐿(𝑧)/𝑑EM
+𝐿(𝑧)devi-
+ates from 1 at high redshift. The parameter 𝑛instead controls
+how fast this ratio changes from 1 at 𝑧=0 toΞ0at𝑧=∞.
+Assuming a transition happens rapidly at late-time, the rate
+𝑛at which this transition takes place comes as a secondary
+issue with respect to the depth Ξ0of the transition itself. How-
+ever, it is worth noting that GR can be recovered also in the
+limit𝑛→0, so we may expect some potential degeneracy
+between the parameters Ξ0and𝑛when the true cosmology of
+our simulations is based on GR.
+Our fiducial values for the ΛCDM parameters are ℎ=
+𝐻0/(100 km/s/Mpc)=0.673,Ω𝑀=0.315, which are based
+on the true cosmology used to produce the simulated galaxy
+catalog that we use in our study [43]. For the modified gravity
+parameters, we will explore the GR case and two deviations
+from it, namely Ξ0=0.9,1.0,1.2, while in all our non-GR
+data sets we will assume 𝑛=2, which is close to the predic-
+tion made in some non-local gravity models, see e.g. [37]. This
+specific value of 𝑛is substantially irrelevant for the purpose
+of testing our statistical methodology with EMRIs; moreover,
+we will also consider scenarios where 𝑛is let vary during the
+parameter inference.
+III. METHOD
+We use the dark sirens method in a Bayesian statisti-
+cal framework to estimate how EMRI populations detected
+by LISA could constrain the cosmological parameters Ω =
+{ℎ,Ω𝑚,Ξ0, 𝑛}. In the most general case, we assume uni-
+form priors for the following cosmological parameters: ℎ∈
+[0.6,0.76],Ω𝑀∈[0.04,0.5],Ξ0∈[0.6,2.0],𝑛∈[0.0,3.0].
+The lower prior on Ξ0is chosen for the sake of computational
+cost. In fact, lower values of Ξ0produce strong correlations in
+the distance-redshift relation, Eq. (4), which in turn make the
+dark siren statistical inference more complex. Our approach
+closely follows the one adopted in [17]. In what follows we
+describe our simulated data set step by step.3
+EMRI population catalogs
+EMRI rates depend on several astrophysical assumptions
+about the MBH mass function and its redshift evolution, the
+fraction of MBHs hosted in dense stellar cusps, and binary pa-
+rameters such as the eccentricity and the mass of the compact
+object (for more details, see [14]). The EMRI study in [14]
+considered different assumptions which led to a set of EMRI
+astrophysical models (cf. their Table I), spanning several or-
+ders of magnitude in EMRI rates. The sources of each of these
+models have then been analysed with a Fisher Matrix (FM)
+approach to obtain detection catalogs with estimates of the
+LISA parameter estimation accuracy for the detected sources,
+where a detection signal-to-noise ratio (SNR) threshold of 20
+was originally chosen. In this study, in order to account for
+the uncertainty in rate estimates, we focus on three of the
+EMRI population models first analysed in [14], which cover
+different EMRI rates. In particular, keeping the original no-
+tation introduced in [14], we consider a fiducial model (M1),
+a pessimistic model (M5) and an optimistic model (M6). The
+FM analysis in [14] made use of two approximate analytical
+waveform models to estimate the waveform generated by EM-
+RIs, the so-called Analytical Kludge Schwarzschild (AKS)
+and Analytical Kludge Kerr (AKK) waveforms [44]. These
+two waveform models are truncated at the Schwarzschild and
+the Kerr last stable orbits of the MBH, respectively, which are
+used as proxies for the plunge. In fact, the choice of various
+plunge conditions establishes how close the compact object
+can approach the MBH horizon, thereby defining the band-
+width and SNR of the signal; thus, AKK waveforms in general
+produce more orbits than the AKS. As a rule of thumb, the
+AKS waveform underestimates the signal’s strength, while the
+AKS significantly overestimates it as the Analytical Kludge
+models become increasingly inaccurate near the horizon [14].
+In this study we are interested in a subset of EMRI extrinsic
+parameters, namely the sky localisation, since the smaller the
+localisation error volume, or error box, of the GW source is,
+the fewer host galaxies will fall within this region, making the
+events more informative for cosmology.
+The FM catalogs for each model in [44] provide the mea-
+sured EMRI luminosity distance 𝑑GW
+𝐿, longitude𝜙GW, and
+colatitude𝜇GW(where𝜇GW=cos(𝜃GW)), with their uncer-
+tainties𝜎𝑑GW
+𝐿,𝜎𝜙GW, and𝜎𝜇GW, and the sky-location covari-
+ance matrix Σ2×2. These quantities represent the only GW
+data𝐷that we need to build our simulated set of dark siren
+observations. The original EMRI catalogs of [14] contain
+events collected over a 10 year LISA observation period. We
+obtain catalogs for 4 years of LISA observation by randomly
+drawing 4/10 of the total number of 10 year detections from
+these original catalogs.
+Galaxy Catalog
+The next step in building our catalog of dark standard sirens
+is to choose a simulated galaxy catalog containing informa-
+tion about the redshift distribution of the galaxies. In this
+study we use a galaxy lightcone built adopting the samemethod developed in [43], which transforms the outputs of
+L-Galaxies [45], a state-of-the-art semi-analytical model ap-
+plied to the Millennium simulation [46], into a lightcone with
+galaxies and their physical properties. Our lightcone, which
+has been used also in [47], covers one octant of the sky and has
+a resolution of 𝑀★>1010𝑀⊙. As a result of this resolution
+limit, we may miss lower-mass galaxies that could potentially
+be host to EMRIs. However, as shown in [17], this limit is
+not expected to relevantly affect the cosmological inference
+that could be obtained with the dark siren approach, thus our
+conclusions should not be affected by the lightcone resolution.
+The information we need for each galaxy is the cosmological
+redshift𝑧cos
+gal, (that is only used in the error box construction),
+the observed redshift 𝑧obs
+gal(from which, using Eq. (1), we can
+compute the luminosity distance measured from EM obser-
+vations𝑑gal,EM
+𝐿, and it is thus used in both in the error box
+construction and in the likelihood), and the right ascension
+𝜙galand cosine of the colatitude 𝜇gal=cos(𝜃gal).
+Errorbox construction
+For the construction of the error boxes, we closely follow the
+procedure outlined in [48], with the difference that here we are
+dealing with the framework of modified GW propagation the-
+ory. In practice, for each GW event we construct localisation
+error volumes, or error boxes, in redshift space by first con-
+verting the lower and upper 3 𝜎uncertainty bounds on 𝑑GW
+𝐿, as
+provided by the GW measurements, adding in quadrature the
+weak lensing contribution to the measurement uncertainty:
+𝜎𝑑𝐿=√︂
+𝜎𝑑GW
+𝐿2
++
+𝜎𝑑WL
+𝐿2
+, (5)
+where the weak lensing error 𝜎𝑑WL
+𝐿is estimated using the model
+described in [18].
+The first step in constructing an EMRI localisation error
+volume is to select the true host of the GW event. Assum-
+ing the true cosmological model, i.e., the fiducial cosmologi-
+cal parameters, we compute the redshift range [𝑧−
+tr,𝑧+
+tr]from
+the𝑑GW
+𝐿−3𝜎𝑑𝐿and𝑑GW
+𝐿+3𝜎𝑑𝐿values, respectively. It is
+worth noting that employing 2 𝜎errors, instead of 3 𝜎errors,
+would lead to more EMRI events within the lightcone red-
+shift boundary and fewer host candidates in a given error box,
+which would greatly help our numerical analysis, but would
+only provide results with a maximum precision of few % in-
+validating our most optimist results. We list all the galaxies
+having𝑧cos
+gal⊂[𝑧−
+tr,𝑧+
+tr]and for each of them, we compute the
+corresponding modified gravity luminosity distance 𝑑gal,GW
+𝐿
+using Eq. (4), where 𝑑gal,EM
+𝐿is computed using Eq. (1) and
+𝑧obs
+gal.𝑑gal,GW
+𝐿represents the luminosity distance measured by
+the GW observation when the galaxy is the host: even though
+this quantity is not directly observed (galaxies are observed
+in the EM spectrum, where the luminosity distance is given
+by Eq. (1)), it is required to associate in a consistent way a
+galaxy host with the EMRI, for which we only have observa-
+tion of its modified luminosity distance 𝑑GW
+𝐿, Eq. (4). These4
+values are only used to extract a random galaxy with proba-
+bility given byN
+𝑑GW
+𝐿,𝜎2
+𝑑𝐿
+𝑑gal,GW
+𝐿, which will be the true
+host of the GW source. The sky coordinate of the true host
+is then labeled as{𝜇tr,𝜙tr}. The next step is to displace the
+center of the localization error volume, corresponding to the
+most probable sky coordinates measured from the GW obser-
+vation. This is done to simulate the fact that due to the random
+nature of the observation noise we do not expect the EMRI
+to be placed exactly at the center of the measured localisation
+error volume. We build a 2D Gaussian probability distribution
+N([𝜇tr,𝜙tr],Σ2×2)centered at the true host coordinates, from
+which we randomly draw a value that will be the error box
+center of the GW observation, and denote it as {𝜇GW,𝜙GW}.
+Next, we calculate the redshift boundaries of the error boxes.
+Considering all the values that the cosmological parameters
+can assume within their prior ranges, as well as the mea-
+sured luminosity distance range [𝑑GW
+𝐿−3𝜎𝑑𝐿,𝑑GW
+𝐿+3𝜎𝑑𝐿],
+we use the modified GW relation Eq. (4) to compute the red-
+shift boundaries that will contain all the potential host galaxies
+from the galaxy catalog that could potentially host the EMRI,
+[𝑧−,𝑧+]. We then assume a rms peculiar velocity of the galaxy
+𝑣𝑝=700 km/s (which is estimated from our simulated light
+cone) and transform it to a galaxy peculiar velocity uncertainty
+with𝜎pv(𝑧)≃𝑣𝑝(1+𝑧)/𝑐=0.0023(1+𝑧). Finally, we select
+all the galaxies that satisfy 𝑧−−𝜎pv(𝑧−)<𝑧obs
+gal<𝑧++𝜎pv(𝑧+),
+𝜙GW−3𝜎𝜙GW< 𝜙 gal< 𝜙 GW+3𝜎𝜙GWand𝜇GW−3𝜎𝜇GW<
+𝜇gal< 𝜇 GW+3𝜎𝜇GW. The galaxies of the 𝑖-th EMRI detection
+are labeled by 𝑗(𝑗=1,...,𝑁𝑖
+gal). Each candidate host is given
+a weight according to its position relative to the center of the
+error box,𝑤𝑗∝N([𝜇GW,𝜙GW],Σ2×2)|(𝜇𝑗
+gal,𝜙𝑗
+gal), which will
+then be used in the likelihood. As a final step, we exclude
+the events whose error box contains more than 5000 galaxies
+as these events are expected to be largely uninformative for
+cosmological inference. This choice saves considerable com-
+putational time and we have numerically verified that it has
+little to no loss in parameter estimation accuracy.
+Bayesian inference
+According to Bayes’ theorem, the posterior probability dis-
+tribution of the parameters Ωcan be written as [17, 49]:
+𝑝(Ω|𝐷H𝐼)∝𝑝(Ω|H𝐼)𝑝(𝐷|ΩH𝐼), (6)
+where𝐷is the data from GW observations coming from the
+FM analysis,His the assumed modified gravity cosmological
+model, and𝐼is the background information relevant for the
+analysis.𝑝(Ω|H𝐼)is the prior on Ω, which we assume as a
+uniform distribution for each parameter. 𝑝(𝐷|ΩH𝐼)is the
+likelihood of 𝑁EMRI events which, assuming they could be
+studied and resolved individually, can be written as the product
+of𝑁single-event likelihoods:
+𝑝(𝐷|ΩH𝐼)=𝑁Ö
+𝑖=1𝑝(𝐷𝑖|ΩH𝐼). (7)After marginalising over 𝑑𝐿, the single-event likelihood can
+be written as:
+𝑝(𝐷𝑖|ΩH𝐼)=∫
+𝑑𝑧GW𝑝(𝐷𝑖|𝑧GWΩH𝐼)𝑝(𝑧GW|ΩH𝐼),
+(8)
+where
+𝑝(𝑧𝐺𝑊|ΩH𝐼)∝𝑁𝑖
+gal∑︁
+𝑗=1𝑤𝑗
+𝜎pv(𝑧obs
+gal,𝑗)exp 
+−1
+2"𝑧obs
+gal,𝑗−𝑧GW
+𝜎pv(𝑧obs
+gal,𝑗)#2 
+,
+(9)
+and
+𝑝(𝐷𝑖|𝑧GWΩH𝐼)∝exp 
+−1
+2"ˆ𝑑GW
+𝐿−𝑑GW
+𝐿(Ω,𝑧GW)
+𝜎𝐷𝐿#2 
+,
+(10)
+where ˆ𝑑GW
+𝐿is the best luminosity distance estimate by LISA
+(coming from the FM analysis) and 𝑑GW
+𝐿(Ω,𝑧GW)is ob-
+tained from the modified luminosity distance-redshift relation,
+Eq. (4). For each event, we integrate the likelihood Eq. (8)
+numerically and infer the posterior distribution Eq. (6) with
+cosmoLISA [50], a public code used for cosmological infer-
+ence with LISA GW sources. The posterior distribution is
+explored with raynest [51], a parallel nested sampling algo-
+rith based on the package ray [52], an open-source package
+that allows for parallel processing of jobs. Compared to [17],
+in this study we use an updated version of cosmoLISA , where
+the major optimisation concerns the numerical marginalisa-
+tion over the GW redshift in Eq. (8). In particular, we do not
+obtain redshift posterior samples for each EMRI event along
+with the cosmological parameters as in [14], but marginalise
+over the redshift numerically while computing the likelihood,
+therefore reducing the parameter space to be explored and the
+computational time. We note that, from the formal point of
+view of nested sampling, the two approaches give equivalent
+results, with the advantage that in the new approach the pa-
+rameter space to be sampled is smaller and only defined by the
+cosmological parameters. This results in an acceleration of
+the likelihood and nested sampling, and a version of the code
+on average 10 times faster than its predecessor when used on a
+computational cluster and with a similar number of GW events.
+The inference is done only on the most informative EMRIs
+with a signal-to-noise ratio (SNR) threshold that is customar-
+ily set to 100. We further impose a redshift cut at 𝑧=1 for
+the upper bound of the localisation volume in redshift space.
+These conditions ensure that selection effects due to the limited
+sensitivity of the GW detector, the modelling of the underlying
+source population, and the finite redshift coverage of the galaxy
+catalogue do not introduce significant bias in the inference. In
+analogy to [17], we verified numerically that such biases be-
+come relevant only if sources of lower SNR are considered. A
+detailed treatment of selection effects (assuming a complete
+galaxy catalog, as in our case, so that EM selection effects
+do not affect the study) would require modelling the EMRI
+detection probability for LISA, and the assumption of hyper-
+parameters describing both the EMRI population distribution
+(like the source-frame masses of the systems) and the merger5
+rate redshift evolution, which are needed to compute the ex-
+pected number of detectable GWs. An appropriate statistical
+framework for this approach would require a fully hierarchi-
+cal inference approach [53, 54], allowing joint inference of
+the cosmological, population and rate hyper-parameters [9–
+12], which requires a computational cost that goes beyond our
+current numerical resources, and whose investigation we thus
+defer for future works. Our selections in SNR and redshift do
+not pose a severe limitation to our forecasts, as low-SNR de-
+tections are generally not well-localised and are not expected
+to be informative dark sirens.
+IV. RESULTS
+We report results for the three EMRI population models M1
+(fiducial), M5 (pessimistic), M6 (optimistic) for both 4 and 10
+years of LISA observation and using both waveform models at
+our disposal (AKS and AKK). We constrain the cosmological
+parametersℎ,Ω𝑚,Ξ0, 𝑛either separately or collectively, for
+a total of five different cosmological parameter scenarios: i)
+ℎ+Ω𝑀+Ξ0+𝑛, ii)ℎ+Ω𝑀+Ξ0, iii)ℎ+Ξ0, iv)Ξ0+𝑛, and v)
+Ξ0only. We will additionally analyse the GR ΛCDM scenario
+(ℎ+Ω𝑀) to compare our findings with the EMRI dark siren
+study in [17].
+For each cosmological scenario, EMRI population model,
+time of observation, and waveform model, we realise 5 inde-
+pendent realizations of the error boxes by following the proce-
+dure outlined in Sec. III. Each realisation is based on the same
+LISA catalogs of detected EMRIs within a given cosmolog-
+ical scenario, but the resulting localisation error volume for
+a given EMRI will generally be different in each realisation,
+since the EMRI extrinsic parameters (in particular the sky lo-
+calisation angles) are randomised so that their host galaxies
+differ in each realisation. We then perform the cosmological
+inference on each of the 5 realisations and rank them according
+to their marginalised 90% C.I. on Ξ0, which is the parameter
+present in all our cosmological scenarios, selecting the median
+realisation to represent the forecasts in each scenario.
+We first show results for 4 years of LISA observation: in
+Sec. IV A and Sec. IV B we respectively assume a true value
+ofΞ0=1.0, corresponding to the GR limit (see Table I),
+and deviations from GR with Ξ0=0.9 (see Table II) and
+Ξ0=1.2 (see Table III). Subsequently, in Sec. IV C we provide
+results for 10 years of LISA observation with an injected value
+Ξ0=1.0 (see Table IV). Lastly, in Sec. IV D we present ΛCDM
+results for comparison with the literature [17] (see Table V).
+For selected examples, we also show 2D corner plots
+with marginalized 1D posterior probability density functions
+(PDF). All results reported in what follows, including all rela-
+tive errors and the constraints appearing in the figures, indicate
+90% C.I. around the measured median value and are given for
+the AKK (AKS) waveform model.A. The GR limit
+Here we consider an injected value Ξ0=1.0. In Table I
+we report the constraints from the 5 different modified gravity
+cosmological scenarios, for all EMRI population models (M1,
+M5, M6), and for both waveform models (AKK, AKS). As an
+example, Fig. 1 shows corner plots for these 5 scenarios in the
+M1 case with the AKS waveform. All results assume 4 years
+of LISA observation (see Sec. IV C for the 10-year case).
+First of all, we comment on the number of dark sirens that
+are used in each scenario. As mentioned in Sec. III, the actual
+number of EMRIs that end up being used in the cosmological
+inference depends on the cosmological scenario under study,
+since the boundaries of the error boxes in redshift space depend
+on the assumed prior on the cosmological parameters and
+consequently on the cosmology itself. This limits to some
+extent our choice of the prior bounds, since choosing larger
+priors would increase the EMRI localisation error volumes
+in redshift space, resulting in more events that are ultimately
+not covered by our galaxy catalog and thus excluded from
+our analysis. Since each parameter has the same prior in all
+cosmological scenarios, the number of dark sirens is the same
+regardless of the injected cosmological parameters, i.e., the
+number of dark sirens is the same as in the scenarios analysed
+in Sec. IV B (but not Secs. IV C and IV D, where we assume
+a longer observation time and a different cosmological model,
+respectively). For the M1 model, the number of available
+dark sirens in 4 years using the AKK (AKS) waveform model
+concentrates around 12 (8), while for M5 it is 2 (1) and for M6
+it ranges from 24 (9) to 29 (10).
+Assuming perfect knowledge of the ΛCDM parameters and
+only measuring the modified gravity parameter Ξ0(thus fix-
+ing𝑛), EMRIs could yield a relative precision ΔΞ0/Ξ0around
+3.2% (8.5%) for M1, 26% (≫100%) for M5, and 1 .8% (8.3%)
+for M6. For comparison, on the theory side, the “minimal”
+RT non-local model predicts Ξ0≈0.934, a 6.6% deviation
+fromΞ0= 1, with potentially larger values if initial condi-
+tions change [55, 56]. This is comparable to the results we
+obtain in the one-parameter cosmological scenario. It should
+be noted that in this scenario we fix ℎto its fiducial value,
+which may somehow limit the impact of the 1D constraint on
+Ξ0, since from Eq. (4) we can see that these parameters are
+correlated, which can lead to some degeneracy. It is therefore
+more interesting to perform a simultaneous inference on both
+parameters.
+In the two-parameter scenario ℎ+Ξ0instead, the relative
+precisionΔΞ0/Ξ0drops to approximately 20% (29%) for M1,
+54% (≫100%) for M5, and 9 .3% (47%) for M6, while the
+relative accuracy Δℎ/ℎis around 7.9% (9.5%) for M1, 9 .3%
+(≫100%) for M5, and 3 .7% (9.9%) for M6. From Fig. 1 we
+can moreover see that a strong correlation exists between Ξ0
+andℎ, as expected from Eq. (4).
+In the cosmological scenario Ξ0+𝑛, where the two modified
+gravity parameters are allowed to vary, the relative precision
+ΔΞ0/Ξ0becomes approximately 43% (44%) for M1, 68% ( ≫
+100%) for M5, 38% (46%) for M6, while 𝑛cannot be measured
+in any of the scenarios. We also note that the introduction of
+another modified gravity parameter 𝑛causes the precision on6
+TABLE I. Median value and 90% C.I. of the marginalised posterior PDF of all cosmological parameters (from the fifth column), each obtained
+using two different waveform models (AKS and AKK), for an injected value Ξ0=1.0 (for the injected values of the other parameters, see
+Sec. II) and observation time of 4 years. Results are grouped according to: the considered EMRI model (first column), the cosmological
+scenario (second column, cf. Sec. III), the number of standard siren events used in the cosmological inference (third and fourth columns).
+Model ParametersNum of StSi ℎ Ω𝑀 Ξ0 𝑛
+AKS AKK AKS AKK AKS AKK AKS AKK AKS AKK
+M1ℎ+Ω𝑀+Ξ0+𝑛 7 12 0.704+0.049
+−0.0690.654+0.054
+−0.0450.278+0.198
+−0.2130.336+0.149
+−0.2411.016+0.714
+−0.3640.907+0.595
+−0.2721.008+1.743
+−0.9321.154+1.658
+−1.085
+ℎ+Ω𝑀+Ξ0 8 12 0.667+0.054
+−0.0460.679+0.036
+−0.0320.290+0.190
+−0.2220.330+0.155
+−0.2450.949+0.287
+−0.2421.020+0.183
+−0.204- -
+ℎ+Ξ0 8 12 0.644+0.086
+−0.0360.656+0.060
+−0.043- - 0.807+0.308
+−0.1590.930+0.170
+−0.196- -
+Ξ0+𝑛 8 12 - - - - 1.018+0.630
+−0.2731.022+0.633
+−0.2470.432+2.108
+−0.4110.323+2.150
+−0.307
+Ξ0 8 13 - - - - 0.992+0.101
+−0.0670.985+0.031
+−0.032- -
+M5ℎ+Ω𝑀+Ξ0+𝑛 1 2 - 0.691+0.062
+−0.078- 0.316+0.167
+−0.241- 0.970+0.793
+−0.345- 1.322+1.524
+−1.230
+ℎ+Ω𝑀+Ξ0 1 2 - 0.695+0.059
+−0.084- 0.292+0.189
+−0.225- 1.079+0.518
+−0.428- -
+ℎ+Ξ0 1 2 - 0.696+0.057
+−0.073- - - 0.794+0.685
+−0.165- -
+Ξ0+𝑛 1 2 - - - - - 0.838+0.870
+−0.209- 1.437+1.373
+−1.390
+Ξ0 1 2 - - - - - 1.011+0.197
+−0.320- -
+M6ℎ+Ω𝑀+Ξ0+𝑛 9 24 0.675+0.041
+−0.0380.670+0.019
+−0.0180.306+0.174
+−0.2330.328+0.154
+−0.2240.984+0.706
+−0.3291.027+0.625
+−0.3251.001+1.751
+−0.9280.815+1.916
+−0.765
+ℎ+Ω𝑀+Ξ0 9 26 0.664+0.055
+−0.0430.687+0.025
+−0.0240.285+0.193
+−0.2180.329+0.156
+−0.2370.917+0.286
+−0.2401.069+0.157
+−0.232- -
+ℎ+Ξ0 9 27 0.688+0.066
+−0.0700.666+0.025
+−0.024- - 0.949+0.585
+−0.3020.980+0.092
+−0.090- -
+Ξ0+𝑛 9 28 - - - - 1.033+0.654
+−0.2940.997+0.494
+−0.2550.492+2.064
+−0.4580.278+2.216
+−0.268
+Ξ0 10 29 - - - - 0.967+0.089
+−0.0721.007+0.019
+−0.018- -
+Ξ0to drop drastically.
+Next, we let the matter density parameter Ω𝑀vary and
+consider the three-parameter space ℎ+Ω𝑀+Ξ0and the four-
+parameter model ℎ+Ω𝑀+Ξ0+𝑛. In the three parameter
+scenario,Ω𝑀can be constrained with a large relative accuracy
+of roughly 61% (71%) for M1, 71% ( ≫100%) for M5, and 60%
+(72%) for M6. These constraints basically do not change in the
+four-parameter model with the addition of 𝑛. Introducing just
+Ω𝑀in general does not appreciably affect the measurements of
+ℎandΞ0, which remain similar to the previous 2D scenarios.
+On the other hand, introducing a secondary modified gravity
+parameter like 𝑛worsens the constraints on Ξ0, while it leaves
+the measurements of ℎqualitatively unchanged. In general, the
+constraints on ℎsee minimal changes between a two-, three-,
+and four-parameter cosmological scenarios.
+Comparing the waveform models, in general the AKK
+model always provides better cosmological measurements than
+the AKS, since AKK yields more detections and generally pro-
+vides larger SNRs. Comparing between different population
+models, in models M1 and M6 the AKS waveform leads to
+comparable numbers of dark sirens, thus similar constraints.
+M5 has only one event satisfying our selection criteria for the
+analysis, thus we cannot obtain any interesting cosmological
+measurement. Even using the AKK waveform, except for the
+1DΞ0-case, we find that M5 tends to fail in recovering the true
+value or even providing a unimodal posterior: this is partly
+expected due to the lack of information in the data, which does
+not allow to break the correlations between Ξ0and the other
+parameters. Regarding the results obtained with the AKK
+waveform, the accuracy on ℎ,Ω𝑀,Ξ0with M6 is always bet-ter, although often only slightly, than the corresponding results
+with M1, with the best measurement of Ξ0reaching∼2% in the
+Ξ0-only scenario. On the other hand, the measurements with
+M5 are up to 10 times worse than with M1. Finally, the pa-
+rameter𝑛cannot be measured independently of the waveform
+used in any of the scenarios.
+B. Degeneracy between Ξ0and𝑛
+Table II and Table III show the results for the injected values
+Ξ0=0.9 andΞ0=1.2. In these cases we only change the
+injected value of Ξ0, keeping the injected values of all the other
+cosmological parameters the same. We also stress that the
+number of standard sirens used in each scenario is equivalent
+to theΞ0=1 case, since it depends only on the cosmological
+priors used in the generation of the localisation error volumes,
+which is the same in all the cases; see Table I.
+We find that relative errors do not depend too much on the
+injected value of Ξ0. Taking M1 as an example, in the one-
+parameter scenario the injected value of Ξ0=0.9 leads to a
+relative uncertainty of 6.3% (7.7%), while the injected value
+Ξ0=1.2 gives 2.9% (8.3%). These numbers can be com-
+pared with the precision of 3.2% (8.5%) obtained in the case
+Ξ0=1. Some difference may be expected as different val-
+ues ofΞ0change the luminosity distance-redshift relation (cf.
+Eq. (4)) and consequently the parameter correlation structure,
+as discussed below. A similar trend can be found for all other
+higher-parameter scenarios; cf. Tables I, II, and III.7
+0.8 0.9 1.0 1.1 1.2 1.3
+0
+02468100=0.992+0.101
+0.067
+h = 0.644+0.086
+0.036
+0.64
+0.680.72
+h0.81.01.21.40
+0.81.01.21.4
+0
+0 = 0.807+0.308
+0.159
+0 = 1.018+0.630
+0.273
+0.91.21.51.8
+0
+0.61.21.82.4n
+0.61.21.82.4
+nn = 0.432+2.108
+0.411
+h = 0.667+0.054
+0.046
+0.10.20.30.4m
+m = 0.290+0.190
+0.222
+0.64
+0.680.72
+h0.751.001.251.501.750
+0.10.20.30.4
+m
+0.75
+1.001.25
+1.501.75
+0
+0 = 0.949+0.287
+0.242
+h = 0.704+0.049
+0.069
+0.10.20.30.4m
+m = 0.278+0.198
+0.213
+0.91.21.51.80
+0 = 1.016+0.714
+0.364
+0.64
+0.68
+0.72
+h0.61.21.82.4n
+0.10.20.30.4
+m
+0.91.21.51.8
+0
+0.61.21.82.4
+nn = 1.008+1.743
+0.932
+FIG. 1. Corner plots (median and 90% C.I., black dashed lines) of the five different parameter set scenarios for the M1 model and the AKS
+waveform. The injected value (blue line) for Ξ0is 1.
+0 = 0.816+0.102
+0.185
+0.75
+1.00
+1.25
+1.50
+0
+0.61.21.82.4n
+0.61.21.82.4
+nn = 1.199+1.512
+0.710
+0 = 1.022+0.633
+0.247
+0.91.21.51.8
+0
+0.61.21.82.4n
+0.61.21.82.4
+nn = 0.323+2.150
+0.307
+0 = 1.323+0.558
+0.172
+0.91.21.51.8
+0
+0.61.21.82.4n
+0.61.21.82.4
+nn = 1.065+1.639
+0.711
+FIG. 2. Corner plots (median and 90% C.I., black dashed lines) of the Ξ0+𝑛scenario for the M1 model, using the AKK waveform, showing
+the different correlation structures. From left to right, the injected value (in blue) for Ξ0is 0.9, 1.0, and 1.2.8
+It is interesting to analyse the 2-parameter Ξ0+𝑛scenario
+in more detail. We observe that although 𝑛can never be mea-
+sured, it has a strong degeneracy with Ξ0. This correlation
+is due to the low-redshift limit of the relationship given by
+Eq. (4):𝑑GW
+𝐿(𝑧)/𝑑EM
+𝐿(𝑧) ≈ 1+𝑛(Ξ0−1)𝑧as𝑧→0. At
+low redshift the two parameters are thus completely degener-
+ate along a straight line in the ( Ξ0,𝑛) parameter space. This
+leads to a strong degeneracy at intermediate redshift, which
+is clearly visible from Fig. 2. The degeneracy has a quali-
+tative different behaviour for Ξ0<1,Ξ0=1,Ξ0>1, as it
+is evident from Fig. 2, which shows Ξ0+𝑛corner plots for
+different fiducial values of Ξ0. Such a behaviour is directly
+related to the 𝑛(Ξ0−1)factor that governs the low-redshift
+limits, whose sign determines the 𝑧→0 degenerate line in
+the (Ξ0,𝑛) parameter space. This degeneracy would be even-
+tually resolved by adding higher redshift dark sirens to the
+cosmological inference.
+C. LISA observation time: 4 vs 10 yr
+In this subsection, we discuss constraints obtained with an
+extension of LISA science observation up to 10 years. We
+assume an injected value Ξ0=1 and present all results in
+Table IV Similar results apply as well to the analysis of other
+non-GR values, which therefore we will not discuss in detail
+here. Note that the number of dark sirens used for the 10-year
+cosmological analyses is, by construction, 10 /4 greater than
+in the 4-year case (cf. Table I).
+In the one-parameter scenario we find ΔΞ0/Ξ0∼1.8%
+(4.0%) for M1, 6.5% (42%) for M5, and 1.2% (4.3%) for
+M6. For the two-parameter ℎ+Ξ0scenario we find instead
+ΔΞ0/Ξ0∼8.5% (18%) for M1, 25% (41%) for M5, and 5.0%
+(18%) for M6, together with Δℎ/ℎ∼3.5% (5.8%) for M1,
+9.4% (10.4%) for M5, and 2.0% (5.0%) for M6. Fig. 3 com-
+pares the results of the ℎ+Ξ0scenario between 4 and 10
+years of observation. A strong correlation between ℎandΞ0is
+clearly shown, as we already noted in Sec. IV A, revealing the
+intrinsic connection between the two parameters which control
+the first derivative of 𝑑GW
+𝐿(𝑧)as𝑧→0, namely the Hubble
+law for GWs.
+Comparing Table IV with Table I, the precision for 10 years
+of observation is on average 1.4 times better than the one ob-
+tained with 4 years of observation, which is slightly better than,
+but in rough accordance with,√︁
+𝑁10yr/𝑁4yr=1.58. However,
+the improvement in each scenario varies greatly due to the low
+statistics of detected dark sirens, and no consistent trend can
+be found for M5 due to the extremely low number of events
+used for the cosmological inference, especially in 4 years of
+observations. We also note that only 10 years of observations
+allow M5 to provide interesting constraints on the cosmologi-
+cal parameters.
+D.ΛCDM
+Compared to the EMRI cosmological study presented in
+[17], in this study we improved some aspects of the analy-sis method as well as the computation of the likelihood; see
+Sec. III for details. It is therefore interesting to verify the im-
+pact of these changes in the forecasts for the classic ΛCDM
+model compared to [17]. The main differences in the method
+can be summarized as follows: (1) In the construction of the
+error boxes, we use 3 𝜎errors on distance and sky localiza-
+tion measurements in order to find the boundaries in redshift
+space. In contrast, the study in [17] relied on 2 𝜎errors on
+distance and sky localization; (2) We use an updated galaxy
+light cone produced with a state-of-the-art semi-analytic evo-
+lution model [43], while [17] used an older full sky map from
+the Virgo Millennium Database [57]; (3) The code used in
+this study implements an optimised numerical marginalisation
+over the GW redshift, as discussed in Sec. III; (4) Here we
+assume a uniform prior ranges on ℎof [0.6, 0.76], while [17]
+assumed [0.6, 0.86]; (5) In this study we report results for the
+median realisation over the five realisations analysed, whereas
+[17] reports results averaged over three realisations; (6) In [17]
+only results for the AKK waveform were available, whereas
+here we also include results for the AKS model.
+Table V shows our results for ΛCDM, where we simultane-
+ously infer the values of ℎandΩ𝑀. We find that constraints
+on bothℎandΩ𝑀improve by a factor of 1.6 at most, although
+they are often indistinguishable from those provided in [17].
+For 4-year observations with the AKK waveform, the 90%
+C.I. constraints now are ∼0.021 (3.1%), 0.044 (6.4%), 0.015
+(2.2%) onℎand∼0.140 (36%), 0.207 (64%), 0.093 (28%)
+onΩ𝑀for M1, M5, M6, respectively. We also provide results
+with the AKS waveform for the first time, which, as expected,
+yield worse limits than the AKK waveform due to the lower
+number of detected dark sirens.
+V. DISCUSSION AND CONCLUSION
+In this section we discuss our findings and compare them
+with the literature.
+We found that over 4 years of LISA observations, constraints
+onΞ0can reach a few percent level (90% C.I.) in our fiducial
+(M1) and optimistic (M6) scenarios, assuming all other param-
+eters are fixed. By inferring simultaneously other parameters,
+especially𝑛, the accuracy on Ξ0drops quickly. We have shown
+that EMRIs cannot be used to perform full inference on both
+ΛCDM and modified gravity parameters, unless some of them
+are constrained by narrow priors. Our estimates are improved
+by considering an extended LISA observation period of 10
+years, in which case Ξ0is constrained at the level of a few
+percent overall, even reaching almost 1% (90% C.I.) in the
+most optimistic scenarios. These results are equally degraded
+when additional parameters are inferred together with Ξ0.
+Current LVK observations show no evidence for deviations
+from GR at cosmological scales [58, 59], though constraints on
+an anomalous damping in the propagation of GWs are weak.
+To compare our results with them, here we first summarize
+the investigations focusing on constraints and predictions us-
+ing LVK data. Ref. [37] use O1 to O3a data to constrain the
+parameterΞ0, fixing all other parameters, employing a dark
+siren analysis correlating with the galaxy catalog GLADE [60].9
+TABLE II. Median value and 90% C.I. of the marginalised posterior PDF of all cosmological parameters (from the fifth column), each obtained
+using two different waveform models (AKS and AKK), for an injected value Ξ0=1.0 (for the injected values of the other parameters, see
+Sec. II) and observation time of 4 years. Results are grouped according to: the considered EMRI model (first column), the cosmological
+scenario (second column, cf. Sec. III). The number of dark sirens used in each scenario is the same as that shown in Table I.
+Model Parametersℎ Ω𝑀 Ξ0 𝑛
+AKS AKK AKS AKK AKS AKK AKS AKK
+M1ℎ+Ω𝑀+Ξ0+𝑛0.667+0.050
+−0.0520.688+0.030
+−0.0380.333+0.152
+−0.2450.345+0.141
+−0.2470.829+0.729
+−0.2100.900+0.502
+−0.2561.533+1.315
+−1.4231.091+1.679
+−1.021
+ℎ+Ω𝑀+Ξ0 0.680+0.062
+−0.0650.658+0.047
+−0.0360.333+0.155
+−0.2540.314+0.168
+−0.2310.821+0.423
+−0.2090.835+0.205
+−0.188- -
+ℎ+Ξ0 0.673+0.063
+−0.0430.653+0.056
+−0.041- - 0.881+0.226
+−0.2220.842+0.174
+−0.133- -
+Ξ0+𝑛 - - - - 0.811+0.139
+−0.1970.816+0.102
+−0.1851.701+1.161
+−1.3651.199+1.512
+−0.710
+Ξ0 - - - - 0.852+0.064
+−0.0680.941+0.057
+−0.061- -
+M5ℎ+Ω𝑀+Ξ0+𝑛 - 0.702+0.052
+−0.087- 0.325+0.160
+−0.244- 0.859+0.931
+−0.234- 1.541+1.309
+−1.417
+ℎ+Ω𝑀+Ξ0 - 0.693+0.061
+−0.082- 0.318+0.165
+−0.241- 0.932+0.776
+−0.312- -
+ℎ+Ξ0 - 0.701+0.054
+−0.089- - - 0.883+0.794
+−0.253- -
+Ξ0+𝑛 - - - - - 0.836+0.563
+−0.197- 1.339+1.441
+−0.834
+Ξ0 - - - - - 0.705+0.600
+−0.093- -
+M6ℎ+Ω𝑀+Ξ0+𝑛0.685+0.041
+−0.0440.672+0.022
+−0.0250.323+0.160
+−0.2420.367+0.122
+−0.2500.894+0.683
+−0.2500.862+0.342
+−0.2231.165+1.616
+−1.0861.100+1.643
+−1.023
+ℎ+Ω𝑀+Ξ0 0.657+0.057
+−0.0380.683+0.021
+−0.0210.300+0.182
+−0.2260.327+0.157
+−0.2370.820+0.316
+−0.1890.958+0.130
+−0.188- -
+ℎ+Ξ0 0.702+0.050
+−0.0650.673+0.019
+−0.018- - 1.042+0.216
+−0.2870.894+0.063
+−0.059- -
+Ξ0+𝑛 - - - - 0.835+0.105
+−0.1970.842+0.078
+−0.2041.224+1.526
+−0.8221.103+1.608
+−0.675
+Ξ0 - - - - 0.902+0.076
+−0.0730.905+0.023
+−0.021- -
+TABLE III. The same as in Table II, but for an injected value Ξ0=1.2 and observation time of 4 years.
+Model Parametersℎ Ω𝑀 Ξ0 𝑛
+AKS AKK AKS AKK AKS AKK AKS AKK
+M1ℎ+Ω𝑀+Ξ0+𝑛0.665+0.052
+−0.0390.663+0.040
+−0.0290.265+0.211
+−0.2010.264+0.211
+−0.1951.233+0.601
+−0.4931.227+0.593
+−0.3601.076+1.688
+−0.9660.954+1.787
+−0.860
+ℎ+Ω𝑀+Ξ0 0.666+0.074
+−0.0540.676+0.053
+−0.0450.293+0.188
+−0.2250.274+0.202
+−0.2091.093+0.362
+−0.4151.230+0.280
+−0.248- -
+ℎ+Ξ0 0.656+0.073
+−0.0480.655+0.047
+−0.051- - 1.025+0.335
+−0.3791.148+0.185
+−0.526- -
+Ξ0+𝑛 - - - - 1.295+0.566
+−0.2081.323+0.558
+−0.1720.985+1.695
+−0.7271.065+1.639
+−0.711
+Ξ0 - - - - 1.093+0.079
+−0.1031.200+0.034
+−0.035- -
+M5ℎ+Ω𝑀+Ξ0+𝑛 - 0.676+0.075
+−0.065- 0.265+0.210
+−0.203- 1.300+0.589
+−0.575- 1.192+1.577
+−1.057
+ℎ+Ω𝑀+Ξ0 - 0.695+0.059
+−0.083- 0.314+0.169
+−0.239- 0.856+0.755
+−0.237- -
+ℎ+Ξ0 - 0.703+0.053
+−0.090- - - 0.955+0.532
+−0.333- -
+Ξ0+𝑛 - - - - - 0.865+0.807
+−0.240- 1.344+1.483
+−1.147
+Ξ0 - - - - - 1.139+0.123
+−0.273- -
+M6ℎ+Ω𝑀+Ξ0+𝑛0.690+0.059
+−0.0580.654+0.022
+−0.0180.238+0.233
+−0.1790.270+0.207
+−0.1961.418+0.498
+−0.5971.209+0.599
+−0.3521.322+1.463
+−1.1380.909+1.852
+−0.819
+ℎ+Ω𝑀+Ξ0 0.693+0.050
+−0.0630.666+0.025
+−0.0240.275+0.205
+−0.2130.321+0.162
+−0.2361.228+0.313
+−0.4051.171+0.165
+−0.211- -
+ℎ+Ξ0 0.654+0.071
+−0.0450.677+0.028
+−0.024- - 1.092+0.363
+−0.2501.225+0.112
+−0.098- -
+Ξ0+𝑛 - - - - 1.348+0.533
+−0.2281.232+0.554
+−0.0831.194+1.550
+−0.8431.606+1.253
+−1.202
+Ξ0 - - - - 1.125+0.098
+−0.2191.202+0.022
+−0.023- -10
+TABLE IV. Median value and 90% C.I. of the marginalised posterior PDF of all cosmological parameters (from the fifth column), each obtained
+using two different waveform models (AKS and AKK), for an injected value Ξ0=1.0 (for the injected values of the other parameters, see
+Sec. II) and observation time of 10 years. Results are grouped according to: the considered EMRI model (first column), the cosmological
+scenario (second column, cf. Sec. III), the number of standard siren events used in the cosmological inference (third and fourth columns).
+Model ParametersNum of StSi ℎ Ω𝑀 Ξ0 𝑛
+AKS AKK AKS AKK AKS AKK AKS AKK AKS AKK
+M1ℎ+Ω𝑀+Ξ0+𝑛17 29 0.660+0.026
+−0.0320.664+0.019
+−0.0200.329+0.155
+−0.2450.342+0.143
+−0.2490.941+0.651
+−0.2810.957+0.564
+−0.2870.960+1.772
+−0.8980.869+1.829
+−0.821
+ℎ+Ω𝑀+Ξ0 19 30 0.681+0.037
+−0.0310.659+0.030
+−0.0250.292+0.189
+−0.2230.332+0.152
+−0.2450.995+0.197
+−0.2090.941+0.155
+−0.174- -
+ℎ+Ξ0 19 30 0.647+0.042
+−0.0330.676+0.023
+−0.024- - 0.876+0.169
+−0.1481.014+0.082
+−0.090- -
+Ξ0+𝑛 19 32 - - - - 0.975+0.438
+−0.2731.024+0.598
+−0.1820.422+2.092
+−0.4030.302+2.187
+−0.288
+Ξ0 19 33 - - - - 0.987+0.038
+−0.0411.004+0.019
+−0.018- -
+M5ℎ+Ω𝑀+Ξ0+𝑛 3 5 0.722+0.035
+−0.0910.681+0.058
+−0.0610.335+0.151
+−0.2540.314+0.169
+−0.2310.834+0.766
+−0.2201.015+0.697
+−0.3511.586+1.309
+−1.4821.069+1.691
+−0.992
+ℎ+Ω𝑀+Ξ0 3 6 0.697+0.058
+−0.0850.667+0.065
+−0.0570.301+0.181
+−0.2320.305+0.177
+−0.2320.853+0.738
+−0.2300.941+0.289
+−0.258- -
+ℎ+Ξ0 3 6 0.693+0.061
+−0.0830.680+0.071
+−0.057- - 0.880+0.470
+−0.2490.979+0.174
+−0.319- -
+Ξ0+𝑛 3 6 - - - - 0.983+0.670
+−0.3151.000+0.517
+−0.2500.665+1.981
+−0.6350.328+2.180
+−0.316
+Ξ0 3 7 - - - - 1.004+0.505
+−0.3301.010+0.028
+−0.104- -
+M6ℎ+Ω𝑀+Ξ0+𝑛23 60 0.671+0.033
+−0.0300.669+0.013
+−0.0140.327+0.157
+−0.2420.351+0.132
+−0.2230.923+0.667
+−0.2681.011+0.603
+−0.3231.036+1.693
+−0.9660.725+1.941
+−0.674
+ℎ+Ω𝑀+Ξ0 23 65 0.667+0.034
+−0.0290.669+0.025
+−0.0200.298+0.183
+−0.2260.359+0.130
+−0.2500.931+0.216
+−0.1960.988+0.145
+−0.162- -
+ℎ+Ξ0 23 68 0.660+0.035
+−0.0310.665+0.014
+−0.013- - 0.951+0.163
+−0.1840.964+0.049
+−0.047- -
+Ξ0+𝑛 23 69 - - - - 1.008+0.618
+−0.2620.993+0.383
+−0.2400.358+2.138
+−0.3410.265+2.191
+−0.256
+Ξ0 24 72 - - - - 0.963+0.042
+−0.0411.001+0.013
+−0.012- -
+TABLE V. Median value and 90% C.I. of the marginalised posterior PDF of the ΛCDM cosmological parameters (from the fifth column),
+each obtained using two different waveform models (AKS and AKK), for both observation times of 4 and 10 years. Results are grouped
+according to: the considered EMRI model (first column), the observation time (second column), the number of standard siren events used in
+the cosmological inference (third and fourth columns).
+Model ObservationNum of StSi ℎ Ω𝑀
+AKS AKK AKS AKK AKS AKK
+M14yr 8 13 0.675+0.035
+−0.0220.661+0.027
+−0.0160.345+0.139
+−0.2190.392+0.094
+−0.185
+10yr 20 33 0.674+0.022
+−0.0180.665+0.016
+−0.0140.309+0.161
+−0.1850.376+0.096
+−0.101
+M54yr 1 3 - 0.686+0.045
+−0.042- 0.325+0.162
+−0.252
+10yr 3 7 0.721+0.035
+−0.0830.667+0.029
+−0.0200.299+0.181
+−0.2220.353+0.133
+−0.167
+M64yr 9 31 0.677+0.023
+−0.0220.674+0.014
+−0.0150.283+0.198
+−0.2210.330+0.104
+−0.081
+10yr 23 77 0.668+0.020
+−0.0140.672+0.009
+−0.0100.343+0.136
+−0.1850.325+0.063
+−0.051
+Their 68% C.I. result reads Ξ0=2.1+3.2
+−1.2. Ref. [61] instead tar-
+get black hole (BH) binaries from GWTC-3 [36] using them as
+spectral sirens to jointly constrain 4 population inference pa-
+rameters with Ξ0. They giveΞ0=1.2+0.7
+−0.7with a flat prior, and
+Ξ0=1.2+0.4
+−0.8with a uniform prior in log (68% C.I.). The same
+authors provide also forecasts with 5 years of LIGO/Virgo data
+at design sensitivity, estimating that the accuracy may range
+from 10% (for an injected Ξ0=1) to 20% (for Ξ0=1.8).
+On the other hand, Ref. [39] use the events GW170817 and
+GW190521 as bright sirens (assuming both EM events have
+a confident associated EM counterpart), and different wave-
+forms to constrain ℎ,Ω𝑀,Ξ0and𝑛. Assuming a Planck (flat)
+prior onℎthey give an upper limit on Ξ0<10(4.4), but nolimit onΩ𝑀and𝑛. Ref. [62] performed a Bayesian spectral
+siren analysis (thus without using any galaxy catalog) includ-
+ing an estimation on population parameters. They also perform
+a model selection based on different population and modified
+GW propagation models. They estimate that Ξ0can be con-
+strained at the 51% level with ∼90 binary BH detections at
+O4-like sensitivity, and at the 20% level with an additional
+∼400 binary BH detections at O5-like sensitivity. Finally,
+a recent study from Ref. [63] analysed 45 events (42 binary
+BHs and 3 neutron star-black holes) from GWTC-3 as dark
+standard sirens and the GLADE+ galaxy catalog [64] to infer
+jointly𝐻0,Ξ0,𝑛and the GW population parameters, finding
+(68% C.I.)Ξ0=1.67+0.93
+−0.94and𝑛=0.80+3.58
+−0.69. In terms of fore-11
+4 years, AKK Model
+Model M1 Model M5 Model M6
+h = 0.656+0.060
+0.043
+0.64
+0.680.72
+h0.81.01.21.40
+0.81.01.21.4
+0
+0 = 0.930+0.170
+0.196
+h = 0.696+0.057
+0.073
+0.64
+0.680.72
+h0.91.21.51.80
+0.91.21.51.8
+0
+0 = 0.794+0.685
+0.165
+h = 0.666+0.025
+0.024
+0.625
+0.650
+0.675
+0.700
+h0.80.91.01.10
+0.80.91.01.1
+0
+0 = 0.980+0.092
+0.090
+10 years, AKK Model
+Model M1 Model M5 Model M6
+h = 0.676+0.023
+0.024
+0.625
+0.650
+0.675
+0.700
+0.725
+h0.750.901.051.200
+0.75
+0.90
+1.051.20
+0
+0 = 1.014+0.082
+0.090
+h = 0.680+0.071
+0.057
+0.64
+0.680.72
+h0.91.21.51.80
+0.91.21.51.8
+0
+0 = 0.979+0.174
+0.319
+h = 0.665+0.014
+0.013
+0.645
+0.660
+0.675
+0.690
+h0.900.951.001.050
+0.90
+0.95
+1.00
+1.05
+0
+0 = 0.964+0.049
+0.047
+FIG. 3. From left to right, corner plots (median and 90% C.I., black dashed lines) for the ℎ+Ξ0two-parameter scenario using the AKK model
+for the M1, M5, and M6 models, respectively. The LISA observation time of the upper (lower) panels is 4 years (10 years). The injected value
+(in blue) ofΞ0is 1.
+casts with LVK detectors at design sensitivity, [65] perform a
+cross-correlation of galaxy surveys with dark sirens and addi-
+tional information from the baryon acoustic oscillation scale
+to constrainΞ0marginalising over redshift dependence, fore-
+castingΞ0=0.98+0.04
+−0.23with∼3500 binary BH dark sirens
+distributed up to redshift 𝑧∼0.5 detected by the LVK net-
+work at design sensitivity. The LISA constraints on Ξ0from
+EMRIs that we report here are in general few times better than
+results obtained with current LVK results, and possibly even
+better than future forecasts for current (second generation)
+GW detectors, at least for realistic and optimistic scenarios.
+We stress however that unlike most of the results from LVK
+analyses mentioned above, our results do not take into account
+the population parameters of the EMRIs.
+On the other hand, our results are comparable to expec-
+tations from 3G detectors only in the most optimistic cases.
+Ref. [56] estimates constraints on Ξ0,𝑤0, together with ΛCDMparameters, using data from CMB, BAO, SNe, as well as stan-
+dard siren data from simulated binary neutron star mergers and
+their corresponding GRB observations from a network of 3G
+detectors. They report that the accuracy on Ξ0could reach
+below percent levels with 10 years of data (with a 80% duty
+cycle for each detector). Ref. [66] produced different estimate
+measurements of Ξ0+𝑛using different designs of the Einstein
+Telescope (ET) [67–69], the future European ground-based
+observatory designed to detect GW sources up to high red-
+shift. Without EM counterparts, but using information on the
+tidal deformability of neutron stars, the accuracy on Ξ0fluc-
+tuates between 3% to 10%, depending on the geometry and
+sensitivity of ET. Using a similar approach, Ref. [70] further
+investigate constraints on Ξ0with binary neutron star mergers
+observed by both ET and DECIGO [71, 72]. FM constraints
+onΞ0using ET (ET+DECIGO) are at the level of ∼3% (1%)
+with an observation time of 3 years, assuming part of the12
+events will be associated to an EM counterpart. In addition,
+Ref. [73] show that with ∼6 quadruply-lensed GW events per
+year detected by ET, in 4 years Ξ0could be detected at the
+∼6% level. 3G detectors should thus confidently constrain Ξ0
+to a few percent level or better, making them more effective
+at measuring deviations in the GW propagation than EMRI
+observations with LISA.
+However, other GW sources can be used as standard sirens,
+like those that will be detected by LISA, and thus provide fur-
+ther cosmological constraints. Ref. [22] uses LISA massive
+black hole binaries (MBHBs) with an EM counterpart as bright
+sirens, showing that Ξ0can be measured at the 1% to 4.4% ac-
+curacy (68% C.I.), depending on different MBHB population
+models. Furthermore, Ref [74] show that combining data from
+future GW bright sirens detected by ground-based detectors,
+LISA, and Taiji, and adding current Planck+BAO+Pantheon
+data, could constrain Ξ0at the level of 0.46% (68% C.I.).
+Such results suggest that the combination of EMRI data with
+other LISA cosmological measurements (or even with other
+space-based GW observations) could yield constraints on Ξ0
+comparable to 3G forecasts. In our results, the limits on Ξ0
+alone from the fiducial model M1 and optimistic model M6
+using the AKK waveform are already comparable to the ones
+derived by LISA MBHB bright sirens, implying that com-
+bining the two datasets could further improve these bounds.
+Moreover, since EMRIs are mostly distributed at low redshift
+and MBHBs are detected at higher redshift, their cosmological
+results will complement each other, possibly breaking some of
+the degeneracies in the parameter space of some scenarios
+[75]. Additionally many theoretical models of DE predicts
+a deviation from ΛCDM for both modified GW propagation
+parameters and DE equation of state parameters, meaning thatin they should be inferred simultaneously for realistic DE sce-
+narios [33].
+In conclusion, we find that the forecasts that we can place
+with LISA EMRIs as dark sirens, assuming a galaxy catalogs
+complete up to 𝑧=1, are definitely better than what LVK
+data can provide now and in the future, but comparable to 3G
+forecasts only in the most optimistic cases. The investigation
+we provide here is the first dark siren analysis on beyond-GR
+deviations with LISA EMRI data, and it helps to better define
+the cosmological science case of LISA. Further work will be
+necessary to fully comprehend the cosmological potential of
+the LISA mission, especially by combining data from different
+populations of LISA standard sirens, in particular EMRI and
+MBHBs.
+ACKNOWLEDGEMENTS
+The authors would like to thank Stas Babak, Enrico Ba-
+rausse, and Alberto Sesana for providing the original EMRI
+catalogs from [14], David Izquierdo-Villalba for providing
+the galaxy catalog used in the dark siren analysis, and Nic-
+col`o Muttoni for help with the implementation of the cross-
+correlation between GW events and galaxies. C. L. also thanks
+Lijing Shao, Ziming Wang, and Dicong Liang for helpful dis-
+cussions. The authors acknowledge support form the French
+space agency CNES in the framework of LISA. This project
+has received financial support from the CNRS through the
+MITI interdisciplinary programs. C. L. is supported by the
+China Scholarship Council (CSC) and the National Natural
+Science Foundation of China (11991053, 11975027). D.L.
+acknowledges funding for this work from the CNES Postdoc-
+toral Fellowship program.
+[1] E. Abdalla et al., JHEAp 34, 49 (2022), 2203.06142.
+[2] D. Huterer and D. L. Shafer, Rept. Prog. Phys. 81, 016901
+(2018), 1709.01091.
+[3] B. F. Schutz, Nature 323, 310 (1986).
+[4] D. E. Holz and S. A. Hughes, Astrophys. J. 629, 15 (2005),
+astro-ph/0504616.
+[5] B. P. Abbott et al. (LIGO Scientific, Virgo, 1M2H, Dark En-
+ergy Camera GW-E, DES, DLT40, Las Cumbres Observatory,
+VINROUGE, MASTER), Nature 551, 85 (2017), 1710.05835.
+[6] M. Soares-Santos, A. Palmese, W. Hartley, J. Annis, J. Garcia-
+Bellido, O. Lahav, Z. Doctor, M. Fishbach, D. Holz, H. Lin,
+et al., The Astrophysical Journal Letters 876, L7 (2019).
+[7] R. Gray, I. M. Hernandez, H. Qi, A. Sur, P. R. Brady, H.-Y.
+Chen, W. M. Farr, M. Fishbach, J. R. Gair, A. Ghosh, et al.,
+Physical Review D 101, 122001 (2020).
+[8] R. Abbott et al. (LIGO Scientific, Virgo,, KAGRA, VIRGO),
+Astrophys. J. 949, 76 (2023), 2111.03604.
+[9] S. Mastrogiovanni, K. Leyde, C. Karathanasis, E. Chassande-
+Mottin, D. A. Steer, J. Gair, A. Ghosh, R. Gray, S. Mukherjee,
+and S. Rinaldi, Phys. Rev. D 104, 062009 (2021), 2103.14663.
+[10] J. R. Gair et al., Astron. J. 166, 22 (2023), 2212.08694.
+[11] S. Mastrogiovanni, D. Laghi, R. Gray, G. C. Santoro, A. Ghosh,
+C. Karathanasis, K. Leyde, D. A. Steer, S. Perri `es, and G. Pierra,Phys. Rev. D 108, 042002 (2023).
+[12] R. Gray, F. Beirnaert, C. Karathanasis, B. Revenu, C. Turski,
+A. Chen, T. Baker, S. Vallejo, A. E. Romano, T. Ghosh, et al.,
+arXiv preprint arXiv:2308.02281 (2023).
+[13] P. Amaro-Seoane, J. R. Gair, M. Freitag, M. C. Miller, I. Mandel,
+C. J. Cutler, and S. Babak, Classical and Quantum Gravity 24,
+R113 (2007).
+[14] S. Babak, J. Gair, A. Sesana, E. Barausse, C. F. Sopuerta, C. P. L.
+Berry, E. Berti, P. Amaro-Seoane, A. Petiteau, and A. Klein,
+Phys. Rev. D 95, 103012 (2017), 1703.09722.
+[15] P. Amaro-Seoane et al. (LISA) (2017), 1702.00786.
+[16] C. L. MacLeod and C. J. Hogan, Physical Review D 77, 043512
+(2008).
+[17] D. Laghi, N. Tamanini, W. Del Pozzo, A. Sesana, J. Gair,
+S. Babak, and D. Izquierdo-Villalba, Mon. Not. Roy. Astron.
+Soc. 508, 4512 (2021), 2102.01708.
+[18] N. Tamanini, C. Caprini, E. Barausse, A. Sesana, A. Klein, and
+A. Petiteau, JCAP 04, 002 (2016), 1601.07112.
+[19] M. Corman, A. Ghosh, C. Escamilla-Rivera, M. A. Hendry,
+S. Marsat, and N. Tamanini, Phys. Rev. D 105, 064061 (2022),
+2109.08748.
+[20] M. Toscani, O. Burke, C. Liu, N. B. Zamel, N. Tamanini, and
+F. Pozzoli (2023), 2307.06722.13
+[21] L. Speri, N. Tamanini, R. R. Caldwell, J. R. Gair, and B. Wang,
+Phys. Rev. D 103, 083526 (2021), 2010.09049.
+[22] E. Belgacem et al. (LISA Cosmology Working Group), JCAP
+07, 024 (2019), 1906.01593.
+[23] R.-G. Cai, N. Tamanini, and T. Yang, JCAP 05, 031 (2017),
+1703.07323.
+[24] C. Caprini and N. Tamanini, JCAP 10, 006 (2016), 1607.08755.
+[25] P. Auclair et al. (LISA Cosmology Working Group) (2022),
+2204.05434.
+[26] I. D. Saltas, I. Sawicki, L. Amendola, and M. Kunz, Physical
+Review Letters 113, 191101 (2014).
+[27] L. Lombriser and A. Taylor, Journal of Cosmology and As-
+troparticle Physics 2016 , 031 (2016).
+[28] A. Nishizawa, Physical Review D 97, 104037 (2018).
+[29] E. Belgacem, Y. Dirian, S. Foffa, and M. Maggiore, Phys. Rev.
+D97, 104066 (2018), 1712.08108.
+[30] S. Arai and A. Nishizawa, Physical Review D 97, 104038 (2018).
+[31] A. Nishizawa, Phys. Rev. D 97, 104037 (2018), 1710.04825.
+[32] S. Arai and A. Nishizawa, Phys. Rev. D 97, 104038 (2018),
+1711.03776.
+[33] E. Belgacem, Y. Dirian, S. Foffa, and M. Maggiore, Phys. Rev.
+D98, 023510 (2018), 1805.08731.
+[34] M. Lagos, M. Fishbach, P. Landry, and D. E. Holz, Phys. Rev.
+D99, 083504 (2019), 1901.03321.
+[35] T. Zhu, W. Zhao, J.-M. Yan, C. Gong, and A. Wang (2023),
+2304.09025.
+[36] R. Abbott et al. (LIGO Scientific, VIRGO, KAGRA) (2021),
+2111.03606.
+[37] A. Finke, S. Foffa, F. Iacovelli, M. Maggiore, and M. Mancarella,
+JCAP 08, 026 (2021), 2101.12660.
+[38] M. Mancarella, A. Finke, S. Foffa, E. Genoud-Prachex, F. Ia-
+covelli, and M. Maggiore, in 56th Rencontres de Moriond on
+Gravitation (2022), 2203.09238.
+[39] S. Mastrogiovanni, L. Haegel, C. Karathanasis, I. M. n. Hernan-
+dez, and D. A. Steer, JCAP 02, 043 (2021), 2010.04047.
+[40] C. de Rham and S. Melville, Phys. Rev. Lett. 121, 221101 (2018),
+1806.09417.
+[41] B. P. Abbott et al. (LIGO Scientific, Virgo, Fermi-GBM, INTE-
+GRAL), Astrophys. J. Lett. 848, L13 (2017), 1710.05834.
+[42] T. Baker, G. Calcagni, A. Chen, M. Fasiello, L. Lombriser,
+K. Martinovic, M. Pieroni, M. Sakellariadou, G. Tasinato,
+D. Bertacca, et al., Journal of Cosmology and Astroparticle
+Physics 2022 , 031 (2022).
+[43] D. Izquierdo-Villalba, R. E. Angulo, A. Orsi, G. Hurier,
+G. Vilella-Rojo, S. Bonoli, C. L ´opez-Sanjuan, J. Alcaniz, J. Ce-
+narro, D. Crist ´obal-Hornillos, et al., Astronomy & Astrophysics
+631, A82 (2019).
+[44] L. Barack and C. Cutler, Physical Review D 69, 082005 (2004).
+[45] B. M. Henriques, S. D. White, P. A. Thomas, R. Angulo, Q. Guo,
+G. Lemson, V. Springel, and R. Overzier, Monthly Notices of
+the Royal Astronomical Society 451, 2663 (2015).
+[46] V. Springel, Monthly notices of the royal astronomical society
+364, 1105 (2005).
+[47] N. Muttoni, D. Laghi, N. Tamanini, S. Marsat, and D. Izquierdo-
+Villalba, arXiv preprint arXiv:2303.10693 (2023).
+[48] N. Muttoni, A. Mangiagli, A. Sesana, D. Laghi, W. Del Pozzo,
+D. Izquierdo-Villalba, and M. Rosati, Phys. Rev. D 105, 043509
+(2022), 2109.13934.
+[49] W. Del Pozzo, Phys. Rev. D 86, 043011 (2012), 1108.1317.[50] W. Del Pozzo and D. Laghi, wdpozzo/cosmolisa (2022), URL
+https://github.com/wdpozzo/cosmolisa .
+[51] W. Del Pozzo and J. Veitch, wdpozzo/raynest (2021), URL
+https://github.com/wdpozzo/raynest .
+[52] URL https://pypi.org/project/ray/ .
+[53] I. Mandel, W. M. Farr, and J. R. Gair, Monthly Notices of the
+Royal Astronomical Society 486, 1086 (2019).
+[54] S. Vitale, D. Gerosa, W. M. Farr, and S. R. Taylor, in Handbook
+of Gravitational Wave Astronomy (Springer, 2022), pp. 1–60.
+[55] M. Maggiore, in Gravity and the Quantum: Pedagogical Essays
+on Cosmology, Astrophysics, and Quantum Gravity (Springer,
+2017), pp. 221–281.
+[56] E. Belgacem, Y. Dirian, S. Foffa, E. J. Howell, M. Maggiore,
+and T. Regimbau, JCAP 08, 015 (2019), 1907.01487.
+[57] Virgo Millennium Database (2012), URL http:
+//gavo.mpa-garching.mpg.de/Millennium/Help?
+page=databases/henriques2012a/database .
+[58] B. P. Abbott, R. Abbott, T. Abbott, F. Acernese, K. Ackley,
+C. Adams, T. Adams, P. Addesso, R. X. Adhikari, V. B. Adya,
+et al., Physical review letters 123, 011102 (2019).
+[59] R. Abbott, H. Abe, F. Acernese, K. Ackley, N. Adhikari, R. Ad-
+hikari, V. Adkins, V. Adya, C. Affeldt, D. Agarwal, et al., arXiv
+preprint arXiv:2112.06861 (2021).
+[60] G. D ´alya, G. Galg ´oczi, L. Dobos, Z. Frei, I. S. Heng, R. Macas,
+C. Messenger, P. Raffai, and R. S. de Souza, Monthly Notices
+of the Royal Astronomical Society 479, 2374 (2018).
+[61] M. Mancarella, E. Genoud-Prachex, and M. Maggiore, Phys.
+Rev. D 105, 064030 (2022), 2112.05728.
+[62] K. Leyde, S. Mastrogiovanni, D. A. Steer, E. Chassande-Mottin,
+and C. Karathanasis, JCAP 09, 012 (2022), 2202.00025.
+[63] A. Chen, R. Gray, and T. Baker, arXiv preprint
+arXiv:2309.03833 (2023).
+[64] G. D ´alya, R. D ´ıaz, F. Bouchet, Z. Frei, J. Jasche, G. Lavaux,
+R. Macas, S. Mukherjee, M. P ´alfi, R. De Souza, et al., Monthly
+Notices of the Royal Astronomical Society 514, 1403 (2022).
+[65] S. Mukherjee, B. D. Wandelt, and J. Silk, Monthly Notices of
+the Royal Astronomical Society 502, 1136 (2021).
+[66] M. Branchesi, M. Maggiore, D. Alonso, C. Badger, B. Banerjee,
+F. Beirnaert, E. Belgacem, S. Bhagwat, G. Boileau, S. Borha-
+nian, et al., Journal of Cosmology and Astroparticle Physics
+2023 , 068 (2023).
+[67] S. Hild, S. Chelkowski, and A. Freise, arXiv preprint
+arXiv:0810.0604 (2008).
+[68] M. Punturo, M. Abernathy, F. Acernese, B. Allen, N. Andersson,
+K. Arun, F. Barone, B. Barr, M. Barsuglia, M. Beker, et al.,
+Classical and Quantum Gravity 27, 194002 (2010).
+[69] S. Hild, M. Abernathy, F. e. Acernese, P. Amaro-Seoane, N. An-
+dersson, K. Arun, F. Barone, B. Barr, M. Barsuglia, M. Beker,
+et al., Classical and Quantum gravity 28, 094013 (2011).
+[70] N. Jiang and K. Yagi, Phys. Rev. D 103, 124047 (2021),
+2104.04442.
+[71] S. Kawamura, M. Ando, N. Seto, S. Sato, T. Nakamura, K. Tsub-
+ono, N. Kanda, T. Tanaka, J. Yokoyama, I. Funaki, et al., Clas-
+sical and Quantum Gravity 28, 094011 (2011).
+[72] S. Kawamura, M. Ando, N. Seto, S. Sato, M. Musha, I. Kawano,
+J. Yokoyama, T. Tanaka, K. Ioka, T. Akutsu, et al., Progress of
+Theoretical and Experimental Physics 2021 , 05A105 (2021).
+[73] A. Finke, S. Foffa, F. Iacovelli, M. Maggiore, and M. Mancarella,
+Phys. Rev. D 104, 084057 (2021), 2107.05046.
+[74] T. Yang, JCAP 05, 044 (2021), 2103.01923.
+[75] N. Tamanini, J. Phys. Conf. Ser. 840, 012029 (2017),
+1612.02634.

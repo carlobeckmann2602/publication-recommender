@@ -1,0 +1,1427 @@
+Consistently constraining fNLwith the squeezed lensing bispectrum using consistency
+relations
+Samuel Goldstein,1,∗Oliver H. E. Philcox,2, 1J. Colin Hill,1Angelo Esposito,3, 4and Lam Hui1
+1Center for Theoretical Physics, Department of Physics,
+Columbia University, New York, NY 10027, USA
+2Simons Society of Fellows, Simons Foundation, New York, NY 10010, USA
+3Dipartimento di Fisica, Sapienza Universit` a di Roma, Piazzale Aldo Moro 2, I-00185 Rome, Italy
+4INFN Sezione di Roma, Piazzale Aldo Moro 2, I-00185 Rome, Italy
+We introduce a non-perturbative method to constrain the amplitude of local-type primordial
+non-Gaussianity ( fNL) using squeezed configurations of the CMB lensing convergence and cosmic
+shear bispectra. First, we use cosmological consistency relations to derive a model for the squeezed
+limit of angular auto- and cross-bispectra of lensing convergence fields in the presence of fNL. Using
+this model, we perform a Fisher forecast with specifications expected for upcoming CMB lensing
+measurements from the Simons Observatory and CMB-S4, as well as cosmic shear measurements from
+a Rubin LSST/ Euclid -like experiment. Assuming a minimum multipole ℓmin= 10 and maximum
+multipole ℓmax= 1400, we forecast σfNL= 175 (95) for Simons Observatory (CMB-S4). Our forecasts
+improve considerably for an LSST/ Euclid -like cosmic shear experiment with three tomographic bins
+andℓmin= 10 and ℓmax= 1400 (5000) with σfNL= 31 (16). A joint analysis of CMB-S4 lensing
+and LSST/ Euclid -like shear yields little gain over the shear-only forecasts; however, we show that
+a joint analysis could be useful if the CMB lensing convergence can be reliably reconstructed at
+larger angular scales than the shear field. The method presented in this work is a novel and robust
+technique to constrain local primordial non-Gaussianity from upcoming large-scale structure surveys
+that is completely independent of the galaxy field (and therefore any nuisance parameters such as
+bϕ), thus complementing existing techniques to constrain fNLusing the scale-dependent halo bias.
+I. INTRODUCTION
+One of the primary goals of ongoing and upcoming
+galaxy surveys such as the Dark Energy Spectroscopic
+Instrument (DESI) [ 1],Euclid [2],SPHEREx [3], and
+the Vera C. Rubin Observatory Legacy Survey of Space
+and Time (LSST) [ 4] is to reveal information about the
+physics behind the primordial perturbations that evolved
+into present-day cosmic structures. In the standard cos-
+mological model, these perturbations are produced during
+an inflationary epoch in which the Universe underwent a
+period of rapid accelerated expansion. The simplest single-
+field models of inflation predict initial conditions that are
+almost perfectly Gaussian and adiabatic [ 5–8]; however,
+a wealth of more complex models exist that predict de-
+partures from Gaussianity [ 9,10]. As such, searches for
+primordial non-Gaussianity (PNG) can powerfully probe
+the physics of the early Universe.
+Currently, the tightest constraints on a wide range of pa-
+rameters characterizing the amplitude of PNG in various
+shapes come from analysis of the cosmic microwave back-
+ground (CMB) [ 11]; nevertheless, large-scale structure
+(LSS) observations provide a complementary approach
+to competitively constrain PNG [ 12–18]. For local-type
+PNG, the subject of this work, LSS constraints are typi-
+cally derived by taking advantage of its distinct imprint
+on halo clustering via the “scale-dependent bias”. This
+effect manifests as an enhancement in the amplitude of
+∗sjg2215@columbia.eduthe large-scale power spectrum of biased tracers relative
+to the expectation from Gaussian initial conditions [ 19–
+22]. Constraining the amplitude of local PNG, fNL,1
+using the scale-dependent bias is a key goal of upcoming
+surveys. The potential of this technique was recently
+demonstrated in an analysis of DESI photometric cluster-
+ing data, which provided the most precise LSS constraint
+onfNLto date [ 18]. However, the impact of foreground
+and systematic effects on this result remains unclear.
+A potential limitation of using the scale-dependent bias
+to constrain local PNG is that the derived constraints
+onfNLrequire precise knowledge of the impact of local
+PNG on galaxy formation, due to the perfect degeneracy
+between fNLand the non-Gaussian halo bias parameter
+bϕ[23–28]. This situation motivates the development of
+alternative methods to constrain local PNG using LSS
+that do not rely on the scale-dependent bias. A promising
+option is to instead use the weak lensing bispectrum, since
+this is sensitive to the (unbiased) total matter distribution.
+The prospect of constraining local PNG using the weak
+lensing bispectrum was first discussed in Takada and
+Jain[29](see also [ 30–32]), where the authors found that
+weak lensing convergence bispectrum tomography does
+not yield competitive constraints on fNL. The goal of
+our paper is to revisit the feasibility of this approach
+and investigate whether the situation has improved given
+the significant advancements in both modeling and ob-
+servations over the past two decades. Our work builds
+upon Ref. [ 29] in several ways. Firstly, while Ref. [ 29]
+1Throughout this paper, we use fNL≡floc
+NL.arXiv:2310.12959v1  [astro-ph.CO]  19 Oct 20232
+used a tree-level perturbation theory model for the local
+PNG contribution to the lensing bispectrum, we utilize a
+recently developed non-perturbative model for the matter
+bispectrum based on the LSS consistency relations [ 33,34]
+that has been validated deep into the non-linear regime
+using N-body simulations [ 35,36]. This model enables
+us to include non-linear modes in our analysis, leveraging
+the unprecedented depth of ongoing and upcoming weak
+lensing experiments. Secondly, we use realistic galaxy
+source distributions and number densities expected for
+an LSST/ Euclid -like survey to directly forecast the con-
+straining power of Stage-IV shear experiments. Finally,
+we forecast the constraining power of CMB lensing bis-
+pectrum measurements using lensing reconstruction noise
+properties expected from the imminent Simons Observa-
+tory [ 37] and future CMB-S4 [ 38] experiments. To our
+knowledge, this is the first forecast for constraining PNG
+using the CMB lensing convergence bispectrum, which
+has previously been shown to be a promising probe of
+cosmology [39].
+The remainder of the paper is organized as follows. In
+Section II, we provide theoretical background on local
+PNG and weak lensing and present expressions for the
+convergence power spectra and bispectra, as well as their
+covariances. In Section III, we discuss the forecast setup,
+before presenting the corresponding results in Section IV.
+Section V summarizes our conclusions and the Appendix
+contains a discussion of the impact of non-linear effects
+on our forecasts.
+Conventions: Throughout this paper we work in natural
+units, c= 1. We assume a fiducial spatially flat ΛCDM
+cosmology based on the Planck 2018 results [ 40] with
+Ωm= 0.311, Ω b= 0.0493, h= 0.674, ns= 0.965, σ8=
+0.811, and τ= 0.054. We assume three species of massless
+neutrinos.
+II. THEORETICAL BACKGROUND
+To forecast how well the squeezed lensing bispectrum
+can constrain fNL, we require a model for the lensing con-
+vergence bispectrum (and its covariance) in the presence
+of local PNG. We derive these results in this section. We
+first derive a non-perturbative expression for the unequal-
+time squeezed 3D matter bispectrum in the presence of
+fNLbased on Ref. [ 36]. We then introduce the weak lens-
+ing convergence field and compute expressions for the
+convergence power spectrum and bispectrum and their
+covariances in terms of the 3D matter power spectrum
+and bispectrum. Some of the results of this section are
+standard in the lensing literature [ 41–44]; nevertheless, we
+include them here both for the sake of completeness and
+to highlight the assumptions underlying our forecasts.A. Conventions
+We first establish some notation. For an overdensity
+fieldδ(q), the 3D power spectrum is defined by
+⟨δ(k)δ(k′)⟩ ≡(2π)3δD(k+k′)P(k, zk), (1)
+where we have explicitly included the time-dependence of
+δ(k). Similarly, the 3D bispectrum is defined by
+⟨δ(q)δ(k)δ(p)⟩ ≡(2π)3δD(q+k+p)B(q,k, zq, zk, zp).
+(2)
+Here, we are interested in the squeezed limit of the bispec-
+trum, where one of the modes is much smaller than the
+other two, i.e., q≪k≃p. In this limit, the contributions
+to the lensing bispectrum satisfy zk≃zp; therefore, we
+use the notation B(q,k, zq, zk) to indicate the unequal-
+time bispectrum (fixing zp=zk). Finally, when working
+with correlators of the lensing convergence, we will often
+specify the time-dependence implicitly in terms of the
+comoving distance, χ, to redshift z.
+B. Squeezed matter bispectrum in the presence of
+local primordial non-Gaussianity
+To derive an expression for squeezed configurations of
+the lensing bispectrum, we first require a model for the
+unequal-time squeezed matter bispectrum in the presence
+of local PNG. Our derivation follows that of [ 36] (see
+also [ 45,46]), but is generalized to include unequal-time
+correlations between the long and short modes.
+Local PNG is parametrized by a primordial gravita-
+tional potential on sub-horizon scales given by [e.g., 47,48]
+Φ(x) = Φ G(x) +fNL 
+Φ2
+G(x)− ⟨Φ2
+G⟩
+, (3)
+where Φ G(x) is a Gaussian random field. To deter-
+mine the squeezed bispectrum we evaluate the correlator
+⟨δ(q)P(k, χk|ΦL)⟩where δ(q) is the soft mode density
+field and P(k, χk|ΦL) is the locally measured small-scale
+power spectrum in the presence of a background long-
+wavelength potential Φ L[45]. This can be expanded as
+P(k, χk|ΦL) =P(k, χk|0)
++Z
+dq′∂P(k, χk)
+∂ΦL(q′)ΦL(q′) +. . . ,(4)
+where we are assuming that q′≡ |q′| ≪k, such that we
+can treat the long mode as a background, in the pres-
+ence of which the power spectrum is evaluated. This
+induces a coupling between the hard mode power spec-
+trum, P(k, χk), and the soft mode density field, δ(q). The
+resulting squeezed limit bispectrum is given by
+B(q,k, χq, χk) =Z
+dq′∂P(k, χk)
+∂ΦL(q′)⟨δ(q)ΦL(q′)⟩
+=∂P(k, χk)
+∂ΦL(q)P(q, χq)
+α(q, χq).(5)3
+Here, we have used Poisson’s equation to relate the
+long-wavelength density and potential fields, δ(q) =
+α(q, χq) ΦL(q), with
+α(q, χq)≡2
+3q2T(q)Dmd(χq)
+ΩmH2
+0, (6)
+where Ω mandH0are the matter density and expansion
+rate today, T(q) is the transfer function (normalized to
+unity for q→0), and Dmd(z) is the growth factor, nor-
+malized to a(z) = 1 /(1 + z) in the matter-dominated
+era.
+We evaluate the potential derivative using the separate
+Universe formalism leading to the following expression
+for the primordial contribution to the late-time matter
+bispectrum in the squeezed limit [36, 46]:
+Bprim(q,k, χq, χk) =6fNLΩmH2
+0
+Dmd(χq)∂P(k, χk)
+∂logσ2
+8
+×P(q, χq)
+q2T(q)+O 
+f2
+NL
+.(7)
+Notice that the soft-mode dependence of the primor-
+dial contribution to the squeezed matter bispectrum
+scales as P(q, χq)/q2; however, the LSS consistency re-
+lations [ 33,34] ensure that, in the absence of local
+PNG and equivalence-principle-violating physics, the ra-
+tioB(q,k, χq, χk)/P(q, χq) has no 1 /qand 1 /q2poles in
+the squeezed limit q/k→0 (see also [ 35]).2It is worth
+stressing that this statement about the lack of poles, in the
+absence of local PNG and equivalence-principle-violation,
+is robust: it holds even if the high momentum ( k) modes
+are in the nonlinear regime, and even if they are affected
+by baryonic feedback processes [ 49,50]. As such, we can
+split the late-time squeezed matter bispectrum into a
+primordial contribution and a gravitational contribution
+B=Bprim+Bgrav, where the primordial contribution is,
+up to O(f2
+NL),described by Eq. (7).
+The gravitational term Bgravis difficult to model be-
+yond perturbative scales; nevertheless, as shown in [ 35],
+the squeezed bispectrum is well-described by a power
+series
+Bgrav(q,k, χq, χk) =∞X
+n=0an(k, θ, χ k)q
+kn
+×P(q, χq)P(k, χk),(8)
+where the ai’s are coefficients characterizing the response
+of small-scale matter clustering to a long-wavelength mode
+andθis the angle between qandk. As described in
+Refs. [ 35,36], by angular averaging over all available
+2In the unequal-time limit in the hard modes (i.e., χk1̸=χk2),
+the squeezed bispectrum has a term proportional to ( Dmd(χk1)−
+Dmd(χk2))P(q, χq)/q; however, this contribution vanishes in the
+limit χk2→χk3, which is assumed here.short modes that satisfy the triangle inequality, the odd-
+order coefficients vanish, and the remaining coefficients
+become independent of the angle θ. In practice, one
+truncates the series at some finite n. By comparing to
+N-body simulations, Ref. [ 36] found that truncating at
+n= 2 is sufficient for a wide range of soft modes. The
+gravitational contribution to the matter bispectrum is
+then
+Bgrav(q,k, zq, zk) =a0(k, χk)P(k)P(q)+ (9)
+a2(k, χk)q2
+k2P(k)P(q),
+which carries two scale- and redshift-dependent “nuisance”
+parameters, a0(k, χk) and a2(k, χk). In this work, we will
+ignore the a2(k, χk) contribution because it is subdom-
+inant and largely uncorrelated with fNL[36].3Further-
+more, for our fiducial forecasts, we will assume perfect
+knowledge of a0(k, χk) via the angular averaged bispec-
+trum consistency condition from [51, 52],
+a0(k, χk) = 1 +13
+21∂logP(k, χk)
+∂logDmd(χk)−1
+3∂logP(k, χk)
+∂logk.
+(10)
+Although Eq. (10)is non-perturbative and can therefore
+be applied to non-linear scales, it is expected to break
+down at small scales and low redshifts due to baryonic
+effects and departures from an Einstein–de Sitter uni-
+verse [ 51,52]. Furthermore, even if Eq. (10)is valid over
+the scales and redshifts considered in this work, modeling
+the derivatives in Eq. (10) can be challenging. Conse-
+quently, we also consider forecasts for a more pessimistic
+scenario in which a0(k, χk) is a free amplitude that we
+marginalize over, as was done in Ref. [36].
+C. Weak gravitational lensing
+In this section, we introduce the weak lensing con-
+vergence field and derive theoretical predictions for the
+lensing convergence power spectrum and bispectrum and
+their associated covariances. For a detailed treatment of
+weak lensing see, e.g., [41–44].
+Assuming the Born approximation and working at lin-
+ear order in the matter density fluctuation, the conver-
+gence field κ(i)(ˆn) is a weighted projection of the matter
+density field:
+κ(i)(ˆn) =Zχs
+0dχ W(i)(χ)δm(χˆn, χ), (11)
+where ˆnis a unit vector, χsis the comoving distance to
+the photon source, and W(i)(χ) is the projection kernel.
+3As shown in Appendix B of [ 36],a2(k, χk) = 0 is a valid assump-
+tion for a wide range of scale cuts.4
+The exact form of W(i)(χ) is determined by the specifics
+of the lensing source. For CMB lensing, the kernel is
+WκCMB(χ)≡3H2
+0Ωmχ
+2a(χ)χ∗−χ
+χ∗
+, (12)
+where χ∗is the comoving distance to the last-scattering
+surface at z∗≃1090, and a(χ) is the scale factor. For
+cosmic shear, the kernel is
+Wκg,(i)(χ) =3H2
+0Ωmχ
+2a(χ)Z∞
+χdχ′p(i)
+s(χ′)χ′−χ
+χ′
+,(13)
+where p(i)
+s(χ) is the redshift distribution of source galaxies
+in the i-th tomographic bin, satisfying the normalization
+conditionR
+dχ′p(i)
+s(χ′) = 1.
+It is convenient to expand the convergence field in
+spherical harmonics,
+κ(i)(ˆn) =X
+ℓ,mκ(i)
+ℓmYℓm(ˆn). (14)
+In the following sections, we will derive expressions for the
+auto- and cross-power spectra and bispectra of arbitrary
+convergence fields κ(i)
+ℓmin terms of the 3D matter power
+spectrum and bispectrum.
+In practice, galaxy weak lensing surveys measure cosmic
+shear instead of convergence; however, the convergence
+field can be reconstructed from shear measurements [ 53–
+59]. The reconstructed convergence field is a (somewhat)
+biased estimate of the underlying convergence field; there-
+fore, in a real analysis, one would likely directly model the
+shear bispectrum instead of the convergence bispectrum.
+For CMB lensing, the convergence field itself can be di-
+rectly reconstructed from the observed CMB temperature
+and polarization anisotropies (e.g., [60]).
+1. Convergence power spectrum
+The angular power spectrum between two convergence
+fields, C(ij)
+ℓ, is defined by
+κ(i)
+ℓmκ∗(j)
+ℓ′,m′
+=δK
+ℓℓ′δK
+mm′C(ij)
+ℓ,
+assuming statistical isotropy. Using Eqs. (11)and(14),
+we can express C(ij)
+ℓas
+C(ij)
+ℓ=2
+πZ
+dχ1W(i)(χ1)Z
+dχ2W(j)(χ2)
+×Z
+dk k2P(k, χ1, χ2)jℓ(kχ1)jℓ(kχ2).(15)
+At high ℓ, we can use the Limber approximation [61–63]
+to replace the highly oscillatory spherical Bessel functionby a Dirac delta function,
+jℓ(kχ)≃rπ
+2ℓ+ 1δD 
+ℓ+1
+2−kχ
+, (16)
+leading to
+C(ij)
+ℓ≫1≃Zdχ
+χ2W(i)(χ)W(j)(χ)P
+k=ℓ+1
+2
+χ, χ
+.(17)
+In this work, we compute the angular power spectrum
+using the exact expression via the FFTLog [ 64–66] algo-
+rithm for ℓ <50 and employ the Limber approximation
+forℓ≥50.
+Assuming a fractional sky coverage fsky, the covariance
+between C(ij)
+ℓandC(mn)
+ℓ′is [29]
+Covh
+C(ij)
+ℓ, C(mn)
+ℓ′i
+=δK
+ℓℓ′
+fsky(2ℓ+ 1)(18)
+×
+˜C(im)
+ℓ˜C(jn)
+ℓ+˜C(in)
+ℓ˜C(jm)
+ℓ
+,
+where we have neglected the connected non-Gaussian con-
+tribution and the super-sample covariance [ 67–72]. The
+connected non-Gaussian contribution is expected to be
+subdominant in Stage-IV convergence power spectra due
+to the suppression of non-Gaussianities in lensing, which
+projects quantities along the line-of-sight [ 67,72]. Con-
+versely, as shown in [ 72], the super-sample covariance can
+have a significant impact on the convergence power spec-
+tra for Stage-IV shear surveys. Nevertheless, we ignore
+the non-Gaussian covariance so that we can determine
+the most optimistic forecasts for a given survey (and thus
+obtain an upper bound on the utility of our method).
+Note that in Eq. (18), we write ˜C(ij)
+ℓto emphasize that
+this is the observed angular power spectrum, including
+the noise contribution as discussed in Sec. III A.
+2. Convergence bispectrum
+The angular bispectrum B(ijk)
+ℓ1ℓ2ℓ3is defined by [e.g., 73]
+⟨κ(i)
+ℓ1m1κ(j)
+ℓ2m2κ(k)
+ℓ3m3⟩ ≡ℓ1ℓ2ℓ3
+m1m2m3
+B(ijk)
+ℓ1ℓ2ℓ3, (19)
+whereℓ1ℓ2ℓ3
+m1m2m3
+is the Wigner-3 jsymbol. Using
+Eqs. (11)and(14), the convergence three-point function
+can be expressed as5
+
+κ(1)
+ℓ1m1κ(2)
+ℓ2m2κ(3)
+ℓ3m3
+=8
+π3Gℓ1ℓ2ℓ3
+m1m2m3Z
+dr r23Y
+i=1dχidkik2
+iW(i)(χi)jℓi(kiχi)jℓi(kir)
+B(k1, k2, k3, χ1, χ2, χ3),(20)
+where we have introduced the Gaunt factor, Gℓ1ℓ2ℓ3m1m2m3≡q
+(2ℓ1+1)(2 ℓ2+1)(2 ℓ3+1)
+4πℓ1ℓ2ℓ3
+0 0 0ℓ1ℓ2ℓ3
+m1m2m3
+. Again
+asserting isotropy, it is convenient to define the reduced
+bispectrum,
+κ(i)
+ℓ1m1κ(j)
+ℓ2m2κ(k)
+ℓ3m3
+≡ Gℓ1ℓ2ℓ3m1m2m3b(ijk)
+ℓ1ℓ2ℓ3, such
+that the reduced bispectrum and angular bispectrum are
+related by
+B(ijk)
+ℓ1ℓ2ℓ3=q
+(2ℓ1+1)(2 ℓ2+1)(2 ℓ3+1)
+4πℓ1ℓ2ℓ3
+0 0 0
+b(ijk)
+ℓ1ℓ2ℓ3
+≡hℓ1ℓ2ℓ3b(ijk)
+ℓ1ℓ2ℓ3.(21)
+As in Eq. (17), in the squeezed limit, which corresponds
+toℓ1≪ℓ2≃ℓ3, we can use the Limber approximation
+for the spherical Bessel functions jℓ2(k2χ2) and jℓ3(k3χ3).
+This allows the reduced bispectrum to be written as
+b(ijk)
+ℓ1ℓ2ℓ3=2
+πZ
+dχ1dχ2W(i)(χ1)W(j)(χ2)W(k)(χ2)
+χ2
+2
+×Z
+dq q2jℓ1(qχ1)jℓ1(qχ2) (22)
+×B
+q,ℓ2+1
+2
+χ2,ℓ3+1
+2
+χ2, χ1, χ2, χ2
+.
+Notice that the assumption that χ2≃χ3is exact in the
+Limber approximation. If we also assume the Limber
+approximation for ℓ1, then
+b(ijk)
+ℓ1ℓ2ℓ3≃Z
+dχW(i)(χ)W(j)(χ)W(k)(χ)
+χ4
+×Bℓ1+1
+2
+χ,ℓ2+1
+2
+χ,ℓ3+1
+2
+χ, χ
+.(23)
+Here, we compute the squeezed angular bispectrum using
+Eq.(22)via the FFTLog algorithm for ℓ1<50 and use
+the Limber approximation in Eq. (23) for ℓ1≥50.
+Finally, assuming ℓ1≤ℓ2≤ℓ3, the Gaussian covariance
+between the reduced bispectra b(abc)
+ℓ1ℓ2ℓ3andb(ijk)
+ℓ′
+1ℓ′
+2ℓ′
+3is
+Covh
+b(abc)
+ℓ1ℓ2ℓ3, b(ijk)
+ℓ′
+1ℓ′
+2ℓ′
+3i
+≃h−1
+ℓ1ℓ2ℓ3h−1
+ℓ′
+1ℓ′
+2ℓ′
+3∆(ℓ1, ℓ2, ℓ3)
+fsky(24)
+×˜C(ai)
+ℓ1˜C(bj)
+ℓ2˜C(ck)
+ℓ3δK
+ℓ1ℓ′
+1δK
+ℓ2ℓ′
+2δK
+ℓ3ℓ′
+3,
+where ∆( ℓ1, ℓ2, ℓ3) is a symmetry factor that is equal to
+six for equilateral triangles, two for isosceles triangles,
+and one otherwise. As in Eq. (18), Eq. (24)includes only
+the Gaussian contribution to the covariance. Although
+non-Gaussian terms can have a significant impact on the
+lensing convergence bispectrum covariance [ 69,74–78],
+especially for squeezed configurations, we neglect them in
+order to forecast the most optimistic possible constraints
+onfNLachievable with the presented method.III. FORECAST SETUP
+A. Survey specifications
+1. CMB lensing experiments
+For the CMB lensing analysis, we consider two CMB
+experiments: Simons Observatory [ 37] and CMB-S4 [ 38,
+79]. We assume a fractional sky coverage fsky= 0.45
+for both surveys, for simplicity. The observed angular
+power spectrum of the CMB lensing convergence, used to
+compute the bispectrum covariance in Eq. (24), is
+˜Cℓ=CκCMB
+ℓ+Nℓ, (25)
+where Nℓis the CMB lensing reconstruction noise. Here,
+we assume that the CMB lensing convergence is recon-
+structed using an iterative estimator [ 80,81] and model
+the reconstruction noise using the iterative noise curves
+from [ 82]. The convergence power spectrum CκCMB
+ℓ is
+computed using Eqs. (15) and(17) where we compute
+the matter power spectrum using halofit [83] to model
+contributions from non-linear structure formation.4
+The left panel of Fig. 1 shows the CMB lensing con-
+vergence power spectrum and its covariance, including
+the cosmic variance and reconstruction noise expected
+for Simons Observatory and CMB-S4. The CMB lensing
+convergence power spectrum is cosmic-variance-limited
+(on the observed sky fraction) up to ℓ≃350 (700) for
+Simons Observatory (CMB-S4).
+2. Cosmic shear experiments
+For the cosmic shear analysis, we consider a generic
+Stage IV photometric galaxy survey with specifications
+similar to those expected of LSST [ 4] and Euclid [84]. As
+for the CMB, we assume that the cosmic shear surveys
+have a fractional sky coverage fsky= 0.45. When cross-
+correlating cosmic shear and CMB lensing, we assume
+the surveys fully overlap.
+We model the true source galaxy redshift distribution
+as
+ptrue
+s(z)∝z2exp [−(z/z0)α], (26)
+4We use the linear power spectrum for the soft mode when com-
+puting the non-Limber integrals since the FFTLog algorithm
+requires that the time dependence of the integrand factorizes.
+This has negligible impact on our results because these scales are
+well described by linear theory.6
+0 1 2 3 4
+z0.00.20.40.60.8dn/dzCMB Lensing EﬃciencyLSST/Euclid ( Ntomo = 1)
+LSST/Euclid ( Ntomo = 3)
+1 10 100 1000 5000
+/lscript10−810−610−410−2/lscript(/lscript+ 1)Cκκ
+/lscript/2πCMB-S4
+Simons Observatory
+LSST/Euclid
+Linear Theory
+Noise
+FIG. 1. Left: Angular auto-power spectra of the CMB lensing convergence and cosmic shear convergence. The shaded region
+denotes the 1 σerror bar estimated from the Gaussian covariance with fsky= 0.45, as described in Sec. III. The CMB lensing
+results (orange and red) include lensing reconstruction noise for Simons Observatory and CMB-S4, while the shear results (blue)
+include shape noise and assume a single tomographic bin; the noise power spectra are shown in dash-dotted. The black dotted
+curves indicate linear-theory predictions. The cosmic shear power spectrum is significantly more sensitive to non-linear structure
+formation than the CMB lensing power spectrum, but also has much higher signal-to-noise at small scales (large ℓ). The power
+spectra are computed using FFTLog for ℓ <50 and using the Limber approximation for ℓ≥50.Right : Assumed redshift source
+distribution for the cosmic shear forecasts presented in this work based on an LSST/ Euclid -like survey. The full sample (solid)
+is normalized to unit integral and the three tomographic bins (dashed) are normalized to 1 /3 each. For comparison, we include
+the CMB lensing kernel WκCMB(z)/H(z) computed using Eq. (12) with an arbitrary normalization.
+with z0= 0.28 and α= 0.9 as specified in the LSST
+Dark Energy Science Collaboration Science Requirements
+Document [ 85]. To account for photometric-redshift un-
+certainties, we assume that the probability distribution
+for the observed photometric redshift, zph, given the true
+galaxy redshift, z, follows a Gaussian distribution,
+P(zph|z) =1p
+2πσ2(z)exp"
+−1
+2z−zph
+σ2(z)2#
+,(27)
+with uncertainty σ(z) = 0 .05(1 + z) [85]. The source
+distribution in a tomographic bin z(i)
+min≤z≤z(i)
+maxis then
+p(i)
+s(z) =ptrue
+s(z)Zz(i)
+max
+z(i)
+mindz′P(z′|z). (28)
+For our fiducial forecast, we divide the source distribution
+into three tomographic bins with an equal number of
+galaxies in each bin. We investigate the impact of vary-
+ing the number of tomographic bins on our parameter
+constraints in Sec. IV B.
+The observed angular power spectrum of the cosmic
+shear convergence used to compute the bispectrum co-
+variance in Eq. (24) is
+˜C(ij)
+ℓ=Cκg,(ij)
+ℓ+δK
+ijσ2
+ϵ
+¯n(i)
+g, (29)where we have included the shape noise contribution aris-
+ing from the intrinsic ellipticities of galaxies. We set the
+effective number density of galaxies to ¯ng= 31 arcmin−2
+and assume an intrinsic rms ellipticity σϵ= 0.26 [86].
+When dividing the galaxy source sample into Ntomoto-
+mographic bins, the effective number density is ¯n(i)
+g=
+¯ng/Ntomo.
+The left panel of Fig. 1 includes the cosmic shear con-
+vergence power spectrum assuming Ntomo= 1 as well as
+the noise contribution due to shape noise. The cosmic
+shear power spectrum is cosmic-variance-limited (on the
+observed sky fraction) up to ℓ≃1800 assuming Ntomo= 1
+and the survey specifications used in this work. The right
+panel of Fig. 1 shows the assumed galaxy redshift source
+distribution in a single tomographic bin and in three
+tomographic bins, as well as the CMB lensing kernel.
+B. Fisher Matrix
+To estimate how well lensing convergence bispectra
+can constrain fNL, we adopt the Fisher matrix formal-
+ism. For our fiducial forecasts, we assume that the auto-
+and cross-bispectra of the convergence fields are the only7
+observables and that fNLis the only free parameter.5
+We also assume a Gaussian likelihood for the observed
+convergence bispectra. The Fisher matrix is then given
+by
+F=X
+ijk
+abcX
+ℓ1ℓ2ℓ3∂ b(ijk)
+ℓ1ℓ2ℓ3
+∂fNLCov−1h
+b(ijk)
+ℓ1ℓ2ℓ3, b(abc)
+ℓ1ℓ2ℓ3i∂ b(abc)
+ℓ1ℓ2ℓ3
+∂fNL,
+(30)
+where ∂ b(ijk)
+ℓ1ℓ2ℓ3/∂fNLis computed using Eqs. (7),(22),
+and(23), and the covariance is computed using Eq. (24).
+The Cram´ er–Rao bound guarantees that the minimum
+variance of an unbiased estimator of a given parameter is
+equal to the inverse Fisher matrix element of the associ-
+ated parameter, hence σfNL≥1/√
+F.
+The sum over i, j, k anda, b, c in Eq. (30)runs over all
+tomographic bins included in the analysis. For example,
+when considering CMB lensing and cosmic shear cross-
+correlations, the i, j, k anda, b, c range from 1 to Ntomo+
+1. The sum over ℓ1, ℓ2,andℓ3runs over all possible
+multipoles satisfying the following criteria:
+•ℓsoft
+min≤ℓ1≤ℓsoft
+max;
+•ℓhard
+min≤ℓ2≤ℓhard
+max;
+•|ℓi−ℓj| ≤ℓk≤ℓi+ℓj;
+•ℓ1+ℓ2+ℓ3= even .
+The first two criteria ensure that the triangles are suf-
+ficiently squeezed such that the bispectrum model in
+Eq.(7)applies.6The last two criteria arise from mo-
+mentum conservation and parity, respectively. For our
+forecasts, we fix the maximum soft multipole ℓsoft
+max= 100
+and the minimum hard multipole ℓhard
+min= 150.7In theory,
+the minimum soft multipole ℓsoft
+minis determined by the
+5Note that this differs from the analysis in Ref. [ 36], which used a
+joint likelihood in the 3D matter power spectrum and bispectrum
+to take advantage of the sample variance cancellation associated
+with the significant correlation between the squeezed bispectrum
+B(q,k) and the soft mode power spectrum P(q). It would be
+interesting to consider whether a similar cancellation applies
+to the angular power spectrum Cℓ1and the squeezed angular
+bispectrum bℓ1ℓ2ℓ3; however, we leave this to future work because
+it would require including the non-Gaussian contributions to the
+power spectrum and bispectrum covariances, since the power
+spectrum and bispectrum are uncorrelated in the Gaussian limit.
+Additionally, bℓ1ℓ2ℓ3andCℓ1have different projection integrals,
+which likely reduces their correlation.
+6In principle, different scale cuts could be imposed for each to-
+mographic bin, as well as for CMB lensing versus cosmic shear,
+because these measurements probe different physical scales and
+redshifts and are sensitive to different systematics. We do not
+account for this in our forecasts because quantifying the exact
+range of multipoles for which our bispectrum model applies for a
+given convergence field would require simulations. Nevertheless,
+we note that this approach of varying scale cuts could be useful
+in practice.
+7This choice of multipoles is somewhat optimistic and a precise
+verification of the range of scales for which our model is validlargest scales observed in the survey; in practice, however,
+the largest scales can be plagued by observational and
+theoretical systematics, including foreground contamina-
+tion (note that high- ℓCMB temperature and polarization
+foregrounds lead to low- ℓbiases in the reconstructed lens-
+ing convergence field) [ 87–90], relativistic corrections [ 91],
+and non-Gaussianity of the likelihood [ 92,93]. Conse-
+quently, we will consider ℓmin
+1= 2, 10, and 20. We vary
+the maximum hard multipole ℓhard
+maxto determine the scales
+at which our constraints saturate due to noise.
+In addition to the forecasts assuming fNLis the only free
+parameter, we present forecasts where we marginalize over
+the leading-order gravitational contribution to the matter
+bispectrum, a0(k, χk) (see Eq. 9). Directly marginalizing
+over a0(k, χk) is challenging because a0(k, χk) depends
+on scale and redshift, both of which enter the bispectrum
+evaluations in Eqs. (22)and(23). Therefore, we assume
+that a0(k, χk) varies slowly over the integration volume
+and can thus be approximated by a single coefficient ¯a(i)
+0,
+where the index ( i) is used to indicate that this parameter
+depends on the redshift kernel of the bispectrum con-
+sidered.8For simplicity, we present these marginalized
+forecasts using only a single convergence field, hence the
+only free parameters are ¯a0andfNL. The 2 ×2 Fisher
+matrix is
+Fαβ=X
+ℓ1ℓ2ℓ3∂ bℓ1ℓ2ℓ3
+∂θαCov−1[bℓ1ℓ2ℓ3, bℓ1ℓ2ℓ3]∂ bℓ1ℓ2ℓ3
+∂θβ,
+(31)
+where θα∈ {fNL,¯a0}.The Fisher error on fNLis then
+σfNL=q
+F−1
+fNLfNL.
+Finally, since the scale cuts used in this work typically
+contain O(106) triangles, we adopt a binning strategy
+based on Ref. [ 29]. In particular, we bin the first two
+multipoles with bin widths ∆ ℓ1= 5 and ∆ ℓ2= 15 and
+rescale the covariance by a factor of (∆ ℓ1∆ℓ2)−1. We
+letℓ3range over all available multipoles subject to the
+triangle inequality, the parity constraint, and the ordering
+ℓ2≤ℓ3. We have verified that this binning approximation
+has negligible impact on our forecasts.
+IV. RESULTS
+A. CMB Lensing
+The top panels of Fig. 2 show the expected error on fNL
+from the CMB lensing bispectrum as a function of the
+would require analyzing simulations, similar to what was done
+for the 3D matter bispectrum in [ 36]. Nevertheless, since most
+of the fNLinformation is coming from the lowest ℓ1bins, our
+results are largely insensitive to the precise choice of ℓsoft
+max.
+8We find that approximating a0(k, χk) as a constant evaluated at
+the peak of the lensing kernel can bias the bispectrum by at most
+≃10% compared to full numerical integration using Eq. (10).8
+400 1000 200010100400σfNL
+/lscriptmin= 2Simons Observatory
+CMB-S4
+Cosmic Variance
+400 1000 2000/lscriptmin= 10
+400 1000 2000/lscriptmin= 20
+400 1000 5000
+/lscriptmax210100200σfNL
+/lscriptmin= 2LSST/Euclid ( Ntomo = 1)
+LSST/Euclid ( Ntomo = 2)
+LSST/Euclid ( Ntomo = 3)
+400 1000 5000
+/lscriptmax/lscriptmin= 10
+400 1000 5000
+/lscriptmax/lscriptmin= 20
+FIG. 2. Forecasted error on fNLfrom the non-linear squeezed bispectrum of CMB lensing ( top) and cosmic shear ( bottom ) using
+a non-perturbative bispectrum model based on the cosmological consistency relations that is independent of the non-Gaussian
+bias, bϕ. The error is shown a function of the maximum multipole ℓmaxfor several values of the minimum multipole ℓmin= 2,10,
+and 20. The forecasts are sensitive to the minimum multipole ℓmin.Whereas the CMB lensing forecasts saturate around
+ℓmax= 1000 due to lensing reconstruction noise, the shear forecasts begin to plateau around ℓmax= 3000 due to shape noise.
+The cosmic shear forecasts improve if we divide the source galaxy sample into two tomographic bins, but there is little to gain
+with Ntomo≥3. The cosmic variance error is shown by the grey bands. The three grey bands in the shear forecasts correspond
+to the number of tomographic bins. All forecasts assume fractional sky coverage fsky= 0.45.
+maximum hard multipole for three different choices of the
+minimum soft multipole. The shaded region denotes the
+cosmic variance error, which assumes perfect knowledge
+of the lensing potential (i.e., Nℓ= 0). The forecasts
+for Simons Observatory (CMB-S4) saturate by ℓmax≃
+800 (1200) .For the fiducial Simons Observatory analysis
+with ℓmin= 10 and ℓmax= 1400, the error on fNLis
+σfNL= 175; with these scale cuts, CMB-S4 can improve
+the constraint by almost a factor of two, yielding σfNL=
+95. Notably, the forecasted error on fNLis very sensitive
+to the lowest multipole. Assuming the CMB lensing
+bispectrum can be reliably reconstructed down to ℓmin=
+2, then the method presented here constrains fNLwith
+precision σfNL= 105 (56) for Simons Observatory (CMB-
+S4).
+The findings of this section indicate that forthcoming
+measurements of the CMB lensing bispectrum from Si-
+mons Observatory and CMB-S4 may not offer competitive
+constraints on fNLcompared with those obtained from the
+primary CMB or from LSS constraints based on the scale-
+dependent bias, though the constraints are on different
+characteristic scales. Nevertheless, the forecasted error onfNLis still better than the tightest current bϕ–independent
+LSS constraints on fNL[14]. The main limitation of these
+forecasts is the CMB lensing reconstruction noise, which
+severely restricts our ability to precisely measure highly
+squeezed configurations of the CMB lensing bispectrum.
+In the more long-term future, the method presented here
+could prove to be quite powerful for a CMB experiment
+that is cosmic-variance-limited up to much smaller scales,
+such as CMB-HD [ 94], although one should properly in-
+clude the non-Gaussian covariance to properly assess how
+much information is practically available at smaller scales.
+B. Cosmic Shear
+The bottom panels of Fig. 2 show the expected error
+onfNLfrom cosmic shear bispectra as a function of ℓmax.
+Interestingly, even for a single tomographic bin and fixed
+scale cuts, the cosmic variance error on fNLfrom the
+shear bispectrum is approximately 20 −40% smaller than
+that from the CMB lensing bispectrum. This is because
+the squeezed limit convergence bispectrum is proportional9
+400 1000 2000
+/lscriptmax10100200σfNL
+/lscriptmin= 2LSST/Euclid ( Ntomo = 3)
++ Simons Observatory
++ CMB-S4
+Cosmic Variance
+400 1000 2000
+/lscriptmax/lscriptmin= 10
+400 1000 2000
+/lscriptmax/lscriptmin= 20
+FIG. 3. As Fig. 2, but showing forecasts for a joint analysis of the CMB lensing and cosmic shear auto- and cross-bispectra
+assuming three tomographic redshift bins. At low maximum multipoles ( ℓmax≈400), including CMB lensing convergence
+measurements expected from Simons Observatory (CMB-S4) improves the forecasted error on fNLby≃10% (20%). At larger
+maximum multipoles ( ℓmax≈2000), the constraint on fNLis dominated by the shear bispectrum with improvements of only
+≃1% (5%) when including the Simons Observatory (CMB-S4) lensing convergence. The two grey bands correspond to the shear
+and shear ×CMB lensing cosmic variance errors.
+to an integral over ∂P(k)/∂log(σ2
+8), whereas the noise is
+proportional to P(k). As a result, the signal-to-noise is en-
+hanced by the logarithmic derivative ∂logP(k)/∂log(σ2
+8),
+which is more pronounced at low redshifts and small
+scales.9This is discussed in more detail in Appendix A.
+The forecasted constraints on fNLfrom the shear bis-
+pectrum measured from an LSST/ Euclid -like survey sat-
+urate at much higher ℓmaxthan the forecasts from the
+CMB lensing bispectrum measured by Simons Observa-
+tory or CMB-S4. Assuming a single tomographic bin with
+ℓmin= 10 and ℓmax= 5000, the shear bispectrum con-
+strains fNLwith precision σfNL= 22. The forecasted error
+improves to σfNL= 16 using three tomographic bins, indi-
+cating that tomographic information of the source galaxies
+can significantly improve constraints on fNL. Similar to
+the findings of Ref. [ 29], our forecasts do not improve
+significantly if we include more than three tomographic
+bins. Taken at face value, the results of this section sug-
+gest that upcoming measurements of tomographic lensing
+bispectra from Stage-IV shear surveys provide a more
+promising avenue towards constraining fNLthan upcom-
+ing measurements of the CMB lensing bispectrum, and
+one that could be vital in confirming detections from the
+scale-dependent bias method, such as [ 18]. However, it
+is important to note that, since the shear bispectrum
+probes smaller scales and lower redshifts than the CMB
+lensing bispectrum, the shear forecasts would likely be
+more sensitive to the non-Gaussian covariance, which we
+have ignored.
+9For the scales and redshifts considered here, the logarithmic
+derivative is greater than one; however, the situation can reverse
+at very small scales and low redshifts (see Fig. 5 in the Appendix).C. CMB Lensing ×Cosmic Shear
+Fig. 3 shows the forecasted error on fNLfor a joint
+analysis of the CMB lensing convergence and the cosmic
+shear auto- and cross-bispectra. These forecasts assume
+that the shear field is measured in three tomographic red-
+shift bins. Assuming ℓmax= 400 and ℓmin= 10, including
+CMB lensing measurements from Simons Observatory
+(CMB-S4) reduces the error on fNLfrom 94 to 86 (78).
+The improvement from a joint analysis is much less sig-
+nificant at smaller scales, where the signal-to-noise of the
+shear bispectrum is significantly larger than that of the
+CMB lensing convergence bispectrum. Indeed, assuming
+ℓmax= 2000 and ℓmin= 10, a joint analysis of CMB-S4
+and an LSST/ Euclid -like shear experiment leads to a less
+than 5% improvement on the constraint on fNLcompared
+to a shear-only analysis.
+Although these results suggest that there is little to
+gain from a joint analysis of CMB lensing and cosmic
+shear in comparison to a shear-only analysis, the situa-
+tion may differ considerably in practice. For instance, a
+realistic analysis would likely impose different scale cuts
+for the CMB lensing measurements and the cosmic shear
+measurements to account for their distinct systematics
+(with CMB lensing potentially providing easier access
+to low ℓ, modulo foreground biases or other reconstruc-
+tion systematics). If one uses only the CMB lensing
+convergence to measure large-scale modes, then the joint
+analysis is restricted to 16 of the 64 total bispectra com-
+binations, assuming Ntomo= 3. Under these conditions,
+with ℓmin= 10 and ℓmax= 2000, the resulting error on
+fNLisσfNL= 32 for CMB-S4. Whereas this value is worse
+than the forecasted σfNL= 23 from a joint analysis of all
+64 bispectra combinations, it still represents a significant10
+400 1000 2000
+/lscriptmax30100500σfNL
+/lscriptmin= 10Fixeda0
+Freea0
+FIG. 4. Forecasted error on fNLfrom the CMB lensing bis-
+pectrum measured by CMB-S4 with and without marginaliza-
+tion over gravitational non-Gaussianity. The solid result as-
+sumes perfect knowledge of the leading-order gravitational non-
+Gaussianity parameter, a0(k, χk). The dashed line marginal-
+izes over a0(k, χk) using the procedure described in Sec. III B.
+Marginalization over a0(k, χk) weakens the constraint on fNL
+by approximately 50%. The two grey shaded regions corre-
+spond to the cosmic-variance-limited error on fNLfrom the
+CMB lensing bispectrum with and without marginalizing over
+a0(k, χk).
+improvement over the σfNL= 95 value obtained for a
+CMB-S4 lensing convergence bispectrum-only analysis
+with these scale cuts.
+D. Marginalizing over gravitational non-Gaussianity
+Finally, we consider how our forecasts would change
+if we no longer assume perfect knowledge of the
+leading-order gravitational non-Gaussianity contribution,
+a0(k, χk) (see Eq. 9). The left panel of Fig. 4 compares the
+forecasted error on fNLfrom the CMB lensing bispectrum
+with and without marginalization over the leading-order
+gravitational non-Gaussianity parameter a0(k, χk) using
+the marginalization procedure described in Sec. III B. The
+red curves assume CMB-S4 lensing reconstruction noise
+and the grey shaded regions denote the cosmic variance
+error. Marginalizing over gravitational non-Gaussianty de-
+grades the constraining power quite significantly, with the
+forecasted error on fNLincreasing from σfNL= 95 to 150,
+assuming ℓmax= 1400. This loss in constraining power
+arises from the large correlation between the primordial
+contribution to the matter bispectrum, Eq. (7), and the
+leading-order gravitational contribution, Eq. (9), which,
+at equal times, is only broken by the 1 /(q2T(q)) term.10
+10Thek-dependence of the a0(k, χk) coefficient also breaks this
+correlation; however, this k-dependence is small and is neglected
+in our forecasts.These findings are in agreement with Ref. [ 36], which
+found a sizeable cross-correlation ( r≃0.7 atz= 0.97)
+between ¯ a0andfNL.
+Based on these results, it is clear that marginalizing
+over the gravitational contribution to the squeezed mat-
+ter bispectrum significantly degrades constraints on fNL
+using the method presented here. Nevertheless, there
+are several possible ways to extend our analysis that
+could improve constraints on a0(k, χk) and, hence, fNL.
+First of all, since a0(k, χk)≃B(q, k)/P(q)P(k), a joint
+analysis of the convergence bispectrum and convergence
+power spectrum could improve constraints on a0(k, χk).
+Ref. [ 36] exploited this sample variance cancellation in
+3D and found that it significantly improved constraints
+onfNL. A precise determination of the impact of sample
+variance cancellation is beyond the scope of this work
+because it requires non-Gaussian covariances. Secondly,
+cross-correlation of CMB lensing and cosmic shear maps
+could help constrain a0(k, χk), since both the CMB lens-
+ing bispectrum and the cosmic shear bispectrum depend
+on differently weighted integrals over a0(k, χk).
+V. CONCLUSIONS
+Constraining the amplitude of local primordial non-
+Gaussianity, fNL, is a key goal of upcoming cosmological
+surveys. Here, we have quantified how well squeezed
+configurations of the CMB lensing convergence and cos-
+mic shear bispectra, as measured by forthcoming exper-
+iments, can constrain fNL. Our method has utilized
+a non-perturbative model for the squeezed bispectrum
+based on the cosmological consistency relations, which is,
+in principle, applicable down to very small scales (high
+ℓmax). In practice, we have found that, even with a joint
+analysis of the auto- and cross-bispectra of convergence
+measurements from an LSST/ Euclid -like experiment and
+CMB-S4, it will be difficult to constrain σfNL≲10.
+In the modern world, with an abundance of forecasts
+predicting σfNL≲1 using Stage-IV surveys (with varying
+degrees of optimism in their assumptions), it is natural
+to question the utility of the approach presented here.
+We emphasize that the primary advantage of using the
+squeezed lensing bispectrum to constrain fNLis that it
+actually constrains fNL.This stands in contrast to most
+existing methods for constraining fNLusing LSS, which
+rely on the scale-dependent bias, and hence require accu-
+rate knowledge of galaxy formation physics to obtain a
+direct constraint on fNL.11Moreover, the squeezed lensing
+bispectrum is sensitive to different large-scale systemat-
+ics compared to alternative methods to constrain fNL
+(e.g., the galaxy power spectrum); thus, our method can
+be used as a valuable cross-check for future constraints
+11In a not entirely unrealistic, but still unrealistic, scenario in which
+cosmologists find themselves debating bϕfNLvs.fNL, the method
+outlined here could potentially quell the controversy.11
+onfNLusing LSS data. Finally, our approach could be
+extended to include galaxy clustering information. Com-
+bining galaxy clustering with CMB lensing and/or cosmic
+shear has already shown great promise as a probe of fNL
+using two-point statistics [ 95]; therefore, a joint analy-
+sis of galaxy clustering, cosmic shear, and CMB lensing
+two-point and three-point functions could offer highly
+informative results. Although these constraints would
+no longer be independent of bϕ, the potential for sample
+variance cancellations and forming cross-bispectra with
+the galaxy density field as the long mode (similar to
+the discussion in Sec. IV C for CMB lensing) makes this
+approach particularly promising from a modeling perspec-
+tive. It is also worth noting that aside from constraining
+constraining fNL, checking the consistency relation with
+data constitutes a test of equivalence principle as well. For
+that purpose, a measurement of the bispectrum involving
+different galaxy populations would be needed [96].
+As with all forecasts, our results depend on several mod-
+eling assumptions. First of all, we have ignored various sys-
+tematics that could impact the CMB lensing and/or cos-
+mic shear bispectra, such as post-Born corrections [ 97,98],
+reconstruction noise biases [ 99], intrinsic alignments [ 100],
+source clustering [ 101], and relativistic effects [ 91]. Fur-
+thermore, we omitted baryonic effects in our analysis,
+despite their significant impact on the correlators of weak
+lensing convergence across various scales [ 102]. One may
+worry that baryons pose a significant challenge to the
+methodology presented here, which uses measurements
+from extremely small scales. However, it is important
+to note that, since the cosmological consistency relations
+are still satisfied with baryons, our model that marginal-
+izes over gravitational non-Gaussianity remains valid as
+long as baryonic corrections are included when computing
+the response function, ∂log(P(k, z))/∂log(σ2
+8). Previous
+studies have shown that these corrections are relatively
+small [ 103].12Finally, to obtain an upper bound on our
+method’s utility, we have neglected non-Gaussian contri-
+butions to the bispectrum covariance. These contributions
+could significantly degrade the cosmic shear forecasts athigh ℓmax, but we leave this to a future work.
+There are several ways to build upon our analysis. An
+immediate follow-up would be to use simulations to ex-
+plicitly verify the range of scale cuts for which our bis-
+pectrum model is valid and to quantify the impact of
+the non-Gaussian covariance. Such an analysis could be
+compared with the results of Ref. [ 104], which assessed
+the information content of primordial non-Gaussianity in
+the lensing convergence field at non-linear scales. Addi-
+tionally, it would be valuable to generalize the method
+presented here to include galaxy clustering statistics and
+information from the scale-dependent bias. Finally, the
+method presented in this work can be readily extended to
+test alternative non-standard cosmological scenarios, such
+as quasi-single field inflation [ 105–108] or equivalence-
+principle-violating physics [ 96], all of which generate anal-
+ogous poles in the squeezed bispectrum. An observational
+test of the LSS consistency relations using weak lensing
+bispectra would also complement the recent test of the
+cosmological consistency relations using the anisotropic
+three-point correlation function [109].
+ACKNOWLEDGMENTS
+We acknowledge computing resources from Columbia University’s
+Shared Research Computing Facility project, which is supported by
+NIH Research Facility Improvement Grant 1G20RR030893-01, and
+associated funds from the New York State Empire State Develop-
+ment, Division of Science Technology and Innovation (NYSTAR)
+Contract C090171, both awarded April 15, 2010. We acknowledge
+the Texas Advanced Computing Center (TACC) at The University
+of Texas at Austin for providing HPC resources that have con-
+tributed to the research results reported within this paper. OHEP
+is a Junior Fellow of the Simons Society of Fellows and edited this
+draft at a speed inspired by the Costa Rican sloth population. JCH
+acknowledges support from NSF grant AST-2108536, NASA grants
+21-ATP21-0129 and 22- ADAP22-0145, the Sloan Foundation, and
+the Simons Foundation. LH acknowledges support by the DOE
+DE-SC011941 and a Simons Fellowship in Theoretical Physics.
+[1]A. Aghamousa et al. (DESI), (2016), arXiv:1611.00036
+[astro-ph.IM].
+[2]L. Amendola et al. , Living Rev. Rel. 21, 2 (2018),
+arXiv:1606.00180 [astro-ph.CO].
+[3] O. Dor´ e et al. , (2014), arXiv:1412.4872 [astro-ph.CO].
+12It is worth reiterating that gravitational non-Gaussianity cannot
+produce poles in the squeezed bispectrum to soft power spectrum
+ratio, regardless of the complexity of the baryonic feedback effects
+[35,49]. Thus observing such poles immediately points to PNG
+(beyond that expected from single-field slow roll inflation) or
+equivalence principle violation. To infer parameters such as fNL
+from the residue of such poles though, does require incorporating
+baryonic corrections in the response function.[4]P. A. Abell et al. (LSST Science, LSST Project), (2009),
+arXiv:0912.0201 [astro-ph.IM].
+[5]J. M. Maldacena, JHEP 05, 013 (2003), arXiv:astro-
+ph/0210603.
+[6]P. Creminelli and M. Zaldarriaga, JCAP 10, 006 (2004),
+arXiv:astro-ph/0407059.
+[7]P. Creminelli, G. D’Amico, M. Musso, and J. Norena,
+JCAP 11, 038 (2011), arXiv:1106.1462 [astro-ph.CO].
+[8]E. Pajer, F. Schmidt, and M. Zaldarriaga, Phys. Rev.
+D88, 083502 (2013), arXiv:1305.0824 [astro-ph.CO].
+[9]P. D. Meerburg et al. , (2019), arXiv:1903.04409 [astro-
+ph.CO].
+[10]A. Ach´ ucarro et al. , (2022), arXiv:2203.08128 [astro-
+ph.CO].
+[11]Y. Akrami et al. (Planck), Astron. Astrophys. 641, A9
+(2020), arXiv:1905.05697 [astro-ph.CO].12
+[12]G. D’Amico, M. Lewandowski, L. Senatore, and
+P. Zhang, (2022), arXiv:2201.11518 [astro-ph.CO].
+[13]G. Cabass, M. M. Ivanov, O. H. E. Philcox, M. Si-
+monovi´ c, and M. Zaldarriaga, Phys. Rev. Lett. 129,
+021301 (2022), arXiv:2201.07238 [astro-ph.CO].
+[14]G. Cabass, M. M. Ivanov, O. H. E. Philcox, M. Si-
+monovi´ c, and M. Zaldarriaga, Phys. Rev. D 106, 043506
+(2022), arXiv:2204.01781 [astro-ph.CO].
+[15]F. McCarthy, M. S. Madhavacheril, and A. S. Maniyar,
+(2022), arXiv:2210.01049 [astro-ph.CO].
+[16]G. Cabass, M. M. Ivanov, O. H. E. Philcox, M. Si-
+monovic, and M. Zaldarriaga, Phys. Lett. B 841, 137912
+(2023), arXiv:2211.14899 [astro-ph.CO].
+[17]A. Krolewski et al. (DESI), (2023), arXiv:2305.07650
+[astro-ph.CO].
+[18]M. Rezaie et al. , (2023), arXiv:2307.01753 [astro-ph.CO].
+[19]N. Dalal, O. Dore, D. Huterer, and A. Shirokov, Phys.
+Rev. D 77, 123514 (2008), arXiv:0710.4560 [astro-ph].
+[20]S. Matarrese and L. Verde, Astrophys. J. Lett. 677, L77
+(2008), arXiv:0801.4826 [astro-ph].
+[21]A. Slosar, C. Hirata, U. Seljak, S. Ho, and N. Padman-
+abhan, JCAP 08, 031 (2008), arXiv:0805.3580 [astro-ph].
+[22]V. Desjacques, U. Seljak, and I. Iliev, Mon. Not. Roy.
+Astron. Soc. 396, 85 (2009), arXiv:0811.2748 [astro-ph].
+[23]B. Reid, L. Verde, K. Dolag, S. Matarrese, and
+L. Moscardini, JCAP 2010 , 013 (2010), arXiv:1004.1637
+[astro-ph.CO].
+[24]A. Barreira, G. Cabass, F. Schmidt, A. Pillepich, and
+D. Nelson, JCAP 12, 013 (2020), arXiv:2006.09368 [astro-
+ph.CO].
+[25]A. Barreira, JCAP 01, 033 (2022), arXiv:2107.06887
+[astro-ph.CO].
+[26]T. Lazeyras, A. Barreira, F. Schmidt, and V. Desjacques,
+JCAP 01, 023 (2023), arXiv:2209.07251 [astro-ph.CO].
+[27] A. Barreira, (2022), arXiv:2205.05673 [astro-ph.CO].
+[28]A. Barreira and E. Krause, (2023), arXiv:2302.09066
+[astro-ph.CO].
+[29]M. Takada and B. Jain, Mon. Not. Roy. Astron. Soc.
+348, 897 (2004), arXiv:astro-ph/0310125.
+[30]B. M. Sch¨ afer, A. Grassi, M. Gerstenlauer, and C. T.
+Byrnes, Mon. Not. Roy. Astron. Soc. 421, 797 (2012),
+arXiv:1107.1656 [astro-ph.CO].
+[31]D. Jeong, F. Schmidt, and E. Sefusatti, Phys. Rev. D
+83, 123005 (2011).
+[32]A. Grassi, L. Heisenberg, C. T. Byrnes, and B. M.
+Sch¨ afer, Mon. Not. Roy. Astron. Soc. 442, 1068 (2014),
+arXiv:1307.4181 [astro-ph.CO].
+[33]M. Peloso and M. Pietroni, JCAP 05, 031 (2013),
+arXiv:1302.0223 [astro-ph.CO].
+[34]A. Kehagias and A. Riotto, Nucl. Phys. B 864, 492
+(2012), arXiv:1205.1523 [hep-th].
+[35]A. Esposito, L. Hui, and R. Scoccimarro, Phys. Rev. D
+100, 043536 (2019), arXiv:1905.11423 [astro-ph.CO].
+[36]S. Goldstein, A. Esposito, O. H. E. Philcox, L. Hui, J. C.
+Hill, R. Scoccimarro, and M. H. Abitbol, Phys. Rev. D
+106, 123525 (2022), arXiv:2209.06228 [astro-ph.CO].
+[37]P. Ade et al. (Simons Observatory), JCAP 02, 056 (2019),
+arXiv:1808.07445 [astro-ph.CO].
+[38]K. N. Abazajian et al. (CMB-S4), (2016),
+arXiv:1610.02743 [astro-ph.CO].
+[39]T. Namikawa, Phys. Rev. D 93, 121301 (2016),
+arXiv:1604.08578 [astro-ph.CO].
+[40]N. Aghanim et al. (Planck), Astron. Astrophys. 641, A6
+(2020), [Erratum: Astron.Astrophys. 652, C4 (2021)],arXiv:1807.06209 [astro-ph.CO].
+[41]M. Bartelmann and P. Schneider, Phys. Rept. 340, 291
+(2001), arXiv:astro-ph/9912508.
+[42]A. Lewis and A. Challinor, Phys. Rept. 429, 1 (2006),
+arXiv:astro-ph/0601594.
+[43]M. Bartelmann and M. Maturi (2016) arXiv:1612.06535
+[astro-ph.CO].
+[44]M. Kilbinger, Rept. Prog. Phys. 78, 086901 (2015),
+arXiv:1411.0115 [astro-ph.CO].
+[45]U. Giri, M. M¨ unchmeyer, and K. M. Smith, (2022),
+arXiv:2205.12964 [astro-ph.CO].
+[46]U. Giri, M. M¨ unchmeyer, and K. M. Smith, (2023),
+arXiv:2305.03070 [astro-ph.CO].
+[47]E. Komatsu and D. N. Spergel, Phys. Rev. D 63, 063002
+(2001), arXiv:astro-ph/0005036.
+[48]R. Scoccimarro, L. Hui, M. Manera, and K. C. Chan,
+Phys. Rev. D 85, 083002 (2012), arXiv:1108.5512 [astro-
+ph.CO].
+[49]B. Horn, L. Hui, and X. Xiao, JCAP 09, 044 (2014),
+arXiv:1406.0842 [hep-th].
+[50]B. Horn, L. Hui, and X. Xiao, JCAP 09, 068 (2015),
+arXiv:1502.06980 [hep-th].
+[51]P. Valageas, Phys. Rev. D 89, 123522 (2014),
+arXiv:1311.4286 [astro-ph.CO].
+[52]T. Nishimichi and P. Valageas, Phys. Rev. D 90, 023546
+(2014), arXiv:1402.3293 [astro-ph.CO].
+[53]N. Kaiser and G. Squires, Astrophys. J. 404, 441 (1993).
+[54]P. G. Castro, A. F. Heavens, and T. D. Kitching, Phys.
+Rev. D 72, 023516 (2005), arXiv:astro-ph/0503479.
+[55]B. Leistedt, J. D. McEwen, M. B¨ uttner, and H. V.
+Peiris, Mon. Not. Roy. Astron. Soc. 466, 3728 (2017),
+arXiv:1605.01414 [astro-ph.CO].
+[56]C. G. R. Wallis, M. A. Price, J. D. McEwen, T. D.
+Kitching, B. Leistedt, and A. Plouviez, Mon. Not. Roy.
+Astron. Soc. 509, 4480 (2021), arXiv:1703.09233 [astro-
+ph.CO].
+[57]C. Chang et al. (DES), Mon. Not. Roy. Astron. Soc. 475,
+3165 (2018), arXiv:1708.01535 [astro-ph.CO].
+[58]M. Gatti et al. (DES), Mon. Not. Roy. Astron. Soc. 498,
+4060 (2020), arXiv:1911.05568 [astro-ph.CO].
+[59]A. Barthelemy, A. Halder, Z. Gong, and C. Uhlemann,
+(2023), arXiv:2307.09468 [astro-ph.CO].
+[60]W. Hu and T. Okamoto, Astrophys. J. 574, 566 (2002),
+arXiv:astro-ph/0111606.
+[61] D. N. Limber, Astrophys. J. 117, 134 (1953).
+[62] N. Kaiser, Astrophys. J. 388, 272 (1992).
+[63]M. LoVerde and N. Afshordi, Phys. Rev. D 78, 123506
+(2008), arXiv:0809.5112 [astro-ph].
+[64]A. J. S. Hamilton, Mon. Not. Roy. Astron. Soc. 312, 257
+(2000), arXiv:astro-ph/9905191.
+[65]V. Assassi, M. Simonovi´ c, and M. Zaldarriaga, JCAP
+11, 054 (2017), arXiv:1705.05022 [astro-ph.CO].
+[66]X. Fang, E. Krause, T. Eifler, and N. MacCrann, JCAP
+05, 010 (2020), arXiv:1911.11947 [astro-ph.CO].
+[67]M. Takada and B. Jain, Mon. Not. Roy. Astron. Soc.
+395, 2065 (2009), arXiv:0810.4170 [astro-ph].
+[68]M. Sato, T. Hamana, R. Takahashi, M. Takada,
+N. Yoshida, T. Matsubara, and N. Sugiyama, Astrophys.
+J.701, 945 (2009), arXiv:0906.2237 [astro-ph.CO].
+[69]M. Sato and T. Nishimichi, Phys. Rev. D 87, 123538
+(2013), arXiv:1301.3588 [astro-ph.CO].
+[70]M. Takada and D. N. Spergel, Mon. Not. Roy. Astron.
+Soc.441, 2456 (2014), arXiv:1307.4399 [astro-ph.CO].
+[71]E. Krause and T. Eifler, Mon. Not. Roy. Astron. Soc.13
+470, 2100 (2017), arXiv:1601.05779 [astro-ph.CO].
+[72]A. Barreira, E. Krause, and F. Schmidt, JCAP 10, 053
+(2018), arXiv:1807.04266 [astro-ph.CO].
+[73]W. Hu, Phys. Rev. D 62, 043007 (2000), arXiv:astro-
+ph/0001303.
+[74]I. Kayo, M. Takada, and B. Jain, Monthly Notices of
+the Royal Astronomical Society 429, 344 (2012).
+[75]I. Kayo and M. Takada, (2013), arXiv:1306.4684 [astro-
+ph.CO].
+[76]K. C. Chan, A. Moradinezhad Dizgah, and J. Nore˜ na,
+Phys. Rev. D 97, 043532 (2018), arXiv:1709.02473 [astro-
+ph.CO].
+[77]T. Fl¨ oss, M. Biagetti, and P. D. Meerburg, (2022),
+arXiv:2206.10458 [astro-ph.CO].
+[78]A. E. Bayer, J. Liu, R. Terasawa, A. Barreira, Y. Zhong,
+and Y. Feng, (2022), arXiv:2210.15647 [astro-ph.CO].
+[79]K. Abazajian et al. , (2019), arXiv:1907.04473 [astro-
+ph.IM].
+[80]C. M. Hirata and U. Seljak, Phys. Rev. D 68, 083002
+(2003), arXiv:astro-ph/0306354.
+[81]J. Carron and A. Lewis, Phys. Rev. D 96, 063510 (2017),
+arXiv:1704.08230 [astro-ph.CO].
+[82]M. Robertson and A. Lewis, (2023), arXiv:2303.13313
+[astro-ph.CO].
+[83]R. Takahashi, M. Sato, T. Nishimichi, A. Taruya, and
+M. Oguri, Astrophys. J. 761, 152 (2012), arXiv:1208.2701
+[astro-ph.CO].
+[84]R. Laureijs et al. (EUCLID), (2011), arXiv:1110.3193
+[astro-ph.CO].
+[85]R. Mandelbaum et al. (LSST Dark Energy Science),
+(2018), arXiv:1809.01669 [astro-ph.CO].
+[86]C. Chang, M. Jarvis, B. Jain, S. M. Kahn, D. Kirkby,
+A. Connolly, S. Krughoff, E. Peng, and J. R. Peter-
+son, Mon. Not. Roy. Astron. Soc. 434, 2121 (2013),
+arXiv:1305.0793 [astro-ph.CO].
+[87]S. J. Osborne, D. Hanson, and O. Dor´ e, JCAP 03, 024
+(2014), arXiv:1310.7547 [astro-ph.CO].
+[88]A. van Engelen, S. Bhattacharya, N. Sehgal, G. P. Holder,
+O. Zahn, and D. Nagai, Astrophys. J. 786, 13 (2014),
+arXiv:1310.7023 [astro-ph.CO].
+[89]S. Ferraro and J. C. Hill, Phys. Rev. D 97, 023512 (2018),
+arXiv:1705.06751 [astro-ph.CO].
+[90]H. Cai, M. S. Madhavacheril, J. C. Hill, and
+A. Kosowsky, Phys. Rev. D 105, 043516 (2022),
+arXiv:2111.01944 [astro-ph.CO].
+[91]F. Bernardeau, C. Bonvin, N. Van de Rijt, and
+F. Vernizzi, Phys. Rev. D 86, 023001 (2012),
+arXiv:1112.4430 [astro-ph.CO].
+[92]M. S. Wang, W. J. Percival, S. Avila, R. Crittenden,
+and D. Bianchi, Mon. Not. Roy. Astron. Soc. 486, 951
+(2019), arXiv:1811.08155 [astro-ph.CO].
+[93]B. Tucci and F. Schmidt, (2023), arXiv:2310.03741
+[astro-ph.CO].
+[94]S. Aiola et al. (CMB-HD), (2022), arXiv:2203.05728
+[astro-ph.CO].
+[95]M. Schmittfull and U. Seljak, Phys. Rev. D 97, 123540
+(2018), arXiv:1710.09465 [astro-ph.CO].
+[96]P. Creminelli, J. Gleyzes, L. Hui, M. Simonovi´ c, and
+F. Vernizzi, JCAP 06, 009 (2014), arXiv:1312.6074 [astro-
+ph.CO].
+[97]G. Pratten and A. Lewis, JCAP 08, 047 (2016),
+arXiv:1605.05662 [astro-ph.CO].
+[98] G. Fabbian, M. Calabrese, and C. Carbone, JCAP 02,
+050 (2018), arXiv:1702.03317 [astro-ph.CO].[99]A. Kalaja, G. Orlando, A. Bowkis, A. Challinor, P. D.
+Meerburg, and T. Namikawa, JCAP 04, 041 (2023),
+arXiv:2210.16203 [astro-ph.CO].
+[100] M. A. Troxel and M. Ishak, Phys. Rept. 558, 1 (2014),
+arXiv:1407.6990 [astro-ph.CO].
+[101] M. Gatti et al. (DES), (2023), arXiv:2307.13860 [astro-
+ph.CO].
+[102] F. Ferlito et al. , (2023), arXiv:2304.12338 [astro-ph.CO].
+[103] A. Barreira, D. Nelson, A. Pillepich, V. Springel,
+F. Schmidt, R. Pakmor, L. Hernquist, and M. Vogels-
+berger, Mon. Not. Roy. Astron. Soc. 488, 2079 (2019),
+arXiv:1904.02070 [astro-ph.CO].
+[104] D. Anbajagane, C. Chang, H. Lee, and M. Gatti, (2023),
+arXiv:2310.02349 [astro-ph.CO].
+[105] V. Assassi, D. Baumann, and D. Green, JCAP 11, 047
+(2012), arXiv:1204.4207 [hep-th].
+[106] X. Chen and Y. Wang, JCAP 04, 027 (2010),
+arXiv:0911.3380 [hep-th].
+[107] D. Baumann, A. Nicolis, L. Senatore, and M. Zaldar-
+riaga, JCAP 07, 051 (2012), arXiv:1004.2488 [astro-
+ph.CO].
+[108] T. Noumi, M. Yamaguchi, and D. Yokoyama, JHEP 06,
+051 (2013), arXiv:1211.1624 [hep-th].
+[109] N. S. Sugiyama, D. Yamauchi, T. Kobayashi, T. Fu-
+jita, S. Arai, S. Hirano, S. Saito, F. Beutler, and H.-J.
+Seo, (2023), 10.1093/mnras/stad1935, arXiv:2305.01142
+[astro-ph.CO].14
+400 1000 2000
+/lscriptmax0.91.01.11.21.31.41.5σShear
+fNL/σCMB Lensing
+fNLHalofit
+dlog(P(k))/dlog(σ2
+8)=1
+Linear
+0.01 0.1 1 10
+k(1/Mpc)123dlog(P(k))/dlog(σ2
+8)
+z= 9
+z= 2
+z= 0.1
+kmax(z)
+0369
+Redshiftz
+FIG. 5. Left: Ratio of cosmic variance error on fNLas a function of ℓmaxfrom the cosmic shear bispectrum with Ntomo = 1 to that
+from the CMB lensing convergence bispectrum for a variety of non-linear modeling choices. The results from the forecasts of the
+main text are shown in red where the shear bispectrum yields ∼30% tighter constraints on fNLthan the CMB lensing bispectrum.
+If we neglect the non-linear enhancement from the logarithmic derivative (blue), then the forecasted error on fNLagrees within
+10% between the two approaches. Finally, if we use linear theory, then the two constraints are consistent to within 4%. The
+slight discrepancy arises from differences in the projection kernels. Right :halofit prediction for ∂log(P(k, z))/∂log(σ2
+8) over
+redshifts 0 < z < 9.Vertical lines indicate the approximate maximum 3D wavenumber kmax≃ℓmax/χ(z)probed at a certain
+redshift assuming ℓmax= 2000 .Forz≳9 the halofit predictions can become unstable so we fix the logarithmic derivative to 1
+(i.e., linear theory) which is accurate at all scales of interest.
+Appendix A: Impact of non-linearities on cosmic
+shear and CMB lensing forecasts
+In this section, we discuss the impact of non-linear
+structure formation on the forecast results in the main
+text. In the realm of 3D matter distributions, and ignoring
+gravitational non-linearities, the redshift dependence of
+the bispectrum scales as B∼P2/D(z)∼D3(z), whereas
+the redshift dependence of the covariance scales as P3≈
+D6. Consequently, the signal-to-noise should be roughly
+independent of redshift. Nevertheless, our forecast results
+show that the cosmic variance error on fNLcan differ by
+up to 50% between the cosmic shear forecasts and the
+CMB lensing forecasts for fixed scale cuts and assuming
+a single tomographic bin. We investigate the source of
+this discrepancy in this section.
+The right panel of Fig. 5 compares the ratio of the
+cosmic variance error on fNLas a function of ℓmaxfor a
+cosmic shear analysis with a single tomographic bin com-
+pared to that from a CMB lensing analysis for a variety
+of non-linear modeling choices. These results assume the
+fiducial scale cuts in the main text, with ℓmin= 10. The
+red line corresponds to the analysis choices used in the
+main forecasts, where all power spectra and the logarith-
+mic derivative ∂log(P(k))/∂log(σ2
+8) are computed using
+halofit . In this case, the shear bispectrum provides∼30% tighter constraints on fNLthan the CMB lensing
+bispectrum. However, if we fix the logarithmic derivative
+to the linear theory prediction of unity (blue), then the
+improvement from cosmic shear diminishes considerably.
+This shows that the main source of discrepancy between
+the cosmic variance CMB lensing and cosmic shear fore-
+casts is due to the non-perturbative enhancement of the
+squeezed matter bispectrum due to local PNG. It remains
+to be seen to what extent this also reduces our constrain-
+ing power due to the associated non-Gaussian covariance.
+Finally, we can use linear theory to also compute the
+bispectrum Eq. (7)and its covariance (grey). In this case,
+the cosmic shear and CMB lensing forecasts are consistent
+to within ≃4%, with the residual attributed to differences
+in the projection kernels.
+The right panel of Fig. 5 shows the halofit prediction
+for the logarithmic derivative ∂log(P(k))/∂log(σ2
+8) for a
+range of redshifts. At high redshifts and large wavenum-
+bers the logarithmic derivative is consistent with unity,
+as expected from linear theory. At smaller scales and
+lower redshifts, however, it can pick up a sizeable en-
+hancement which improves the constraints from cosmic
+shear. The vertical dashed lines indicate the approximate
+maximum wavenumber probed kmax≃ℓmax/χassuming
+ℓmax= 2000 .The impact of baryons on the logarithmic
+derivative could be a significant systematic [ 103], which
+should be explored in future studies.

@@ -1,0 +1,845 @@
+rspa.royalsocietypublishing.org
+Research
+Article submitted to journal
+Subject Areas:
+Astrobiology, Extrasolar planets
+Keywords:
+Origins of life, prebiotic chemistry,
+planetary dynamics, hydrogen
+cyanide, habitable planets, impacts
+Author for correspondence:
+R. J. Anslow
+e-mail: rja92@ast.cam.ac.ukCan comets deliver prebiotic
+molecules to rocky
+exoplanets?
+R. J. Anslow1, A. Bonsor1and P . B.
+Rimmer2
+1Institute of Astronomy, University of Cambridge,
+Madingley Road, Cambridge CB3 0HA, UK
+2Astrophysics Group, Cavendish Laboratory, University
+of Cambridge, JJ Thomson Ave, Cambridge, CB3 0HE,
+UK
+In this work we consider the potential of cometary
+impacts to deliver complex organic molecules and
+the prebiotic building blocks required for life to rocky
+exoplanets. Numerical experiments have demonstrated
+that for these molecules to survive, impacts at very low
+velocities are required. This work shows that for comets
+scattered from beyond the snow-line into the habitable
+zone, the minimum impact velocity is always lower
+for planets orbiting Solar-type stars than M-dwarfs.
+Using both an analytical model and numerical N-body
+simulations, we show that the lowest velocity impacts
+occur onto planets in tightly-packed planetary systems
+around high-mass (i.e. Solar-mass) stars, enabling the
+intact delivery of complex organic molecules. Impacts
+onto planets around low-mass stars are found to be
+very sensitive to the planetary architecture, with the
+survival of complex prebiotic molecules potentially
+impossible in loosely-packed systems. Rocky planets
+around M-dwarfs also suffer significantly more high
+velocity impacts, potentially posing unique challenges
+for life on these planets. In the scenario that cometary
+delivery is important for the origins of life, this study
+predicts the presence of biosignatures will be correlated
+with i) decreasing planetary mass (i.e. escape velocity),
+ii) increasing stellar-mass, and iii) decreasing planetary
+separation (i.e. exoplanets in tightly-packed systems).
+©The Authors. Published by the Royal Society under the terms of the
+Creative Commons Attribution License http://creativecommons.org/licenses/
+by/4.0/, which permits unrestricted use, provided the original author and
+source are credited.arXiv:2310.12906v1  [astro-ph.EP]  19 Oct 20232rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .1. Introduction
+The initial emergence of life on Earth will require some initial inventory of prebiotic molecules, for
+which there are two leading supply mechanisms, endogenous synthesis on the early-Earth and
+exogenous delivery. There are a number of synthesis pathways, such as via lightning discharge [1,2],
+atmospheric proton irradiation [3], atmospheric photochemical networks [4,5], and the shock-
+synthesis of carbonaceous and nitrogenous molecules during high velocity impacts [6,7]. The
+efficacy of these pathways, however, is dependent on the atmospheric oxidation state of the
+early-Earth, decreasing significantly in more oxidised atmospheres [8].
+The exogenous delivery of prebiotic molecules is an attractive, atmosphere-independent supply
+mechanism encompassing the delivery of extraterrestrial objects including asteroids, comets and
+interplanetary dust particles [9 –12]. Return samples from the Ryugu asteroid have revealed a
+diverse inventory of prebiotic molecules [13,14], with the discovery of intact amino acids in
+meteorite samples [15,16] highlighting that at least some prebiotic molecules are able to survive
+atmospheric entry. The survival of prebiotic molecules in meteorites may not even be necessary,
+given that carbonaceous chondrites are able to catalyze a range of prebiotic molecules in aqueous
+conditions, and thereby fertilise the early-Earth [17,18].
+Comets have been suggested as potentially important sources of prebiotic delivery (e.g. [19]) as
+they are known to contain large amounts of the prebiotic feedstock molecule hydrogen cyanide
+(HCN) [20], as well as simple amino acids [21]. The discovery of a rich diversity of CHN- and
+CHS-bearing molecules on the comet 67P [22] has further supported the potential importance of
+cometary impacts in delivering part of the early-Earth’s organic inventory. Despite the relatively
+small number of cometary impacts on the early-Earth (in comparison to asteroids and left-over
+planetesimals) [23,24], it has been estimated that comets delivered 2 orders of magnitude more
+organic material than meteorites [12]. This is a consequence of the extremely high carbon content
+of comets ( ∼10% [10,20]) in comparison to both C-and S-type asteroids (2% [25] and 0.2% [26]
+respectively).
+There has, however, been longstanding debate surrounding the plausibility and efficiency of
+cometary delivery given the pyrolysis, or thermal decomposition, of constituent organics during
+impacts (e.g. [19]), and the subsequent dilution of surviving molecules in the atmosphere and
+oceans. The ‘warm comet pond’ [27] has been proposed as a specific origins scenario, able to
+alleviate both of these concerns and support the initial emergence of life. The scenario requires
+the ‘soft-landing’ of a cometary nucleus, which excavates the impact point and forms a dirty pond
+from the cometary components. Climatic variations are thought to cause the episodic drying of
+these ponds, promoting the rapid polymerisation of constituent prebiotic molecules. It is thought
+this wet-dry cycling will effectively drive the required biogeochemical reactions crucial for RNA
+production on the early-Earth, and therefore play an important role in the initial emergence of
+life (e.g. [28,29]). Relatively high concentrations of prebiotic molecules are required for there to be
+sufficient polymerisation, and so this scenario still requires low-velocity impacts. Specific prebiotic
+molecules are more (or less) susceptible to thermal decomposition by virtue of their molecular
+structure, and so the inventory of molecules that can be effectively delivered to a planet is very
+sensitive to impact velocity.
+HCN is an example of a prebiotic molecule that is particularly suited to this warm comet
+pond scenario, as its strong carbon-nitrogen triple bond confers much greater durability to the
+temperatures experienced during impacts. Given also the abundance of HCN in comets [20],
+cometary delivery onto the early-Earth is thought to have been able to successfully deliver high
+concentrations of HCN to local environments, which can survive over 0.1-1 Myr timescales [30].
+This has significant biological implications, since HCN is a key feedstock molecule in multiple
+prebiotic syntheses, as a precursor to amino acids through Strecker synthesis [31], invoked in
+the Miller-Urey experiments [32]. Further studies have demonstrated the role of HCN in the
+synthesis of lipids, sugars, nucleobases and nucleotides [33 –35], four key building blocks of life, as3rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .summarised in [36]. The strict velocity constraints required in the comet pond scenario naturally
+prompt the question of whether the Earth is somewhat special in this regard.
+Exoplanets are observed across a wide range of environments, with M-dwarf stars the most
+numerous spectral-class in our galaxy, comprising ∼70% of all stars in the Solar-neighbourhood
+[37]. Many of these stars host large outer reservoirs of planetesimals in belts analogous to the
+Solar System asteroid and Kuiper belts, which generate infrared excesses through the collisional
+production of dust [38,39]. These belts are inferred to have masses ∼102MEarth , roughly 6 orders
+of magnitude larger than the Kuiper belt [40]. The detection of carbon monoxide gas in several of
+these systems indicates the presence of volatile-rich cometary bodies, suggesting a similarity to
+Solar System comets [41,42]. There are relatively few known debris discs around M-dwarfs, but
+systems such as the nearby M-dwarf AU Microscopii, with its two warm-Neptunes [43,44] orbiting
+interior to a cold, dusty debris belt [45], provide key examples that architectures similar to that
+proposed here do exist.
+Thus, in this study we hypothesize that comets host comparable prebiotic molecular diversity
+in other planetary systems, and ask the question "Which planets, and planetary systems are the
+most susceptible to successful cometary delivery?". The detection of habitable planets around F-
+and G-type stars remains a formidable observational challenge, and there exist unique challenges
+facing the habitability of planets around both M-dwarfs and F-type stars [46,47]. Nonetheless,
+by addressing this question, we can begin to test the hypothesis that cometary delivery plays an
+important role in origins scenarios against data from the next generation of great observatories.
+The paper starts in Section (a) by introducing an idealised planetary architecture based on
+observations of tightly-packed multiple planet systems. We present in Section (b) an analytical
+method to determine how slowly comets are potentially able to impact onto rocky habitable
+planets. Section (c) describes the numerical simulations that will be used to confirm this result and
+investigate how frequently low velocity impacts can occur. In Section 3 we present the results of
+these simulations in the context of our analytical predictions. In Section 4 we discuss the results
+of our analytical model and simulations, and present predictions for future correlations between
+biosignatures and exoplanet populations. Finally, Section 5 summarises our conclusions.
+2. Methods
+The cometary delivery of prebiotically interesting molecules requires very low impact velocities,
+to minimise the amount of thermal degradation and allow a substantial quantity to survive the
+impact. To understand the importance of cometary delivery in an exoplanetary context, we study
+the scattering of volatile-rich bodies from beyond the snow-line into the habitable zone. We
+consider an idealised planetary system with equally spaced and equal-mass planets, as sketched in
+figure 1, which allows us to make analytical predictions for the minimum impact velocity onto
+the inner habitable planet. We then use N-body simulations to study the overall changes to the
+velocity distribution and test our analytical predictions.
+(a) Idealised planetary architecture
+We consider a chain of co-planar planets, each with mass MEarth , on circular orbits around a
+central star (mass M∗∈[0.1, 2] MSun). The semi-major axis of the inner planet is fixed in the centre
+of the star’s habitable zone, which is calculated using the stellar mass-luminosity relationship and
+habitable zone prescription from [48,49] respectively. The semi-major axes of the other planets are
+chosen such that the planets are equally spaced in units of their mutual Hill radius,
+ai+1=ai+∆RHi,i+1, (2.1)
+RHi,i+1=2MEarth
+3M∗1/3ai+ai+1
+2
+≡X(ai+ai+1). (2.2)4rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+Figure 1. Schematic diagram of the idealised planetary system considered in this work with equally spaced planets (brown
+circles, semi-major axis ai) scattering comets (small dark blue circles) from the snow-line. The blue region represents
+the volatile-rich region of the disc where comets occur, and the green region represents the habitable zone. Low velocity
+cometary impacts onto habitable planets will follow the lower arrows, which sketch the dynamically cold scattering between
+adjacent planets. The dynamically hot scattering as shown by the upper arrows, will result in high velocity impacts.
+We are interested in the scattering of volatile-rich material onto the inner planet, and so use the
+snow-line to delineate the boundary between the populations of rocky and volatile-rich bodies
+in the disc. The number of planets is chosen to span the gap between the habitable zone and
+snow-line. The location of the snow-line is calculated under the assumption of an optically thick,
+steady-state protoplanetary disc as outlined in [50,51].
+This choice of architecture is inspired by the prevalence of so-called ’peas in a pod’ systems [52].
+This describes the observed phenomenon that individual exoplanet systems have much smaller
+dispersion in mass, radius, and orbital period in comparison to the system-to-system variation
+of the exoplanet population as a whole [53 –55]. The observed correlation between the size of the
+planets and their orbital period ratios implies that gravitational interactions between neighboring
+planets are responsible for this effect, for which the mutual Hill radius is the natural length scale.
+Whilst this chosen architecture is clearly idealised, numerical simulations have demonstrated
+that pebble accretion may naturally form these tight multi-planet systems, in addition to outer
+giant planets [56,57]. These giant planets may be an important source of comets into the inner
+planetary system, given their efficiency at scattering comets onto habitable zone-crossing orbits [58].
+In this work, however, we do not specify the outer planetary architecture in an attempt to keep the
+model as general as possible.
+In the Kepler systems, the interplanetary separations typically range between 10-30 mutual
+Hill radii ( ∆) [53,59]. Below 10 ∆the stability dramatically decreases, due to the high degree of
+dynamical complexity present in these tightly-packed systems [60,61]. For separations below a
+critical value ∆c[62,63], these systems are stable for less than 102conjunctions. We therefore
+consider planetary spacings in the range 10 to 80 mutual Hill radii, which spans both the Kepler
+systems and terrestrial Solar System planets. Numerical simulations have demonstrated that
+tightly-packed systems with equal and low mass planets are particularly efficient at scattering
+comets into the innermost planets [64]. These results ensure efficient cometary scattering into the
+habitable zone, and are used to guide the range of spacings we consider in section (c).
+(b) Analytical predictions
+Simulations have demonstrated that the scattering of particles by multiple planets can be well-
+approximated by a series of three-body interactions [65], between which the orbits of the particles
+conserve their Tisserand parameter [66,67]. We therefore separate the dynamics of particles into
+two distinct regions - inside and outside of the scattering planet’s Hill sphere. Inside the Hill
+sphere we assume the particle feels only the attraction of the central planet, so is pulled onto a
+hyperbolic orbit with the planet at the focus. With v∞the relative velocity to the planet "at infinity",
+the impact velocity onto the planet is given by v2
+imp=v2esc+v2∞. The relative velocity at infinity is5rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .determined by the particle’s orbital elements outside of the Hill sphere, and is given by [68]
+v2
+∞=v2
+pl 
+3−apl
+a−2 cosis
+a(1−e2)
+apl!
+=v2
+pl(3− T). (2.3)
+There are therefore three key factors to consider when determining the minimum impact velocity;
+the planet’s escape velocity, the planet’s orbital (Keplerian) velocity, and the particle’s orbit relative
+to the planet, as characterised by the Tisserand parameter, T. The maximum Tisserand parameter
+of the particle is constrained by the planetary architecture, corresponding to an orbit with apocentre
+Q=a1, and pericentre q=a0. We are able to analytically calculate both the maximum Tisserand
+parameter, and minimum impact velocity for our idealised planetary architecture,
+Tmax= (1−∆X) + 2√
+1 +∆X, (2.4)
+v2
+imp,min=v2
+esc+GM∗
+dHZ
+2 +∆X−2√
+1 +∆X
+, (2.5)
+where dHZ=dHZ(M∗)is the radial location of the habitable zone.
+(c) Numerical simulations
+The overall velocity distribution onto a planet will be determined by the inwards flux of particles
+(on a range of orbits), and the accretion cross section of the planet1. The location of planets in
+(apl, Mpl)space determines the dynamics of the scattered particles, with the equality of the escape
+velocity and Keplerian velocity roughly constraining the efficiency of particle ejection from the
+system [69]. The details of the planetary architecture is therefore able to dramatically alter the
+inwards flux and relative velocities of the scattered particles in the system. Whilst the Tisserand
+parameter is conserved during interactions with a single planet, it is not conserved in the scenario
+that a particle has multiple interactions and is exchanged between two scattering planets [70],
+making it challenging to make analytical predictions about the overall velocity distribution. We
+therefore turn to N-body simulations, which are well-suited to studying the effects of both the
+planetary architecture and stellar-mass on the overall velocity distribution.
+N-body simulations were carried out using the MERCURIUS hybrid integrator [71] from the
+open source code REBOUND [72]. This integrator allows us to speed up the long-term integrations
+during distant interactions, without losing precision during close encounters. The scheme uses
+the 15th order adaptive integrator IAS15 [73] during close encounters, and otherwise uses the
+symplectic Wisdom-Holman integrator WHFast [74,75]. All planets are chosen to have the same
+mass and radius as the Earth, and we adopt a timestep of P0/50, where P0represents the period
+of the innermost planet. The inner planet is fixed in the star’s habitable zone, and the semi-major
+axes of the scattering planets are given by
+an=a01 +∆X
+1−∆Xn
+. (2.6)
+The number of planets, n, is chosen to fully span the gap between the habitable zone and snow-line
+(i.e.an> dSL). The conservation of the Tisserand parameter determines the minimum pericentre
+each test-particle can be scattered to [70], and so we use the requirement for planet-crossing orbits
+to generate the test-particles’ Tisserand parameter distribution. We inject test-particles into the
+chaotic zone of the outer planet [74], and record the impact velocities when the particles collide
+with the physical radius of each planet in the simulation.
+3. Results
+In this section we first discuss our analytical predictions for the minimum impact velocities onto
+the habitable planet in our idealised planetary system. We then present the results of the N-body
+1The accretion cross section of a planet is a function of the planetary and stellar properties, and the particle’s orbit. It is given
+byσacc∝R2
+pl 
+1 +v2
+esc/v2
+∞
+, which we note is a function of the particle’s Tisserand parameter.6rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+0 20 40 60 80
+∆ [mutual Hill radii]2.802.852.902.953.00Tmax
+Solar SystemTRAPPIST-1 Unstable(a)
+1.0 MSun
+0.7 MSun
+0.4 MSun
+0.1 MSun
+0 20 40 60 80
+∆ [mutual Hill radii]121416182022vimp [km/s]
+Unstable
+efficient organic deliveryinefficient organic delivery(b)
+Figure 2. Left panel. Analytical predictions for the maximum Tisserand parameter of comets onto an Earth-like planet in
+the habitable zone of M-dwarf, K- and G-type stars, as a function of the spacing between scattering planets (in units of
+mutual Hill radius). Typical values for the terrestrial planets in the Solar System, and the tightly-packed TRAPPIST -1 planets
+are added for reference. Right panel. The corresponding analytical predictions for the minimum velocity impacts onto the
+planet. Rough velocity thresholds, based off values for HCN survival [30] are added for reference. In both panels, the grey
+shaded region is an unstable region ( ∆ < ∆ c), for which planets will have close encounters in less than ∼102orbits.
+simulations, and discuss how the overall velocity distribution is affected by the stellar-mass and
+planetary architecture. Our analytical predictions are then compared with the N-body simulations
+to verify their accuracy.
+(a) Analytical results
+In order to analytically predict the minimum impact velocities, we consider the comet’s Tisserand
+parameter, conserved during three-body interactions with the scattering planets. The maximum
+Tisserand parameter (equation 2.4), corresponding to comets scattered between neighbouring
+planets, is shown in figure 2(a). We see the maximum Tisserand parameter decreases with the
+planetary separation ( ∆), and that the effect of the planetary architecture is more significant around
+low-mass stars. The corresponding minimum impact velocity, given by equation 2.5 is shown in
+figure 2(b), and increases strongly with ∆for low-mass stars. For low-mass stars (0.1 MSun), the
+range of spacings considered corresponds to scattering directly from the snow-line, all the way up
+to having 6 planets spaced equally between the snow-line and habitable zone.
+The dependence of both the maximum Tisserand parameter and minimum impact velocity on ∆
+is seen to be stronger around low-mass stars. Since the planet-to-star mass ratio is larger around low-
+mass stars, the width of the resonant regions around these planets will also increase. Consequently,
+fixed separations in mutual Hill radius correspond to larger distances in physical-space around
+low-mass stars, and therefore lower (higher) Tisserand parameters (impact velocities).
+For the case of direct scattering between the snow-line and habitable zone (i.e planetary
+separations of ∼70∆) the minimum impact velocities reach ∼20 km/s around low-mass stars.
+This high velocity is attributed to the larger ratio of the snow-line to the habitable zone around
+low-mass stars, and the (roughly) M−1/2
+∗ scaling of the orbital velocity of habitable planets. As
+velocities exceed 20 km/s, HCN survival decreases exponentially from ∼1%, severely limiting the
+efficiency of cometary delivery. Above 25 km/s impact blowoff from the atmosphere will prevent
+any successful cometary delivery [30].
+In summary we find the effectiveness of cometary delivery will depend on the planet’s escape
+velocity, the planetary architecture and the stellar-mass, as illustrated in figure 3. Figure 3(a) shows
+how reducing the planet’s escape velocity is able to keep the impact velocity substantially below7rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+0.1 1 2
+M∗ [MSun]1020304050607080∆ [mutual Hill radii](a)
+Mpl=0.5MEarth
+vesc = 7.90 km/s15km/s
+Efficient
+delivery
+0.1 1 2
+M∗ [MSun]Mpl=MEarth
+vesc = 11.18 km/s(b)
+0.1 1 2
+M∗ [MSun]20km/sInefficient
+delivery(c)
+Mpl=2MEarth
+vesc = 15.81 km/s
+5.07.19.111.213.215.317.319.421.423.5
+vimp [km/s]
+Figure 3. The minimum impact velocity onto an Earth-like planet in the habitable zone is calculated across a wide range of
+∆-M∗parameter space. The planet’s escape velocity is changed between the three panels. The survival of HCN is used
+as a proxy for the overall efficiency of cometary delivery. HCN delivery is most effective below 15 km/s, decreasing sharply
+above 20 km/s for which there will be very limited survival [30] Above 25 km/s there will be no HCN survival due to impact
+blowoff from the atmosphere.
+15 km/s, effectively erasing all effects of the planetary architecture and stellar-mass. For an Earth-
+like planet, the importance of the planetary architecture in the context of cometary delivery is
+almost completely dependent on the stellar-mass, as shown in figure 3(b).
+(b) Numerical results
+The results of our N-body simulations, as described in section (c), are shown in figure 4 for a range
+of stellar masses [0.1, 0.4, 1] MSun. Each panel corresponds to a different stellar mass, illustrating
+the effects of the planetary architecture for three planetary spacings, [10,30,50]RH,m. The velocity
+distribution onto a habitable planet orbiting a 1 MSunstar is included in the background for
+comparison. As predicted, there is a large change in the minimum impact velocity as a function of
+∆, which our analytical model is able to accurately reproduce as indicated by the dashed lines.
+There are a small number of impacts below our analytical predictions, which are a consequence
+of our assumption that comets must have planet-crossing orbits to be scattered by the planets in the
+system. Instead, there exists extended regions surrounding planets ( ∼RHill) within which particles
+can be scattered, increasing the available parameter space for the comets. We expect this effect to be
+more significant in systems with higher-mass planets and smaller planetary separations, as comets
+with low v∞will have much longer interaction times with the planets, allowing impacts from
+much larger impact parameters2. Some additional complexity arises as comets can be scattered
+backwards and forwards between just two planets, which can substantially alter their Tisserand
+parameter [70]. These are, however, minor effects, as seen in the low-velocity tails of figure 4, and
+are actually beneficial to the successful delivery of prebiotic molecules, so do not substantially
+affect the main conclusions we reach.
+We also see clear qualitative differences between the velocity distributions in figure 4,
+highlighting the fact that it is not just the minimum impact velocity that is affected by the planetary
+architecture and stellar-mass. A key takeaway is that there are a much larger fraction of very
+low-velocity impacts around Solar-mass stars, which suggests that comets would be able to deliver
+a significantly larger inventory of prebiotic molecules. The fraction of low-velocity impacts is
+2The conservation of angular momentum determines a maximum impact parameter for impacts, bmax=Rplvimp/v∞∼
+Rplvesc/v∞8rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+10 15 20 25 30 35 40
+Impact velocity [km/s]0.000.050.100.150.200.25Frequency(a)
+M∗=0.1MSun∆a=50RH,m
+∆a=30RH,m
+∆a=10RH,m
+10 15 20 25 30 35 40
+Impact velocity [km/s](b)
+M∗=0.4MSun∆a=50RH,m
+∆a=30RH,m
+∆a=10RH,m
+Figure 4. Impact velocity distributions from N-body test-particle simulations onto an Earth-like planet in the habitable zone
+of an 0.1 MSunM-dwarf (a) and an 0.4 MSunM-dwarf (b). The planetary spacing, in units of mutual Hill radius, is varied
+between 10RH,mand50RH,min each panel. This translates to between 2 and 8 planets spaced equally between the
+snow-line and habitable zone. The vertical dashed lines are the analytical predictions for the minimum velocity impacts (as
+seen in figure 2). For comparison, the velocity distribution for a planet around a G-type star (1 MSun,∆a= 50RH,m ) is
+shaded grey in the background. The overall shapes of these distributions are very sensitive to the initial distribution of the
+test-particles, which we describe in section (c).
+only found to depend on the planetary architecture for planets around low-mass stars, as seen in
+figure 5, which is supported by the general results of our analytical model.
+An additional, striking feature of the velocity distributions, is that the spread in impact velocities
+is much larger for systems around low-mass stars. This is driven by the extended high-velocity
+tails, which remain almost unchanged by the planetary spacing. These are comets scattered onto
+highly eccentric orbits by the outer planets, which remain on such orbits before impacting the inner
+habitable planet. This has potentially significant implications for cometary delivery, as the survival
+rate decreases exponentially with impact velocity. Furthermore, the increased fraction of high-
+velocity impacts around low-mass stars may be prejudicial to the development, and persistence
+of life on these planets [76]. We will discuss these changes to the velocity distributions, and the
+associated implications for cometary delivery in section 4.
+(c) Summary of results
+We have demonstrated analytically and numerically that very low velocity impacts onto Earth-like
+planets are possible (impossible) around Solar-type (M-dwarf) stars for comets scattered directly
+from beyond the snow-line. We show, however, that the presence of a number of planets between
+the habitable zone and snow-line is able to significantly reduce the minimum impact velocity,
+independent of stellar-mass. The dependence of the minimum impact velocity on the planet’s
+escape velocity, the stellar-mass and the planetary architecture is shown in figure 3. The results of
+our N-body simulations, figures 4 and 5, demonstrate that the overall velocity distributions onto
+habitable planets are also very sensitive to the stellar-mass and planetary architecture. Importantly
+for the possibility of cometary delivery, there will be substantially more low-velocity impacts onto
+planets in tightly-packed planetary systems and around higher-mass stars.
+4. Discussion9rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+10 20 30 40 50
+∆ [mutual Hill radii]020406080100
+M∗=0.1MSun(a)
+v<12 km/s
+v<13 km/s
+v<14 km/s
+v<15 km/s
+v<16 km/s
+v<17 km/s
+10 20 30 40 50
+∆ [mutual Hill radii]020406080100
+M∗=1.0MSun(b)Fraction of low velocity impacts (%)
+Figure 5. The fraction of low-velocity impacts as a function of the planetary spacing for a number of velocity thresholds
+are shown for a planet around both an M-dwarf ( left panel ) and G-type star ( right panel ). Both the minimum velocity
+and the full velocity distribution shift to lower velocities when the planetary spacing is decreased, seen clearly for planets
+around M-dwarfs. A similar trend is only seen for the very lowest velocity impacts around G-type stars, as predicted by our
+analytical model (see e.g. figure 2). For reference, using [30, equation 6], HCN survival is enhanced by roughly 100% for
+impacts at 12 km/s compared to 17 km/s. These changes in the velocity distribution at small ∆therefore correspond to
+significant increases in HCN survival.
+(a) For which planets might cometary delivery be important?
+As summarised in section (c), we find the minimum impact velocity of comets onto habitable
+planets is reduced for i) planets with lower escape velocities (lower mass), ii) planets orbiting
+higher-mass stars, and iii) planets in tightly-packed systems, for which comets are delivered on
+low eccentricity orbits. The survival of prebiotically interesting molecules in comets depends on
+both the impactor’s size and velocity and so, whilst remaining agnostic to the size-frequency
+distribution, we are able to make robust statements about the relative efficiency of cometary
+delivery.
+The most promising planets for any cometary delivery at low impact velocities will be found
+around F- and G-type stars, largely irrespective of the planetary architecture (see figure 3). The
+simulations presented here indicate that the delivery of the prebiotically relevant molecule HCN,
+favoured for impacts below 15 km/s (low impact angle, small radius) [30], is possible, but not
+common for Earth mass planets in the habitable zone of Sun-like stars (see figure 4).
+Delivery at low velocities, including sufficiently gentle impacts for there to be the successful
+delivery of an appreciable amount of more complex prebiotic molecules, such as amino acids [19],
+will always occur more frequently for lower mass planets due to their lower escape velocities, as
+seen in figure 3. A consequence of this conclusion is that comets could have delivered a larger,
+and potentially more complex initial prebiotic inventory to Mars than Earth. The same is also true
+for planets around massive stars (i.e. M∗> M Sun), given the orbital velocity in the habitable zone
+decreases roughly as M−1/2
+∗ . The short main sequence lifetimes, and inhospitable ionising winds
+from A-, B- and O- type stars [77,78] suggest that there are other reasons why life may not be
+favoured, pointing to F-type stars as the most promising high-mass stars to support life. A number
+of unique challenges for the emergence and evolution of life (post cometary delivery) remain for
+planets around F-type stars, including enhanced UV-fluxes [79], and the migration of the habitable
+zone throughout the stellar main sequence [46].
+Successful cometary delivery at low velocities is significantly more challenging for planets
+around low-mass stars. For comets scattered directly from the snow-line, minimum impact
+velocities can exceed 20 km/s onto Earth-like planets. For context, impacts at 20 km/s for a10rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .6 km comet result in approximately 0.2 % HCN survival, which decreases to 0 % above 25 km/s,
+where significant atmospheric blowoff is expected [30]. We show, however, that this minimum
+impact velocity can be significantly reduced in multiple-planet systems, suggesting that successful
+cometary delivery is possible in tightly-packed systems, often observed around low-mass stars.
+The fraction of low velocity impactors increases in more tightly-packed systems (figure 5), which
+further enhances the potential efficiency of cometary delivery in these scenarios.
+TRAPPIST-1 is an example of a tightly-packed planetary system around a low-mass M-dwarf
+(0.0898 MSun[80]), with 3 planets in the habitable zone (e, f, and g) [81]. Proxima Centauri is
+another low-mass M-dwarf (0.12 MSun) also with a habitable zone planet, Proxima Centauri b [82].
+A crucial distinction is that Proxima Centauri b has only one known external companion, the
+candidate planet Proxima Cenaturi c, which is on a distant orbit beyond the snow-line [83]. In the
+case this interior region truly lacks any additional planets and debris, this resulting architecture
+would lead to significantly higher impact velocities when compared to the TRAPPIST-1 planets.
+This would, in turn, dramatically reduce the efficiency of any cometary delivery. We note that
+these results are in agreement with the general picture of fast litho-panspermia in the TRAPPIST-1
+system presented in [84].
+The dynamical timescales around low-mass stars are much shorter than Solar-type stars, whilst
+the pre-main sequence cooling phase is significantly longer around low-mass stars [85], a prolonged
+period of enhanced stellar activity and high XUV-fluxes [86,87]. These effects combine such that the
+late-bombardment of habitable planets will end before the star reaches the main sequence [88,89].
+These planets will have likely exceeded the runaway greenhouse threshold [90], and so any
+cometary delivery during this period would occur during the planet’s magma ocean epoch [89],
+unconducive to the initial emergence of life via the comet pond scenario. More promisingly, recent
+work indicates that volatile-rich debris is ubiquitously scattered into exo-asteroid belts during
+the planet formation process [88]. This would support our general picture of scattering from a
+volatile-rich reservoir beyond the snow-line, and allow for delayed cometary delivery across a
+wide range of stellar-masses.
+(b) The effects of the overall velocity distribution
+Whilst crucial for cometary delivery, low-velocity impactors constitute only a small fraction of the
+overall population of impacting bodies (as seen in figure 4). The fraction of high-velocity impacts
+increases significantly around low-mass stars (see figure 5), which remain even in tightly-packed
+systems. These impactors have potentially negative implications for the habitability of planets
+around low-mass stars, even in the case of successful cometary delivery, which we will now
+discuss.
+Comet ponds are particularly exposed settings for abiogenesis, sensitive to both their immediate
+environment and also global climatic conditions, so are very sensitive to a planet’s impact
+history [76]. Increased fluxes of high-velocity impactors are therefore likely to be prejudicial to the
+subsequent emergence of life. High-velocity impacts are capable of shock heating atmospheres
+to very high temperatures ( ∼100°C), which can be followed by prolonged periods of cooling to
+temperatures below 0 °C due to the shielding effects of impact ejecta [91]. These ejecta blankets
+can also seriously disrupt the chemical evolution of comet ponds due to, and not limited to,
+acidification, heating and mixing [76].
+Moving beyond the sterilising potential of high-velocity impacts, modelling the overall velocity
+distribution is crucial for characterising a planet’s atmospheric evolution. Atmospheric evolution
+will depend on the relative efficiency of volatile delivery to loss from atmospheric stripping, which
+will be dependent on impactors’ velocity distribution, size distribution and composition (e.g. [92]).
+Habitable planets around low-mass stars will therefore be more susceptible to atmospheric erosion
+(see also [23,93]), which is largely driven by impacts above twice the planet’s escape velocity [94].
+The sensitivity of atmospheric evolution calculations to the impactors’ velocity distribution means
+that tailored N-body simulations are necessary to make accurate conclusions about individual
+planetary systems, as demonstrated in [95].11rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .High-velocity impactors might, however, support other origins scenarios that do not require
+the initial emergence of life from small surface-level ponds. High-velocity impacts can enrich a
+planet’s volatile inventory through the shock synthesis of prebiotic feedstock molecules [12], in
+which a number of chemicals (including HCN) can be synthesised in the impactor’s plasma. As
+with many other HCN formation pathways, this effect is found to be most effective in reduced
+atmospheres [6,7]. For the early-Earth it is thought that at least one impactor will have been able to
+generate prebiotically relevant concentrations of HCN, even for an oxidised early-atmosphere [7].
+The increased fraction of high-velocity impacts onto habitable planets around low-mass stars could
+therefore indicate more effective endogenous HCN production, a tentative conclusion contingent
+on the oxidation state of the planet’s early-atmosphere. A separate study would therefore be
+required to understand the efficiency of impact-driven HCN production in different environments,
+and allow for a comparison with cometary delivery.
+(c) Model limitations
+To analytically explore how the stellar-mass and planetary architecture affects the impact velocity
+distribution onto habitable planets, we necessarily make a number of simplifying assumptions.
+This enables us to draw some broad conclusions about the importance of cometary delivery in
+a wide range of planetary environments. The main assumptions we make, and the potential
+implications for our conclusions, are summarised here.
+In this work we have considered highly idealised planetary architectures, with equal mass
+planets spaced equally in terms of their mutual Hill radius. This may be reflected in the
+observational population of peas-in-a-pod systems [52], but our architectures are significantly more
+idealised than these observed systems. Previous work has demonstrated, however, that a variety of
+architectures are able to scatter exocomets onto the inner planets [64], with the scattering efficiency
+dependent on both the planet masses and spacings. This suggests a robustness to minor changes
+in the planetary architecture, with the details of the impacting flux and velocity distribution onto
+habitable planets changing on a system-by-system basis.
+As discussed in Section (a), we do not specify the planetary architecture beyond the snow-line,
+however the presence of an external giant planet could be crucial in perturbing comets onto
+habitable zone-crossing orbits [58]. Given the efficiency of pebble accretion beyond the snow-
+line [57], we argue this justifies our choice of architectures, as external giant planets would be able
+to provide an inwards cometary flux. The presence of a giant planet could however effectively
+prevent inwards scattering depending on its location in (apl, Mpl)space [69]. We note here that the
+dynamics of every individual planetary system will be unique, with particular (in)efficiencies in
+scattering dependent on the exact orbital locations of planets, and that both resonant and secular
+effects could in principle produce results that differ significantly from the trends we present in this
+paper.
+The results of our N-body simulations are very sensitive to the assumptions we make regarding
+the initial distribution of the test-particles. Our choice of a dynamically cold distribution of test-
+particles gives us an upper limit on the fraction of low-velocity impacts, providing an optimistic
+picture of the potential efficiency of cometary delivery. If, however, the outer cometary belt is
+dynamically excited, low velocity impacts will be unlikely. Our assumption of a planet at the inner
+edge of a static snow-line is also highly idealised, with the location of the snow-line evolving
+quickly during initial planet formation before moving slowly outwards at late times [96]. Every
+system will have a different architecture, but if instead a giant planet beyond the snow-line is
+the dominant source of volatile-rich comets, this would have the same effect as changing the
+initial Tisserand parameter distribution, shifting the velocity distribution towards higher velocities.
+We also acknowledge that in practice outer belts are likely to host very diverse populations of
+volatile-rich bodies, as seen in the solar system (e.g. [97]). These do not necessarily need to be
+scattered from the snow-line, as near-Earth asteroids have also been found to host a suite of
+prebiotically relevant molecules, with amino acids, amines and the RNA nucleobase Uracil found
+on the carbonaceous asteroid Ryugu [13,14].12rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .Finally, the successful cometary delivery of prebiotic molecules is also contingent on a number
+of physical parameters, which include most significantly the comet’s radius, the atmospheric
+density, and the location of impact [11,19]. For example, the atmospheric density is crucial in
+determining the efficiency of aerobraking, which in principle is able to sufficiently decelerate
+large comets in very dense ( ∼10 bar) atmospheres and facilitate increased organic survival [11].
+Smaller bodies (i.e <0.5 km) will violently disrupt at high altitudes due to comets’ low material
+strengths [98], and so it is likely that in this size range these ‘airbursts’ will prevent successful
+cometary delivery [99]. Similarly, organic survival will decrease for larger radius comets, and for
+impacts onto the continental crust, rather than deep ocean [19]. In light of the recent atmospheric
+retrievals of K2-18b, which is potentially a temperate, water-rich sub-Neptune [100], a study of
+cometary delivery onto ‘Hycean’ planets may be of interest, given their deep atmospheres and
+oceanic surfaces. Cometary delivery may be particularly important, given that high pressure
+ices below the oceans would likely preclude access to volatile elements in the silicate core [101].
+In this work, however, we remain agnostic to these effects in our analytical model as they will
+change on a planet-by-planet basis, and require additional assumptions, such as the comets’
+size-frequency distribution. These effects will, however contribute additional scatter onto our
+conclusions regarding the importance of cometary delivery.
+(d) Observational outlook
+Exoplanets can be seen as a diverse array of laboratories, which we can use to study different
+origins-of-life scenarios (e.g. [102]). In the coming decade, the HabEx-PLATO-LIFE epoch will
+facilitate the detection and atmospheric characterisation of a census of potentially habitable Earth-
+mass planets, extending even to planets around Sun-like stars. These are prime candidates for
+supporting Earth-like conditions, improving the prospects of detecting the first signs of life outside
+our home planet. This work suggests that in the scenario that the cometary delivery of prebiotically
+relevant molecules at low velocities is important for the origin of life, there will be a correlation
+between the presence of biosignatures and the following populations,
+(i)Exoplanets with low escape velocities. A strict upper bound at around 25 km/s would
+indicate a very strong reliance on cometary delivery.
+(ii)Exoplanets in tightly-packed systems. This should be a stronger effect for the population
+of planets around low-mass stars (see figure 3).
+(iii)Exoplanets around high-mass stars (M∗≳1MSun).This effect would be seen roughly
+independent of planetary spacing.
+Alternatively, the absence of such a correlation would strongly indicate that cometary delivery at
+low velocities is unimportant for the origins of life on rocky exoplanets.
+5. Conclusions
+This paper studies the potential of cometary impacts to deliver the initial prebiotic inventory
+required for the origins of life on rocky exoplanets. We consider the scattering of comets by an
+idealised planetary system, and derive simple analytical expressions for the minimum impact
+velocity onto habitable planets. This allows us to draw a number of broad conclusions about the
+importance of cometary delivery across a wide range of planetary environments.
+We find that minimum impact velocities are reduced for planets with lower escape velocities,
+planets in tightly-packed systems, and for planetary systems around high-mass stars. Furthermore,
+the results of our N-body simulations demonstrate that the overall velocity distribution of
+impactors onto habitable planets is very sensitive to both the stellar-mass and planetary
+architecture, with the fraction of low-velocity impacts increasing significantly for planets around
+Solar-mass stars, and in tightly-packed systems. It will be these populations of exoplanets where
+successful cometary delivery of prebiotic molecules is most likely to be successful, with significant13rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .implications for the resulting prebiotic inventories due to the exponential decrease in survivability
+with impact velocity.
+Our results highlight the importance of understanding a planet’s bulk properties, the stellar-
+mass and the surrounding planetary environment, as all of these factors individually can
+drastically affect a comet’s minimum impact velocity. If future space missions, such as HabEx/LIFE,
+characterise the atmospheres of rocky planets around stars with a range of stellar masses, this work
+predicts that if cometary delivery is important for the origins of life, the presence of biosignatures
+will be correlated with increased stellar-mass, decreased planetary mass, and decreased planetary
+spacing (i.e. tightly-packed systems). The absence of such correlations would suggest that alternate
+pathways are required to produce the initial inventories of prebiotic feedstock molecules on rocky
+exoplanets.
+Acknowledgements. We thank Matthew Clement and an anonymous reviewer for insightful comments
+that have greatly improved this manuscript. RJA acknowledges the Science and Technology Facilities Council
+(STFC) for a PhD studentship. AB acknowledges the support of a Royal Society University Research Fellowship,
+URF\R1\211421. Simulations in this paper made use of the REBOUND code which can be downloaded freely
+athttps://github.com/hannorein/rebound .
+Software acknowledgements: REBOUND [72], N UMPY [103], M ATPLOTLIB [104], A STROPY [105].
+References
+1.Chameides WL, Walker JCG. 1981 Rates of fixation by lightning of carbon and nitrogen in
+possible primitive atmospheres. Origins of life 11, 291–302. (10.1007/BF00931483)
+2.Barth P et al.. 2023 Isotopic constraints on lightning as a source of fixed nitrogen in Earth’s
+early biosphere. Nature Geoscience . (10.1038/s41561-023-01187-2)
+3.Kobayashi K et al.. 2023 Formation of Amino Acids and Carboxylic Acids in Weakly
+Reducing Planetary Atmospheres by Solar Energetic Particles from the Young Sun. Life13.
+(10.3390/life13051103)
+4.Zahnle KJ. 1986 Photochemistry of CH4 and HCN in the primitive atmosphere. Origins of life
+and evolution of the biosphere 16, 188–189. (10.1007/BF02421973)
+5.Tian F, Kasting JF, Zahnle K. 2011 Revisiting HCN formation in Earth’s early atmosphere. Earth
+and Planetary Science Letters 308, 417–423. (10.1016/j.epsl.2011.06.011)
+6.Ferus M, Kubelík P , Knížek A, Pastorek A, Sutherland J, Civiš S. 2017 High Energy Radical
+Chemistry Formation of HCN-rich Atmospheres on early Earth. Scientific Reports 7, 6275.
+(10.1038/s41598-017-06489-1)
+7.Parkos D, Pikus A, Alexeenko A, Melosh HJ. 2018 HCN Production via Impact Ejecta Reentry
+During the Late Heavy Bombardment. Journal of Geophysical Research: Planets 123, 892–909.
+(10.1002/2017JE005393)
+8.Rimmer PB, Rugheimer S. 2019 Hydrogen cyanide in nitrogen-rich atmospheres of rocky
+exoplanets. Icarus 329, 124–131. (10.1016/j.icarus.2019.02.020)
+9.Oró J. 1961 Comets and the Formation of Biochemical Compounds on the Primitive Earth.
+Nature 190, 389–390. (10.1038/190389a0)
+10.Anders E. 1989 Pre-biotic organic matter from comets and asteroids. Nature 342, 255–257.
+(10.1038/342255a0)
+11.Chyba CF, Thomas PJ, Brookshaw L, Sagan C. 1990 Cometary Delivery of Organic Molecules
+to the Early Earth. Science 249, 366–373.
+12.Chyba C, Sagan C. 1992 Endogenous production, exogenous delivery and impact-shock
+synthesis of organic molecules: an inventory for the origins of life. Nature 355, 125–132.
+(10.1038/355125a0)
+13. Oba Y et al.. 2023 Uracil in the carbonaceous asteroid (162173) Ryugu. Nature Communications
+14, 1292. (10.1038/s41467-023-36904-3)
+14.Naraoka H et al.. 2023 Soluble organic molecules in samples of the carbonaceous asteroid
+(162173) Ryugu. Science 379, eabn9033. (10.1126/science.abn9033)
+15.Kvenvolden K et al.. 1970 Evidence for Extraterrestrial Amino-acids and Hydrocarbons in the
+Murchison Meteorite. Nature 228, 923–926. (10.1038/228923a0)
+16.Cronin JR, Moore CB. 1971 Amino Acid Analyses of the Murchison, Murray, and Allende
+Carbonaceous Chondrites. Science 172, 1327–1329. (10.1126/science.172.3990.1327)
+17.Rotelli L et al.. 2016 The key role of meteorites in the formation of relevant prebiotic molecules14rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .in a formamide/water environment. Scientific Reports 6, 38888. (10.1038/srep38888)
+18.Trigo-Rodríguez JM, Rimola A, Tanbakouei S, Soto VC, Lee M. 2019 Accretion of Water in
+Carbonaceous Chondrites: Current Evidence and Implications for the Delivery of Water to
+Early Earth. Space Science Reviews 215, 18. (10.1007/s11214-019-0583-0)
+19.Pierazzo E, Chyba CF. 1999 Amino acid survival in large cometary impacts. Meteoritics &
+Planetary Science 34, 909–918. (https://doi.org/10.1111/j.1945-5100.1999.tb01409.x)
+20.Mumma MJ, Charnley SB. 2011 The Chemical Composition of Comets—Emerging Taxonomies
+and Natal Heritage. Annual Review of Astronomy and Astrophysics 49, 471–524. (10.1146/annurev-
+astro-081309-130811)
+21.Elsila JE, Glavin DP , Dworkin JP . 2009 Cometary glycine detected in samples returned
+by Stardust. Meteoritics & Planetary Science 44, 1323–1330. (https://doi.org/10.1111/j.1945-
+5100.2009.tb01224.x)
+22.Altwegg K et al.. 2017 Organics in comet 67P-a first comparative analysis of mass spectra from
+ROSINA-DFMS, COSAC and Ptolemy. Monthly Notices of the Royal Astronomical Society 469,
+130–141. (10.1093/mnras/stx1415)
+23.Sinclair CA, Wyatt MC, Morbidelli A, Nesvorný D. 2020 Evolution of the Earth’s Atmosphere
+during Late Veneer Accretion. Monthly Notices of the Royal Astronomical Society 499, 5334–5362.
+(https://doi.org/10.1093/mnras/staa3210)
+24.Nesvorný D et al.. 2023 Impact Rates in the Outer Solar System. The Planetary Science Journal 4,
+139. (10.3847/PSJ/ace8ff)
+25.Sephton MA. 2002 Organic compounds in carbonaceous meteorites. Nat. Prod. Rep. 19, 292–311.
+(10.1039/B103775G)
+26.Moore CB, Lewis CF. 1967 Total carbon content of ordinary chondrites. Journal of Geophysical
+Research (1896-1977) 72, 6289–6292. (https://doi.org/10.1029/JZ072i024p06289)
+27.Clark BC. 1988 Primeval procreative comet pond. Origins of life and evolution of the biosphere 18,
+209–238. (10.1007/BF01804671)
+28.Pearce BKD, Pudritz RE, Semenov DA, Henning TK. 2017 Origin of the RNA world: The
+fate of nucleobases in warm little ponds. Proceedings of the National Academy of Sciences 114,
+11327–11332. (10.1073/pnas.1710339114)
+29.Campbell TD, Febrian R, McCarthy JT, Kleinschmidt HE, Forsythe JG, Bracher PJ. 2019 Prebiotic
+condensation through wet–dry cycling regulated by deliquescence. Nature Communications 10,
+4508. (10.1038/s41467-019-11834-1)
+30.Todd ZR, Öberg KI. 2020 Cometary Delivery of Hydrogen Cyanide to the Early Earth.
+Astrobiology 20, 1109–1120. (10.1089/ast.2019.2187)
+31.Strecker A. 1854 Ueber einen neuen aus Aldehyd - Ammoniak und
+Blausäure entstehenden Körper. Justus Liebigs Annalen der Chemie 91, 349–351.
+(https://doi.org/10.1002/jlac.18540910309)
+32.Miller SL. 1953 A Production of Amino Acids under Possible Primitive Earth Conditions.
+Science 117, 528–529. (10.1126/science.117.3046.528)
+33.Ferus M et al.. 2015 High-energy chemistry of formamide: A unified mechanism
+of nucleobase formation. Proceedings of the National Academy of Sciences 112, 657–662.
+(10.1073/pnas.1412072111)
+34.Patel BH, Percivalle C, Ritson DJ, Duffy CD, Sutherland JD. 2015 Common origins of RNA,
+protein and lipid precursors in a cyanosulfidic protometabolism. Nature Chemistry 7, 301–307.
+(10.1038/nchem.2202)
+35.Xu J, Ritson DJ, Ranjan S, Todd ZR, Sasselov DD, Sutherland JD. 2018 Photochemical reductive
+homologation of hydrogen cyanide using sulfite and ferrocyanide. Chemical Communications 54,
+5566–5569. (10.1039/C8CC01499J)
+36.Sutherland JD. 2016 The Origin of Life—Out of the Blue. Angewandte Chemie International Edition
+55, 104–121. (https://doi.org/10.1002/anie.201506585)
+37.Bochanski JJ et al.. 2010 The luminosity and mass functions of low-mass stars in the galactic
+disk. II. The Field. The Astronomical Journal 139, 2679. (10.1088/0004-6256/139/6/2679)
+38.Wyatt MC. 2008 Evolution of debris disks.. Annual Review of Astronomy and Astrophysics 46,
+339–383. (10.1146/annurev.astro.45.051806.110525)
+39.Eiroa C et al.. 2013 DUst around NEarby Stars. The survey observational results. Astronomy &
+Astrophysics 555, A11. (10.1051/0004-6361/201321050)
+40.Krivov AV , Wyatt MC. 2020 Solution to the debris disc mass problem: planetesimals are born
+small?. Monthly Notices of the Royal Astronomical Society 500, 718–735. (10.1093/mnras/staa2385)15rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .41.Zuckerman B, Song I. 2012 A 40 Myr old gaseous circumstellar disk at 49 Ceti: massive
+co-rich comet clouds at young A-type stars. The Astrophysical Journal 758, 77. (10.1088/0004-
+637X/758/2/77)
+42.Marino S et al.. 2016 Exocometary gas in the HD 181327 debris ring. Monthly Notices of the Royal
+Astronomical Society 460, 2933–2944. (10.1093/mnras/stw1216)
+43.Plavchan P et al.. 2020 A planet within the debris disk around the pre-main-sequence star AU
+Microscopii. Nature 582, 497–500. (10.1038/s41586-020-2400-z)
+44.Martioli, E., Hébrard, G., Correia, A. C. M., Laskar, J., Lecavelier des Etangs, A.. 2021 New
+constraints on the planetary system around the young active star AU Mic - Two transiting warm
+Neptunes near mean-motion resonance. Astronomy & Astrophysics 649, A177. (10.1051/0004-
+6361/202040235)
+45. Kalas P , Liu MC, Matthews BC. 2004 Discovery of a Large Dust Disk Around the Nearby Star
+AU Microscopii. Science 303, 1990–1992. (10.1126/science.1093420)
+46.Sato S, Cuntz M, Guerra Olvera CM, Jack D, Schröder KP . 2014 Habitability around F-type
+stars. International Journal of Astrobiology 13, 244–258. (10.1017/S1473550414000020)
+47.Shields AL, Ballard S, Johnson JA. 2016 The habitability of planets orbiting M-dwarf stars.
+Physics Reports 663, 1. (10.1016/j.physrep.2016.10.003)
+48.Scalo J et al.. 2007 M stars as targets for terrestrial exoplanet searches and biosignature
+detection. Astrobiology 7, 85–166. Copyright: Copyright 2018 Elsevier B.V ., All rights reserved.
+(10.1089/ast.2006.0125)
+49.Kopparapu RK et al.. 2013 Habitable Zones around Main-sequence Stars: New Estimates. The
+Astrophysical Journal 765, 131. (10.1088/0004-637X/765/2/13110.48550/arXiv.1301.6674)
+50.Alcalá JM et al.. 2014 X-shooter spectroscopy of young stellar objects. IV . Accretion in low-
+mass stars and substellar objects in Lupus. Astronomy & Astrophysics 561, A2. (10.1051/0004-
+6361/201322254)
+51.Min M, Dullemond CP , Kama M, Dominik C. 2011 The thermal structure and the location of
+the snow line in the protosolar nebula: Axisymmetric models with full 3-D radiative transfer.
+Icarus 212, 416–426. (https://doi.org/10.1016/j.icarus.2010.12.002)
+52.Weiss LM et al.. 2022 Architectures of Compact Multi-planet Systems: Diversity and Uniformity.
+arXiv e-prints p. arXiv:2203.10076. (10.48550/arXiv.2203.10076)
+53.Weiss LM et al.. 2018 The California-Kepler Survey. V . Peas in a Pod: Planets in a Kepler
+Multi-planet System Are Similar in Size and Regularly Spaced. The Astronomical Journal 155, 48.
+(10.3847/1538-3881/aa9ff6)
+54.Millholland S, Wang S, Laughlin G. 2017 Kepler Multi-planet Systems Exhibit Unexpected Intra-
+system Uniformity in Mass and Radius. The Astrophysical Journal Letters 849, L33. (10.3847/2041-
+8213/aa9714)
+55.Wang S. 2017 RV-detected Kepler-multi Analogs Exhibit Intra-system Mass Uniformity. Research
+Notes of the AAS 1, 26. (10.3847/2515-5172/aa9be5)
+56.Lambrechts, Michiel et al.. 2019 Formation of planetary systems by pebble accretion and
+migration - How the radial pebble flux determines a terrestrial-planet or super-Earth growth
+mode. Astronomy & Astrophysics 627, A83. (10.1051/0004-6361/201834229)
+57.Bitsch, B et al.. 2019 Formation of planetary systems by pebble accretion and migration: growth
+of gas giants. Astronomy & Astrophysics 623, A88. (10.1051/0004-6361/201834489)
+58.Dencs Z, Regály Z. 2019 Water delivery to the TRAPPIST-1 planets. Monthly Notices of the Royal
+Astronomical Society 487, 2191–2199. (10.1093/mnras/stz1412)
+59.Pu B, Wu Y. 2015 Spacing of Kepler planets: sculpting by dynamical instability. The Astrophysical
+Journal 819. (10.3847/0004-637X/819/2/170)
+60.Chambers J, Wetherill G, Boss A. 1996 The Stability of Multi-Planet Systems. Icarus 119, 261–268.
+(https://doi.org/10.1006/icar.1996.0019)
+61.Obertas A, Van Laerhoven C, Tamayo D. 2017 The stability of tightly-packed, evenly-
+spaced systems of Earth-mass planets orbiting a Sun-like star. Icarus 293, 52–58.
+(https://doi.org/10.1016/j.icarus.2017.04.010)
+62.Gladman B. 1993 Dynamics of Systems of Two Close Planets. Icarus 106, 247–263.
+(10.1006/ICAR.1993.1169)
+63.Deck KM, Payne M, Holman MJ. 2013 First-order resonance overlap and the stability of close
+two-planet systems. The Astrophysical Journal 774, 129. (10.1088/0004-637X/774/2/129)
+64.Marino S, Bonsor A, Wyatt MC, Kral Q. 2018 Scattering of exocomets by a planet chain: exozodi
+levels and the delivery of cometary material to inner planets. Monthly Notices of the Royal
+Astronomical Society 479, 1651–1671. (10.1093/mnras/sty1475)16rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .65.Levison HF, Duncan MJ. 1997 From the Kuiper Belt to Jupiter-family comets: The spatial
+distribution of ecliptic comets. Icarus 127, 13–32. (10.1006/ICAR.1996.5637)
+66.Tisserand FF. 1889 Traité de mécanique céleste . Number v. 4 in Traité de mécanique céleste.
+Gauthier-Villars.
+67. Murray CD, Dermott SF. 1999 Solar system dynamics . Cambridge University Press.
+68.Öpik EJ. 1951 Collision Probabilities with the Planets and the Distribution of Interplanetary
+Matter. Proceedings of the Royal Irish Academy. Section A: Mathematical and Physical Sciences 54,
+165–199.
+69.Wyatt MC, Bonsor A, Jackson AP , Marino S, Shannon A. 2017 How to design a planetary system
+for different scattering outcomes: Giant impact sweet spot, maximizing exocomets, scattered
+discs. Monthly Notices of the Royal Astronomical Society 464, 3385–3407. (10.1093/mnras/stw2633)
+70.Bonsor A, Wyatt MC. 2012 The scattering of small bodies in planetary systems: constraints on
+the possible orbits of cometary material. Monthly Notices of the Royal Astronomical Society 420,
+2990–3002. (10.1111/j.1365-2966.2011.20156.x)
+71.Rein H et al.. 2019 Hybrid symplectic integrators for planetary dynamics. Monthly Notices of the
+Royal Astronomical Society 485, 5490–5497. (10.1093/mnras/stz769)
+72.Rein H, Liu SF. 2012 Astrophysics REBOUND: an open-source multi-purpose N-body code for
+collisional dynamics. Astronomy & Astrophysics 537, 128. (10.1051/0004-6361/201118085)
+73.Rein H, Spiegel DS. 2015 IAS15: a fast, adaptive, high-order integrator for gravitational
+dynamics, accurate to machine precision over a billion orbits. Monthly Notices of the Royal
+Astronomical Society 446, 1424–1437. (10.1093/mnras/stu2164)
+74.Wisdom J, Holman M. 1991 Symplectic maps for the N-body problem. The Astronomical Journal
+102, 1528–1538. (10.1086/115978)
+75.Rein H, Tamayo D. 2015 WHFAST: a fast and unbiased implementation of a symplectic
+Wisdom-Holman integrator for long-term gravitational simulations. Monthly Notices of the
+Royal Astronomical Society 452, 376–388. (10.1093/mnras/stv1257)
+76.Maher KA, Stevenson DJ. 1988 Impact frustration of the origin of life. Nature 331, 612–614.
+(10.1038/331612a0)
+77.Maeder A, Meynet G. 1988 Tables of evolutionary star models from 0.85 to 120 solar masses
+with overshooting and mass loss. Astronomy and Astrophysics Supplement Series 76, 411–425.
+78.Kudritzki RP , Puls J. 2000 Winds from Hot Stars. Annual Review of Astronomy and Astrophysics
+38, 613–666. (10.1146/annurev.astro.38.1.613)
+79.Cockell CS. 1999 Carbon Biochemistry and the Ultraviolet Radiation Environments of F, G, and
+K Main Sequence Stars. Icarus 141, 399–407. (https://doi.org/10.1006/icar.1999.6167)
+80.Agol E et al.. 2021 Refining the Transit-timing and Photometric Analysis of TRAPPIST-1:
+Masses, Radii, Densities, Dynamics, and Ephemerides. The Planetary Science Journal 2, 1.
+(10.3847/PSJ/abd022)
+81.Gillon M et al.. 2017 Seven temperate terrestrial planets around the nearby ultracool dwarf star
+TRAPPIST-1. Nature 542, 456–460. (10.1038/nature21360)
+82.Anglada-Escudé G et al.. 2016 A terrestrial planet candidate in a temperate orbit around
+Proxima Centauri. Nature 536, 437–440. (10.1038/nature19106)
+83.Damasso M et al.. 2020 A low-mass planet candidate orbiting Proxima Centauri at a distance
+of 1.5 AU. Science Advances 6, eaax7467. (10.1126/sciadv.aax7467)
+84.Krijt S, Bowling TJ, Lyons RJ, Ciesla FJ. 2017 Fast Litho-panspermia in the Habitable Zone of
+the TRAPPIST-1 System. The Astrophysical Journal Letters 839, L21. (10.3847/2041-8213/aa6b9f)
+85.Ramirez RM, Kaltenegger L. 2014 The habitable zones of pre-main-sequence stars. The
+Astrophysical Journal Letters 797, 25. (10.1088/2041-8205/797/2/L25)
+86.Hawley SL et al.. 2014 Kepler Flares. I. Active and Inactive M Dwarfs. The Astrophysical Journal
+797, 121. (10.1088/0004-637X/797/2/121)
+87.Baraffe I, Homeier D, Allard F, Chabrier G. 2015 Astrophysics New evolutionary models for
+pre-main sequence and main sequence low-mass stars down to the hydrogen-burning limit.
+Astronomy & Astrophysics 577, 42. (10.1051/0004-6361/201425481)
+88.Clement MS, Quintana EV , Quarles BL. 2022 Habitable Planet Formation around Low-mass
+Stars: Rapid Accretion, Rapid Debris Removal, and the Essential Contribution of External
+Giants. The Astrophysical Journal 928, 91. (10.3847/1538-4357/ac549e)
+89.Lichtenberg T, Clement MS. 2022 Reduced Late Bombardment on Rocky Exoplanets around M
+Dwarfs. The Astrophysical Journal Letters 938, L3. (10.3847/2041-8213/ac9521)
+90.Bolmont E et al.. 2017 Water loss from terrestrial planets orbiting ultracool dwarfs: implications
+for the planets of TRAPPIST-1. Monthly Notices of the Royal Astronomical Society 464, 3728–3741.
+(10.1093/mnras/stw2578)17rspa.royalsocietypublishing.org Proc R Soc A 0000000. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .91.Toon OB, Pollack JB, Ackerman TP , Turco RP , McKay CP , Liu MS. 1982 Evolution of an impact-
+generated dust cloud and its effects on the atmosphere. In Geological Implications of Impacts of
+Large Asteroids and Comets on the Earth , . Geological Society of America. (10.1130/SPE190-p187)
+92.Schlichting HE, Sari R, Yalinewich A. 2015 Atmospheric mass loss during
+planet formation: The importance of planetesimal impacts. Icarus 247, 81–94.
+(https://doi.org/10.1016/j.icarus.2014.09.053)
+93.Wyatt MC, Kral Q, Sinclair CA. 2020 Susceptibility of planetary atmospheres to mass-loss and
+growth by planetesimal impacts: the impact shoreline. Monthly Notices of the Royal Astronomical
+Society 491, 782–802. (10.1093/mnras/stz3052)
+94.Melosh HJ, Vickery AM. 1989 Impact erosion of the primordial atmosphere of Mars. Nature
+338, 487–489. (10.1038/338487a0)
+95.Kral Q et al.. 2018 Cometary impactors on the TRAPPIST-1 planets can destroy all planetary
+atmospheres and rebuild secondary atmospheres on planets f, g, and h. Monthly Notices of the
+Royal Astronomical Society 479, 2649–2672. (10.1093/MNRAS/STY1677)
+96.Zhang Y, Jin L. 2015 The evolution of the snow line in a protoplanetary disk. The Astrophysical
+Journal 802, 58. (10.1088/0004-637X/802/1/58)
+97.Nesvorný D, Brož M, Carruba V . 2015 Identification and Dynamical Properties
+of Asteroid Families. In Asteroids IV , pp. 297–321. University of Arizona Press.
+(10.2458/azu_uapress_9780816532131-ch016)
+98.Chyba CF, Thomas PJ, Zahnle KJ. 1993 The 1908 Tunguska explosion: atmospheric disruption
+of a stony asteroid. Nature 361, 40–44. (10.1038/361040a0)
+99.Boslough M, Crawford D. 2008 Low-altitude airbursts and the impact threat. International
+Journal of Impact Engineering 35, 1441–1448. Hypervelocity Impact Proceedings of the 2007
+Symposium (https://doi.org/10.1016/j.ijimpeng.2008.07.053)
+100. Madhusudhan N et al.. 2023 Carbon-bearing Molecules in a Possible Hycean Atmosphere.
+arXiv e-prints p. arXiv:2309.05566. (10.48550/arXiv.2309.05566)
+101. Madhusudhan N, Moses JI, Rigby F, Barrier E. 2023 Chemical conditions on Hycean worlds.
+Faraday Discuss. 245, 80–111. (10.1039/D3FD00075C)
+102. Rimmer PB. 2023 Origins of Life on Exoplanets. In Smoukov S, Seckbach J, Gordon
+R, editors, Conflicting Models for the Origin of Life , pp. 407–424. John Wiley & Sons.
+(10.1002/9781119555568.ch16)
+103. Harris CR et al.. 2020 Array programming with NumPy. Nature 585, 357–362. (10.1038/s41586-
+020-2649-2)
+104. Hunter JD. 2007 Matplotlib: A 2D Graphics Environment. Computing in Science and Engineering
+9, 90–95. (10.1109/MCSE.2007.55)
+105. Astropy Collaboration et al.. 2022 The Astropy Project: Sustaining and Growing a Community-
+oriented Open-source Project and the Latest Major Release (v5.0) of the Core Package. The
+Astrophysical Journal 935, 167. (10.3847/1538-4357/ac7c74)
