@@ -1,35 +1,11 @@
-import csv, re
+import csv, re, os
 from dataclasses import dataclass
 from crawler import ArxivCrawler, PdfCrawler
 
-@dataclass
-class ArxivConfig:
-    # recent submissions
-    output_file_recent = "recent_papers.csv"
-    dir_recent         = r"^/list/[a-z]+(?:-[a-z]+)?/recent$" # have pattern /list/<category>/recent -> recent submissions of current week (mo-fr)
-    dir_past_week      = r"^/list/[a-z]+(?:-[a-z]+)?/pastweek#item\d+$" # have pattern pastweek#item[1:x] -> recent submissions of current week (mo-fr) <a name="itemX">
-    # new submissions, cross-lists and replacements
-    output_file_new    = "new_papers.csv"
-    dir_new            = r"^/list/[a-z]+(?:-[a-z]+)?/new$" # have pattern /list/<category>/new -> new submissions, cross-lists and replacements
-    dir_type           = r"^/list/[a-z]+(?:-[a-z]+)?/new#item\d+$" # index has to be crawled to determine which submission type is listed
-
 if __name__ == '__main__':
-    arxiv_crawler = ArxivCrawler()
-    #arxiv_crawler.crawl_target_dir_pdf_links(ArxivConfig.dir_new, ArxivConfig.output_file_new)
-    #arxiv_crawler.crawl_target_dir_pdf_links(ArxivConfig.dir_recent, ArxivConfig.output_file_recent)
-    
-    pdf_crawler = PdfCrawler()
-    file_path = "/home/julian/devel/publikationsempfehlung/data_ingest/_data/urls/recent_papers.csv"
-    id_pattern = r"\d{4}\.\d{5}$"
-    with open(file_path, 'r', newline='') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            pdf_link = row[0]
-            
-            id_part = re.search(id_pattern, pdf_link)
-            if id_part:
-                file_id = id_part.group()
-            
-                if pdf_crawler.pull(url=pdf_link, filename=file_id):
-                    pdf_crawler.read()
-                    #pdf_crawler.delete()
+    ac = ArxivCrawler()
+    #ac.crawl_publications(csv_path=os.getcwd() + "/data_ingest/_data/ids/2023.csv")
+    ac.crawl_ids(year=2017) # 1991=304, 1992=2254, 2008=58356, 
+    #ac.crawl_ids(year=2018, months=["12"], main_cat='astro-ph')
+    #ac.crawl_ids(year=2018, months=["01", "02", "03"], main_cat='cond-mat')
+    #ac.clean_duplicates(os.getcwd() + "/data_ingest/_data/ids/2018.csv") # 58671
