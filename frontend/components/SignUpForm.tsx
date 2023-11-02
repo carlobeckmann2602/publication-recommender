@@ -67,7 +67,6 @@ export function SignUpForm() {
   };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
     router.push("/");
     toast({
       title: "You submitted the following values:",

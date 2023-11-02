@@ -32,7 +32,6 @@ export function Searchbar() {
   const router = useRouter();
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data.query);
     router.push(`/search?q=${data.query}`);
   }
 
