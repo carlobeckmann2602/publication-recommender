@@ -30,23 +30,25 @@ class ArxivCrawler:
         root = ArxivCrawler.root
         abstract_dir = ArxivCrawler.first_dir["abstract"]
         pdf_dir = ArxivCrawler.first_dir["pdf"]
-        self.publications.append(["id", "src", "src_id", "doi", "author", "title", "abstract", "full_text"])
+        self.publications.append(["id", "src", "src_id", "doi", "url", "author", "title", "abstract", "full_text", "subm_time"])
         ids = self._read_ids_from_csv(csv_path)
 
         for id in ids:
             self.arxiv_id = id
             self.id += 1
-            if self.id == 11: break
+            if self.id == 4: break
             try:
                 self.response = requests.get(root+abstract_dir+id)
                 if self.response.status_code == 200:
                     soup = BeautifulSoup(self.response.text, 'html.parser')
+                    date = self._find_submission_date(soup)
                     doi = self._find_doi(soup)
+                    url = "https://doi.org/"+doi if doi is not None else root+pdf_dir+id
                     author = self._find_author(soup)
                     title = self._find_title(soup)
                     abstract = self._find_abstract(soup)
                     full_text = self._crawl_pdf(root+pdf_dir+id)
-                    self.publications.append([self.id, root, self.arxiv_id, doi, author, title, abstract, full_text])
+                    self.publications.append([self.id, root, self.arxiv_id, doi, url, author, title, abstract, full_text, date])
                 else:
                     print(f"- failed to retrieve the web page. Status code: {self.response.status_code}")
             except ConnectionResetError as e:
@@ -109,42 +111,70 @@ class ArxivCrawler:
         return abstract
     
     def _find_submission_date(self, soup):
-        date_pat = r"dateline"
+        date_pat = r"([A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]+ \d{4} \d{2}:\d{2}:\d{2} UTC)"
         date = None
         div_tags = soup.find_all('div')
         for div in div_tags:
             class_att = div.get('class')
-            if class_att is not None and re.match(r"^"+date_pat, class_att[0]):
-                date = div.text
-                "[Submitted on "
+            if class_att is not None and re.match(r"^submission-history", class_att[0]):
+                match = re.search(date_pat, div.text)
+                date = match.group()
         return date
     
     def _crawl_pdf(self, url):
         pdf_path = ArxivCrawler.temp_path+'downloaded.pdf'
-        full_text = ""
+        full_text = b""
         try:
             self.response = requests.get(url)
 
             if self.response.status_code == 200:
+                full_text = self.response.content
+                '''
                 with open(pdf_path, 'wb') as pdf_file:
-                    pdf_content = io.BytesIO(self.response.content)
+                    pdf_content = self.response.content #io.BytesIO(self.response.content)
                     pdf_file.write(pdf_content)
-
+                
                 pdf_document = fitz.open(pdf_path)
-
+                outline = pdf_document.outline # wie iterieren
+                title_list = list()
+                section_list = list()
+                word_count = 0
+                font_sizes = list()
+                current_page = list()
+            
                 for page_num in range(pdf_document.page_count):
                     page = pdf_document[page_num]
-                    outline = page.get_pymupdf_outline()
-                    if outline:
-                        for entry in outline:
-                            print(entry[1])
+                    blocks = page.get_text("blocks")
+                    words = page.get_text("words")
+                    word_count += len(words)
+                    dict = page.get_text("dict")
+
+                    last_font_size = None
+                    current_font_size = None
+                    last_block = list()
+                    last_is_title = False
+
+                    for block in dict["blocks"]:
+                        current_block = ""
+                        if block.get("lines") is not None:
+                            for line in block["lines"]:
+                                spans = line["spans"][0]
+                                current_font_size = spans["size"]
+                                if not current_font_size in font_sizes:
+                                    font_sizes.append(current_font_size)
+                                    font_sizes.sort()
+                                text_line = spans["text"]
+
+                                current_block += text_line + "\n"
+
+                            current_page.append((current_font_size, current_block.strip()))
+                '''
             else:
                 print(f"- failed to retrieve the pdf. Status code: {self.response.status_code}")
         except ConnectionResetError as e:
             print(f"- failed to retrieve data. Error: {e.args}")
         except requests.exceptions.ConnectionError as e:
             print(f"- failed to retrieve data. Error: {e.args}")
-        full_text = full_text.replace("\n", " ")
         return full_text
     
     def crawl_ids(self, year, months:list=None, main_cat=None):
@@ -223,7 +253,7 @@ class ArxivCrawler:
         if main_cat is not None:
             path += "_" + main_cat
         path += ".csv"
-        self._write_to_csv(path, self.pdf_links)
+        self._write_to_csv(path, self.pdf_links, True)
         return self.pdf_links
     
     def crawl_new(self, main_cat=None):
@@ -380,14 +410,14 @@ class ArxivCrawler:
         print("- year " + str(year) + " DOES exist in the '" + cat + "' category. crawling '" + cat + "' ...")
         return True
     
-    def _write_to_csv(self, filepath, data):
+    def _write_to_csv(self, filepath, data, is_id=False):
         print("writing " + str(len(data)) + " entries to '" + filepath + "' ...")
-        if len(data[0]) < 2:
+        if is_id:
             data.sort()
         with open(filepath, 'w', newline='') as file:
             writer = csv.writer(file)
             for row in data:
-                if len(data[0]) < 2:
+                if is_id:
                     writer.writerow([row])
                 else:
                     writer.writerow(row)
@@ -421,4 +451,4 @@ class ArxivCrawler:
         print("- found '" + str(pre_len) + "' entries.")
         print("- removed '" + str(pre_len-post_len) + "' duplicates.")
         #print("writing " + str(post_len) + " ids to '" + csv_path + "' ...")
-        self._write_to_csv(csv_path, id_list)
+        self._write_to_csv(csv_path, id_list, True)
