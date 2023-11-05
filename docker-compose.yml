@@ -1,62 +1,118 @@
 version: "3.9"
 services:
   nest:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
+    image: node:18-alpine3.17
     volumes:
-      - ./backend:/usr/src/app/backend
-      - ignore_backend:/usr/src/app/backend/node_modules
+      - ./backend:/usr/src/app
+    working_dir: /usr/src/app
     ports:
-      - "3001:3000"
+      - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
+    healthcheck:
+      test: wget --spider http://localhost:${BACKEND_PORT}
+      interval: 30s
+      retries: 10
+      start_period: 10s
+      timeout: 10s
     depends_on:
       - postgres
+      - ai_backend
     stdin_open: true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run migration:run
+        npm run start:dev
     tty: true
+    environment:
+      - APP_ENV=${APP_ENV}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+      - DB_SYNC=${BACKEND_DB_SYNC}
 
-  artificial_intelligence_backend:
+  ai_backend:
     build:
       context: ./ai_backend
       dockerfile: Dockerfile
     volumes:
-      - ./ai_backend/data:/data/
+      - ./ai_backend/:/code/
     ports:
-      - "8000:8000"
+      - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
     stdin_open: true
     tty: true
+    environment:
+      - PORT=${AI_BACKEND_PORT}
 
   postgres:
     image: postgres:16.0-alpine3.18
     environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${BACKEND_DB_USERNAME}
+      - POSTGRES_PASSWORD=${BACKEND_DB_PASSWORD}
+      - POSTGRES_DB=${BACKEND_DB_DATABASE}
     volumes:
       - backend_database:/var/lib/postgresql/data
     ports:
-      - "${DB_HOST_PORT}:${DB_PORT}"
+      - "${BACKEND_DB_HOST_PORT}:${BACKEND_DB_PORT}"
 
   next:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+    image: node:18-alpine3.17
     volumes:
-      - ./frontend:/usr/src/app/frontend
-      - ignore_frontend:/usr/src/app/frontend/node_modules
+      - ./frontend:/usr/src/app
+    working_dir: /usr/src/app
     ports:
-      - "3000:3000"
+      - "${FRONTEND_HOST_PORT}:${FRONTEND_PORT}"
     depends_on:
       nest:
         condition: service_healthy
     stdin_open: true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run codegen
+        npm run dev
     tty: true
+    environment:
+      - BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXTAUTH_SECRET=${FRONTEND_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${FRONTEND_NEXTAUTH_URL}
+      - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
 
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - "${ADMINER_HOST_PORT}:${ADMINER_PORT}"
+
+  seeders:
+    image: node:18-alpine3.17
+    working_dir: /usr/src/app
+    profiles:
+      - seeders
+    volumes:
+      - ./backend:/usr/src/app
+    depends_on:
+      nest:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm run seed:run
+    environment:
+      - APP_ENV=${APP_ENV}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+      - DB_SYNC=${BACKEND_DB_SYNC}
+
 volumes:
-  ignore_backend:
-  ignore_frontend:
   backend_database:

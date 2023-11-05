@@ -5,9 +5,9 @@ export class CreatePublicationsTable1698184468440 implements MigrationInterface 
     await queryRunner.query(`
       CREATE TABLE publications (
         id UUID PRIMARY KEY,
-        title VARCHAR(500) NOT NULL,
-        authors VARCHAR(100) ARRAY DEFAULT ARRAY[]::VARCHAR[],
-        publisher VARCHAR(500),
+        title VARCHAR NOT NULL,
+        authors VARCHAR ARRAY DEFAULT ARRAY[]::VARCHAR[],
+        publisher VARCHAR,
         date DATE,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
