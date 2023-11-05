@@ -1,17 +1,16 @@
-import { EnvironmentReader } from 'safe-env-vars';
+import 'dotenv/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 import { Publications1698190282922 } from '../seeders/1698190282922-publications';
-const env = new EnvironmentReader({ dotEnvPath: '.env.dev' });
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
-  host: env.get('DB_HOST'),
-  port: Number.parseInt(env.get('DB_PORT')),
-  username: env.get('DB_USERNAME'),
-  password: env.get('DB_PASSWORD'),
-  database: env.get('DB_DATABASE'),
+  host: process.env.DB_HOST,
+  port: Number.parseInt(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   synchronize: false,
   logging: false,
   entities: [Publication],

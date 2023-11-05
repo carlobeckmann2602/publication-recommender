@@ -4,28 +4,20 @@
 
 ### Dev Mode
 
-1. Create a .env.dev file in the backend folder based on .env.example.
-2. Create a .env.development file in the frontend folder based on .env.example
-3. Run
+Create .env file in the root of the project based on .env.example
+
+#### Start
 
 ```bash
-npm install
+docker compose up
 ```
 
-in ./frontend and ./backend. If you don't do this some folders will be crated through docker and their owner will be root instead of you.
-
-4. Run
-
+#### Start with seeders
 ```bash
-docker compose --env-file ./backend/.env.dev  up --build
+docker compose --profile seeders up
 ```
 
-### Prodduction Mode
-
-1. Create a .env.prod file in the backend folder based on .env.example
-2. Create a .env.prod file in the frontend folder based on .env.example
-3. run
-
+#### SSH into a started container
 ```bash
-docker compose --env-file ./backend/.env.prod  -f docker-compose.prod.yml  up --build
+docker exec -it <container> /bin/sh
 ```
