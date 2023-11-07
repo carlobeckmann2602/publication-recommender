@@ -8,7 +8,7 @@ type Props = {
 export default function SignIn(props: Props) {
   return (
     <>
-      <Header title="Log In" subtitle="Please enter your details." />
+      <Header title="Sign In" subtitle="Please enter your details." />
       <div className="flex justify-center p-8">
         <div className="flex flex-col w-1/2">
           <LogInForm
