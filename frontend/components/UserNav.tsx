@@ -1,10 +1,6 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 import {
   DropdownMenu,
@@ -14,46 +10,58 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { signOut, useSession } from "next-auth/react";
 
-import Link from "next/link"
+import Link from "next/link";
+import SignInSignUpButton from "./SignInSignUpButton";
 
 export function UserNav() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-            <AvatarFallback>SC</AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">shadcn</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              m@example.com
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <Link href="/profile">
-            <DropdownMenuItem>
-              Profil
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem>
-            Einstellungen
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+  const { data: session } = useSession();
+
+  if (session && session.user) {
+    const name = session.user.name;
+    const initals = name
+      .match(/(\b\S)?/g)
+      ?.join("")
+      ?.match(/(^\S|\S$)?/g)
+      ?.join("")
+      .toUpperCase();
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={session.user.image} alt="profile image" />
+              <AvatarFallback>{initals}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {session.user.name}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {session.user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <Link href="/profile">
+              <DropdownMenuItem>Profil</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Einstellungen</DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
+  return <SignInSignUpButton />;
 }
