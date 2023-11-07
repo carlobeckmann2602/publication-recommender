@@ -14,12 +14,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import {
+  ExclamationTriangleIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/24/outline";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import TextSeparator from "./TextSeparator";
+import GoogleButton from "./GoogleButton";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 const FormSchema = z
   .object({
@@ -45,7 +54,12 @@ const FormSchema = z
     path: ["confirm"],
   });
 
-export function SignUpForm() {
+type Props = {
+  callbackUrl?: string;
+  error?: string;
+};
+
+export function SignUpForm(props: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -79,108 +93,125 @@ export function SignUpForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="name" {...field} />
-              </FormControl>
-              <FormDescription>Your displayed Name.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="email" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your email address to login.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    {...field}
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showPassword ? (
-                      <EyeSlashIcon
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    ) : (
-                      <EyeIcon
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    )}
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      {...field}
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                      {showPassword ? (
+                        <EyeSlashIcon
+                          className="h-6 w-6"
+                          onClick={togglePasswordVisibility}
+                        />
+                      ) : (
+                        <EyeIcon
+                          className="h-6 w-6"
+                          onClick={togglePasswordVisibility}
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-              </FormControl>
-              <FormDescription>Your Password to login.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirm"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm Password"
-                    {...field}
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showConfirmPassword ? (
-                      <EyeSlashIcon
-                        className="h-6 w-6"
-                        onClick={toggleConfirmPasswordVisibility}
-                      />
-                    ) : (
-                      <EyeIcon
-                        className="h-6 w-6"
-                        onClick={toggleConfirmPasswordVisibility}
-                      />
-                    )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirm"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm Password"
+                      {...field}
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                      {showConfirmPassword ? (
+                        <EyeSlashIcon
+                          className="h-6 w-6"
+                          onClick={toggleConfirmPasswordVisibility}
+                        />
+                      ) : (
+                        <EyeIcon
+                          className="h-6 w-6"
+                          onClick={toggleConfirmPasswordVisibility}
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-              </FormControl>
-              <FormDescription>
-                Please reenter your password here.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full">
+            Create Account
+          </Button>
+        </form>
+      </Form>
+      {!!props.error && (
+        <Alert variant="destructive">
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>Authentication Failed!</AlertDescription>
+        </Alert>
+      )}
+      <TextSeparator>or</TextSeparator>
+      <div className="flex flex-col gap-4">
+        <GoogleButton
+          onClick={() => {
+            signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
+          }}
         />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+      </div>
+      <span className="text-center">
+        Already have an account?{" "}
+        <Link href={"/signup"} className="underline">
+          Sign In
+        </Link>
+      </span>
+    </>
   );
 }

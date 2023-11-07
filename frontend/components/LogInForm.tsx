@@ -79,7 +79,7 @@ export function LogInForm(props: Props) {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="email" {...field} />
+                  <Input placeholder="Email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
