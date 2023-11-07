@@ -14,7 +14,8 @@ import {
 import { signOut, useSession } from "next-auth/react";
 
 import Link from "next/link";
-import SignInSignUpButton from "./SignInSignUpButton";
+import SignInSignUpButton from "@/components/login/SignInSignUpButton";
+import SignOut from "@/components/login/SignOut";
 
 export function UserNav() {
   const { data: session } = useSession();
@@ -57,7 +58,14 @@ export function UserNav() {
             <DropdownMenuItem>Einstellungen</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
+          <SignOut>
+            <Button
+              variant={"ghost"}
+              className="text-sm justify-start p-2 font-normal h-auto"
+            >
+              Log out
+            </Button>
+          </SignOut>
         </DropdownMenuContent>
       </DropdownMenu>
     );

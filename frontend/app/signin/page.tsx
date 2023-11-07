@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header";
-import { LogInForm } from "@/components/LogInForm";
+import { LogInForm } from "@/components/login/LogInForm";
 
 type Props = {
   searchParams?: Record<"callbackUrl" | "error", string>;

@@ -26,8 +26,8 @@ import {
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import GoogleButton from "./GoogleButton";
-import TextSeparator from "./TextSeparator";
+import GoogleButton from "@/components/login/GoogleButton";
+import TextSeparator from "@/components/TextSeparator";
 
 const FormSchema = z.object({
   email: z

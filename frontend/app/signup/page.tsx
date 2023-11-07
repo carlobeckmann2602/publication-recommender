@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header";
-import { SignUpForm } from "@/components/SignUpForm";
+import { SignUpForm } from "@/components/login/SignUpForm";
 import React from "react";
 
 export default function Search() {

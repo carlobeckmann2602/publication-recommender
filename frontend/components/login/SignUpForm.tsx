@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,8 +24,8 @@ import {
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import TextSeparator from "./TextSeparator";
-import GoogleButton from "./GoogleButton";
+import TextSeparator from "@/components/TextSeparator";
+import GoogleButton from "@/components/login/GoogleButton";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
