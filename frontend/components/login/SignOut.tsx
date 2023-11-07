@@ -23,7 +23,7 @@ export default function SignOut({ children }: Props) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Are you sure to log out?</DialogTitle>
+          <DialogTitle>Are you sure you want to log out?</DialogTitle>
         </DialogHeader>
         <DialogFooter className="sm:justify-start">
           <DialogClose className="w-1/2" asChild>
