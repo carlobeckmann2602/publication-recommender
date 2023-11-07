@@ -133,11 +133,19 @@ export function LogInForm(props: Props) {
         </Alert>
       )}
       <TextSeparator>or</TextSeparator>
-      <GoogleButton
-        onClick={() => {
-          signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
-        }}
-      />
+      <div className="flex flex-col gap-4">
+        <GoogleButton
+          onClick={() => {
+            signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
+          }}
+        />
+      </div>
+      <span className="text-center">
+        Dont have an account?{" "}
+        <Link href={"/signup"} className="underline">
+          Create Account
+        </Link>
+      </span>
     </>
   );
 }
