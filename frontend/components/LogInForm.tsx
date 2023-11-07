@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
+
 import {
   Form,
   FormControl,
@@ -24,6 +25,9 @@ import {
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+import GoogleButton from "./GoogleButton";
+import TextSeparator from "./TextSeparator";
 
 const FormSchema = z.object({
   email: z
@@ -67,10 +71,7 @@ export function LogInForm(props: Props) {
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="email"
@@ -80,9 +81,6 @@ export function LogInForm(props: Props) {
                 <FormControl>
                   <Input placeholder="email" {...field} />
                 </FormControl>
-                <FormDescription>
-                  This is your email address to login.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -115,12 +113,16 @@ export function LogInForm(props: Props) {
                     </div>
                   </div>
                 </FormControl>
-                <FormDescription>Your Password to login.</FormDescription>
+                <FormDescription className="text-right">
+                  <Link href={"/"}>Forgotten Password?</Link>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Sign In</Button>
+          <Button type="submit" className="w-full">
+            Sign In
+          </Button>
         </form>
       </Form>
       {!!props.error && (
@@ -130,14 +132,12 @@ export function LogInForm(props: Props) {
           <AlertDescription>Authentication Failed!</AlertDescription>
         </Alert>
       )}
-      <Button
-        className="mt-8"
+      <TextSeparator>or</TextSeparator>
+      <GoogleButton
         onClick={() => {
           signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
         }}
-      >
-        Sign In With Google
-      </Button>
+      />
     </>
   );
 }
