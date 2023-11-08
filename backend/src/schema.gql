@@ -7,6 +7,17 @@ type JwtDto {
   refreshToken: String!
 }
 
+type User {
+  id: String!
+  email: String!
+  name: String!
+}
+
+type LoggedIn {
+  jwt: JwtDto!
+  user: User!
+}
+
 type Publication {
   id: String!
   title: String!
@@ -31,14 +42,15 @@ input PublicationsQueryDto {
 }
 
 type Mutation {
-  register(data: RegisterDto!): JwtDto!
-  login(data: LoginDto!): JwtDto!
+  register(data: RegisterDto!): LoggedIn!
+  login(data: LoginDto!): LoggedIn!
   refreshToken(token: String!): JwtDto!
 }
 
 input RegisterDto {
   email: String!
   password: String!
+  name: String!
 }
 
 input LoginDto {

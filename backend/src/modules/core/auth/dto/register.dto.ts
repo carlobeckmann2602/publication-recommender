@@ -1,21 +1,22 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
-import { IsDefined, IsEmail, MinLength } from 'class-validator';
+import { IsDefined, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 @InputType()
 export class RegisterDto {
   @Field()
-  @IsDefined({
-    message: 'Email is required',
-  })
+  @IsDefined()
   @IsEmail()
   @Transform((params) => params.value.toLowerCase())
   email: string;
 
   @Field()
-  @IsDefined({
-    message: 'Password is required',
-  })
+  @IsDefined()
   @MinLength(8)
   password: string;
+
+  @Field()
+  @IsDefined()
+  @IsNotEmpty()
+  name: string;
 }

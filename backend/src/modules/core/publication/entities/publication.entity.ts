@@ -14,7 +14,7 @@ export class Publication {
   id: string;
 
   @Field()
-  @Column({ nullable: false })
+  @Column()
   title: string;
 
   @Field()

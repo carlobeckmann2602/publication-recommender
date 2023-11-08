@@ -6,6 +6,7 @@ import { Args, Resolver } from '@nestjs/graphql';
 import { Mutation } from '@nestjs/graphql/dist/decorators/mutation.decorator';
 import { UserNotFoundException } from '../../user/exceptions/user-not-found.exception';
 import { JwtDto } from '../dto/jwt.dto';
+import { LoggedIn } from '../dto/logged-in.dto';
 import { LoginDto } from '../dto/login.dto';
 import { RegisterDto } from '../dto/register.dto';
 import { TokenInvalidException } from '../exception/token-invalid.exception';
@@ -15,7 +16,7 @@ import { AuthService } from '../services/auth.service';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Mutation(() => JwtDto)
+  @Mutation(() => LoggedIn)
   @UsePipes(new ValidationPipe({ transform: true }))
   async register(
     @Args('data', {
@@ -23,7 +24,7 @@ export class AuthResolver {
       nullable: false,
     })
     data: RegisterDto,
-  ): Promise<JwtDto> {
+  ): Promise<LoggedIn> {
     try {
       return await this.authService.register(data);
     } catch (e) {
@@ -31,7 +32,7 @@ export class AuthResolver {
     }
   }
 
-  @Mutation(() => JwtDto)
+  @Mutation(() => LoggedIn)
   @UsePipes(new ValidationPipe({ transform: true }))
   async login(
     @Args('data', {
@@ -39,7 +40,7 @@ export class AuthResolver {
       nullable: false,
     })
     data: LoginDto,
-  ): Promise<JwtDto> {
+  ): Promise<LoggedIn> {
     try {
       return await this.authService.login(data.email, data.password);
     } catch (e) {

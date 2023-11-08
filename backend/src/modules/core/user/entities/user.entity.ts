@@ -4,10 +4,11 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 @ObjectType()
 @Entity('users')
 export class User {
-  constructor(id: string, email: string, password: string) {
+  constructor(id: string, email: string, password: string, name: string) {
     this.id = id;
     this.email = email;
     this.password = password;
+    this.name = name;
   }
 
   @Field()
@@ -20,6 +21,10 @@ export class User {
 
   @Column()
   password: string;
+
+  @Field()
+  @Column()
+  name: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
