@@ -53,6 +53,6 @@ export class UserService {
 
     const password = bcrypt.hashSync(dto.password, 10);
 
-    return await this.userRepository.save(new User(uuidv4(), dto.email, password));
+    return await this.userRepository.save(new User(uuidv4(), dto.email, password, dto.name));
   }
 }

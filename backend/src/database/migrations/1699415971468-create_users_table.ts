@@ -7,6 +7,7 @@ export class CreateUsersTable1699415971468 implements MigrationInterface {
        id UUID PRIMARY KEY,
        email varchar NOT NULL UNIQUE,
        password varchar NOT NULL,
+       name varchar NOT NULL,
        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`);

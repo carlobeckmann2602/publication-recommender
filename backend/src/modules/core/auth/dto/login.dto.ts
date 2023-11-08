@@ -5,16 +5,12 @@ import { IsDefined, IsEmail } from 'class-validator';
 @InputType()
 export class LoginDto {
   @Field()
-  @IsDefined({
-    message: 'Email is required',
-  })
+  @IsDefined()
   @IsEmail()
   @Transform((params) => params.value.toLowerCase())
   email: string;
 
   @Field()
-  @IsDefined({
-    message: 'Password is required',
-  })
+  @IsDefined()
   password: string;
 }

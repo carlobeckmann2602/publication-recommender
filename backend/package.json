@@ -21,7 +21,8 @@
     "migration:run": "typeorm-ts-node-commonjs -d src/database/datasources/postgres.ts migration:run",
     "migration:create": "typeorm-ts-node-commonjs migration:create ./src/database/migrations/$npm_config_name",
     "seed:run": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs -d src/database/datasources/postgres.ts seed:run",
-    "seed:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:create -n ./src/database/seeders/$npm_config_name"
+    "seed:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:create -n ./src/database/seeders/$npm_config_name",
+    "db:drop": "typeorm-ts-node-commonjs -d src/database/datasources/postgres.ts schema:drop"
   },
   "dependencies": {
     "@apollo/server": "^4.9.4",

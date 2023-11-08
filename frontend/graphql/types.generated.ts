@@ -19,6 +19,12 @@ export type JwtDto = {
   refreshToken: Scalars['String'];
 };
 
+export type LoggedIn = {
+  __typename?: 'LoggedIn';
+  jwt: JwtDto;
+  user: User;
+};
+
 export type LoginDto = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -26,9 +32,9 @@ export type LoginDto = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  login: JwtDto;
+  login: LoggedIn;
   refreshToken: JwtDto;
-  register: JwtDto;
+  register: LoggedIn;
 };
 
 
@@ -78,5 +84,12 @@ export type QueryPublicationsArgs = {
 
 export type RegisterDto = {
   email: Scalars['String'];
+  name: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  email: Scalars['String'];
+  id: Scalars['String'];
 };
