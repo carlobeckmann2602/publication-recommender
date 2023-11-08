@@ -13,6 +13,39 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type JwtDto = {
+  __typename?: 'JwtDto';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+};
+
+export type LoginDto = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  login: JwtDto;
+  refreshToken: JwtDto;
+  register: JwtDto;
+};
+
+
+export type MutationLoginArgs = {
+  data: LoginDto;
+};
+
+
+export type MutationRefreshTokenArgs = {
+  token: Scalars['String'];
+};
+
+
+export type MutationRegisterArgs = {
+  data: RegisterDto;
+};
+
 export type Publication = {
   __typename?: 'Publication';
   authors: Array<Scalars['String']>;
@@ -41,4 +74,9 @@ export type QueryPublicationArgs = {
 
 export type QueryPublicationsArgs = {
   filter?: InputMaybe<PublicationsQueryDto>;
+};
+
+export type RegisterDto = {
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
