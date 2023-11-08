@@ -54,6 +54,11 @@ $ npm run seed:create -name=<seed_name>
 $ npm run seed:run
 ```
 
+## Drop all tables:
+
+```bash
+$ npm run db:drop
+```
 
 ## License
 
