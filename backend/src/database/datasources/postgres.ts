@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
+import { User } from '../../modules/core/user/entities/user.entity';
 import { Publications1698190282922 } from '../seeders/1698190282922-publications';
 
 const options: DataSourceOptions & SeederOptions = {
@@ -13,7 +14,7 @@ const options: DataSourceOptions & SeederOptions = {
   database: process.env.DB_DATABASE,
   synchronize: false,
   logging: false,
-  entities: [Publication],
+  entities: [User, Publication],
   migrations: [`${__dirname}/../migrations/**/*{.ts,.js}`],
   subscribers: [],
   seeds: [Publications1698190282922],

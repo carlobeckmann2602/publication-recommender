@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import PublicationsQueryDto from '../dto/publications-query.dto';
 import { Publication } from '../entities/publication.entity';
+import { PublicationNotFoundException } from '../exception/publication-not-found.exception';
 
 @Injectable()
 export class PublicationService {
@@ -31,7 +32,16 @@ export class PublicationService {
     return await dbQuery.getMany();
   }
 
+  /**
+   * @throws {PublicationNotFoundException}
+   */
   async findOne(id: string): Promise<Publication> {
-    return this.publicationRepository.findOneBy({ id });
+    const publication = await this.publicationRepository.findOneBy({ id });
+
+    if (!publication) {
+      throw new PublicationNotFoundException(PublicationNotFoundException.MESSAGE);
+    }
+
+    return publication;
   }
 }
