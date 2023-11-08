@@ -42,6 +42,9 @@ $ npm run migration:create -name=<migration_name>
 
 # run migrations
 $ npm run migration:run
+
+# revert migration
+$ npm run migration:revert
 ```
 
 ## Seeds
