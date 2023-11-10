@@ -24,7 +24,5 @@ import { UserService } from './user/services/user.service';
     }),
   ],
   providers: [UserService, AuthService, TokenService, PublicationService, PublicationResolver, AuthResolver],
-  controllers: [],
-  exports: [TypeOrmModule],
 })
 export class CoreModule {}
