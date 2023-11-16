@@ -50,6 +50,19 @@ export class TokenService {
   /**
    * @throws {TokenInvalidException}
    */
+  verifyAccessToken(token: string): PayloadDto {
+    const payload = this.verify(token);
+
+    if (payload.isRefreshToken) {
+      throw new TokenInvalidException(TokenInvalidException.MESSAGE);
+    }
+
+    return payload;
+  }
+
+  /**
+   * @throws {TokenInvalidException}
+   */
   verifyRefreshToken(token: string): PayloadDto {
     const payload = this.verify(token);
 
