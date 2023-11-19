@@ -62,11 +62,11 @@ if __name__ == '__main__':
     print(data.info())
     print(data.sample().iloc[0]["article_id"])
     summy = Summarizer(transformer="all-mpnet-base-v2", debug=True, tokenize=False)
-    recommender_system = Recommender(summy,
+    recommender_system = Recommender(summarization=summy,
                                      transformer="all-mpnet-base-v2",
                                      token_amount=5,
                                      annoy_input_length=768,
                                      annoy_n_trees=100)
-#    build_and_save()
-    sample_test()
+    build_and_save()
+#    sample_test()
 

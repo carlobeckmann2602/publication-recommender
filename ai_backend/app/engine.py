@@ -1,13 +1,14 @@
 import nltk
 import os
+import pickle
 import pandas as pd
 import numpy as np
 import torch
-from .util.misc import add_array_column
+from .util.misc import add_array_column, load_json_dict
 from sentence_transformers import SentenceTransformer, util
 from .util.LexRank import degree_centrality_scores
 from annoy import AnnoyIndex
-from typing import Literal, List
+from typing import Literal, List, Dict
 from tqdm.auto import tqdm
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -112,6 +113,12 @@ class Recommender:
         self.transformer = transformer
         self.instantiate_annoy()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["annoy_database"]
+        del state["mapping"]
+        return state
+
     def instantiate_annoy(self):
         self.annoy_database = AnnoyIndex(self.annoy_input_length, self.annoy_mode)
 
@@ -159,9 +166,18 @@ class Recommender:
             os.makedirs(path)
         self.annoy_database.save(path + "annoy.ann")
         self.mapping.to_pickle(path + "mapping.pkl")
+        state_file = open(path + "state.pkl", "wb")
+        pickle.dump(self.__getstate__(), state_file)
+        state_file.close()
 
     def load(self, path="./data/generated_data", model_name="current"):
         path = path + "/" + model_name + "/"
+        if os.path.exists(path + "state.pkl"):
+            state_file = open(path + "state.pkl", "rb")
+            state_dict = pickle.load(state_file)
+            state_file.close()
+            self.__dict__.update(state_dict)
+            self.instantiate_annoy()
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")
 
