@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import { v4 as uuidv4 } from 'uuid';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 
 export class Publications1698190282922 implements Seeder {
@@ -12,14 +11,15 @@ export class Publications1698190282922 implements Seeder {
     const publications: Publication[] = [];
 
     for (let i = 0; i < 100; i++) {
-      const publication = new Publication(uuidv4(), faker.commerce.productName());
-      publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;
-      publication.authors = this.generateAuthors();
-      publication.date = Math.floor(Math.random() * 2) === 1 ? faker.date.past() : null;
-
+      const vektorData = new Array(5).fill('').map(() => {
+        return {
+          sentence: faker.lorem.sentence(),
+          vector: new Array(500).fill('').map(() => faker.number.float({ min: 0, max: 1 })),
+        };
+      });
+      const publication = new Publication('my Title', null, null, null, null, vektorData);
       publications.push(publication);
     }
-
     await repository.insert(publications);
   }
 

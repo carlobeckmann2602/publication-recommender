@@ -10,7 +10,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  DateTime: any;
 };
 
 export type JwtDto = {
@@ -52,34 +51,31 @@ export type MutationRegisterArgs = {
   data: RegisterDto;
 };
 
-export type Publication = {
-  __typename?: 'Publication';
-  authors: Array<Scalars['String']>;
-  date: Scalars['DateTime'];
-  id: Scalars['String'];
-  publisher: Scalars['String'];
+export type PublicationResponseDto = {
+  __typename?: 'PublicationResponseDto';
+  authors?: Maybe<Array<Scalars['String']>>;
+  doi?: Maybe<Scalars['String']>;
+  id: Scalars['Float'];
+  publicationDate?: Maybe<Scalars['String']>;
+  sentence?: Maybe<Scalars['String']>;
   title: Scalars['String'];
-};
-
-export type PublicationsQueryDto = {
-  publisher?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  publication: Publication;
-  publications: Array<Publication>;
+  publication: PublicationResponseDto;
+  publications: Array<PublicationResponseDto>;
 };
 
 
 export type QueryPublicationArgs = {
-  id: Scalars['String'];
+  id: Scalars['Float'];
 };
 
 
 export type QueryPublicationsArgs = {
-  filter?: InputMaybe<PublicationsQueryDto>;
+  filter: Scalars['String'];
 };
 
 export type RegisterDto = {

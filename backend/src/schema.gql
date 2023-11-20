@@ -18,27 +18,19 @@ type LoggedIn {
   user: User!
 }
 
-type Publication {
-  id: String!
+type PublicationResponseDto {
+  id: Float!
   title: String!
-  publisher: String!
-  authors: [String!]!
-  date: DateTime!
+  doi: String
+  url: String
+  authors: [String!]
+  publicationDate: String
+  sentence: String
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Query {
-  publications(filter: PublicationsQueryDto): [Publication!]!
-  publication(id: String!): Publication!
-}
-
-input PublicationsQueryDto {
-  title: String
-  publisher: String
+  publications(filter: String!): [PublicationResponseDto!]!
+  publication(id: Float!): PublicationResponseDto!
 }
 
 type Mutation {

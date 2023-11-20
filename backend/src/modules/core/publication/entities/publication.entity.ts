@@ -1,37 +1,46 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType()
+type VectorData = {
+  sentence: string;
+  vector: number[];
+};
+
 @Entity('publications')
 export class Publication {
-  constructor(id: string, title: string) {
-    this.id = id;
+  constructor(
+    title: string,
+    doi: string | null,
+    url: string | null,
+    authors: string[] | null,
+    publicationDate: Date | null,
+    vectorData: VectorData[],
+  ) {
     this.title = title;
+    this.doi = doi;
+    this.url = url;
+    this.authors = authors;
+    this.publicationDate = publicationDate;
+    this.vectorData = vectorData;
   }
 
-  @Field()
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Field()
   @Column()
   title: string;
 
-  @Field()
   @Column({ nullable: true })
-  publisher: string;
+  doi: string | null;
 
-  @Field(() => [String])
-  @Column('varchar', { array: true })
-  authors: string[] = [];
-
-  @Field()
   @Column({ nullable: true })
-  date: Date;
+  url: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  @Column('varchar', { nullable: true, array: true })
+  authors: string[] | null;
 
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  @Column({ nullable: true })
+  publicationDate: Date | null;
+
+  @Column({ type: 'json' })
+  vectorData: VectorData[];
 }
