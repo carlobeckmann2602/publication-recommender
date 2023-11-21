@@ -25,8 +25,6 @@ services:
         npm run migration:run
         npm run start:dev
     tty: true
-    networks:
-      - pr_network
     environment:
       - APP_ENV=${APP_ENV}
       - DB_HOST=${BACKEND_DB_HOST}
@@ -48,8 +46,6 @@ services:
       - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
     stdin_open: true
     tty: true
-    networks:
-      - pr_network
     environment:
       - PORT=${AI_BACKEND_PORT}
 
@@ -61,8 +57,6 @@ services:
       - POSTGRES_DB=${BACKEND_DB_DATABASE}
     volumes:
       - backend_database:/var/lib/postgresql/data
-    networks:
-      - pr_network
     ports:
       - "${BACKEND_DB_HOST_PORT}:${BACKEND_DB_PORT}"
 
@@ -85,8 +79,6 @@ services:
         npm run codegen
         npm run dev
     tty: true
-    networks:
-      - pr_network
     environment:
       - BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
       - NEXTAUTH_SECRET=${FRONTEND_NEXTAUTH_SECRET}
@@ -97,8 +89,6 @@ services:
   adminer:
     image: adminer
     restart: always
-    networks:
-      - pr_network
     ports:
       - "${ADMINER_HOST_PORT}:${ADMINER_PORT}"
 
@@ -117,8 +107,6 @@ services:
       - -c
       - |
         npm run seed:run
-    networks:
-      - pr_network
     environment:
       - APP_ENV=${APP_ENV}
       - DB_HOST=${BACKEND_DB_HOST}
@@ -126,9 +114,10 @@ services:
       - DB_PASSWORD=${BACKEND_DB_PASSWORD}
       - DB_DATABASE=${BACKEND_DB_DATABASE}
       - DB_PORT=${BACKEND_DB_PORT}
-
+  rabbitmq:
+    image: rabbitmq:3.12.9-management
+    ports:
+      - 5672:5672
+      - 15672:15672
 volumes:
   backend_database:
-
-networks:
-  pr_network:
