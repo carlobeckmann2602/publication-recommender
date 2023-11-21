@@ -34,7 +34,7 @@ class Summarizer:
                 nltk.download('punkt')
         return list(nltk.sent_tokenize(input_text))
 
-    def run(self, input_data: str | pd.Series, amount=1) -> np.ndarray[str]:
+    def run(self, input_data: str | pd.Series, amount=1, add_embedding=False) -> np.ndarray[str] | np.ndarray[float]:
         if amount < 1:
             raise Exception("The desired sentence amount must be greater than 1")
         if isinstance(input_data, str):
@@ -65,7 +65,10 @@ class Summarizer:
         tqdm.pandas(desc="(Summarizing) Calculating Cosine")
         dataframe["cosine"] = dataframe["embedding"].progress_apply(cos_sim)
 
-        def rank_tokens(cosine_vector: list, token_list: list):
+        def rank_tokens(row: pd.Series):
+            cosine_vector = row["cosine"]
+            token_list = row["token"]
+            embedding_list = row["embedding"]
             score_mask = degree_centrality_scores(cosine_vector, threshold=None)
             significance_mask = np.argsort(-score_mask)
             significance_mask = significance_mask[0:amount]
@@ -74,14 +77,21 @@ class Summarizer:
             token_vector = np.array(token_list)
             token_vector = np.vectorize(lambda x: x.strip())(token_vector)
             token_ranking = token_vector[significance_mask]
-            return list(token_ranking)
+            embedding_ranking = np.array(embedding_list)[significance_mask]
+
+            row["ranked_tokens"] = list(token_ranking)
+            row["ranked_embeddings"] = list(embedding_ranking)
+            return row
 
         tqdm.pandas(desc="(Summarizing) Ranking Tokens")
-        dataframe["ranking"] = dataframe[["cosine", "token"]].progress_apply(
-            lambda x: rank_tokens(x["cosine"], x["token"]),
-            axis=1)
+        dataframe = dataframe.progress_apply(rank_tokens, axis=1)
 
-        return np.array(dataframe["ranking"].tolist(), dtype=str)
+        tokens = np.array(dataframe["ranked_tokens"].tolist(), dtype=str)
+        if add_embedding:
+            embeddings = np.array(dataframe["ranked_embeddings"].tolist(), dtype=float)
+            return tokens, embeddings
+        else:
+            return tokens
 
 
 class Recommender:
