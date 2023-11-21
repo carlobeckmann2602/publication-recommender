@@ -24,7 +24,7 @@ export class MessageQueService {
     });
 
     const publicationCount = await this.publicationRepository.count();
-    const moreData = publicationCount > index * rangePerRequest;
+    const moreData = publicationCount > (index + 1) * rangePerRequest;
 
     return new SendAnnoyDataDto(mappedResults, moreData);
   }
