@@ -2,6 +2,7 @@ import { Dependencies, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Publication } from '../../publication/entities/publication.entity';
+import { PublicationCreateDto } from '../dto/publication-create.dto';
 import { SendAnnoyDataDto } from '../dto/send-annoy-data.dto';
 
 @Injectable()
@@ -26,5 +27,9 @@ export class MessageQueService {
     const moreData = publicationCount > index * rangePerRequest;
 
     return new SendAnnoyDataDto(mappedResults, moreData);
+  }
+
+  async savePublication(publicationCreateDto: PublicationCreateDto) {
+    await this.publicationRepository.save(publicationCreateDto);
   }
 }

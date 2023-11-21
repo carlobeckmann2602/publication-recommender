@@ -1,9 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
-type VectorData = {
-  sentence: string;
-  vector: number[];
-};
+import { VectorData } from '../interfaces/vectorData.interface';
 
 @Entity('publications')
 export class Publication {

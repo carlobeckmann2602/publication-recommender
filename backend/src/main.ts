@@ -8,7 +8,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://@rabbitmq'],
-      queue: 'annoy_data_get',
+      queue: 'nest_receive',
       queueOptions: {
         durable: false,
       },
