@@ -4,7 +4,7 @@ import { UserService } from '../../user/services/user.service';
 import { JwtDto } from '../dto/jwt.dto';
 import { LoggedIn } from '../dto/logged-in.dto';
 import { RegisterDto } from '../dto/register.dto';
-import { InvalidCredentialsException } from '../exception/invalid-credentials.exception';
+import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
 import { TokenService } from './token.service';
 
 @Injectable()

@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import { v4 as uuidv4 } from 'uuid';
+import { DescriptorDto } from '../../modules/core/publication/dto/descriptor.dto';
+import { SentenceDto } from '../../modules/core/publication/dto/sentence.dto';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 
 export class Publications1698190282922 implements Seeder {
@@ -12,11 +13,22 @@ export class Publications1698190282922 implements Seeder {
     const publications: Publication[] = [];
 
     for (let i = 0; i < 100; i++) {
-      const publication = new Publication(uuidv4(), faker.commerce.productName());
+      const descriptor = new DescriptorDto();
+      descriptor.sentences = new Array(5).fill('').map(() => {
+        const sentence = new SentenceDto();
+        sentence.value = faker.lorem.sentence();
+        sentence.vector = new Array(500).fill('').map(() => faker.number.float({ min: 0, max: 1 }));
+
+        return sentence;
+      });
+      const publication = new Publication();
+      publication.title = faker.lorem.sentence();
       publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;
       publication.authors = this.generateAuthors();
       publication.date = Math.floor(Math.random() * 2) === 1 ? faker.date.past() : null;
-
+      publication.doi = faker.commerce.isbn();
+      publication.url = faker.internet.url();
+      publication.descriptor = descriptor;
       publications.push(publication);
     }
 

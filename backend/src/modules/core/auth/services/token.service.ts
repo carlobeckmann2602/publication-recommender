@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { JwtDto } from '../dto/jwt.dto';
 import { PayloadDto } from '../dto/payload.dto';
-import { TokenInvalidException } from '../exception/token-invalid.exception';
+import { TokenInvalidException } from '../exceptions/token-invalid.exception';
 
 @Injectable()
 export class TokenService {

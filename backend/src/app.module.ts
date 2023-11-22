@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './modules/core/core.module';
 import { DatabaseModule } from './modules/database/database.module';
+import { RabbitMQModule } from './modules/mq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DatabaseModule } from './modules/database/database.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     DatabaseModule,
+    RabbitMQModule,
     CoreModule,
   ],
   controllers: [AppController],

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
+import { CreatePublicationDto } from '../dto/create-publication.dto';
 import PublicationsQueryDto from '../dto/publications-query.dto';
 import { Publication } from '../entities/publication.entity';
-import { PublicationNotFoundException } from '../exception/publication-not-found.exception';
+import { PublicationNotFoundException } from '../exceptions/publication-not-found.exception';
 
 @Injectable()
 export class PublicationService {
@@ -43,5 +45,10 @@ export class PublicationService {
     }
 
     return publication;
+  }
+
+  async createPublication(dto: CreatePublicationDto): Promise<void> {
+    const publication = plainToInstance<Publication, any>(Publication, dto, { excludeExtraneousValues: true });
+    await this.publicationRepository.save(publication);
   }
 }
