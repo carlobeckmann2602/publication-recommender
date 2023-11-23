@@ -23,11 +23,15 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextSeparator from "@/components/TextSeparator";
 import GoogleButton from "@/components/login/GoogleButton";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+
+import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+import { useMutation } from "@apollo/client";
+import { RegisterDocument } from "@/graphql/mutation/RegisterUser.generated";
 
 const FormSchema = z
   .object({
@@ -45,7 +49,7 @@ const FormSchema = z
       .email({ message: "Invalid email address" }),
     password: z
       .string()
-      .min(2, { message: "Password must be 2 or more characters long" }),
+      .min(8, { message: "Password must be 8 or more characters long" }),
     confirm: z.string(),
   })
   .refine((data) => data.password === data.confirm, {
@@ -59,6 +63,8 @@ type Props = {
 };
 
 export function SignUpForm(props: Props) {
+  const [errorMsg, setErrorMsg] = useState(props.error);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -79,16 +85,36 @@ export function SignUpForm(props: Props) {
     setConfirmPasswordVisibility(!showConfirmPassword);
   };
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    router.push("/");
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  const [registerFunction, { loading, error }] = useMutation(RegisterDocument, {
+    onCompleted: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {},
+  });
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const response = await registerFunction({
+      variables: {
+        email: data.email,
+        name: data.name,
+        password: data.password,
+      },
     });
+    console.log(response);
+    if (response.errors) {
+      console.error(response.errors);
+      setErrorMsg("Authentication Failed!");
+    } else {
+      router.push("/");
+      toast({
+        title: "You submitted the following values:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        ),
+      });
+    }
   }
 
   return (
@@ -192,11 +218,11 @@ export function SignUpForm(props: Props) {
           </Button>
         </form>
       </Form>
-      {!!props.error && (
+      {!!errorMsg && (
         <Alert variant="destructive">
           <ExclamationTriangleIcon className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Authentication Failed!</AlertDescription>
+          <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
       <TextSeparator>or</TextSeparator>
