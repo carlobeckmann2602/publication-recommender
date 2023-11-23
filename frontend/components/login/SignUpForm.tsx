@@ -85,12 +85,7 @@ export function SignUpForm(props: Props) {
     setConfirmPasswordVisibility(!showConfirmPassword);
   };
 
-  const [registerFunction, { loading, error }] = useMutation(RegisterDocument, {
-    onCompleted: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {},
-  });
+  const [registerFunction, { loading, error }] = useMutation(RegisterDocument);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const response = await registerFunction({
@@ -100,12 +95,16 @@ export function SignUpForm(props: Props) {
         password: data.password,
       },
     });
-    console.log(response);
     if (response.errors) {
       console.error(response.errors);
       setErrorMsg("Authentication Failed!");
     } else {
-      router.push("/");
+      await signIn("credentials", {
+        username: data.email,
+        password: data.password,
+        redirect: true,
+        callbackUrl: props.callbackUrl ?? "/",
+      });
       toast({
         title: "You submitted the following values:",
         description: (

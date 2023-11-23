@@ -1,4 +1,5 @@
 import { Searchbar } from "@/components/Searchbar";
+import { getSession } from "next-auth/react";
 
 export default function Home() {
   return (

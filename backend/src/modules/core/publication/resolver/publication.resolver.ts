@@ -12,7 +12,7 @@ export class PublicationResolver {
   constructor(private publicationService: PublicationService) {}
 
   @Query(() => [Publication])
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async publications(
     @AuthUser() user,
     @Args('filter', {
@@ -25,7 +25,7 @@ export class PublicationResolver {
   }
 
   @Query(() => Publication)
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async publication(@AuthUser() user, @Args('id') id: string): Promise<Publication> {
     try {
       return await this.publicationService.findOne(id);
