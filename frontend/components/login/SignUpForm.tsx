@@ -132,6 +132,7 @@ export function SignUpForm(props: Props) {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
+                      autoComplete="on"
                       {...field}
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
@@ -164,6 +165,7 @@ export function SignUpForm(props: Props) {
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm Password"
+                      autoComplete="on"
                       {...field}
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
@@ -207,7 +209,7 @@ export function SignUpForm(props: Props) {
       </div>
       <span className="text-center">
         Already have an account?{" "}
-        <Link href={"/signup"} className="underline">
+        <Link href={"/signin"} className="underline">
           Sign In
         </Link>
       </span>
