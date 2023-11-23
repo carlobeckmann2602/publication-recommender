@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
+import { createHash } from 'node:crypto';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
+import { v4 as uuidv4 } from 'uuid';
 import { DescriptorDto } from '../../modules/core/publication/dto/descriptor.dto';
 import { SentenceDto } from '../../modules/core/publication/dto/sentence.dto';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
@@ -22,6 +24,7 @@ export class Publications1698190282922 implements Seeder {
         return sentence;
       });
       const publication = new Publication();
+      publication.exId = createHash('md5').update(uuidv4()).digest('hex');
       publication.title = faker.lorem.sentence();
       publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;
       publication.authors = this.generateAuthors();

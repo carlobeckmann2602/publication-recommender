@@ -12,6 +12,10 @@ export class Publication {
   @Expose()
   id: string;
 
+  @Column({ name: 'ex_id', unique: true })
+  @Expose()
+  exId: string;
+
   @Field()
   @Column()
   @Expose()

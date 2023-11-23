@@ -5,5 +5,5 @@ export class PublicationVectorsRequestDto {
   chunk: number;
 
   @IsNumber()
-  chunkSize: number = 500;
+  chunkSize: number = 100;
 }

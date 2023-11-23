@@ -8,6 +8,10 @@ export class CreatePublicationDto {
   @IsNotEmpty()
   title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  exId: string;
+
   @IsOptional()
   @IsString()
   doi?: string;
