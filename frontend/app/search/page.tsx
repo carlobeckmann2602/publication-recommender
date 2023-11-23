@@ -1,4 +1,4 @@
-import LiteratureSearchResults from "@/components/LiteratureSearchResults";
+import LiteratureSearchResults from "@/components/search/LiteratureSearchResults";
 import { Searchbar } from "@/components/Searchbar";
 import { Suspense } from "react";
 
