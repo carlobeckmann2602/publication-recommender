@@ -1,13 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile
 from typing import List, Dict
 from .engine import Summarizer, Recommender
 import os
+import aiofiles
 
 rec_api = FastAPI()
 initial_engines: Dict[str, Recommender] = {}
 rec_api.engines = initial_engines
+rec_api.recommender = Recommender(Summarizer())
 
-rec_api.model_path = "../data/generated_data/"
+rec_api.model_path = "./data/generated_data/"
+rec_api.upload_path = "./data/upload/"
 
 
 @rec_api.get("/models/possible")
@@ -17,7 +20,10 @@ def get_model_names() -> Dict[str, List[str]]:
 
     **return**: a list of possible model names
     """
-    models = next(os.walk(rec_api.model_path))[1]
+    try:
+        models = next(os.walk(rec_api.model_path))[1]
+    except StopIteration:
+        raise HTTPException(status_code=404, detail=fr"No models found in {os.path.abspath(rec_api.model_path)}")
     return {"disk_models": models}
 
 
@@ -105,3 +111,34 @@ async def get_current_recommender():
     **return**: The current model (recommendation engine)
     """
     return {"current_model": str(list(rec_api.engines.keys()))}
+
+
+@rec_api.post("/summarize/")
+async def summarize(file: UploadFile):
+    try:
+        file_content = await read_file_in_chunks(file=file, delete_buffer=True)
+        ranked_tokens, ranked_embeddings = rec_api.recommender.summarizer.run(input_data=file_content, amount=5, add_embedding=True)
+        output_dict = {}
+        for index, (token, embedding) in enumerate(zip(ranked_tokens[0], ranked_embeddings[0])):
+            output_dict[index] = {"token": token, "embedding": list(embedding)}
+        return output_dict
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=404, detail="Error while uploading the file")
+
+
+async def read_file_in_chunks(file: UploadFile, delete_buffer=True) -> str:
+    if not os.path.exists(rec_api.upload_path):
+        os.makedirs(rec_api.upload_path)
+    try:
+        async with aiofiles.open(rec_api.upload_path + file.filename, 'wb') as f:
+            while contents := await file.read(1024 * 1024):
+                await f.write(contents)
+                contents = contents.decode("utf-8")
+                return contents
+    except Exception as e:
+        raise e
+    finally:
+        await file.close()
+        if delete_buffer:
+            os.remove(rec_api.upload_path + file.filename)

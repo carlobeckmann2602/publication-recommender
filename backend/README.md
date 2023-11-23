@@ -40,6 +40,9 @@ $ npm run test:cov
 # create migration
 $ npm run migration:create -name=<migration_name>
 
+# generate migration based on changes in the entities
+$ npm run migration:generate -name=<migration_name>
+
 # run migrations
 $ npm run migration:run
 

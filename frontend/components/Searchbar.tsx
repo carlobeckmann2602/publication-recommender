@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,23 +8,26 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const FormSchema = z.object({
   query: z.string(),
 });
 
-export function Searchbar() {
+interface Props {
+  value?: string;
+}
+
+export function Searchbar(props: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      query: "",
+      query: props.value,
     },
   });
 
@@ -37,20 +39,30 @@ export function Searchbar() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full justify-center items-center max-w-3xl relative"
+      >
         <FormField
           control={form.control}
           name="query"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex-grow">
               <FormControl>
-                <Input type="text" placeholder="Search Term" {...field} />
+                <Input
+                  className="pr-14"
+                  type="text"
+                  placeholder="Literatursuche"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Search</Button>
+        <Button variant="secondary" className="absolute right-0" type="submit">
+          <MagnifyingGlassIcon className="h-4 w-4" />
+        </Button>
       </form>
     </Form>
   );

@@ -17,8 +17,6 @@ import { DatabaseModule } from './modules/database/database.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: true,
-      context: ({ req }) => ({ req }),
     }),
     DatabaseModule,
     CoreModule,
