@@ -1,5 +1,4 @@
 import { Searchbar } from "@/components/Searchbar";
-import SignInButton from "@/components/SignInButton";
 import LiteratureCard from "@/components/search/LiteratureCard";
 
 export default function Home() {
@@ -17,9 +16,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen items-center flex-col">
+    <div className="flex justify-center grow items-center flex-col">
       <Searchbar></Searchbar>
-      <SignInButton></SignInButton>
       <LiteratureCard {...mockupCard} />
     </div>
   );

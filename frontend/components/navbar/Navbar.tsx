@@ -1,9 +1,9 @@
-"use client"
+"use client";
 import React from "react";
-import { MainNav } from "./MainNav"
-import { UserNav } from "./UserNav"
+import { MainNav } from "@/components/navbar/MainNav";
+import { UserNav } from "@/components/navbar/UserNav";
 
-export function Navbar(){
+export function Navbar() {
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
@@ -13,5 +13,5 @@ export function Navbar(){
         </div>
       </div>
     </div>
-  )
+  );
 }

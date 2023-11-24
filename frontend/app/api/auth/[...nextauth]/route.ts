@@ -1,3 +1,6 @@
+import { LoginDocument } from "@/graphql/mutation/LoginUser.generated";
+import { RefreshTokenDocument } from "@/graphql/mutation/RefreshToken.generated";
+import { getClient } from "@/lib/client";
 import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -5,24 +8,26 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 async function refreshToken(token: JWT): Promise<JWT> {
-  /*const res = await fetch(Backend_URL + "/auth/refresh", {
-    method: "POST",
-    headers: {
-      authorization: `Refresh ${token.token.jwtRefreshToken}`,
+  const { data } = await getClient().mutate({
+    mutation: RefreshTokenDocument,
+    variables: {
+      token: token.userToken.jwtRefreshToken,
     },
-  });*/
+  });
 
-  //const response = await res.json();
-  const response = {
-    token: {
-      jwtToken: "token",
-      jwtRefreshToken: "refresh-token",
-    },
+  const result = {
+    jwtToken: data?.refreshToken.accessToken
+      ? data.refreshToken.accessToken
+      : "",
+    jwtRefreshToken: data?.refreshToken.refreshToken
+      ? data.refreshToken.refreshToken
+      : "",
+    jwtExpiresIn: 100000000000000000,
   };
 
   return {
     ...token,
-    backendTokens: response,
+    userToken: result,
   };
 }
 
@@ -43,23 +48,30 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.username || !credentials?.password) return null;
         const { username, password } = credentials;
 
+        const { data } = await getClient().mutate({
+          mutation: LoginDocument,
+          variables: {
+            email: credentials.username,
+            password: credentials.password,
+          },
+        });
+
         const user = {
-          id: "1",
-          name: "J Smith",
-          email: credentials?.username,
-          image: "imageURL",
+          id: data?.login.user.id,
+          name: data?.login.user.name,
+          email: data?.login.user.email,
+          image: null,
         };
         // accessing the jwt returned by server
-        const token = {
-          jwtToken: "parsedResponse.access_token",
-          jwtRefreshToken: "refresh-token",
+        const userToken = {
+          jwtToken: data?.login.jwt.accessToken,
+          jwtRefreshToken: data?.login.jwt.refreshToken,
+          jwtExpiresIn: new Date().getTime() + 10000000, //TODO use correct expiry date
         };
-
-        //TODO! Add GraphQL Api Call for user lookup
 
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
-          return { user, token } as any;
+          return { user, userToken } as any;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
@@ -76,7 +88,7 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/signin",
-    signOut: "/signout",
+    signOut: "/",
   },
 
   callbacks: {
@@ -113,10 +125,10 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, account }) {
       if (account?.provider === "google") {
-        token.token = {
-          jwtToken: account.access_token,
-          jwtRefreshToken: account.refresh_token,
-          //jwtExpiresIn: account.expires_at,
+        token.userToken = {
+          jwtToken: account.access_token ? account.access_token : "",
+          jwtRefreshToken: account.refresh_token ? account.refresh_token : "",
+          jwtExpiresIn: account.expires_at ? account.expires_at : 0,
         };
         if (user.name && user.email)
           token.user = {
@@ -131,22 +143,14 @@ export const authOptions: NextAuthOptions = {
         return { ...token, ...user };
       }
 
-      return token;
+      if (new Date().getTime() < token.userToken.jwtExpiresIn) return token;
 
-      /*
-      if (
-        token.token.jwtExpiresIn &&
-        new Date().getTime() < token.token.jwtExpiresIn
-      )
-        return token;
-
-      return await refreshToken(token);*/
+      return await refreshToken(token);
     },
 
     async session({ token, session, user }) {
       session.user = token.user;
-      session.token = token.token;
-
+      session.userToken = token.userToken;
       return session;
     },
   },
