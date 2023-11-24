@@ -58,8 +58,8 @@ export default function LiteratureCard(props: Props) {
         <div className="flex flex-row justify-between align-middle grow">
           <div className="flex flex-row gap-2">
             <ClipboardDocumentIcon width={24} />
-            <TagIcon width={24} />
-            {/* <HeartIcon width={20} /> */}
+            {/* <TagIcon width={24} /> */}
+            <HeartIcon width={20} />
           </div>
           <span>
             DOI:{" "}
