@@ -1,22 +1,46 @@
-import os, re, io, csv, PyPDF2, fitz
+import os, re, io, csv, PyPDF2
 import requests
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
 import urllib.request as libreq
+from pdf_crawler import PdfCrawler
 
 class ArxivApiCrawler:
     root = "http://export.arxiv.org/api/" #{method_name}?{parameters}
-
-    dataset_path = os.getcwd() + "/data_ingest/_data/arxiv_dataset/"
-    temp_path = os.getcwd() + "/data_ingest/_data/temp/"
+    temp_path = os.getcwd() + "/_data/temp/"
+    dataset_path = os.getcwd() + "/_data/"
     
     def __init__(self):
-        self.main_categories = list()
-        self.sub_categories = list()
-        self.pdf_links = list()
+        self.pdf_crawler = PdfCrawler(ArxivApiCrawler.temp_path)
         self.publications = list()
-        self.arxiv_id = None
         self.id = None
+        self.arxiv_id = None
+
+    def run(self):
+        # get publications in database
+        # crawl 50 publications start at number of pub in database
+        # for each publication
+            # if in database skip
+            # else create new entry
+        pass
+
+    def run_alt(self):
+        # get publications in database
+            # get largest id
+            # get smallest id
+        # crawl newest publication
+            # if newest publication is not same id as largest id: crawl missing
+            # else: skip
+        # from smallest id crawl the next 50 smaller ids
+            # create new entry
+        pass
+    
+    def get_db_entries(self):
+        self.db_entries = self.read_csv(ArxivApiCrawler.dataset_path+"dataset.csv")
+        return self.db_entries
+    
+    def update_db_entries(self, pub_list):
+        return self.write_csv(ArxivApiCrawler.dataset_path+"dataset.csv", pub_list)
 
     def crawl_publications(self, start_at=0, max_results=50, descending=True, csv_path=None):
         root = ArxivApiCrawler.root
@@ -41,7 +65,7 @@ class ArxivApiCrawler:
                         arxiv_id = arxiv_id.replace("http://arxiv.org/abs/", "")
                         if "v" in arxiv_id:
                             arxiv_id = arxiv_id[:-2]
-                        self.id = arxiv_id
+                        self.arxiv_id = arxiv_id
                         pub_date = entry.find(xml_tag_prefix+'published').text
                         upd_date = entry.find(xml_tag_prefix+'updated').text
                         title = entry.find(xml_tag_prefix+'title').text
@@ -58,8 +82,8 @@ class ArxivApiCrawler:
                         for category_tag in entry.findall(xml_tag_prefix+'category'):
                             category += category_tag.get('term') + ", "
                         category = category[:-2]
-                        full_text = self._crawl_pdf(pdf_url)
-                        self.publications.append([self.arxiv_id, "https://arxiv.org/", pub_date, upd_date, title, abstract, author, doi, pdf_url, category, full_text])
+                        full_text = self._crawl_pdf(pdf_url, self.arxiv_id + ".txt")
+                        self.publications.append([self.arxiv_id, "https://arxiv.org/", pub_date, upd_date, title, abstract, author, doi, pdf_url, category])
                 else:
                     print(f"- failed to retrieve data. status code: {self.response.status}")
         except ConnectionResetError as e:
@@ -71,98 +95,6 @@ class ArxivApiCrawler:
         #match = re.search(csv_pat, csv_path)
         #self._write_to_csv(ArxivApiCrawler.dataset_path+match.group(), self.publications)
         return self.publications
-
-    
-    def _find_doi(self, url):
-        try:
-            self.response = requests.get(url)
-            if self.response.status_code == 200:
-                soup = BeautifulSoup(self.response.text, 'html.parser')
-                doi_pat = r"https://doi.org/"
-                doi = None
-                a_tags = soup.find_all('a')
-                for a in a_tags:
-                    href = a.get('href')
-                    if href is not None and re.match(r"^"+doi_pat, href):
-                        doi = href.replace(doi_pat, "")
-            else:
-                print(f"- failed to retrieve the pdf. Status code: {self.response.status_code}")
-        except ConnectionResetError as e:
-            print(f"- failed to retrieve data. Error: {e.args}")
-        except requests.exceptions.ConnectionError as e:
-            print(f"- failed to retrieve data. Error: {e.args}")
-        return doi
-    
-    def _crawl_pdf(self, url):
-        pdf_path = ArxivApiCrawler.temp_path+'downloaded.pdf'
-        word_len_threshold = 25
-        full_text = b""
-        font_size_counter = {}
-        try:
-            self.response = requests.get(url)
-
-            if self.response.status_code == 200:
-                full_text = self.response.content
-                '''
-                with open(pdf_path, 'wb') as pdf_file:
-                    pdf_content = self.response.content 
-                    pdf_file.write(pdf_content)
-                
-                pdf_document = fitz.open(pdf_path)
-                word_count = 0
-                current_pdf = list()
-            
-                for page_num in range(pdf_document.page_count):
-                    current_page = list()
-                    page = pdf_document[page_num]
-                    words = page.get_text("words")
-                    word_count += len(words)
-                    dict = page.get_text("dict")
-
-                    for block in dict["blocks"]:
-                        current_block = ""
-                        if block.get("lines") is not None:
-                            for line in block["lines"]:
-                                spans = line["spans"]
-                                font_size = spans[0]["size"]
-                                text_line = ""
-                                for span in spans:
-                                    text_line += span["text"]
-                                
-                                if font_size_counter.get(str(font_size)) is None:
-                                    font_size_counter.update({str(font_size): 1}) 
-                                else:
-                                    counter = font_size_counter.get(str(font_size))
-                                    counter += 1
-                                    font_size_counter.update({str(font_size): counter}) 
-
-                                current_block += text_line + "\n"
-                            
-                            current_block = current_block.strip()
-                            current_block = current_block.replace("\n", " ")
-                            #if len(current_block) > word_len_threshold:
-                            current_page.append((font_size, current_block.strip()))
-
-                    current_pdf.extend(current_page)
-                '''
-            else:
-                print(f"- failed to retrieve the pdf. Status code: {self.response.status_code}")
-        except ConnectionResetError as e:
-            print(f"- failed to retrieve data. Error: {e.args}")
-        except requests.exceptions.ConnectionError as e:
-            print(f"- failed to retrieve data. Error: {e.args}")
-
-        '''
-        fs = (0, 0)
-        for x, y in font_size_counter.items():
-            if y > fs[1]:
-                fs = (float(x),y)
-
-        current_pdf = [(num, text) for num, text in current_pdf if num >= fs[0]]
-        current_pdf = [(num, text) for num, text in current_pdf if num < 20]
-        current_pdf = [(num, text) for num, text in current_pdf if (num == fs[0] and len(text) > word_len_threshold) or num > fs[0]]
-        '''
-        return full_text
     
     def write_csv(self, csv_path, data):
         print("writing " + str(len(data)) + " entries to '" + csv_path + "' ...")
@@ -185,3 +117,29 @@ class ArxivApiCrawler:
         print("- found '" + str(len(id_list)) + "' ids.")
         return id_list
 
+    def _find_doi(self, url):
+        try:
+            self.response = requests.get(url)
+            if self.response.status_code == 200:
+                soup = BeautifulSoup(self.response.text, 'html.parser')
+                doi_pat = r"https://doi.org/"
+                doi = None
+                a_tags = soup.find_all('a')
+                for a in a_tags:
+                    href = a.get('href')
+                    if href is not None and re.match(r"^"+doi_pat, href):
+                        doi = href.replace(doi_pat, "")
+            else:
+                print(f"- failed to retrieve the pdf. Status code: {self.response.status_code}")
+        except ConnectionResetError as e:
+            print(f"- failed to retrieve data. Error: {e.args}")
+        except requests.exceptions.ConnectionError as e:
+            print(f"- failed to retrieve data. Error: {e.args}")
+        return doi
+    
+    def _crawl_pdf(self, url, filename):
+        if self.pdf_crawler.pull(url, filename):
+            full_text = self.pdf_crawler.read()
+        else: full_text = None
+
+        return full_text
