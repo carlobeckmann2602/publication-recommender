@@ -18,7 +18,9 @@ export default function Home() {
   return (
     <div className="flex justify-center grow items-center flex-col">
       <Searchbar></Searchbar>
-      <LiteratureCard {...mockupCard} />
+      <div className="flex flex-col items-center py-6">
+        <LiteratureCard {...mockupCard} />
+      </div>
     </div>
   );
 }
