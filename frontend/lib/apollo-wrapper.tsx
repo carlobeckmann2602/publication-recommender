@@ -9,6 +9,7 @@ import {
 } from "@apollo/experimental-nextjs-app-support/ssr";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { setVerbosity } from "ts-invariant";
+import { GRAPHQL_URL } from "@/constants/urls";
 
 if (process.env.NODE_ENV === "development") {
   setVerbosity("debug");
@@ -18,7 +19,7 @@ if (process.env.NODE_ENV === "development") {
 
 function makeClient() {
   const httpLink = new HttpLink({
-    uri: process.env.BACKEND_GRAPHQL_ENDPOINT,
+    uri: `${GRAPHQL_URL}/graphql`,
   });
 
   return new NextSSRApolloClient({
