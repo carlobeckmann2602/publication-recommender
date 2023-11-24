@@ -40,6 +40,7 @@ services:
     build:
       context: ./ai_backend
       dockerfile: Dockerfile
+    command: uvicorn app.main:rec_api --host 0.0.0.0 --reload --reload-dir ./app --port ${AI_BACKEND_PORT}
     volumes:
       - ./ai_backend/:/code/
     ports:
@@ -48,6 +49,48 @@ services:
     tty: true
     environment:
       - PORT=${AI_BACKEND_PORT}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+  
+  ai_backend_worker:
+    container_name: ai_backend_worker
+    build: 
+      context: ./ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_worker.celery worker --loglevel=info
+    volumes:
+      - ./ai_backend/:/code/
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - API_PORT=${AI_BACKEND_PORT}
+    depends_on:
+      - rabbitmq
+      - redis
+      - ai_backend
+
+  ai_backend_flower:
+    container_name: ai_backend_flower
+    build: 
+      context: ./ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT}
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - API_PORT=${AI_BACKEND_PORT}
+    volumes:
+      - ./ai_backend/:/code/
+    ports:
+      - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
+    depends_on:
+      - rabbitmq
+      - redis
+      - ai_backend
 
   postgres:
     image: postgres:16.0-alpine3.18
@@ -118,5 +161,10 @@ services:
     image: rabbitmq:3.12.9-management
     ports:
       - 15672:15672
+  
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+
 volumes:
   backend_database:

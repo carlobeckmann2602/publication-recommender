@@ -1,92 +1,78 @@
-from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from typing import List, Dict
 from .engine import Summarizer, Recommender
+from .util.misc import create_file_structure
+from .celery_worker import recommend_by_token, recommend_by_publication, update_recommender
 import os
 import aiofiles
 
-rec_api = FastAPI()
-initial_engines: Dict[str, Recommender] = {}
-rec_api.engines = initial_engines
-rec_api.recommender = Recommender(Summarizer())
+rec_api = FastAPI(
+    title="HSD Publication Recommendation Engine",
+    description="This is a beautiful description",
+    version="0.2.0"
+)
 
-rec_api.model_path = "./data/generated_data/"
-rec_api.upload_path = "./data/upload/"
+# Setup file structure
+rec_api.data_path = os.environ["DATA_PATH"]
+rec_api.generated_data_path = f"{rec_api.data_path}/generated_data"
+rec_api.model_path = f"{rec_api.generated_data_path}/models"
+rec_api.upload_path = f"{rec_api.generated_data_path}/upload"
+rec_api.archive_path = f"{rec_api.generated_data_path}/archive"
+create_file_structure(rec_api.model_path, rec_api.upload_path, rec_api.archive_path)
 
-
-@rec_api.get("/models/possible")
-def get_model_names() -> Dict[str, List[str]]:
-    """
-    Lists all registered annoy models, that can be loaded from disk
-
-    **return**: a list of possible model names
-    """
-    try:
-        models = next(os.walk(rec_api.model_path))[1]
-    except StopIteration:
-        raise HTTPException(status_code=404, detail=fr"No models found in {os.path.abspath(rec_api.model_path)}")
-    return {"disk_models": models}
+# Initiate model
+rec_api.current_model = f"{rec_api.archive_path}/arxiv_6k-v2.zip"
 
 
-@rec_api.get("/{model_name}/load/")
-def load_recommender(model_name: str,
-                     token_amount: int = 5,
-                     annoy_input_length: int = 768,
-                     annoy_n_trees: int = 100):
-    """
-    Loads a registered models from disk and sets it as the current recommendation engine.
-    - **model_name**: The name of the recommendation engine (model). Use /models/ to get list of options.
-    - **token_amount**: The amount of tokens that are used for every publication entry
-    - **annoy_input_length**: Vector length of annoy inputs
-    - **annoy_n_trees**: Tree amount separating the annoy planes
-
-    **return**: The currently loaded model after calculation
-    """
-    summarizer = Summarizer(transformer="all-mpnet-base-v2",
-                            tokenize=False)
-    recommender = Recommender(summarizer,
-                              transformer="all-mpnet-base-v2",
-                              token_amount=token_amount,
-                              annoy_input_length=annoy_input_length,
-                              annoy_n_trees=annoy_n_trees)
-    recommender.load(path=rec_api.model_path, model_name=model_name)
-    rec_api.engines[model_name] = recommender
-    return {"loaded": model_name}
+@rec_api.get("/stress_test/")
+async def stress_test(amount=100):
+    for index in amount:
+        task = recommend_by_token.delay("This is a test.", amount=5)
 
 
-@rec_api.get("/{model_name}/match_id/{publication_id}/")
-async def get_recommendation(model_name: str, publication_id: str, amount: int = 5):
+@rec_api.get("/last_changed")
+def get_model_modification_date():
+    if os.path.exists(rec_api.current_model):
+        return {"last_changed": os.path.getmtime(rec_api.current_model)}
+    else:
+        raise HTTPException(status_code=404, detail=fr"No models archive found for {rec_api.current_model}")
+
+
+@rec_api.get("/model.zip")
+def get_model_data():
+    if os.path.exists(rec_api.current_model):
+        return FileResponse(rec_api.current_model)
+    else:
+        raise HTTPException(status_code=404, detail=fr"No models archive found for {rec_api.current_model}")
+
+
+@rec_api.get("/match_id/{publication_id}/")
+async def get_recommendation(publication_id: str, amount: int = 5):
     """
     Runs the recommendation engine for a publication ID.
-    - **model_name**: The model that should be used
     - **publication_id**: The input publication
     - **amount**: The amount of matches to be included
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    if model_name not in rec_api.engines.keys():
-        raise HTTPException(status_code=404, detail="No model with this name loaded")
-    recommender = rec_api.engines[model_name]
-    if publication_id not in recommender.mapping[Recommender.PUB_ID_KEY].values:
-        raise HTTPException(status_code=404, detail="No Publication with this ID in mapping")
-    matches = recommender.get_match_by_id(str(publication_id), amount)
-    return matches.to_dict()
+    task = recommend_by_publication.delay(str(publication_id), amount)
+    result = task.get()
+    return result
 
 
-@rec_api.get("/{model_name}/match_token/{token}/")
-async def get_recommendation(model_name: str, token: str, amount: int = 5):
+@rec_api.get("/match_token/{token}/")
+async def get_recommendation(token: str, amount: int = 5):
     """
     Runs the recommendation engine for a publication ID.
-    - **model_name**: The model that should be used
     - **token**: The input token. For example a sentence
     - **amount**: The amount of matches to be included
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    if model_name not in rec_api.engines.keys():
-        raise HTTPException(status_code=404, detail="No model with this name loaded")
-    recommender = rec_api.engines[model_name]
-    matches = recommender.get_match_by_token(str(token), amount)
-    return matches.to_dict()
+    task = recommend_by_token.delay(str(token), amount)
+    result = task.get()
+    return result
 
 
 @rec_api.get("/{model_name}/random_id/")

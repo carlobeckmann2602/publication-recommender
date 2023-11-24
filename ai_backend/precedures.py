@@ -67,6 +67,7 @@ if __name__ == '__main__':
                                      token_amount=5,
                                      annoy_input_length=768,
                                      annoy_n_trees=100)
-    build_and_save()
+    recommender_system.load(model_name="arxiv_6k-v2-test")
+#    build_and_save()
 #    sample_test()
 
