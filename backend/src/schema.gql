@@ -22,6 +22,7 @@ type Publication {
   id: String!
   title: String!
   publisher: String!
+  abstract: String!
   authors: [String!]!
   date: DateTime!
 }

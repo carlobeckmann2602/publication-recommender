@@ -4,7 +4,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { ExtractJwt } from 'passport-jwt';
 import { UserNotFoundException } from '../../user/exceptions/user-not-found.exception';
 import { UserService } from '../../user/services/user.service';
-import { TokenInvalidException } from '../exception/token-invalid.exception';
+import { TokenInvalidException } from '../exceptions/token-invalid.exception';
 import { TokenService } from '../services/token.service';
 
 @Injectable()

@@ -21,3 +21,9 @@ docker compose --profile seeders up
 ```bash
 docker exec -it <container> /bin/sh
 ```
+
+#### RabbitMQ Management
+
+host:RABBITMQ_MANAGEMENT_PORT
+
+Example: localhost:15672

@@ -9,7 +9,7 @@ import { JwtDto } from '../dto/jwt.dto';
 import { LoggedIn } from '../dto/logged-in.dto';
 import { LoginDto } from '../dto/login.dto';
 import { RegisterDto } from '../dto/register.dto';
-import { TokenInvalidException } from '../exception/token-invalid.exception';
+import { TokenInvalidException } from '../exceptions/token-invalid.exception';
 import { AuthService } from '../services/auth.service';
 
 @Resolver(() => JwtDto)

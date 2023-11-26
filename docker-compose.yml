@@ -15,6 +15,7 @@ services:
       timeout: 10s
     depends_on:
       - postgres
+      - rabbitmq
       - ai_backend
     stdin_open: true
     command:
@@ -29,6 +30,7 @@ services:
       - pr_network
     environment:
       - APP_ENV=${APP_ENV}
+      - BACKEND_PORT=${BACKEND_PORT}
       - DB_HOST=${BACKEND_DB_HOST}
       - DB_USERNAME=${BACKEND_DB_USERNAME}
       - DB_PASSWORD=${BACKEND_DB_PASSWORD}
@@ -37,6 +39,10 @@ services:
       - JWT_SECRET=${BACKEND_JWT_SECRET}
       - JWT_ACCESS_TOKEN_TTL=${BACKEND_JWT_ACCESS_TOKEN_TTL}
       - JWT_REFRESH_TOKEN_TTL=${BACKEND_JWT_REFRESH_TOKEN_TTL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_QUEUE1=${RABBITMQ_QUEUE1}
+      - RABBITMQ_QUEUE2=${RABBITMQ_QUEUE2}
 
   ai_backend:
     build:
@@ -47,6 +53,8 @@ services:
     ports:
       - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
     stdin_open: true
+    depends_on:
+      - rabbitmq
     tty: true
     networks:
       - pr_network
@@ -128,8 +136,19 @@ services:
       - DB_DATABASE=${BACKEND_DB_DATABASE}
       - DB_PORT=${BACKEND_DB_PORT}
 
+  rabbitmq:
+    image: rabbitmq:3.12.9-management-alpine
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    networks:
+      - pr_network
+    ports:
+      - "${RABBITMQ_HOST_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+
 volumes:
   backend_database:
+  rabbit_data:
 
 networks:
   pr_network:
