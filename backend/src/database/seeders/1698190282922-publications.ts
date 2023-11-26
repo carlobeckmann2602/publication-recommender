@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DescriptorDto } from '../../modules/core/publication/dto/descriptor.dto';
 import { SentenceDto } from '../../modules/core/publication/dto/sentence.dto';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
+import { SourceVo } from '../../modules/core/publication/vo/source.vo';
 
 export class Publications1698190282922 implements Seeder {
   track = false;
@@ -25,7 +26,9 @@ export class Publications1698190282922 implements Seeder {
       });
       const publication = new Publication();
       publication.exId = createHash('md5').update(uuidv4()).digest('hex');
+      publication.source = SourceVo.arxiv();
       publication.title = faker.lorem.sentence();
+      publication.abstract = faker.lorem.sentences(3);
       publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;
       publication.authors = this.generateAuthors();
       publication.date = Math.floor(Math.random() * 2) === 1 ? faker.date.past() : null;

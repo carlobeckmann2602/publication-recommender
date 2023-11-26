@@ -12,7 +12,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
           transport: Transport.RMQ,
           options: {
             urls: [`amqp://${configService.get('RABBITMQ_HOST')}:${configService.get('RABBITMQ_PORT')}`],
-            queue: `${configService.get('RABBITMQ_DATA_QUEUE')}`,
+            queue: `${configService.get('RABBITMQ_QUEUE2')}`,
           },
         });
       },

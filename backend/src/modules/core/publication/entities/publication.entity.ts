@@ -3,6 +3,8 @@ import { Expose, Type } from 'class-transformer';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { DescriptorDto } from '../dto/descriptor.dto';
 import { DescriptorTransformer } from '../transformers/descriptor.transformer';
+import { SourceTransformer } from '../transformers/source.transformer';
+import { SourceVo } from '../vo/source.vo';
 
 @ObjectType()
 @Entity('publications')
@@ -12,9 +14,18 @@ export class Publication {
   @Expose()
   id: string;
 
-  @Column({ name: 'ex_id', unique: true })
+  @Column({ name: 'ex_id' })
   @Expose()
   exId: string;
+
+  @Column({
+    type: 'enum',
+    enum: SourceVo.getAvailableValues(),
+    transformer: new SourceTransformer(),
+  })
+  @Expose()
+  @Type(() => SourceVo)
+  source: SourceVo;
 
   @Field()
   @Column()
@@ -33,6 +44,11 @@ export class Publication {
   @Column({ nullable: true })
   @Expose()
   publisher: string;
+
+  @Field()
+  @Column({ nullable: true })
+  @Expose()
+  abstract: string;
 
   @Field(() => [String])
   @Column('varchar', { array: true })

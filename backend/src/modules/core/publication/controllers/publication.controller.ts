@@ -19,7 +19,7 @@ export class PublicationController {
 
   @MessagePattern('get_publication_vectors')
   @UsePipes(ValidationPipe)
-  async provideVectors(@Payload(new ValidationPipe({ transform: true })) dto: PublicationVectorsRequestDto) {
+  async provideVectors(@Payload() dto: PublicationVectorsRequestDto) {
     const chunk = await this.descriptorService.getVectorsChunk(dto);
     this.client.emit('publication_vectors', chunk);
   }

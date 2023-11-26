@@ -54,6 +54,7 @@ export type MutationRegisterArgs = {
 
 export type Publication = {
   __typename?: 'Publication';
+  abstract: Scalars['String'];
   authors: Array<Scalars['String']>;
   date: Scalars['DateTime'];
   id: Scalars['String'];

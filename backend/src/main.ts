@@ -11,7 +11,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [`amqp://${configService.get('RABBITMQ_HOST')}`],
-      queue: `${configService.get('RABBITMQ_DATA_QUEUE')}`,
+      queue: `${configService.get('RABBITMQ_QUEUE1')}`,
     },
   });
   await app.startAllMicroservices();
