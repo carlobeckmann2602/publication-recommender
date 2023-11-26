@@ -6,13 +6,17 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService, ConfigService>(ConfigService);
-
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
       urls: [`amqp://${configService.get('RABBITMQ_HOST')}`],
       queue: `${configService.get('RABBITMQ_QUEUE1')}`,
     },
+  });
+  app.enableCors({
+    origin: '*',
+    methods: 'PUT, GET, POST, OPTIONS, PATCH, DELETE',
+    credentials: true,
   });
   await app.startAllMicroservices();
   await app.listen(configService.get('BACKEND_PORT'));

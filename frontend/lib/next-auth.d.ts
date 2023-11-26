@@ -8,9 +8,10 @@ declare module "next-auth" {
       email: string;
       image: string;
     };
-    token: {
-      jwtToken: string | undefined;
-      jwtRefreshToken: string | undefined;
+    userToken: {
+      jwtToken: string;
+      jwtRefreshToken: string;
+      jwtExpiresIn: number;
     };
   }
 }
@@ -25,10 +26,10 @@ declare module "next-auth/jwt" {
       email: string;
       image: string;
     };
-    token: {
-      jwtToken: string | undefined;
-      jwtRefreshToken: string | undefined;
-      //jwtExpiresIn: number | undefined;
+    userToken: {
+      jwtToken: string;
+      jwtRefreshToken: string;
+      jwtExpiresIn: number;
     };
   }
 }
