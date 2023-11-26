@@ -59,9 +59,9 @@ services:
     build: 
       context: ./ai_backend
       dockerfile: Dockerfile
-    command: celery -A app.celery_worker.celery worker --loglevel=info
+    command: celery -A app.celery.celery_worker.celery worker --loglevel=info
     volumes:
-      - ./ai_backend/:/code/
+      - ./ai_backend/app/:/code/app/
     environment:
       - BROKER=${AI_BACKEND_BROKER}
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
@@ -77,14 +77,14 @@ services:
     build: 
       context: ./ai_backend
       dockerfile: Dockerfile
-    command: celery -A app.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT}
+    command: celery -A app.celery.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT} --conf=app/celery/flowerconfig.py
     environment:
       - BROKER=${AI_BACKEND_BROKER}
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - DATA_PATH=${AI_BACKEND_DATA_PATH}
       - API_PORT=${AI_BACKEND_PORT}
     volumes:
-      - ./ai_backend/:/code/
+      - ./ai_backend/app/:/code/app/
     ports:
       - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
     depends_on:
