@@ -75,15 +75,16 @@ def update_recommender():
         print("Closed Zip File")
 
 
-def recommender_outdated():
+def recommender_outdated(remote_change_time: float = None):
     zip_path = f"{celery.data_path}/{celery.recommender_name}.zip"
     if os.path.exists(zip_path):
         local_change_time = os.path.getmtime(zip_path)
     else:
         local_change_time = 0
     try:
-        result = requests.get(f"{celery.api}/last_changed").json()
-        remote_change_time = result["last_changed"]
+        if remote_change_time is None:
+            result = requests.get(f"{celery.api}/last_changed").json()
+            remote_change_time = result["last_changed"]
         return local_change_time < remote_change_time
     except Exception:
         return False
@@ -112,11 +113,16 @@ class Tasks:
 
     @staticmethod
     @celery.task(name="update")
-    def triggered_update():
+    def triggered_update(remote_change_time: float):
         print("Run triggered update")
         return None
-        if recommender_outdated():
+        if recommender_outdated(remote_change_time):
             print("Updating")
             update_recommender()
         else:
             print("Recommender already up to date")
+
+    @staticmethod
+    @celery.task(name="build_annoy")
+    def build_annoy():
+        print("Building Annoy")
