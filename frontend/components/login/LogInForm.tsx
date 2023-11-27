@@ -28,6 +28,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import GoogleButton from "@/components/login/GoogleButton";
 import TextSeparator from "@/components/TextSeparator";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   email: z
@@ -37,7 +38,7 @@ const FormSchema = z.object({
     .email({ message: "Invalid email address" }),
   password: z
     .string()
-    .min(2, { message: "Password must be 2 or more characters long" }),
+    .min(8, { message: "Password must be 8 or more characters long" }),
 });
 
 type Props = {
@@ -46,6 +47,8 @@ type Props = {
 };
 
 export function LogInForm(props: Props) {
+  const [errorMsg, setErrorMsg] = useState(props.error);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -58,14 +61,22 @@ export function LogInForm(props: Props) {
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!showPassword);
   };
+  const router = useRouter();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await signIn("credentials", {
+    const res = await signIn("credentials", {
       username: data.email,
       password: data.password,
-      redirect: true,
+      redirect: false,
       callbackUrl: props.callbackUrl ?? "/",
     });
+    if (res?.ok) {
+      router.push("/");
+    } else if (res?.error) {
+      setErrorMsg(res?.error);
+    } else {
+      setErrorMsg("Login failed!");
+    }
   }
 
   return (
@@ -126,11 +137,11 @@ export function LogInForm(props: Props) {
           </Button>
         </form>
       </Form>
-      {!!props.error && (
+      {!!errorMsg && (
         <Alert variant="destructive">
           <ExclamationTriangleIcon className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Authentication Failed!</AlertDescription>
+          <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
       <TextSeparator>or</TextSeparator>

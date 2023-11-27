@@ -121,6 +121,7 @@ export const authOptions: NextAuthOptions = {
         */
         return true;
       }
+
       return true; // Do different verification for other providers that don't have `email_verified`
     },
     async jwt({ token, user, account }) {

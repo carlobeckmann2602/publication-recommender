@@ -11,7 +11,7 @@ interface SearchParams {
 
 export default function Search({ searchParams }: SearchParams) {
   return (
-    <div className="flex justify-center grow items-center gap-4 flex-col">
+    <div className="flex justify-center grow items-center gap-4 flex-col w-full">
       <Searchbar value={searchParams.q}></Searchbar>
       <Suspense key={searchParams.q} fallback={<div>Loading...</div>}>
         <LiteratureSearchResults

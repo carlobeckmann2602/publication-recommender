@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import {
   ExclamationTriangleIcon,
   EyeIcon,
@@ -29,7 +28,6 @@ import GoogleButton from "@/components/login/GoogleButton";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 import { useMutation } from "@apollo/client";
 import { RegisterDocument } from "@/graphql/mutation/RegisterUser.generated";
 
@@ -88,31 +86,28 @@ export function SignUpForm(props: Props) {
   const [registerFunction, { loading, error }] = useMutation(RegisterDocument);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const response = await registerFunction({
-      variables: {
-        email: data.email,
-        name: data.name,
-        password: data.password,
-      },
-    });
-    if (response.errors) {
-      console.error(response.errors);
+    try {
+      const response = await registerFunction({
+        variables: {
+          email: data.email,
+          name: data.name,
+          password: data.password,
+        },
+      });
+      if (response.errors) {
+        console.error(response.errors);
+        setErrorMsg("Authentication Failed!");
+      } else {
+        await signIn("credentials", {
+          username: data.email,
+          password: data.password,
+          redirect: true,
+          callbackUrl: props.callbackUrl ?? "/",
+        });
+      }
+    } catch (error: any) {
+      console.error(error.message);
       setErrorMsg("Authentication Failed!");
-    } else {
-      await signIn("credentials", {
-        username: data.email,
-        password: data.password,
-        redirect: true,
-        callbackUrl: props.callbackUrl ?? "/",
-      });
-      toast({
-        title: "You submitted the following values:",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
-      });
     }
   }
 

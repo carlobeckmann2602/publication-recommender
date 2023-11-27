@@ -1,7 +1,9 @@
 import React from "react";
 import { getClient } from "@/lib/client";
-import { ApolloWrapper } from "@/lib/apollo-wrapper";
 import { GetSearchResultsDocument } from "@/graphql/queries/GetSearchResults.generated";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import LiteratureCard from "@/components/search/LiteratureCard";
 
 interface Props {
   query: string | undefined;
@@ -12,10 +14,32 @@ export default async function LiteratureSearchResults({
   query,
   offset,
 }: Props) {
-  const data = await getClient().query({
-    query: GetSearchResultsDocument,
-    variables: { query: query },
-  });
+  try {
+    const { data } = await getClient().query({
+      query: GetSearchResultsDocument,
+      variables: { query: query },
+    });
 
-  return <div>{JSON.stringify(data.data, undefined, 2)}</div>;
+    return (
+      <>
+        {data.publications.map((publication, index) => {
+          <LiteratureCard
+            title={publication.title}
+            link=""
+            authors={JSON.stringify(publication.authors)}
+            abstract={publication.abstract}
+            date={publication.date}
+          ></LiteratureCard>;
+        })}
+      </>
+    );
+  } catch (error: any) {
+    return (
+      <Alert variant="destructive" className="w-1/4">
+        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
+  }
 }

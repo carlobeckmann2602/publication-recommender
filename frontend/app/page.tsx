@@ -1,5 +1,7 @@
 import { Searchbar } from "@/components/Searchbar";
-import LiteratureCard from "@/components/search/LiteratureCard";
+import LiteratureCard, {
+  DOCUMENT_TYPES,
+} from "@/components/search/LiteratureCard";
 
 export default function Home() {
   const mockupCard = {
@@ -12,13 +14,13 @@ export default function Home() {
     matchedSentence:
       "Lorem ipsum dolor sit amet consectetur. Volutpat massa dolor nunc quis lorem.",
     doi: "https://doi.org/10.3343/kjlm.2009.29.1.1",
-    documentType: "paper",
+    documentType: DOCUMENT_TYPES.PAPER,
   };
 
   return (
     <div className="flex justify-center grow items-center flex-col">
       <Searchbar></Searchbar>
-      <div className="flex flex-col items-center py-6">
+      <div className="flex flex-col items-center py-6 w-full">
         <LiteratureCard {...mockupCard} />
       </div>
     </div>
