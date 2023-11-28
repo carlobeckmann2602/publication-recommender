@@ -72,6 +72,8 @@ services:
       context: ./ai_backend
       dockerfile: Dockerfile
     command: celery -A app.celery.celery_worker.celery worker -B --loglevel=info
+    networks:
+      - pr_network
     volumes:
       - ./ai_backend/app/:/code/app/
     environment:
@@ -97,6 +99,8 @@ services:
       - API_PORT=${AI_BACKEND_PORT}
     volumes:
       - ./ai_backend/app/:/code/app/
+    networks:
+      - pr_network
     ports:
       - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
     depends_on:
