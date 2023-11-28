@@ -1,49 +1,42 @@
-import { Type } from 'class-transformer';
-import { IsArray, IsDate, IsDefined, IsIn, IsNotEmpty, IsOptional, IsString, IsUrl, Validate } from 'class-validator';
-import { IsDescriptorDto } from '../validators/descriptor-dto.validator';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsArray, IsIn, IsOptional, IsString, IsUrl } from 'class-validator';
 import { SourceVo } from '../vo/source.vo';
 import { DescriptorDto } from './descriptor.dto';
 
+@InputType()
 export class CreatePublicationDto {
-  @IsString()
-  @IsNotEmpty()
+  @Field()
   title: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @Field()
   exId: string;
 
-  @IsString()
+  @Field()
   @IsIn(SourceVo.getAvailableValues())
   source: string;
 
-  @IsOptional()
-  @IsString()
+  @Field({ nullable: true })
   doi?: string;
 
+  @Field({ nullable: true })
   @IsOptional()
   @IsUrl()
   url?: string;
 
-  @IsOptional()
-  @IsString()
+  @Field({ nullable: true })
   publisher?: string;
 
-  @IsOptional()
-  @IsString()
+  @Field({ nullable: true })
   abstract?: string;
 
+  @Field((of) => [String], { nullable: true })
   @IsArray()
   @IsString({ each: true })
   authors: string[] = [];
 
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
+  @Field({ nullable: true })
   date?: Date;
 
-  @IsDefined()
-  @Validate(IsDescriptorDto)
-  @Type(() => DescriptorDto)
+  @Field((type) => DescriptorDto)
   descriptor: DescriptorDto;
 }

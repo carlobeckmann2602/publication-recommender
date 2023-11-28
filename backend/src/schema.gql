@@ -18,6 +18,16 @@ type LoggedIn {
   user: User!
 }
 
+type PublicationVectorsDto {
+  id: String!
+  vectors: [[Float!]!]
+}
+
+type PublicationChunkDto {
+  data: PublicationVectorsDto!
+  chunk: Float!
+}
+
 type Publication {
   id: String!
   title: String!
@@ -43,9 +53,38 @@ input PublicationsQueryDto {
 }
 
 type Mutation {
+  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
+  savePublication(createPublication: CreatePublicationDto!): Publication!
   register(data: RegisterDto!): LoggedIn!
   login(data: LoginDto!): LoggedIn!
   refreshToken(token: String!): JwtDto!
+}
+
+input PublicationVectorsRequestDto {
+  chunk: Int!
+  chunkSize: Int = 100
+}
+
+input CreatePublicationDto {
+  title: String!
+  exId: String!
+  source: String!
+  doi: String
+  url: String
+  publisher: String
+  abstract: String
+  authors: [String!] = []
+  date: DateTime
+  descriptor: DescriptorDto!
+}
+
+input DescriptorDto {
+  sentences: [SentenceDto!]!
+}
+
+input SentenceDto {
+  value: String!
+  vector: [Float!]!
 }
 
 input RegisterDto {

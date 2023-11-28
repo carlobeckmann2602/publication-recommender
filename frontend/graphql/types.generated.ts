@@ -13,6 +13,23 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type CreatePublicationDto = {
+  abstract?: InputMaybe<Scalars['String']>;
+  authors?: InputMaybe<Array<Scalars['String']>>;
+  date?: InputMaybe<Scalars['DateTime']>;
+  descriptor: DescriptorDto;
+  doi?: InputMaybe<Scalars['String']>;
+  exId: Scalars['String'];
+  publisher?: InputMaybe<Scalars['String']>;
+  source: Scalars['String'];
+  title: Scalars['String'];
+  url?: InputMaybe<Scalars['String']>;
+};
+
+export type DescriptorDto = {
+  sentences: Array<SentenceDto>;
+};
+
 export type JwtDto = {
   __typename?: 'JwtDto';
   accessToken: Scalars['String'];
@@ -33,13 +50,20 @@ export type LoginDto = {
 export type Mutation = {
   __typename?: 'Mutation';
   login: LoggedIn;
+  provideVectors: PublicationChunkDto;
   refreshToken: JwtDto;
   register: LoggedIn;
+  savePublication: Publication;
 };
 
 
 export type MutationLoginArgs = {
   data: LoginDto;
+};
+
+
+export type MutationProvideVectorsArgs = {
+  provideVectors: PublicationVectorsRequestDto;
 };
 
 
@@ -52,6 +76,11 @@ export type MutationRegisterArgs = {
   data: RegisterDto;
 };
 
+
+export type MutationSavePublicationArgs = {
+  createPublication: CreatePublicationDto;
+};
+
 export type Publication = {
   __typename?: 'Publication';
   abstract: Scalars['String'];
@@ -60,6 +89,23 @@ export type Publication = {
   id: Scalars['String'];
   publisher: Scalars['String'];
   title: Scalars['String'];
+};
+
+export type PublicationChunkDto = {
+  __typename?: 'PublicationChunkDto';
+  chunk: Scalars['Float'];
+  data: PublicationVectorsDto;
+};
+
+export type PublicationVectorsDto = {
+  __typename?: 'PublicationVectorsDto';
+  id?: Maybe<Scalars['String']>;
+  vectors?: Maybe<Array<Array<Scalars['Float']>>>;
+};
+
+export type PublicationVectorsRequestDto = {
+  chunk: Scalars['Int'];
+  chunkSize?: InputMaybe<Scalars['Int']>;
 };
 
 export type PublicationsQueryDto = {
@@ -87,6 +133,11 @@ export type RegisterDto = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type SentenceDto = {
+  value: Scalars['String'];
+  vector: Array<Scalars['Float']>;
 };
 
 export type User = {
