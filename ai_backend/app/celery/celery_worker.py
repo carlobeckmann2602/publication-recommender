@@ -1,7 +1,6 @@
 from celery import Celery
 from celery.signals import worker_ready
 from app.celery import celeryconfig
-from celery.worker.control import Panel
 from app.engine import Recommender, Summarizer
 from app.util.misc import create_file_structure
 import shutil
@@ -10,10 +9,8 @@ import os
 
 celery = Celery(__name__)
 celery.config_from_object(celeryconfig)
-
 celery.data_path = os.environ["DATA_PATH"]
 celery.recommender_name = "recommender"
-
 celery.api = "http://ai_backend:" + os.environ["API_PORT"]
 celery.update_delay = 60 * 60
 
@@ -42,13 +39,15 @@ def recommend_by_token(token: str, amount: int) -> dict:
 def recommend_by_publication(publication_id: str, amount: int) -> dict:
     recommender = get_recommender()
     if publication_id not in recommender.mapping[Recommender.PUB_ID_KEY].values:
-        return {"state": "FAILURE"}
+        raise MissingPublication(f"Publication <{publication_id}> not in mapping")
     matches = recommender.get_match_by_id(str(publication_id), amount)
     return matches.to_dict()
 
 
-def summarize(input_text: str, amount: int):
+def summarize(input_text: str, amount: int, tokenize: bool | None = None):
     recommender = get_recommender()
+    if tokenize is not None:
+        recommender.summarizer.tokenize = tokenize
     ranked_tokens, ranked_embeddings = recommender.summarizer.run(input_data=input_text, amount=amount,
                                                                   add_embedding=True)
     output_dict = {}
@@ -90,6 +89,10 @@ def recommender_outdated(remote_change_time: float = None):
         return False
 
 
+class MissingPublication(Exception):
+    pass
+
+
 class Tasks:
     @staticmethod
     @celery.task(name="update_recommender")
@@ -97,7 +100,10 @@ class Tasks:
         update_recommender()
 
     @staticmethod
-    @celery.task(name="recommend_publication_id")
+    @celery.task(name="recommend_publication_id",
+                 # autoretry_for=[MissingPublication],
+                 # retry_kwargs={"max_retries": 5}
+                 )
     def recommend_by_publication(publication_id: str, amount: int) -> dict:
         return recommend_by_publication(publication_id, amount)
 
@@ -108,14 +114,13 @@ class Tasks:
 
     @staticmethod
     @celery.task(name="summarize")
-    def summarize(text: str, amount: int):
-        return summarize(text, amount=amount)
+    def summarize(text: str, amount: int, tokenize: bool | None):
+        return summarize(text, amount=int(amount), tokenize=tokenize)
 
     @staticmethod
     @celery.task(name="update")
     def triggered_update(remote_change_time: float):
-        print("Run triggered update")
-        return None
+        print(f"Run triggered update with time: {remote_change_time}")
         if recommender_outdated(remote_change_time):
             print("Updating")
             update_recommender()

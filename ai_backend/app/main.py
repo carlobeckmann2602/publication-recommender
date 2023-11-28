@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from typing import List, Dict
 from .util.misc import create_file_structure
 from celery.app import control
-from .celery.celery_worker import Tasks, celery
+from .celery.celery_worker import Tasks, MissingPublication
 import os
 import aiofiles
 
@@ -25,8 +25,13 @@ create_file_structure(rec_api.model_path, rec_api.upload_path, rec_api.archive_p
 rec_api.current_model = f"{rec_api.archive_path}/arxiv_6k-v2.zip"
 
 
-@rec_api.get("/last_changed")
+@rec_api.get("/last_changed/")
 async def get_model_modification_date():
+    """
+    Returns the float value (UNIX time) of the last time the current recommender engine was changed.
+
+    **return**: The UNIX time value with pattern: {last_changed: float}
+    """
     if os.path.exists(rec_api.current_model):
         return {"last_changed": os.path.getmtime(rec_api.current_model)}
     else:
@@ -35,15 +40,27 @@ async def get_model_modification_date():
 
 @rec_api.post("/update_model/")
 async def update_model(file: UploadFile):
+    """
+    Replaces the current recommendation engine.
+    - **file**: The new recommendation engine as a zip archive.
+    """
     await read_file_in_chunks(file, as_file="current_model.zip",
                               delete_buffer=False, return_raw=True,
                               destination=rec_api.archive_path)
     rec_api.current_model = f"{rec_api.archive_path}/current_model.zip"
-    Tasks.triggered_update.apply_async(queue='ml_broadcast')
+    Tasks.triggered_update.apply_async(
+        args=[os.path.getmtime(rec_api.current_model)],
+        queue='ml_broadcast'
+    )
 
 
-@rec_api.get("/model.zip")
+@rec_api.get("/model.zip/")
 async def get_model_data():
+    """
+    Returns the current model as a zip archive.
+
+    **return**: The recommendation engine as a zip archive.
+    """
     if os.path.exists(rec_api.current_model):
         return FileResponse(rec_api.current_model)
     else:
@@ -59,9 +76,12 @@ async def get_recommendation(publication_id: str, amount: int = 5):
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = Tasks.recommend_by_publication.delay(str(publication_id), amount)
-    result = task.get()
-    return result
+    task = Tasks.recommend_by_publication.apply_async(args=[str(publication_id), amount])
+    try:
+        result = task.get()
+        return result
+    except MissingPublication as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @rec_api.get("/match_token/{token}/")
@@ -73,16 +93,26 @@ async def get_recommendation(token: str, amount: int = 5):
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = Tasks.recommend_by_token.delay(str(token), amount)
+    task = Tasks.recommend_by_token.apply_async(args=[str(token), amount])
     result = task.get()
     return result
 
 
 @rec_api.post("/summarize/")
-async def summarize(file: UploadFile, amount=5):
+async def summarize(file: UploadFile, amount=5, tokenize: bool | None = None):
+    """
+    Condenses a given textfile to the most important sentences contained in it.
+    Also appends the calculated embeddings (vectors) for each sentence
+    - **file**: The text file
+    - **amount**: The amount of most important sentences
+    - **tokenize**: If set to True or False, the underlying recommendation engine will ignore the current saved
+                    settings and behave as set
+
+    **return**: The summarization with pattern: {*n*: {token: str, embedding: [float]} *for n in amount*}
+    """
     try:
         file_content = await read_file_in_chunks(file=file, as_file=file.filename, delete_buffer=True)
-        task = Tasks.summarize.delay(file_content, amount)
+        task = Tasks.summarize.apply_async(args=[file_content, amount, tokenize])
         return task.get()
     except Exception as e:
         print(e)
