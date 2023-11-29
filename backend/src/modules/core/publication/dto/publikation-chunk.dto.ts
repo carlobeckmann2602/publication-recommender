@@ -1,6 +1,18 @@
-import { ObjectType } from '@nestjs/graphql';
-import { createChunkDto } from './chunk.dto';
-import { PublicationVectorsDto } from './publication-vectors.dto';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class PublicationChunkDto extends createChunkDto(PublicationVectorsDto) {}
+export class PublicationChunkDto {
+  @Field((type) => Int)
+  chunk: number;
+
+  @Field((type) => [PublicationChunkDataDto])
+  data: PublicationChunkDataDto[];
+}
+
+@ObjectType()
+class PublicationChunkDataDto {
+  @Field()
+  id: string;
+  @Field((type) => [[Float]])
+  vectors: number[][];
+}

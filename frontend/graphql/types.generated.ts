@@ -91,16 +91,16 @@ export type Publication = {
   title: Scalars['String'];
 };
 
-export type PublicationChunkDto = {
-  __typename?: 'PublicationChunkDto';
-  chunk: Scalars['Float'];
-  data: PublicationVectorsDto;
+export type PublicationChunkDataDto = {
+  __typename?: 'PublicationChunkDataDto';
+  id: Scalars['String'];
+  vectors: Array<Array<Scalars['Float']>>;
 };
 
-export type PublicationVectorsDto = {
-  __typename?: 'PublicationVectorsDto';
-  id?: Maybe<Scalars['String']>;
-  vectors?: Maybe<Array<Array<Scalars['Float']>>>;
+export type PublicationChunkDto = {
+  __typename?: 'PublicationChunkDto';
+  chunk: Scalars['Int'];
+  data: Array<PublicationChunkDataDto>;
 };
 
 export type PublicationVectorsRequestDto = {

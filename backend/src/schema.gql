@@ -18,14 +18,14 @@ type LoggedIn {
   user: User!
 }
 
-type PublicationVectorsDto {
-  id: String!
-  vectors: [[Float!]!]
+type PublicationChunkDto {
+  chunk: Int!
+  data: [PublicationChunkDataDto!]!
 }
 
-type PublicationChunkDto {
-  data: PublicationVectorsDto!
-  chunk: Float!
+type PublicationChunkDataDto {
+  id: String!
+  vectors: [[Float!]!]!
 }
 
 type Publication {
