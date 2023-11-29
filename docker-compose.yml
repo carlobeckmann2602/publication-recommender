@@ -186,6 +186,8 @@ services:
   redis:
     container_name: redis
     image: redis:6.2-alpine
+    networks:
+      - pr_network
 
   rabbitmq:
     image: rabbitmq:3.12.9-management-alpine

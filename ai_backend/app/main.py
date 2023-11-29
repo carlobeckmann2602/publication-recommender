@@ -126,11 +126,13 @@ async def read_file_in_chunks(file: UploadFile, as_file: str,
         os.makedirs(destination)
     try:
         async with aiofiles.open(destination + "/" + as_file, 'wb') as f:
+            all_content = b''
             while contents := await file.read(1024 * 1024):
                 await f.write(contents)
-                if not return_raw:
-                    contents = contents.decode("utf-8")
-                return contents
+                all_content += contents
+        if not return_raw:
+            all_content = all_content.decode("utf-8")
+        return all_content
     except Exception as e:
         raise e
     finally:
