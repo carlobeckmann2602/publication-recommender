@@ -129,7 +129,9 @@ export const authOptions: NextAuthOptions = {
         token.userToken = {
           jwtToken: account.access_token ? account.access_token : "",
           jwtRefreshToken: account.refresh_token ? account.refresh_token : "",
-          jwtExpiresIn: account.expires_at ? account.expires_at : 0,
+          jwtExpiresIn: /* account.expires_at
+            ? account.expires_at
+            : */ 100000000000000000,
         };
         if (user.name && user.email)
           token.user = {

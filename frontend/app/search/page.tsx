@@ -1,14 +1,14 @@
 import LiteratureSearchResults from "@/components/search/LiteratureSearchResults";
 import Pagination from "@/components/search/Pagination";
-import { Searchbar } from "@/components/Searchbar";
+import { Searchbar } from "@/components/search/Searchbar";
 import { Suspense } from "react";
 
-interface SearchParams {
+type SearchParams = {
   searchParams: {
     q: string;
     offset: number | undefined;
   };
-}
+};
 
 export default function Search({ searchParams }: SearchParams) {
   return (

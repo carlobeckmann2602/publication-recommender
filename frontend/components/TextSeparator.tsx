@@ -2,9 +2,9 @@ import React from "react";
 
 import { Separator } from "@/components/ui/separator";
 
-interface Props {
+type Props = {
   children: string;
-}
+};
 
 function TextSeparator({ children }: Props) {
   return (
