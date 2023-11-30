@@ -1,9 +1,8 @@
-import { UseGuards } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from '../../auth/decorators/user.decorator';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import PublicationsQueryDto from '../dto/publications-query.dto';
+import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { Publication } from '../entities/publication.entity';
 import { PublicationService } from '../services/publication.service';
 
@@ -11,24 +10,24 @@ import { PublicationService } from '../services/publication.service';
 export class PublicationResolver {
   constructor(private publicationService: PublicationService) {}
 
-  @Query(() => [Publication])
-  @UseGuards(JwtAuthGuard)
+  @Query(() => [PublicationResponseDto])
   async publications(
-    @AuthUser() user,
-    @Args('filter', {
-      type: () => PublicationsQueryDto,
-      nullable: true,
-    })
-    query: PublicationsQueryDto,
-  ): Promise<Publication[]> {
-    return await this.publicationService.findAll(query);
+    @Args('filter')
+    query: string,
+  ): Promise<PublicationResponseDto[]> {
+    try {
+      const publications = await this.publicationService.findAll(query);
+      return publications.map((publication) => new PublicationResponseDto(publication));
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
-  @Query(() => Publication)
-  @UseGuards(JwtAuthGuard)
-  async publication(@AuthUser() user, @Args('id') id: string): Promise<Publication> {
+  @Query(() => PublicationResponseDto)
+  async publication(@AuthUser() user, @Args('id') id: string): Promise<PublicationResponseDto> {
     try {
-      return await this.publicationService.findOne(id);
+      const publication = await this.publicationService.findOne(id);
+      return new PublicationResponseDto(publication);
     } catch (e) {
       throw new NotFoundException(null, e.message);
     }
