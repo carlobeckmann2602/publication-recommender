@@ -2,12 +2,12 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
-interface Props {
+type Props = {
   totalResults: number;
   resultsPerPage: number;
   selectedPage: number;
   url: string;
-}
+};
 
 export default function Pagination(props: Props) {
   const pageNumbers = [];

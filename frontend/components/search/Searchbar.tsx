@@ -19,9 +19,9 @@ const FormSchema = z.object({
   query: z.string(),
 });
 
-interface Props {
+type Props = {
   value?: string;
-}
+};
 
 export function Searchbar(props: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -52,7 +52,7 @@ export function Searchbar(props: Props) {
                 <Input
                   className="pr-14"
                   type="text"
-                  placeholder="Literatursuche"
+                  placeholder="Search for literature"
                   {...field}
                 />
               </FormControl>

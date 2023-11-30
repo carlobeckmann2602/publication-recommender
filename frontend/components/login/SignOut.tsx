@@ -11,9 +11,9 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
-interface Props {
+type Props = {
   children: ReactNode;
-}
+};
 
 export default function SignOut({ children }: Props) {
   return (

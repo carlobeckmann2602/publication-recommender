@@ -1,9 +1,9 @@
 import { Header } from "@/components/Header";
 
-export default function Profile() {
+export default function Settings() {
   return (
     <div>
-      <Header title="Profil" />
+      <Header title="Settings" />
     </div>
   );
 }
