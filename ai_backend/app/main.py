@@ -112,11 +112,25 @@ async def summarize(file: UploadFile, amount=5, tokenize: bool | None = None):
     """
     try:
         file_content = await read_file_in_chunks(file=file, as_file=file.filename, delete_buffer=True)
-        task = Tasks.summarize.apply_async(args=[file_content, amount, tokenize])
-        return task.get()
+        return await summarize_text(file_content, amount, tokenize)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=404, detail="Error while uploading the file")
+    
+@rec_api.get("/summarize/{text}/")
+async def summarize_text(text: str, amount=5, tokenize: bool | None = None):
+    """
+    Condenses a given text to the most important sentences contained in it.
+    Also appends the calculated embeddings (vectors) for each sentence
+    - **text**: The text
+    - **amount**: The amount of most important sentences
+    - **tokenize**: If set to True or False, the underlying recommendation engine will ignore the current saved
+                    settings and behave as set
+
+    **return**: The summarization with pattern: {*n*: {token: str, embedding: [float]} *for n in amount*}
+    """
+    task = Tasks.summarize.apply_async(args=[text, amount, tokenize])
+    return task.get()
 
 
 async def read_file_in_chunks(file: UploadFile, as_file: str,
