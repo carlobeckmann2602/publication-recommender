@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { plainToClass } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
+import { In, Repository } from 'typeorm';
+import { AnnoyResultDto } from '../dto/annoy-result.dto';
 import { CreatePublicationDto } from '../dto/create-publication.dto';
-import PublicationsQueryDto from '../dto/publications-query.dto';
 import { Publication } from '../entities/publication.entity';
+import { AiBackendException } from '../exceptions/ai-backend.exception';
 import { PublicationNotFoundException } from '../exceptions/publication-not-found.exception';
 import { SourceVo } from '../vo/source.vo';
 
@@ -14,24 +17,19 @@ export class PublicationService {
     private publicationRepository: Repository<Publication>,
   ) {}
 
-  async findAll(query?: PublicationsQueryDto): Promise<Publication[]> {
-    const dbQuery = this.publicationRepository.createQueryBuilder('publications');
-
-    if (query) {
-      if (query.title) {
-        dbQuery.andWhere(`publications.title LIKE :title`, {
-          title: `${query.title}%`,
-        });
-      }
-
-      if (query.publisher) {
-        dbQuery.andWhere(`publications.publisher LIKE :publisher`, {
-          publisher: `${query.publisher}%`,
-        });
-      }
+  async findAll(query: string): Promise<Publication[]> {
+    let parsedResult: AnnoyResultDto;
+    try {
+      await fetch('http://ai_backend:8000/arxiv_6k-v2/load');
+      const result = await (await fetch(`http://ai_backend:8000/arxiv_6k-v2/match_token/${query}`)).json();
+      parsedResult = plainToClass(AnnoyResultDto, result);
+      await validateOrReject(parsedResult);
+    } catch (e) {
+      throw new AiBackendException();
     }
 
-    return await dbQuery.getMany();
+    const ids = parsedResult.matches.map((singleResult) => singleResult.id);
+    return await this.publicationRepository.find({ where: { id: In(ids) } });
   }
 
   /**

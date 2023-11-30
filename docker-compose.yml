@@ -48,6 +48,7 @@ services:
     build:
       context: ./ai_backend
       dockerfile: Dockerfile
+    command: uvicorn app.main:rec_api --host 0.0.0.0 --reload --reload-dir ./app --port ${AI_BACKEND_PORT}
     volumes:
       - ./ai_backend/:/code/
     ports:
@@ -60,6 +61,52 @@ services:
       - pr_network
     environment:
       - PORT=${AI_BACKEND_PORT}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+  
+  ai_backend_worker:
+    container_name: ai_backend_worker
+    build: 
+      context: ./ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_worker.celery worker -B --loglevel=info
+    networks:
+      - pr_network
+    volumes:
+      - ./ai_backend/app/:/code/app/
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - API_PORT=${AI_BACKEND_PORT}
+    depends_on:
+      - rabbitmq
+      - redis
+      - ai_backend
+
+  ai_backend_flower:
+    container_name: ai_backend_flower
+    build: 
+      context: ./ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT} --conf=app/celery/flowerconfig.py
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - API_PORT=${AI_BACKEND_PORT}
+    volumes:
+      - ./ai_backend/app/:/code/app/
+    networks:
+      - pr_network
+    ports:
+      - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
+    depends_on:
+      - rabbitmq
+      - redis
+      - ai_backend
 
   postgres:
     image: postgres:16.0-alpine3.18
@@ -135,6 +182,12 @@ services:
       - DB_PASSWORD=${BACKEND_DB_PASSWORD}
       - DB_DATABASE=${BACKEND_DB_DATABASE}
       - DB_PORT=${BACKEND_DB_PORT}
+  
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    networks:
+      - pr_network
 
   rabbitmq:
     image: rabbitmq:3.12.9-management-alpine

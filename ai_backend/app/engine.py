@@ -25,6 +25,11 @@ class Summarizer:
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["transformer"]
+        return state
+
     @staticmethod
     def tokenize_input(input_text: str, check_download=True) -> List[str]:
         if check_download:
@@ -127,6 +132,7 @@ class Recommender:
         state = self.__dict__.copy()
         del state["annoy_database"]
         del state["mapping"]
+        del state["transformer"]
         return state
 
     def instantiate_annoy(self):
@@ -177,6 +183,8 @@ class Recommender:
         self.annoy_database.save(path + "annoy.ann")
         self.mapping.to_pickle(path + "mapping.pkl")
         state_file = open(path + "state.pkl", "wb")
+        self.transformer.save(path + "rec_transformer")
+        self.summarizer.transformer.save(path + "summy_transformer")
         pickle.dump(self.__getstate__(), state_file)
         state_file.close()
 
@@ -187,6 +195,8 @@ class Recommender:
             state_dict = pickle.load(state_file)
             state_file.close()
             self.__dict__.update(state_dict)
+            self.transformer = SentenceTransformer(path + "rec_transformer")
+            self.summarizer.transformer = SentenceTransformer(path + "summy_transformer")
             self.instantiate_annoy()
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")

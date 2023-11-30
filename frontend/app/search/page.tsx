@@ -1,4 +1,5 @@
 import LiteratureSearchResults from "@/components/search/LiteratureSearchResults";
+import Pagination from "@/components/search/Pagination";
 import { Searchbar } from "@/components/Searchbar";
 import { Suspense } from "react";
 
@@ -18,6 +19,12 @@ export default function Search({ searchParams }: SearchParams) {
           query={searchParams.q}
           offset={searchParams.offset}
         />
+        <Pagination
+          totalResults={100}
+          resultsPerPage={10}
+          selectedPage={searchParams.offset ? searchParams.offset : 0}
+          url={`/search?q=${searchParams.q}`}
+        ></Pagination>
       </Suspense>
     </div>
   );
