@@ -1,4 +1,4 @@
-import os, re, io, csv, PyPDF2, fitz
+import os, re, csv
 import requests
 from bs4 import BeautifulSoup
 
@@ -14,9 +14,9 @@ class ArxivCrawler:
     year_pat = r"\d{2}$"
     entry_pat = r"\[ total of (\d{1,6}) entries:"
 
-    ids_path = os.getcwd() + "/data_ingest/_data/ids/"
-    dataset_path = os.getcwd() + "/data_ingest/_data/arxiv_dataset/"
-    temp_path = os.getcwd() + "/data_ingest/_data/temp/"
+    ids_path = "/app/_data/ids/"
+    dataset_path = "/app/_data/arxiv_dataset/"
+    temp_path = "/app/_data/temp/"
     
     def __init__(self):
         self.main_categories = list()

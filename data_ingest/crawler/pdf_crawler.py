@@ -1,8 +1,8 @@
-import os, io, re, csv, requests, PyPDF2
+import os, io, requests, PyPDF2
 
 class PdfCrawler:
-    def __init__(self):
-        self.temp_dir = os.getcwd() + "/data_ingest/_data/temp/"
+    def __init__(self, temp_path):
+        self.temp_dir = temp_path
         self.url = None
         self.temp_file = None
         self.response = None
@@ -38,20 +38,14 @@ class PdfCrawler:
                 print(f"File not found: '{self.temp_file}'")
             except Exception as e:
                 print(f"An error occurred: '{str(e)}'")
+            self.temp_file = None
 
     def read(self):
         if self.temp_file is not None:
             with open(self.temp_file, "r", encoding="utf-8") as txt_file:
                 file_content = txt_file.read()
-                
-                    #if "Abstract" in text:
-                        #abstract = text.split("Abstract", 1)[-1].strip()
-                        #abstract = abstract.split('\n', 1)[0].strip()
-                        #break  # Exit the loop once the abstract is found
-
-            #print(file_content)
-                # crawl pdf for id, author, and abstract
-                #author_names = self._read_author(self.response.content)
+            self.delete()
+        return file_content
     
     def _read_author(self, content):
         pass
