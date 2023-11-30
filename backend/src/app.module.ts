@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './modules/core/core.module';
 import { DatabaseModule } from './modules/database/database.module';
+import { RabbitMQModule } from './modules/mq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -17,9 +18,9 @@ import { DatabaseModule } from './modules/database/database.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: true,
     }),
     DatabaseModule,
+    RabbitMQModule,
     CoreModule,
   ],
   controllers: [AppController],

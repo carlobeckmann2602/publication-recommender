@@ -1,13 +1,14 @@
 import nltk
 import os
+import pickle
 import pandas as pd
 import numpy as np
 import torch
-from .util.misc import add_array_column
+from .util.misc import add_array_column, load_json_dict
 from sentence_transformers import SentenceTransformer, util
 from .util.LexRank import degree_centrality_scores
 from annoy import AnnoyIndex
-from typing import Literal, List
+from typing import Literal, List, Dict
 from tqdm.auto import tqdm
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -24,6 +25,11 @@ class Summarizer:
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["transformer"]
+        return state
+
     @staticmethod
     def tokenize_input(input_text: str, check_download=True) -> List[str]:
         if check_download:
@@ -33,7 +39,7 @@ class Summarizer:
                 nltk.download('punkt')
         return list(nltk.sent_tokenize(input_text))
 
-    def run(self, input_data: str | pd.Series, amount=1) -> np.ndarray[str]:
+    def run(self, input_data: str | pd.Series, amount=1, add_embedding=False) -> np.ndarray[str] | np.ndarray[float]:
         if amount < 1:
             raise Exception("The desired sentence amount must be greater than 1")
         if isinstance(input_data, str):
@@ -64,7 +70,10 @@ class Summarizer:
         tqdm.pandas(desc="(Summarizing) Calculating Cosine")
         dataframe["cosine"] = dataframe["embedding"].progress_apply(cos_sim)
 
-        def rank_tokens(cosine_vector: list, token_list: list):
+        def rank_tokens(row: pd.Series):
+            cosine_vector = row["cosine"]
+            token_list = row["token"]
+            embedding_list = row["embedding"]
             score_mask = degree_centrality_scores(cosine_vector, threshold=None)
             significance_mask = np.argsort(-score_mask)
             significance_mask = significance_mask[0:amount]
@@ -73,14 +82,21 @@ class Summarizer:
             token_vector = np.array(token_list)
             token_vector = np.vectorize(lambda x: x.strip())(token_vector)
             token_ranking = token_vector[significance_mask]
-            return list(token_ranking)
+            embedding_ranking = np.array(embedding_list)[significance_mask]
+
+            row["ranked_tokens"] = list(token_ranking)
+            row["ranked_embeddings"] = list(embedding_ranking)
+            return row
 
         tqdm.pandas(desc="(Summarizing) Ranking Tokens")
-        dataframe["ranking"] = dataframe[["cosine", "token"]].progress_apply(
-            lambda x: rank_tokens(x["cosine"], x["token"]),
-            axis=1)
+        dataframe = dataframe.progress_apply(rank_tokens, axis=1)
 
-        return np.array(dataframe["ranking"].tolist(), dtype=str)
+        tokens = np.array(dataframe["ranked_tokens"].tolist(), dtype=str)
+        if add_embedding:
+            embeddings = np.array(dataframe["ranked_embeddings"].tolist(), dtype=float)
+            return tokens, embeddings
+        else:
+            return tokens
 
 
 class Recommender:
@@ -111,6 +127,13 @@ class Recommender:
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
         self.instantiate_annoy()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["annoy_database"]
+        del state["mapping"]
+        del state["transformer"]
+        return state
 
     def instantiate_annoy(self):
         self.annoy_database = AnnoyIndex(self.annoy_input_length, self.annoy_mode)
@@ -159,9 +182,22 @@ class Recommender:
             os.makedirs(path)
         self.annoy_database.save(path + "annoy.ann")
         self.mapping.to_pickle(path + "mapping.pkl")
+        state_file = open(path + "state.pkl", "wb")
+        self.transformer.save(path + "rec_transformer")
+        self.summarizer.transformer.save(path + "summy_transformer")
+        pickle.dump(self.__getstate__(), state_file)
+        state_file.close()
 
     def load(self, path="./data/generated_data", model_name="current"):
         path = path + "/" + model_name + "/"
+        if os.path.exists(path + "state.pkl"):
+            state_file = open(path + "state.pkl", "rb")
+            state_dict = pickle.load(state_file)
+            state_file.close()
+            self.__dict__.update(state_dict)
+            self.transformer = SentenceTransformer(path + "rec_transformer")
+            self.summarizer.transformer = SentenceTransformer(path + "summy_transformer")
+            self.instantiate_annoy()
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")
 

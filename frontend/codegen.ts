@@ -5,7 +5,7 @@ dotenv.config({ path: "./.env.development" });
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: process.env.BACKEND_GRAPHQL_ENDPOINT,
+  schema: process.env.SERVER_BACKEND_GRAPHQL_ENDPOINT,
   documents: ["graphql/**/*.{gql, graphql}"],
   generates: {
     "graphql/types.generated.ts": { plugins: ["typescript"] },

@@ -1,71 +1,212 @@
 version: "3.9"
 services:
   nest:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
+    image: node:18-alpine3.17
     volumes:
-      - ./backend:/usr/src/app/backend
-      - ignore_backend:/usr/src/app/backend/node_modules
+      - ./backend:/usr/src/app
+    working_dir: /usr/src/app
     ports:
-      - "3001:3000"
+      - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
+    healthcheck:
+      test: wget --spider http://localhost:${BACKEND_PORT}
+      interval: 30s
+      retries: 50
+      start_period: 10s
+      timeout: 10s
     depends_on:
       - postgres
+      - rabbitmq
+      - ai_backend
     stdin_open: true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run migration:run
+        npm run start:dev
     tty: true
+    networks:
+      - pr_network
+    environment:
+      - APP_ENV=${APP_ENV}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+      - JWT_SECRET=${BACKEND_JWT_SECRET}
+      - JWT_ACCESS_TOKEN_TTL=${BACKEND_JWT_ACCESS_TOKEN_TTL}
+      - JWT_REFRESH_TOKEN_TTL=${BACKEND_JWT_REFRESH_TOKEN_TTL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_QUEUE1=${RABBITMQ_QUEUE1}
+      - RABBITMQ_QUEUE2=${RABBITMQ_QUEUE2}
 
-  artificial_intelligence_backend:
+  ai_backend:
     build:
       context: ./ai_backend
       dockerfile: Dockerfile
+    command: uvicorn app.main:rec_api --host 0.0.0.0 --reload --reload-dir ./app --port ${AI_BACKEND_PORT}
     volumes:
-      - ./ai_backend/data:/data/
+      - ./ai_backend/:/code/
     ports:
-      - "8000:8000"
+      - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
     stdin_open: true
+    depends_on:
+      - rabbitmq
     tty: true
+    networks:
+      - pr_network
+    environment:
+      - PORT=${AI_BACKEND_PORT}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
   
-  arxiv_api_scraper:
-    build:
-      context: ./data_ingest
+  ai_backend_worker:
+    container_name: ai_backend_worker
+    build: 
+      context: ./ai_backend
       dockerfile: Dockerfile
+    command: celery -A app.celery.celery_worker.celery worker -B --loglevel=info
+    networks:
+      - pr_network
     volumes:
-      - ./data_ingest/_data:/app/_data/
-    stdin_open: true
-    tty: true
+      - ./ai_backend/app/:/code/app/
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - API_PORT=${AI_BACKEND_PORT}
+    depends_on:
+      - rabbitmq
+      - redis
+      - ai_backend
 
+  ai_backend_flower:
+    container_name: ai_backend_flower
+    build: 
+      context: ./ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT} --conf=app/celery/flowerconfig.py
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - API_PORT=${AI_BACKEND_PORT}
+    volumes:
+      - ./ai_backend/app/:/code/app/
+    networks:
+      - pr_network
+    ports:
+      - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
+    depends_on:
+      - rabbitmq
+      - redis
+      - ai_backend
+
+
+
+  
+  
+  
   postgres:
     image: postgres:16.0-alpine3.18
     environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${BACKEND_DB_USERNAME}
+      - POSTGRES_PASSWORD=${BACKEND_DB_PASSWORD}
+      - POSTGRES_DB=${BACKEND_DB_DATABASE}
     volumes:
       - backend_database:/var/lib/postgresql/data
+    networks:
+      - pr_network
     ports:
-      - "${DB_HOST_PORT}:${DB_PORT}"
+      - "${BACKEND_DB_HOST_PORT}:${BACKEND_DB_PORT}"
 
   next:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+    image: node:18-alpine3.17
     volumes:
-      - ./frontend:/usr/src/app/frontend
-      - ignore_frontend:/usr/src/app/frontend/node_modules
+      - ./frontend:/usr/src/app
+    working_dir: /usr/src/app
     ports:
-      - "3000:3000"
+      - "${FRONTEND_HOST_PORT}:${FRONTEND_PORT}"
     depends_on:
       nest:
         condition: service_healthy
     stdin_open: true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run codegen
+        npm run dev
     tty: true
+    networks:
+      - pr_network
+    environment:
+      - SERVER_BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_SERVER_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXTAUTH_SECRET=${FRONTEND_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${FRONTEND_NEXTAUTH_URL}
+      - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
 
   adminer:
     image: adminer
     restart: always
+    networks:
+      - pr_network
     ports:
-      - 8080:8080
+      - "${ADMINER_HOST_PORT}:${ADMINER_PORT}"
+
+  seeders:
+    image: node:18-alpine3.17
+    working_dir: /usr/src/app
+    profiles:
+      - seeders
+    volumes:
+      - ./backend:/usr/src/app
+    depends_on:
+      nest:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm run seed:run
+    networks:
+      - pr_network
+    environment:
+      - APP_ENV=${APP_ENV}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+  
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    networks:
+      - pr_network
+
+  rabbitmq:
+    image: rabbitmq:3.12.9-management-alpine
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    networks:
+      - pr_network
+    ports:
+      - "${RABBITMQ_HOST_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+
 volumes:
-  ignore_backend:
-  ignore_frontend:
   backend_database:
+  rabbit_data:
+
+networks:
+  pr_network:

@@ -2,10 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type JwtDto {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type User {
+  id: String!
+  email: String!
+  name: String!
+}
+
+type LoggedIn {
+  jwt: JwtDto!
+  user: User!
+}
+
 type Publication {
   id: String!
   title: String!
   publisher: String!
+  abstract: String!
   authors: [String!]!
   date: DateTime!
 }
@@ -23,4 +40,21 @@ type Query {
 input PublicationsQueryDto {
   title: String
   publisher: String
+}
+
+type Mutation {
+  register(data: RegisterDto!): LoggedIn!
+  login(data: LoginDto!): LoggedIn!
+  refreshToken(token: String!): JwtDto!
+}
+
+input RegisterDto {
+  email: String!
+  password: String!
+  name: String!
+}
+
+input LoginDto {
+  email: String!
+  password: String!
 }

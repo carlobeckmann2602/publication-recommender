@@ -40,8 +40,14 @@ $ npm run test:cov
 # create migration
 $ npm run migration:create -name=<migration_name>
 
+# generate migration based on changes in the entities
+$ npm run migration:generate -name=<migration_name>
+
 # run migrations
 $ npm run migration:run
+
+# revert migration
+$ npm run migration:revert
 ```
 
 ## Seeds
@@ -54,6 +60,11 @@ $ npm run seed:create -name=<seed_name>
 $ npm run seed:run
 ```
 
+## Drop all tables:
+
+```bash
+$ npm run db:drop
+```
 
 ## License
 

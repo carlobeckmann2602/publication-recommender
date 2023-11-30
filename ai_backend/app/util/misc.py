@@ -1,7 +1,11 @@
 import json
+import shutil
 import numpy as np
 import pandas as pd
+from typing import Dict
 import re
+import os
+import platform
 
 
 def add_array_column(dataframe: pd.DataFrame, column_name: str, value_array: np.ndarray) -> pd.DataFrame:
@@ -41,3 +45,14 @@ def get_arxiv_url(arxiv_id: str):
         access = arxiv_id
     return "https://arxiv.org/abs/" + access
 
+
+def load_json_dict(json_path: str) -> Dict:
+    with open(json_path) as file:
+        json_dict = json.load(file)
+    return json_dict
+
+
+def create_file_structure(*args):
+    for path in args:
+        if not os.path.exists(path):
+            os.makedirs(path)
