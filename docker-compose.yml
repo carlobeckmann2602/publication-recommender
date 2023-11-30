@@ -108,10 +108,18 @@ services:
       - redis
       - ai_backend
 
-
-
-  
-  
+  arxiv_api_scraper:
+    build:
+      context: ./data_ingest
+      dockerfile: Dockerfile
+    volumes:
+      - ./data_ingest/:/scraper/
+    networks:
+      - pr_network
+    depends_on:
+      - ai_backend
+    stdin_open: true
+    tty: true
   
   postgres:
     image: postgres:16.0-alpine3.18
