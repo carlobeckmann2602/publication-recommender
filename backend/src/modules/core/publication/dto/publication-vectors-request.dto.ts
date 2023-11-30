@@ -1,9 +1,10 @@
-import { IsNumber } from 'class-validator';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
+@InputType()
 export class PublicationVectorsRequestDto {
-  @IsNumber()
+  @Field((type) => Int)
   chunk: number;
 
-  @IsNumber()
+  @Field((type) => Int, { nullable: true })
   chunkSize: number = 100;
 }

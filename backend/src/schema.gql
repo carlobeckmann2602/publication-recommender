@@ -18,6 +18,16 @@ type LoggedIn {
   user: User!
 }
 
+type PublicationChunkDto {
+  chunk: Int!
+  data: [PublicationChunkDataDto!]!
+}
+
+type PublicationChunkDataDto {
+  id: String!
+  vectors: [[Float!]!]!
+}
+
 type PublicationResponseDto {
   id: String!
   title: String!
@@ -33,9 +43,43 @@ type Query {
 }
 
 type Mutation {
+  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
+  savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
   register(data: RegisterDto!): LoggedIn!
   login(data: LoginDto!): LoggedIn!
   refreshToken(token: String!): JwtDto!
+}
+
+input PublicationVectorsRequestDto {
+  chunk: Int!
+  chunkSize: Int = 100
+}
+
+input CreatePublicationDto {
+  title: String!
+  exId: String!
+  source: String!
+  doi: String
+  url: String
+  publisher: String
+  abstract: String
+  authors: [String!] = []
+  date: DateTime
+  descriptor: DescriptorDto!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DescriptorDto {
+  sentences: [SentenceDto!]!
+}
+
+input SentenceDto {
+  value: String!
+  vector: [Float!]!
 }
 
 input RegisterDto {

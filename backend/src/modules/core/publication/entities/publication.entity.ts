@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { DescriptorDto } from '../dto/descriptor.dto';
 import { DescriptorTransformer } from '../transformers/descriptor.transformer';
@@ -57,9 +57,11 @@ export class Publication {
   @Type(() => DescriptorDto)
   descriptor: DescriptorDto;
 
+  @Exclude()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

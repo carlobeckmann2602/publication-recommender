@@ -45,7 +45,7 @@ export class PublicationService {
     return publication;
   }
 
-  async createPublication(dto: CreatePublicationDto): Promise<void> {
+  async createPublication(dto: CreatePublicationDto): Promise<Publication> {
     const publication = new Publication();
     publication.title = dto.title;
     publication.publisher = dto.publisher;
@@ -57,6 +57,6 @@ export class PublicationService {
     publication.url = dto.url;
     publication.doi = dto.doi;
     publication.date = dto.date;
-    await this.publicationRepository.save(publication);
+    return await this.publicationRepository.save(publication);
   }
 }

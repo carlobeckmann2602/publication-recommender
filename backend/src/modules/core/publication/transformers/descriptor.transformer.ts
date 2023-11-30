@@ -7,7 +7,7 @@ export class DescriptorTransformer implements ValueTransformer {
     if (value) {
       return plainToInstance<DescriptorDto, any>(DescriptorDto, value, {
         excludeExtraneousValues: true,
-      }) as DescriptorDto;
+      });
     }
   }
 
