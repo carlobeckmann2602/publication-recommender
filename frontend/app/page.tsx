@@ -5,6 +5,7 @@ import LiteratureCard, {
 
 export default function Home() {
   const mockupCard = {
+    id: "1",
     title: "Correct use of repeated measures analysis of variance",
     authors: "E Park, M Cho, CS Ki",
     date: "2021",

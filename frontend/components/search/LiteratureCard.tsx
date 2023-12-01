@@ -17,9 +17,10 @@ import {
 } from "@heroicons/react/24/outline";
 
 type Props = {
+  id: string;
   title: string;
   authors?: string;
-  date?: string;
+  date?: string | null;
   link: string;
   abstract?: string;
   matchedSentence?: string;
@@ -40,7 +41,7 @@ export default function LiteratureCard(props: Props) {
   );
   const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
   return (
-    <Card className="w-5/6">
+    <Card className="w-5/6" id={props.id}>
       <CardHeader>
         <CardTitle className="flex flex-row gap-2 align-middle">
           {props.documentType === DOCUMENT_TYPES.PAPER && (

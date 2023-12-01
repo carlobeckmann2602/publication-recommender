@@ -6,7 +6,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import LiteratureCard from "@/components/search/LiteratureCard";
 
 type Props = {
-  query: string | undefined;
+  query: string;
   offset: number | undefined;
 };
 
@@ -24,11 +24,11 @@ export default async function LiteratureSearchResults({
       <>
         {data.publications.map((publication, index) => {
           <LiteratureCard
+            id={publication.id}
             title={publication.title}
-            link=""
+            link={publication.url ? publication.url : ""}
             authors={JSON.stringify(publication.authors)}
-            abstract={publication.abstract}
-            date={publication.date}
+            date={publication.publicationDate}
           ></LiteratureCard>;
         })}
       </>
