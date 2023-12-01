@@ -13,9 +13,9 @@ class ArxivScraper:
     year_pat = r"\d{2}$"
     entry_pat = r"\[ total of (\d{1,6}) entries:"
 
-    ids_path = "/scraper/_data/ids/"
-    dataset_path = "/scraper/_data/arxiv_dataset/"
-    temp_path = "/scraper/_data/temp/"
+    ids_path = "/scraper/data/ids/"
+    dataset_path = "/scraper/data/arxiv_dataset/"
+    temp_path = "/scraper/data/temp/"
     
     def __init__(self):
         self.main_categories = list()
@@ -25,7 +25,7 @@ class ArxivScraper:
         self.arxiv_id = None
         self.id = 0
 
-    def crawl_publications(self, csv_path):
+    def scrape_publications(self, csv_path):
         root = ArxivScraper.root
         abstract_dir = ArxivScraper.first_dir["abstract"]
         pdf_dir = ArxivScraper.first_dir["pdf"]
@@ -46,7 +46,7 @@ class ArxivScraper:
                     author = self._find_author(soup)
                     title = self._find_title(soup)
                     abstract = self._find_abstract(soup)
-                    full_text = self._crawl_pdf(root+pdf_dir+id)
+                    full_text = self._scrape_pdf(root+pdf_dir+id)
                     self.publications.append([self.id, root, self.arxiv_id, doi, url, author, title, abstract, full_text, date])
                 else:
                     print(f"- failed to retrieve the web page. Status code: {self.response.status_code}")
@@ -120,7 +120,7 @@ class ArxivScraper:
                 date = match.group()
         return date
     
-    def _crawl_pdf(self, url):
+    def _scrape_pdf(self, url):
         pdf_path = ArxivScraper.temp_path+'downloaded.pdf'
         full_text = b""
         try:
@@ -176,7 +176,7 @@ class ArxivScraper:
             print(f"- failed to retrieve data. Error: {e.args}")
         return full_text
     
-    def crawl_ids(self, year, months:list=None, main_cat=None):
+    def scrape_ids(self, year, months:list=None, main_cat=None):
         list_dir = ArxivScraper.first_dir["list"]
         pdf_dir = ArxivScraper.first_dir["pdf"]
         if year >= 2008:
@@ -189,7 +189,7 @@ class ArxivScraper:
             months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
 
         if main_cat is None:
-            cat_list = self._crawl_main_categories()
+            cat_list = self._scrape_main_categories()
         else: 
             cat_list.append(main_cat)
         
@@ -201,7 +201,7 @@ class ArxivScraper:
             for month in months:
                 match = re.search(ArxivScraper.year_pat, str(year))
                 url = ArxivScraper.root + list_dir + cat + "/" + match.group() + month
-                print("- crawling ids for " + str(year) + "." + str(month) + " in the '" + cat + "' category ...")
+                print("- scraping ids for " + str(year) + "." + str(month) + " in the '" + cat + "' category ...")
                 current_month_links = list()
                 try:
                     self.response = requests.get(url)
@@ -255,14 +255,14 @@ class ArxivScraper:
         self._write_to_csv(path, self.pdf_links, True)
         return self.pdf_links
     
-    def crawl_new(self, main_cat=None):
+    def scrape_new(self, main_cat=None):
         first_dir = ArxivScraper.first_dir
         new_dir = ArxivScraper.new_dir
         pdf_dir =  ArxivScraper.first_dir["pdf"]
         id_dir = ArxivScraper.id_dir
         cat_list = list()
         if main_cat is None:
-            cat_list = self._crawl_main_categories()
+            cat_list = self._scrape_main_categories()
         else: 
             cat_list.append(main_cat)
         
@@ -292,14 +292,14 @@ class ArxivScraper:
         self.pdf_links = list(set(self.pdf_links))
         return self.pdf_links
     
-    def crawl_recent(self, main_cat=None): # nimmt immer nur die ersten 25 weil nur 25 angezeigt werden
+    def scrape_recent(self, main_cat=None): # nimmt immer nur die ersten 25 weil nur 25 angezeigt werden
         first_dir = ArxivScraper.first_dir
         recent_dir = ArxivScraper.recent_dir
         pdf_dir = ArxivScraper.first_dir["pdf"]
         id_dir = ArxivScraper.id_dir
         cat_list = list()
         if main_cat is None:
-            cat_list = self._crawl_main_categories()
+            cat_list = self._scrape_main_categories()
         else: 
             cat_list.append(main_cat)
         
@@ -329,8 +329,8 @@ class ArxivScraper:
         self.pdf_links = list(set(self.pdf_links))
         return self.pdf_links
     
-    def _crawl_main_categories(self):
-        print("crawling '" + ArxivScraper.root + "' for categories ...")
+    def _scrape_main_categories(self):
+        print("scraping '" + ArxivScraper.root + "' for categories ...")
 
         try:
             self.response = requests.get(ArxivScraper.root)
@@ -359,7 +359,7 @@ class ArxivScraper:
         print("- found " + str(len(self.main_categories)) + " categories: " + str(self.main_categories))
         return self.main_categories
     
-    def _crawl_sub_categories(self, main_cat=None):
+    def _scrape_sub_categories(self, main_cat=None):
         try:
             self.response = requests.get(ArxivScraper.root)
             first_dir = ArxivScraper.first_dir
@@ -406,7 +406,7 @@ class ArxivScraper:
         except requests.exceptions.ConnectionError as e:
             print(f"- failed to retrieve data. Error: {e.args}\n")
         
-        print("- year " + str(year) + " DOES exist in the '" + cat + "' category. crawling '" + cat + "' ...")
+        print("- year " + str(year) + " DOES exist in the '" + cat + "' category. scraping '" + cat + "' ...")
         return True
     
     def _write_to_csv(self, filepath, data, is_id=False):

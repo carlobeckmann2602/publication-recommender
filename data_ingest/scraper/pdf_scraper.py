@@ -22,9 +22,9 @@ class PdfScraper:
                     text = page.extract_text()
                     txt_file.write(text)
 
-            print(f"PDF content written to '{self.temp_file}'.")
+            print(f"--- pdf content written to temp file '{self.temp_file}'.")
         else:
-            print(f"Failed to read the PDF. Status code: {self.response.status_code}")
+            print(f"--- failed to read the pdf. status code: {self.response.status_code}")
             return False
         return True
     
@@ -32,11 +32,11 @@ class PdfScraper:
         if self.temp_file is not None:
             try:
                 os.remove(self.temp_file)
-                print(f"'{self.temp_file}' has been deleted.")
+                print(f"--- tempfile '{self.temp_file}' has been deleted.")
             except FileNotFoundError:
-                print(f"File not found: '{self.temp_file}'")
+                print(f"--- temp file not found: '{self.temp_file}'")
             except Exception as e:
-                print(f"An error occurred: '{str(e)}'")
+                print(f"--- an error occurred: '{str(e)}'")
             self.temp_file = None
 
     def read(self):
