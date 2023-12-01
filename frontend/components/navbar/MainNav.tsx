@@ -16,7 +16,7 @@ export function MainNav({
         href="/"
         className="text-sm font-medium transition-colors hover:text-primary"
       >
-        <Image src="/logo.svg" alt="logo" width={50} height={50} />
+        <Image src="/logo.svg" alt="logo" width={35} height={35} />
       </Link>
     </nav>
   );
