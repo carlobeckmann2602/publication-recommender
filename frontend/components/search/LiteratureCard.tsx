@@ -19,13 +19,13 @@ import {
 type Props = {
   id: string;
   title: string;
-  authors?: string;
-  date?: string | null;
+  authors?: string | null;
+  date?: Date;
   link: string;
-  abstract?: string;
-  matchedSentence?: string;
-  doi?: string;
-  documentType?: DOCUMENT_TYPES;
+  abstract?: string | null;
+  matchedSentence?: string | null;
+  doi?: string | null;
+  documentType?: DOCUMENT_TYPES | null;
 };
 
 export enum DOCUMENT_TYPES {
@@ -39,7 +39,8 @@ export default function LiteratureCard(props: Props) {
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"
   );
-  const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
+  //const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
+  const doiUrl = `https://www.doi.org/${props.doi}`;
   return (
     <Card className="w-5/6" id={props.id}>
       <CardHeader>
@@ -57,11 +58,12 @@ export default function LiteratureCard(props: Props) {
           {props.title}
         </CardTitle>
         <CardDescription>
-          {props.authors} {props.authors && " - "} {props.date}
+          {props.authors} {props.authors && " - "} {props.date?.getFullYear()}
           {props.date && " - "}
           <a
             href={props.link}
             className="text-blue-500 hover:text-gray-800 underline"
+            target="_blank"
           >
             {domain}
           </a>
@@ -87,10 +89,11 @@ export default function LiteratureCard(props: Props) {
             <span>
               DOI:{" "}
               <a
-                href={props.doi}
+                href={doiUrl}
                 className="text-blue-500 hover:text-gray-800 underline"
+                target="_blank"
               >
-                {doiCode}
+                {props.doi}
               </a>
             </span>
           )}
