@@ -7,7 +7,7 @@ export default function Search() {
     <>
       <Header title="Create Account" subtitle="Please provide your details." />
       <div className="flex justify-center p-8">
-        <div className="flex flex-col w-1/2 gap-8">
+        <div className="flex flex-col w-full sm:w-3/4 lg:w-1/2 gap-8">
           <SignUpForm></SignUpForm>
         </div>
       </div>

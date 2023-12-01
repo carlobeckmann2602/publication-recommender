@@ -16,7 +16,7 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 
-interface Props {
+type Props = {
   title: string;
   authors?: string;
   date?: string;
@@ -25,7 +25,7 @@ interface Props {
   matchedSentence?: string;
   doi?: string;
   documentType?: DOCUMENT_TYPES;
-}
+};
 
 export enum DOCUMENT_TYPES {
   "PAPER" = 1,
@@ -53,7 +53,7 @@ export default function LiteratureCard(props: Props) {
             <ChatBubbleBottomCenterTextIcon width={24} />
           )}
           {!props.documentType && <DocumentIcon width={24} />}
-          <h2>{props.title}</h2>
+          {props.title}
         </CardTitle>
         <CardDescription>
           {props.authors} {props.authors && " - "} {props.date}

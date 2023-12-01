@@ -5,10 +5,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import LiteratureCard from "@/components/search/LiteratureCard";
 
-interface Props {
+type Props = {
   query: string | undefined;
   offset: number | undefined;
-}
+};
 
 export default async function LiteratureSearchResults({
   query,

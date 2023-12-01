@@ -1,36 +1,58 @@
-import { UseGuards } from '@nestjs/common';
+import { InternalServerErrorException, ValidationPipe } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
-import { Args, Query, Resolver } from '@nestjs/graphql';
-import { AuthUser } from '../../auth/decorators/user.decorator';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import PublicationsQueryDto from '../dto/publications-query.dto';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreatePublicationDto } from '../dto/create-publication.dto';
+import { PublicationResponseDto } from '../dto/publication-response.dto';
+import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
+import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
 import { Publication } from '../entities/publication.entity';
+import { DescriptorService } from '../services/descriptor.service';
 import { PublicationService } from '../services/publication.service';
 
 @Resolver(() => Publication)
 export class PublicationResolver {
-  constructor(private publicationService: PublicationService) {}
+  constructor(
+    private publicationService: PublicationService,
+    private descriptorService: DescriptorService,
+  ) {}
 
-  @Query(() => [Publication])
-  @UseGuards(JwtAuthGuard)
+  @Query(() => [PublicationResponseDto])
   async publications(
-    @AuthUser() user,
-    @Args('filter', {
-      type: () => PublicationsQueryDto,
-      nullable: true,
-    })
-    query: PublicationsQueryDto,
-  ): Promise<Publication[]> {
-    return await this.publicationService.findAll(query);
+    @Args('filter')
+    query: string,
+  ): Promise<PublicationResponseDto[]> {
+    try {
+      const publications = await this.publicationService.findAll(query);
+      return publications.map((publication) => new PublicationResponseDto(publication));
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
-  @Query(() => Publication)
-  @UseGuards(JwtAuthGuard)
-  async publication(@AuthUser() user, @Args('id') id: string): Promise<Publication> {
+  @Query(() => PublicationResponseDto)
+  async publication(@Args('id') id: string): Promise<PublicationResponseDto> {
     try {
-      return await this.publicationService.findOne(id);
+      const publication = await this.publicationService.findOne(id);
+      return new PublicationResponseDto(publication);
     } catch (e) {
       throw new NotFoundException(null, e.message);
     }
+  }
+
+  @Mutation((returns) => PublicationChunkDto)
+  async provideVectors(
+    @Args('provideVectors', { type: () => PublicationVectorsRequestDto })
+    dto: PublicationVectorsRequestDto,
+  ): Promise<PublicationChunkDto> {
+    return await this.descriptorService.getVectorsChunk(dto);
+  }
+
+  @Mutation((returns) => PublicationResponseDto)
+  async savePublication(
+    @Args('createPublication', { type: () => CreatePublicationDto }, new ValidationPipe({ transform: true }))
+    dto: CreatePublicationDto,
+  ): Promise<PublicationResponseDto> {
+    const publication = await this.publicationService.createPublication(dto);
+    return new PublicationResponseDto(publication);
   }
 }

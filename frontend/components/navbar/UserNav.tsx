@@ -53,9 +53,11 @@ export function UserNav() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <Link href="/profile">
-              <DropdownMenuItem>Profil</DropdownMenuItem>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
             </Link>
-            <DropdownMenuItem>Einstellungen</DropdownMenuItem>
+            <Link href="/settings">
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <SignOut>
