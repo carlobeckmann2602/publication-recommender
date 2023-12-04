@@ -5,7 +5,6 @@ import pandas as pd
 from typing import Dict
 import re
 import os
-import platform
 
 
 def add_array_column(dataframe: pd.DataFrame, column_name: str, value_array: np.ndarray) -> pd.DataFrame:

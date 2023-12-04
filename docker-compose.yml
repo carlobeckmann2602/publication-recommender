@@ -65,13 +65,21 @@ services:
       - BROKER=${AI_BACKEND_BROKER}
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
   
   ai_backend_worker:
     container_name: ai_backend_worker
     build: 
       context: ./ai_backend
       dockerfile: Dockerfile
-    command: celery -A app.celery.celery_worker.celery worker -B --loglevel=info
+    command: celery -A app.celery.celery_worker.celery worker -P eventlet --loglevel=warning
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     networks:
       - pr_network
     volumes:
@@ -81,6 +89,7 @@ services:
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - DATA_PATH=${AI_BACKEND_DATA_PATH}
       - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
     depends_on:
       - rabbitmq
       - redis
@@ -97,6 +106,7 @@ services:
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - DATA_PATH=${AI_BACKEND_DATA_PATH}
       - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
     volumes:
       - ./ai_backend/app/:/code/app/
     networks:
