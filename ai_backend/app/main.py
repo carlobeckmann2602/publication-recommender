@@ -22,7 +22,15 @@ rec_api.archive_path = f"{rec_api.generated_data_path}/archive"
 create_file_structure(rec_api.model_path, rec_api.upload_path, rec_api.archive_path)
 
 # Initiate model
-rec_api.current_model = f"{rec_api.archive_path}/arxiv_6k-v2.zip"
+rec_api.current_model = f"{rec_api.archive_path}/arxiv_6k-v3.zip"
+
+
+@rec_api.get("/build_annoy/")
+async def build_annoy():
+    """
+    Forces to build a new annoy index
+    """
+    Tasks.build_annoy.apply_async(args=[])
 
 
 @rec_api.get("/last_changed/")
@@ -116,7 +124,8 @@ async def summarize(file: UploadFile, amount=5, tokenize: bool | None = None):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=404, detail="Error while uploading the file")
-    
+
+
 @rec_api.get("/summarize/{text}/")
 async def summarize_text(text: str, amount=5, tokenize: bool | None = None):
     """

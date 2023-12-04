@@ -23,3 +23,4 @@ beat_schedule = {
     }
 }
 timezone = "Europe/Berlin"
+broker_connection_retry_on_startup = True
