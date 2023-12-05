@@ -31,7 +31,13 @@ export class PublicationResolver {
   }
 
   @Query(() => Int)
-  async publicationCount(@Args('source', { nullable: true }) source?: SourceVo): Promise<number> {
+  async publicationCount(
+    @Args('source', {
+      type: () => SourceVo,
+      nullable: true,
+    })
+    source?: SourceVo,
+  ): Promise<number> {
     return await this.publicationService.count(source);
   }
 
