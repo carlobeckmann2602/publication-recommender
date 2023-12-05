@@ -1,9 +1,7 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsArray, IsOptional, IsString, IsUrl } from 'class-validator';
 import { SourceVo } from '../vo/source.vo';
 import { DescriptorDto } from './descriptor.dto';
-
-registerEnumType(SourceVo, { name: 'PublicationSource' });
 
 @InputType()
 export class CreatePublicationDto {
