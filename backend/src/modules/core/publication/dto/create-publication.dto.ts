@@ -1,7 +1,9 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsIn, IsOptional, IsString, IsUrl } from 'class-validator';
+import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { IsArray, IsOptional, IsString, IsUrl } from 'class-validator';
 import { SourceVo } from '../vo/source.vo';
 import { DescriptorDto } from './descriptor.dto';
+
+registerEnumType(SourceVo, { name: 'PublicationSource' });
 
 @InputType()
 export class CreatePublicationDto {
@@ -11,9 +13,8 @@ export class CreatePublicationDto {
   @Field()
   exId: string;
 
-  @Field()
-  @IsIn(SourceVo.getAvailableValues())
-  source: string;
+  @Field(() => SourceVo)
+  source: SourceVo;
 
   @Field({ nullable: true })
   doi?: string;
