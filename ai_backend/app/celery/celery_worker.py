@@ -1,9 +1,11 @@
+import pandas as pd
 from celery import Celery
 from celery.signals import worker_ready
 from app.celery import celeryconfig
-from app.engine import Recommender, Summarizer
+from app.engine import Recommender, Summarizer, device
 from app.util.misc import create_file_structure
 from app.graphql_backend import get_all_vectors
+from typing import Dict, List
 import shutil
 import requests
 import os
@@ -21,7 +23,7 @@ create_file_structure(celery.data_path)
 def on_worker_ready(**_):
     print("Starting Worker")
     update_recommender()
-    print("Run Worker")
+    print(f"Runing Worker on {device}")
 
 
 def get_recommender() -> Recommender:
@@ -32,8 +34,8 @@ def get_recommender() -> Recommender:
 
 def recommend_by_token(token: str, amount: int) -> dict:
     recommender = get_recommender()
-    result = recommender.get_match_by_token(str(token), amount).to_dict()
-    return result
+    matches = recommender.get_match_by_token(str(token), amount)
+    return convert_matching_to_response(matches, recommender.PUBLICATION_ID_KEY)
 
 
 def recommend_by_publication(publication_id: str, amount: int) -> dict:
@@ -41,9 +43,13 @@ def recommend_by_publication(publication_id: str, amount: int) -> dict:
     if publication_id not in recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
         raise MissingPublication(f"Publication <{publication_id}> not in mapping")
     matches = recommender.get_match_by_id(str(publication_id), amount)
+    return convert_matching_to_response(matches, recommender.PUBLICATION_ID_KEY)
+
+
+def convert_matching_to_response(mathing: pd.DataFrame, pub_id_key: str) -> Dict[str, List[Dict[str, str | int]]]:
     result = {"matches": []}
-    for index, row in matches.iterrows():
-        pub_id = row[recommender.PUBLICATION_ID_KEY]
+    for index, row in mathing.iterrows():
+        pub_id = row[pub_id_key]
         input_token = row["input_token"]
         matching_token = row["matching_token"]
         result["matches"].append({
