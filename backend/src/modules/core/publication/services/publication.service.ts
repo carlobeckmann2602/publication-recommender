@@ -45,6 +45,10 @@ export class PublicationService {
     return publication;
   }
 
+  async count(source?: SourceVo): Promise<number> {
+    return await this.publicationRepository.count({ where: { source } });
+  }
+
   async createPublication(dto: CreatePublicationDto): Promise<Publication> {
     const publication = new Publication();
     publication.title = dto.title;

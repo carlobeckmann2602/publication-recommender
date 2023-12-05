@@ -39,6 +39,7 @@ type PublicationResponseDto {
 
 type Query {
   publications(filter: String!): [PublicationResponseDto!]!
+  publicationCount(source: String): Int!
   publication(id: String!): PublicationResponseDto!
 }
 
