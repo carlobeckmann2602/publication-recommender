@@ -26,7 +26,7 @@ export class Publications1698190282922 implements Seeder {
       });
       const publication = new Publication();
       publication.exId = createHash('md5').update(uuidv4()).digest('hex');
-      publication.source = SourceVo.arxiv();
+      publication.source = SourceVo.ARXIV;
       publication.title = faker.lorem.sentence();
       publication.abstract = faker.lorem.sentences(3);
       publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;

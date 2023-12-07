@@ -2,7 +2,6 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { DescriptorDto } from '../dto/descriptor.dto';
 import { DescriptorTransformer } from '../transformers/descriptor.transformer';
-import { SourceTransformer } from '../transformers/source.transformer';
 import { SourceVo } from '../vo/source.vo';
 
 @Entity('publications')
@@ -17,11 +16,9 @@ export class Publication {
 
   @Column({
     type: 'enum',
-    enum: SourceVo.getAvailableValues(),
-    transformer: new SourceTransformer(),
+    enum: SourceVo,
   })
   @Expose()
-  @Type(() => SourceVo)
   source: SourceVo;
 
   @Column()

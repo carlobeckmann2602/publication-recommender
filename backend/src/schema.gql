@@ -58,7 +58,7 @@ input PublicationVectorsRequestDto {
 input CreatePublicationDto {
   title: String!
   exId: String!
-  source: String!
+  source: PublicationSource!
   doi: String
   url: String
   publisher: String
@@ -66,6 +66,10 @@ input CreatePublicationDto {
   authors: [String!] = []
   date: DateTime
   descriptor: DescriptorDto!
+}
+
+enum PublicationSource {
+  ARXIV
 }
 
 """

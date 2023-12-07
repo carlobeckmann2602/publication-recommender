@@ -51,7 +51,7 @@ export class PublicationService {
     publication.title = dto.title;
     publication.publisher = dto.publisher;
     publication.exId = dto.exId;
-    publication.source = SourceVo.fromString(dto.source);
+    publication.source = SourceVo.ARXIV;
     publication.abstract = dto.abstract;
     publication.descriptor = dto.descriptor;
     publication.authors = dto.authors;
