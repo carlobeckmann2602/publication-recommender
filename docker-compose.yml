@@ -16,7 +16,6 @@ services:
     depends_on:
       - postgres
       - rabbitmq
-      - ai_backend
     stdin_open: true
     command:
       - /bin/sh
