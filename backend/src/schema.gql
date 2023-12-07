@@ -39,8 +39,12 @@ type PublicationResponseDto {
 
 type Query {
   publications(filter: String!): [PublicationResponseDto!]!
-  publicationCount(source: String): Int!
+  publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
+}
+
+enum PublicationSource {
+  ARXIV
 }
 
 type Mutation {
@@ -67,10 +71,6 @@ input CreatePublicationDto {
   authors: [String!] = []
   date: DateTime
   descriptor: DescriptorDto!
-}
-
-enum PublicationSource {
-  ARXIV
 }
 
 """
