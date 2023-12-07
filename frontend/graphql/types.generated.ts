@@ -53,7 +53,7 @@ export type Mutation = {
   provideVectors: PublicationChunkDto;
   refreshToken: JwtDto;
   register: LoggedIn;
-  savePublication: Publication;
+  savePublication: PublicationResponseDto;
 };
 
 
@@ -81,16 +81,6 @@ export type MutationSavePublicationArgs = {
   createPublication: CreatePublicationDto;
 };
 
-export type Publication = {
-  __typename?: 'Publication';
-  abstract: Scalars['String'];
-  authors: Array<Scalars['String']>;
-  date: Scalars['DateTime'];
-  id: Scalars['String'];
-  publisher: Scalars['String'];
-  title: Scalars['String'];
-};
-
 export type PublicationChunkDataDto = {
   __typename?: 'PublicationChunkDataDto';
   id: Scalars['String'];
@@ -103,20 +93,25 @@ export type PublicationChunkDto = {
   data: Array<PublicationChunkDataDto>;
 };
 
+export type PublicationResponseDto = {
+  __typename?: 'PublicationResponseDto';
+  authors?: Maybe<Array<Scalars['String']>>;
+  doi?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  publicationDate?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
+};
+
 export type PublicationVectorsRequestDto = {
   chunk: Scalars['Int'];
   chunkSize?: InputMaybe<Scalars['Int']>;
 };
 
-export type PublicationsQueryDto = {
-  publisher?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-};
-
 export type Query = {
   __typename?: 'Query';
-  publication: Publication;
-  publications: Array<Publication>;
+  publication: PublicationResponseDto;
+  publications: Array<PublicationResponseDto>;
 };
 
 
@@ -126,7 +121,7 @@ export type QueryPublicationArgs = {
 
 
 export type QueryPublicationsArgs = {
-  filter?: InputMaybe<PublicationsQueryDto>;
+  filter: Scalars['String'];
 };
 
 export type RegisterDto = {

@@ -1,9 +1,10 @@
-query GetSearchResults($query: String) {
-  publications(filter: { title: $query }) {
+query GetSearchResults($query: String!) {
+  publications(filter: $query) {
+    id
     title
-    publisher
-    abstract
+    doi
+    url
     authors
-    date
+    publicationDate
   }
 }

@@ -6,7 +6,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import LiteratureCard from "@/components/search/LiteratureCard";
 
 type Props = {
-  query: string | undefined;
+  query: string;
   offset: number | undefined;
 };
 
@@ -19,18 +19,26 @@ export default async function LiteratureSearchResults({
       query: GetSearchResultsDocument,
       variables: { query: query },
     });
-
     return (
       <>
-        {data.publications.map((publication, index) => {
+        {data.publications.map((publication) => (
           <LiteratureCard
+            key={publication.id}
+            id={publication.id}
             title={publication.title}
-            link=""
-            authors={JSON.stringify(publication.authors)}
-            abstract={publication.abstract}
-            date={publication.date}
-          ></LiteratureCard>;
-        })}
+            link={publication.url ? publication.url : ""}
+            authors={JSON.stringify(publication.authors)
+              .replaceAll('"', "")
+              .replaceAll(",", ", ")
+              .slice(1, -1)}
+            date={
+              publication.publicationDate
+                ? new Date(publication.publicationDate)
+                : undefined
+            }
+            doi={publication.doi}
+          />
+        ))}
       </>
     );
   } catch (error: any) {
