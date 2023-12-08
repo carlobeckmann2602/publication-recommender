@@ -16,7 +16,11 @@ export class CreateFavoritesTable1701905384269 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE favorites
         ADD FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE`);
     await queryRunner.query(`ALTER TABLE favorites
-        ADD CONSTRAINT user_id_publication_id UNIQUE ("user_id", "publication_id")`);
+        ADD UNIQUE ("user_id", "publication_id")`);
+
+    await queryRunner.query(`
+      CREATE INDEX ON favorites(user_id);
+      CREATE INDEX ON favorites(publication_id);`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
