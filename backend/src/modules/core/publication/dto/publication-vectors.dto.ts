@@ -5,6 +5,6 @@ export class PublicationVectorsDto {
   @Field()
   id: string;
 
-  @Field((type) => [[Float]], { nullable: true })
+  @Field(() => [[Float]], { nullable: true })
   vectors: number[][];
 }
