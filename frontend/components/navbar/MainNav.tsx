@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export function MainNav({
   className,
@@ -15,7 +16,7 @@ export function MainNav({
         href="/"
         className="text-sm font-medium transition-colors hover:text-primary"
       >
-        Home
+        <Image src="/logo.svg" alt="logo" width={35} height={35} />
       </Link>
     </nav>
   );

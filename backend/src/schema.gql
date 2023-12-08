@@ -40,8 +40,13 @@ type PublicationResponseDto {
 
 type Query {
   publications(filter: String!): [PublicationResponseDto!]!
+  publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
   favorites: [PublicationResponseDto!]!
+}
+
+enum PublicationSource {
+  ARXIV
 }
 
 type Mutation {
@@ -62,7 +67,7 @@ input PublicationVectorsRequestDto {
 input CreatePublicationDto {
   title: String!
   exId: String!
-  source: String!
+  source: PublicationSource!
   doi: String
   url: String
   publisher: String

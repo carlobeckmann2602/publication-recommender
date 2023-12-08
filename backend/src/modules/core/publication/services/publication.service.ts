@@ -22,6 +22,7 @@ export class PublicationService {
     try {
       await fetch('http://ai_backend:8000/arxiv_6k-v2/load');
       const result = await (await fetch(`http://ai_backend:8000/arxiv_6k-v2/match_token/${query}`)).json();
+
       parsedResult = plainToClass(AnnoyResultDto, result);
       await validateOrReject(parsedResult);
     } catch (e) {
@@ -45,12 +46,16 @@ export class PublicationService {
     return publication;
   }
 
+  async count(source?: SourceVo): Promise<number> {
+    return await this.publicationRepository.count({ where: { source } });
+  }
+
   async createPublication(dto: CreatePublicationDto): Promise<Publication> {
     const publication = new Publication();
     publication.title = dto.title;
     publication.publisher = dto.publisher;
     publication.exId = dto.exId;
-    publication.source = SourceVo.fromString(dto.source);
+    publication.source = SourceVo.ARXIV;
     publication.abstract = dto.abstract;
     publication.descriptor = dto.descriptor;
     publication.authors = dto.authors;

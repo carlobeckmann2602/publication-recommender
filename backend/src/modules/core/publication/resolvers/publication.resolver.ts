@@ -1,6 +1,6 @@
 import { InternalServerErrorException, ValidationPipe } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
@@ -8,6 +8,7 @@ import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
 import { Publication } from '../entities/publication.entity';
 import { DescriptorService } from '../services/descriptor.service';
 import { PublicationService } from '../services/publication.service';
+import { SourceVo } from '../vo/source.vo';
 
 @Resolver(() => Publication)
 export class PublicationResolver {
@@ -27,6 +28,17 @@ export class PublicationResolver {
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
+  }
+
+  @Query(() => Int)
+  async publicationCount(
+    @Args('source', {
+      type: () => SourceVo,
+      nullable: true,
+    })
+    source?: SourceVo,
+  ): Promise<number> {
+    return await this.publicationService.count(source);
   }
 
   @Query(() => PublicationResponseDto)
