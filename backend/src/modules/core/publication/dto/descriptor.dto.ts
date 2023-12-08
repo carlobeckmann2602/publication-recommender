@@ -4,7 +4,7 @@ import { SentenceDto } from './sentence.dto';
 
 @InputType()
 export class DescriptorDto {
-  @Field((type) => [SentenceDto])
+  @Field(() => [SentenceDto])
   @Expose()
   sentences: SentenceDto[];
 }

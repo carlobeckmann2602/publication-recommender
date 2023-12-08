@@ -24,9 +24,12 @@ export class PublicationResponseDto {
   @Field({ nullable: true })
   url: string | null;
 
-  @Field((type) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   authors: string[] | null;
 
   @Field({ nullable: true })
   publicationDate: string | null;
+
+  @Field()
+  isFavorite: boolean = false;
 }

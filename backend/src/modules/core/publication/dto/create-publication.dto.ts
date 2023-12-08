@@ -28,7 +28,7 @@ export class CreatePublicationDto {
   @Field({ nullable: true })
   abstract?: string;
 
-  @Field((of) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsArray()
   @IsString({ each: true })
   authors: string[] = [];
@@ -36,6 +36,6 @@ export class CreatePublicationDto {
   @Field({ nullable: true })
   date?: Date;
 
-  @Field((type) => DescriptorDto)
+  @Field(() => DescriptorDto)
   descriptor: DescriptorDto;
 }

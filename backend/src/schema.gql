@@ -35,12 +35,14 @@ type PublicationResponseDto {
   url: String
   authors: [String!]
   publicationDate: String
+  isFavorite: Boolean!
 }
 
 type Query {
   publications(filter: String!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
+  favorites: [PublicationResponseDto!]!
 }
 
 enum PublicationSource {
@@ -50,6 +52,8 @@ enum PublicationSource {
 type Mutation {
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
   savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
+  markAsFavorite(id: String!): Boolean!
+  unmarkAsFavorite(id: String!): Boolean!
   register(data: RegisterDto!): LoggedIn!
   login(data: LoginDto!): LoggedIn!
   refreshToken(token: String!): JwtDto!

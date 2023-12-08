@@ -2,10 +2,10 @@ import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class PublicationChunkDto {
-  @Field((type) => Int)
+  @Field(() => Int)
   chunk: number;
 
-  @Field((type) => [PublicationChunkDataDto])
+  @Field(() => [PublicationChunkDataDto])
   data: PublicationChunkDataDto[];
 }
 
@@ -13,6 +13,6 @@ export class PublicationChunkDto {
 class PublicationChunkDataDto {
   @Field()
   id: string;
-  @Field((type) => [[Float]])
+  @Field(() => [[Float]])
   vectors: number[][];
 }
