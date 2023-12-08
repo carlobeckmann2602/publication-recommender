@@ -1,5 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Favorite } from '../../publication/entities/favorite.entity';
 
 @ObjectType()
 @Entity('users')
@@ -25,6 +34,12 @@ export class User {
   @Field()
   @Column()
   name: string;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.user, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'user_id' })
+  favorites: Favorite[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
