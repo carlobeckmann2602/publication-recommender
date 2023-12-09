@@ -147,7 +147,7 @@ class Tasks:
     @celery.task(name="build_annoy")
     def build_annoy():
         recommender = get_recommender()
-        recommender.annoy_input_length = 500
+        recommender.annoy_input_length = 768
         result = get_all_vectors()
         new_mapping, embeddings = recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
         recommender.build_annoy(new_mapping, embeddings, "override")
