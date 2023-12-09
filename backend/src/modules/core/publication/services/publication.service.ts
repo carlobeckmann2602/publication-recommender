@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
@@ -15,14 +16,15 @@ export class PublicationService {
   constructor(
     @InjectRepository(Publication)
     private publicationRepository: Repository<Publication>,
+    private configService: ConfigService,
   ) {}
 
   async findAll(query: string): Promise<Publication[]> {
     let parsedResult: AnnoyResultDto;
     try {
-      await fetch('http://ai_backend:8000/arxiv_6k-v2/load');
-      const result = await (await fetch(`http://ai_backend:8000/arxiv_6k-v2/match_token/${query}`)).json();
-
+      const result = await (
+        await fetch(`${this.configService.get('PROJECT_AI_BACKEND_URL')}/match_token/${query}`)
+      ).json();
       parsedResult = plainToClass(AnnoyResultDto, result);
       await validateOrReject(parsedResult);
     } catch (e) {

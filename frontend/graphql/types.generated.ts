@@ -21,7 +21,7 @@ export type CreatePublicationDto = {
   doi?: InputMaybe<Scalars['String']>;
   exId: Scalars['String'];
   publisher?: InputMaybe<Scalars['String']>;
-  source: Scalars['String'];
+  source: PublicationSource;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;
 };
@@ -50,15 +50,22 @@ export type LoginDto = {
 export type Mutation = {
   __typename?: 'Mutation';
   login: LoggedIn;
+  markAsFavorite: Scalars['Boolean'];
   provideVectors: PublicationChunkDto;
   refreshToken: JwtDto;
   register: LoggedIn;
   savePublication: PublicationResponseDto;
+  unmarkAsFavorite: Scalars['Boolean'];
 };
 
 
 export type MutationLoginArgs = {
   data: LoginDto;
+};
+
+
+export type MutationMarkAsFavoriteArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -81,6 +88,11 @@ export type MutationSavePublicationArgs = {
   createPublication: CreatePublicationDto;
 };
 
+
+export type MutationUnmarkAsFavoriteArgs = {
+  id: Scalars['String'];
+};
+
 export type PublicationChunkDataDto = {
   __typename?: 'PublicationChunkDataDto';
   id: Scalars['String'];
@@ -98,10 +110,15 @@ export type PublicationResponseDto = {
   authors?: Maybe<Array<Scalars['String']>>;
   doi?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+  isFavorite: Scalars['Boolean'];
   publicationDate?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   url?: Maybe<Scalars['String']>;
 };
+
+export enum PublicationSource {
+  Arxiv = 'ARXIV'
+}
 
 export type PublicationVectorsRequestDto = {
   chunk: Scalars['Int'];
@@ -110,13 +127,20 @@ export type PublicationVectorsRequestDto = {
 
 export type Query = {
   __typename?: 'Query';
+  favorites: Array<PublicationResponseDto>;
   publication: PublicationResponseDto;
+  publicationCount: Scalars['Int'];
   publications: Array<PublicationResponseDto>;
 };
 
 
 export type QueryPublicationArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryPublicationCountArgs = {
+  source?: InputMaybe<PublicationSource>;
 };
 
 
