@@ -5,6 +5,8 @@ import { Favorite } from '../../modules/core/publication/entities/favorite.entit
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 import { User } from '../../modules/core/user/entities/user.entity';
 import { Publications1698190282922 } from '../seeders/1698190282922-publications';
+import { Users1702173590422 } from '../seeders/1702173590422-users';
+import { Favorites1702173668297 } from '../seeders/1702173668297-favorites';
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
@@ -18,7 +20,7 @@ const options: DataSourceOptions & SeederOptions = {
   entities: [User, Publication, Favorite],
   migrations: [`${__dirname}/../migrations/**/*{.ts,.js}`],
   subscribers: [],
-  seeds: [Publications1698190282922],
+  seeds: [Publications1698190282922, Users1702173590422, Favorites1702173668297],
   factories: [],
 };
 
