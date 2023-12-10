@@ -3,11 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { AnnoyResultDto } from '../dto/annoy-result.dto';
 import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { Publication } from '../entities/publication.entity';
 import { AiBackendException } from '../exceptions/ai-backend.exception';
+import { NoPublicationWithDateForSourceException } from '../exceptions/no-publication-with-date-for-source.exception';
 import { PublicationNotFoundException } from '../exceptions/publication-not-found.exception';
 import { SourceVo } from '../vo/source.vo';
 
@@ -51,6 +52,30 @@ export class PublicationService {
 
   async count(source?: SourceVo): Promise<number> {
     return await this.publicationRepository.count({ where: { source } });
+  }
+
+  async oldest(source: SourceVo): Promise<Publication> {
+    const results = await this.publicationRepository.find({
+      where: { source, date: Not(IsNull()) },
+      order: { date: 'DESC' },
+    });
+    const result = results[0];
+    if (!result) {
+      throw new NoPublicationWithDateForSourceException();
+    }
+    return result;
+  }
+
+  async newest(source: SourceVo): Promise<Publication> {
+    const results = await this.publicationRepository.find({
+      where: { source, date: Not(IsNull()) },
+      order: { date: 'ASC' },
+    });
+    const result = results[0];
+    if (!result) {
+      throw new NoPublicationWithDateForSourceException();
+    }
+    return result;
   }
 
   async createPublication(dto: CreatePublicationDto): Promise<Publication> {
