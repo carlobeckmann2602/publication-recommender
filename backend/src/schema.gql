@@ -42,6 +42,7 @@ type Query {
   publications(filter: String!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
+  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
   favorites: [PublicationResponseDto!]!
 }
 
@@ -49,19 +50,18 @@ enum PublicationSource {
   ARXIV
 }
 
+input PublicationVectorsRequestDto {
+  chunk: Int!
+  chunkSize: Int = 100
+}
+
 type Mutation {
-  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
   savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
   markAsFavorite(id: String!): Boolean!
   unmarkAsFavorite(id: String!): Boolean!
   register(data: RegisterDto!): LoggedIn!
   login(data: LoginDto!): LoggedIn!
   refreshToken(token: String!): JwtDto!
-}
-
-input PublicationVectorsRequestDto {
-  chunk: Int!
-  chunkSize: Int = 100
 }
 
 input CreatePublicationDto {

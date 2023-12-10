@@ -51,7 +51,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   login: LoggedIn;
   markAsFavorite: Scalars['Boolean'];
-  provideVectors: PublicationChunkDto;
   refreshToken: JwtDto;
   register: LoggedIn;
   savePublication: PublicationResponseDto;
@@ -66,11 +65,6 @@ export type MutationLoginArgs = {
 
 export type MutationMarkAsFavoriteArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationProvideVectorsArgs = {
-  provideVectors: PublicationVectorsRequestDto;
 };
 
 
@@ -128,9 +122,15 @@ export type PublicationVectorsRequestDto = {
 export type Query = {
   __typename?: 'Query';
   favorites: Array<PublicationResponseDto>;
+  provideVectors: PublicationChunkDto;
   publication: PublicationResponseDto;
   publicationCount: Scalars['Int'];
   publications: Array<PublicationResponseDto>;
+};
+
+
+export type QueryProvideVectorsArgs = {
+  provideVectors: PublicationVectorsRequestDto;
 };
 
 
