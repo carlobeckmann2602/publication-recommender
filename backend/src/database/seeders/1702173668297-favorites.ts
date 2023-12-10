@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { Seeder } from 'typeorm-extension';
 import { Favorite } from '../../modules/core/publication/entities/favorite.entity';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 import { User } from '../../modules/core/user/entities/user.entity';
@@ -7,7 +7,7 @@ import { User } from '../../modules/core/user/entities/user.entity';
 export class Favorites1702173668297 implements Seeder {
   track = false;
 
-  public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
+  public async run(dataSource: DataSource): Promise<any> {
     const favoriteRepository = dataSource.getRepository(Favorite);
     const userRepository = dataSource.getRepository(User);
     const publicationRepository = dataSource.getRepository(Publication);
