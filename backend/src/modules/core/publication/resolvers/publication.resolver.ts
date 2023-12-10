@@ -9,6 +9,7 @@ import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
 import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
 import { Publication } from '../entities/publication.entity';
+import { NoPublicationWithDateForSourceException } from '../exceptions/no-publication-with-date-for-source.exception';
 import { DescriptorService } from '../services/descriptor.service';
 import { FavoriteService } from '../services/favorites.service';
 import { PublicationService } from '../services/publication.service';
@@ -72,6 +73,30 @@ export class PublicationResolver {
       return new PublicationResponseDto(publication);
     } catch (e) {
       throw new NotFoundException(null, e.message);
+    }
+  }
+
+  @Query(() => PublicationResponseDto)
+  async oldest(@Args('source', { type: () => SourceVo }) source: SourceVo) {
+    try {
+      const publication = await this.publicationService.oldest(source);
+      return new PublicationResponseDto(publication);
+    } catch (e) {
+      if (e instanceof NoPublicationWithDateForSourceException) {
+        throw new NotFoundException(e);
+      }
+    }
+  }
+
+  @Query(() => PublicationResponseDto)
+  async newest(@Args('source', { type: () => SourceVo }) source: SourceVo) {
+    try {
+      const publication = await this.publicationService.newest(source);
+      return new PublicationResponseDto(publication);
+    } catch (e) {
+      if (e instanceof NoPublicationWithDateForSourceException) {
+        throw new NotFoundException(e);
+      }
     }
   }
 

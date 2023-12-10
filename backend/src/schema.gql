@@ -48,6 +48,8 @@ type Query {
   publicationsById(filter: String!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
+  oldest(source: PublicationSource!): PublicationResponseDto!
+  newest(source: PublicationSource!): PublicationResponseDto!
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
   favorites: [PublicationResponseDto!]!
 }
