@@ -70,7 +70,7 @@ export class PublicationResolver {
     }
   }
 
-  @Mutation(() => PublicationChunkDto)
+  @Query(() => PublicationChunkDto)
   async provideVectors(
     @Args('provideVectors', { type: () => PublicationVectorsRequestDto })
     dto: PublicationVectorsRequestDto,
