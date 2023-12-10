@@ -25,25 +25,30 @@ export class PublicationResolver {
   @Query(() => [PublicationResponseDto])
   @SetMetadata('optional', true)
   @UseGuards(JwtAuthGuard)
-  async publications(
+  async publicationsByQuery(
     @AuthUser() user: User | null,
     @Args('filter')
     query: string,
   ): Promise<PublicationResponseDto[]> {
     try {
-      const publications = await this.publicationService.findAll(query);
-      const favorites: Set<string> = user
-        ? new Set((await this.favoriteService.all(user)).map((publication) => publication.id))
-        : new Set([]);
+      const publications = await this.publicationService.findAll(query, 'query');
+      return await this.favoriteService.publicationsWithFavorites(publications, user);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
 
-      return publications.map((publication) => {
-        const dto = new PublicationResponseDto(publication);
-        if (favorites.has(dto.id)) {
-          dto.isFavorite = true;
-        }
-
-        return dto;
-      });
+  @Query(() => [PublicationResponseDto])
+  @SetMetadata('optional', true)
+  @UseGuards(JwtAuthGuard)
+  async publicationsById(
+    @AuthUser() user: User | null,
+    @Args('filter')
+    id: string,
+  ): Promise<PublicationResponseDto[]> {
+    try {
+      const publications = await this.publicationService.findAll(id, 'id');
+      return await this.favoriteService.publicationsWithFavorites(publications, user);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
