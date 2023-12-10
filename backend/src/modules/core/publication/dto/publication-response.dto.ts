@@ -9,7 +9,7 @@ export class PublicationResponseDto {
     this.doi = publication.doi;
     this.url = publication.url;
     this.authors = publication.authors;
-    this.publicationDate = publication.date ? publication.date.toISOString() : null;
+    this.publicationDate = publication.date;
   }
 
   @Field()
@@ -28,7 +28,7 @@ export class PublicationResponseDto {
   authors: string[] | null;
 
   @Field({ nullable: true })
-  publicationDate: string | null;
+  publicationDate: Date | null;
 
   @Field()
   isFavorite: boolean = false;
