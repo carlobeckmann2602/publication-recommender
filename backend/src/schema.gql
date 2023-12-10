@@ -44,7 +44,8 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Query {
-  publications(filter: String!): [PublicationResponseDto!]!
+  publicationsByQuery(filter: String!): [PublicationResponseDto!]!
+  publicationsById(filter: String!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!

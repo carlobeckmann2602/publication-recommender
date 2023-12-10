@@ -19,12 +19,13 @@ export class PublicationService {
     private configService: ConfigService,
   ) {}
 
-  async findAll(query: string): Promise<Publication[]> {
+  async findAll(by: string, type: 'query' | 'id') {
     let parsedResult: AnnoyResultDto;
+    const path = type === 'query' ? 'match_token' : 'match_id';
+
     try {
-      const result = await (
-        await fetch(`${this.configService.get('PROJECT_AI_BACKEND_URL')}/match_token/${query}`)
-      ).json();
+      const url = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/${path}/${by}`;
+      const result = await (await fetch(url)).json();
       parsedResult = plainToClass(AnnoyResultDto, result);
       await validateOrReject(parsedResult);
     } catch (e) {
