@@ -105,7 +105,7 @@ export type PublicationResponseDto = {
   doi?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   isFavorite: Scalars['Boolean'];
-  publicationDate?: Maybe<Scalars['String']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
   title: Scalars['String'];
   url?: Maybe<Scalars['String']>;
 };

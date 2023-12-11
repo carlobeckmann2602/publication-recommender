@@ -49,9 +49,9 @@ export class Publication {
   @Expose()
   authors: string[] = [];
 
-  @Column({ nullable: true, type: 'date' })
+  @Column({ nullable: true })
   @Expose()
-  date: Date;
+  date: Date | null;
 
   @Column({ type: 'jsonb', transformer: new DescriptorTransformer() })
   @Expose()

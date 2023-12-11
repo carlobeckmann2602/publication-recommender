@@ -34,12 +34,18 @@ type PublicationResponseDto {
   doi: String
   url: String
   authors: [String!]
-  publicationDate: String
+  publicationDate: DateTime
   isFavorite: Boolean!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
-  publications(filter: String!): [PublicationResponseDto!]!
+  publicationsByQuery(filter: String!): [PublicationResponseDto!]!
+  publicationsById(filter: String!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
@@ -76,11 +82,6 @@ input CreatePublicationDto {
   date: DateTime
   descriptor: DescriptorDto!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 input DescriptorDto {
   sentences: [SentenceDto!]!
