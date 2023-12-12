@@ -1,7 +1,10 @@
-import re, csv, requests, json
+import re, csv, requests, json, datetime
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
 import urllib.request as libreq
+from gql import gql, Client
+from gql.transport.aiohttp import AIOHTTPTransport
+from gql.transport.exceptions import TransportQueryError
 
 from publications import ArxivPublication
 from .pdf_scraper import PdfScraper
@@ -11,10 +14,12 @@ class ArxivApiScraper:
     temp_path = "/scraper/data/temp/"
     dataset_path = "/scraper/data/arxiv_dataset/"
     id_patterns = {"current": r"\d{4}\.\d{4,5}","old": r"[a-z]+(?:-[a-z]+)?\/\d{7}"}
-    interval = 10
+    interval = 3
     
     def __init__(self):
         self.pdf_scraper = PdfScraper(ArxivApiScraper.temp_path)
+        self.gql_transport = AIOHTTPTransport(url="http://nest:3000/graphql")
+        self.gql_client = Client(transport=self.gql_transport, fetch_schema_from_transport=True)
 
     def run(self):
         print("ArxivApiScraper.run()")
@@ -88,11 +93,60 @@ class ArxivApiScraper:
     def get_db_entries(self):
         #print("ArxivApiScraper.get_db_entries()")
         self.db_entries = self.read_csv(ArxivApiScraper.dataset_path+"publications.csv")
+        
+        print("-- requesting publications from database ...")
+        db_entries = None
+        '''
+        file_param = {"file": open("/scraper/data/temp/"+arxiv_id+".txt", "rb")}
+        res_ai_api = requests.post("http://localhost:3001/graphql", files=file_param)
+        if res_ai_api.status_code == 200:
+            db_entries = res_ai_api.text
+            print("-- response: "+str(db_entries))
+        else:
+            print("-- failed to request publications in database.")
+            return db_entries
+        '''
         return self.db_entries
     
     # TODO
     def update_db_entries(self, update_list):
         #print("ArxivApiScraper.update_db_entries(update_list)")
+        print("-- saving publications to database ...")
+        mutation = gql("""
+        mutation savePublication($query: CreatePublicationDto!) {
+            savePublication(createPublication: $query) {
+                id
+                title
+            }
+        }
+        """)
+        for pub in update_list:
+            params = {
+                "query": {
+                    "title": str(pub.title), 
+                    "exId": str(pub.arxiv_id),
+                    "source":str(pub.src),
+                    "doi": str(pub.doi),
+                    "url": str(pub.url),
+                    "abstract": str(pub.abstract),
+                    "authors": pub.authors,
+                    "date": pub.pub_date,
+                    "descriptor": pub.vector_dict
+  
+            }}
+            """  
+            {
+                '0': {
+                    'token': 'blabla', 
+                    'embedding': [-0.07583089172840118, -0.07275690138339996, ...]
+                }
+            }
+            """
+            try:
+                result = self.gql_client.execute(mutation, variable_values=params)
+                print("--- saving ..." + str(result))
+            except TransportQueryError as e:
+                print(e)
         return self.write_csv(ArxivApiScraper.dataset_path+"publications.csv", update_list)
     
     def scrape_newest_id(self):
@@ -155,8 +209,10 @@ class ArxivApiScraper:
                             arxiv_id = arxiv_id[:-2]
                         print("-- collect api metadata of publication id '" + str(arxiv_id) + "' ...")
                         # find published and updated timestamps
-                        pub_date = entry.find(xml_tag_prefix+'published').text
-                        upd_date = entry.find(xml_tag_prefix+'updated').text
+                        pub_date_str = entry.find(xml_tag_prefix+'published').text
+                        pub_date = datetime.datetime.strptime(pub_date_str,"%Y-%m-%dT%H:%M:%SZ") #2023-11-29T18:57:18Z
+                        upd_date_str = entry.find(xml_tag_prefix+'updated').text
+                        upd_date = datetime.datetime.strptime(upd_date_str,"%Y-%m-%dT%H:%M:%SZ") #2023-11-29T18:57:18Z
                         # find title
                         title = entry.find(xml_tag_prefix+'title').text.strip()
                         title = title.replace("\n", " ")
@@ -164,10 +220,9 @@ class ArxivApiScraper:
                         abstract = entry.find(xml_tag_prefix+'summary').text.strip()
                         abstract = abstract.replace("\n", " ")
                         # find author/s
-                        author = ""
+                        authors = list()
                         for author_tag in entry.findall(xml_tag_prefix+'author'):
-                            author += author_tag.find(xml_tag_prefix+'name').text + ", "
-                        author = author[:-2]
+                            authors.append(author_tag.find(xml_tag_prefix+'name').text)
                         # find pdf link and doi link
                         doi = "10.48550/arXiv."+arxiv_id
                         for link_tag in entry.findall(xml_tag_prefix+'link'):
@@ -210,7 +265,7 @@ class ArxivApiScraper:
                         pub = ArxivPublication(
                             arxiv_id=arxiv_id, 
                             title=title, 
-                            author=author, 
+                            authors=authors, 
                             src="https://arxiv.org/",
                             url=pdf_url,
                             pub_date=pub_date,
@@ -270,7 +325,7 @@ class ArxivApiScraper:
         with open(csv_path, 'a', newline='') as file:
             writer = csv.writer(file)
             for pub in pub_list:
-                writer.writerow([pub.arxiv_id, pub.title, pub.author, pub.src, pub.url, pub.pub_date, pub.upd_date, pub.doi, pub.abstract, pub.vector_data])
+                writer.writerow([pub.arxiv_id, pub.title, pub.authors, pub.src, pub.url, pub.pub_date, pub.upd_date, pub.doi, pub.abstract, pub.vector_dict])
         return True
     
     def read_csv(self, csv_path):

@@ -5,7 +5,7 @@ class Publication:
         self.upd_date:str = upd_date
         self.title:str = title
         self.abstract = abstract
-        self.author:str = author
+        self.authors:list = author
         self.doi:str = doi
         self.url:str = url
         self.vector_dict = vector_dict
