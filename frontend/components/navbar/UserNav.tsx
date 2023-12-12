@@ -55,7 +55,7 @@ export function UserNav() {
             <Link href="/profile">
               <DropdownMenuItem>Profile</DropdownMenuItem>
             </Link>
-            <Link href="/settings">
+            <Link href="/profile/settings">
               <DropdownMenuItem>Settings</DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>

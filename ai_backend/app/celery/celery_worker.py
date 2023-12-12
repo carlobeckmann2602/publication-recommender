@@ -1,8 +1,11 @@
+import pandas as pd
 from celery import Celery
 from celery.signals import worker_ready
 from app.celery import celeryconfig
-from app.engine import Recommender, Summarizer
+from app.engine import Recommender, Summarizer, device
 from app.util.misc import create_file_structure
+from app.graphql_backend import get_all_vectors
+from typing import Dict, List
 import shutil
 import requests
 import os
@@ -12,7 +15,6 @@ celery.config_from_object(celeryconfig)
 celery.data_path = os.environ["DATA_PATH"]
 celery.recommender_name = "recommender"
 celery.api = "http://ai_backend:" + os.environ["API_PORT"]
-celery.update_delay = 60 * 60
 
 create_file_structure(celery.data_path)
 
@@ -21,7 +23,7 @@ create_file_structure(celery.data_path)
 def on_worker_ready(**_):
     print("Starting Worker")
     update_recommender()
-    print("Run Worker")
+    print(f"Runing Worker on {device}")
 
 
 def get_recommender() -> Recommender:
@@ -32,16 +34,30 @@ def get_recommender() -> Recommender:
 
 def recommend_by_token(token: str, amount: int) -> dict:
     recommender = get_recommender()
-    result = recommender.get_match_by_token(str(token), amount).to_dict()
-    return result
+    matches = recommender.get_match_by_token(str(token), amount)
+    return convert_matching_to_response(matches, recommender.PUBLICATION_ID_KEY)
 
 
 def recommend_by_publication(publication_id: str, amount: int) -> dict:
     recommender = get_recommender()
-    if publication_id not in recommender.mapping[Recommender.PUB_ID_KEY].values:
+    if publication_id not in recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
         raise MissingPublication(f"Publication <{publication_id}> not in mapping")
     matches = recommender.get_match_by_id(str(publication_id), amount)
-    return matches.to_dict()
+    return convert_matching_to_response(matches, recommender.PUBLICATION_ID_KEY)
+
+
+def convert_matching_to_response(mathing: pd.DataFrame, pub_id_key: str) -> Dict[str, List[Dict[str, str | int]]]:
+    result = {"matches": []}
+    for index, row in mathing.iterrows():
+        pub_id = row[pub_id_key]
+        input_token = row["input_token"]
+        matching_token = row["matching_token"]
+        result["matches"].append({
+            "id": pub_id,
+            "input_token": input_token,
+            "mathing_token": matching_token
+        })
+    return result
 
 
 def summarize(input_text: str, amount: int, tokenize: bool | None = None):
@@ -130,4 +146,17 @@ class Tasks:
     @staticmethod
     @celery.task(name="build_annoy")
     def build_annoy():
-        print("Building Annoy")
+        recommender = get_recommender()
+        recommender.annoy_input_length = 768
+        result = get_all_vectors()
+        new_mapping, embeddings = recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
+        recommender.build_annoy(new_mapping, embeddings, "override")
+        if os.path.exists(celery.data_path + "/temp"):
+            shutil.rmtree(celery.data_path + "/temp")
+        recommender.save(path=celery.data_path, model_name="temp")
+        shutil.make_archive(celery.data_path + "/temp", format="zip", root_dir=celery.data_path + "/temp")
+        requests.post(celery.api + "/update_model/", files={"file": open(celery.data_path + "/temp.zip", "rb")})
+        shutil.rmtree(celery.data_path + "/temp")
+        os.remove(celery.data_path + "/temp.zip")
+        print(new_mapping.info())
+        print(new_mapping.head(10))

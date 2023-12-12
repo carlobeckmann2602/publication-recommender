@@ -20,13 +20,13 @@ export class Publications1698190282922 implements Seeder {
       descriptor.sentences = new Array(5).fill('').map(() => {
         const sentence = new SentenceDto();
         sentence.value = faker.lorem.sentence();
-        sentence.vector = new Array(500).fill('').map(() => faker.number.float({ min: 0, max: 1 }));
+        sentence.vector = new Array(768).fill('').map(() => faker.number.float({ min: 0, max: 1 }));
 
         return sentence;
       });
       const publication = new Publication();
       publication.exId = createHash('md5').update(uuidv4()).digest('hex');
-      publication.source = SourceVo.arxiv();
+      publication.source = SourceVo.ARXIV;
       publication.title = faker.lorem.sentence();
       publication.abstract = faker.lorem.sentences(3);
       publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;

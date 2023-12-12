@@ -15,9 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
-const FormSchema = z.object({
-  query: z.string(),
-});
+const FormSchema = z
+  .object({
+    query: z.string(),
+  })
+  .partial();
 
 type Props = {
   value?: string;
@@ -34,7 +36,7 @@ export function Searchbar(props: Props) {
   const router = useRouter();
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    router.push(`/search?q=${data.query}`);
+    if (data.query) router.push(`/search?q=${data.query}`);
   }
 
   return (

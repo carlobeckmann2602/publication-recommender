@@ -1,11 +1,11 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { DescriptorDto } from '../dto/descriptor.dto';
 import { DescriptorTransformer } from '../transformers/descriptor.transformer';
-import { SourceTransformer } from '../transformers/source.transformer';
 import { SourceVo } from '../vo/source.vo';
 
 @Entity('publications')
+@Unique('ex_id_source', ['exId', 'source'])
 export class Publication {
   @PrimaryGeneratedColumn('uuid')
   @Expose()
@@ -17,14 +17,13 @@ export class Publication {
 
   @Column({
     type: 'enum',
-    enum: SourceVo.getAvailableValues(),
-    transformer: new SourceTransformer(),
+    enum: SourceVo,
   })
   @Expose()
-  @Type(() => SourceVo)
   source: SourceVo;
 
   @Column()
+  @Index('idx_title')
   @Expose()
   title: string;
 
@@ -37,6 +36,7 @@ export class Publication {
   url: string | null;
 
   @Column({ nullable: true })
+  @Index('idx_publisher')
   @Expose()
   publisher: string | null;
 
@@ -44,13 +44,14 @@ export class Publication {
   @Expose()
   abstract: string | null;
 
-  @Column('varchar', { array: true })
+  @Column('varchar', { array: true, default: [] })
+  @Index('idx_gin_authors', { synchronize: false })
   @Expose()
   authors: string[] = [];
 
   @Column({ nullable: true })
   @Expose()
-  date: Date;
+  date: Date | null;
 
   @Column({ type: 'jsonb', transformer: new DescriptorTransformer() })
   @Expose()

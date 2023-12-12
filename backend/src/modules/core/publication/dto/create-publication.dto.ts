@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsIn, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsArray, IsOptional, IsString, IsUrl } from 'class-validator';
 import { SourceVo } from '../vo/source.vo';
 import { DescriptorDto } from './descriptor.dto';
 
@@ -11,9 +11,8 @@ export class CreatePublicationDto {
   @Field()
   exId: string;
 
-  @Field()
-  @IsIn(SourceVo.getAvailableValues())
-  source: string;
+  @Field(() => SourceVo)
+  source: SourceVo;
 
   @Field({ nullable: true })
   doi?: string;
@@ -29,7 +28,7 @@ export class CreatePublicationDto {
   @Field({ nullable: true })
   abstract?: string;
 
-  @Field((of) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsArray()
   @IsString({ each: true })
   authors: string[] = [];
@@ -37,6 +36,6 @@ export class CreatePublicationDto {
   @Field({ nullable: true })
   date?: Date;
 
-  @Field((type) => DescriptorDto)
+  @Field(() => DescriptorDto)
   descriptor: DescriptorDto;
 }

@@ -34,20 +34,28 @@ type PublicationResponseDto {
   doi: String
   url: String
   authors: [String!]
-  publicationDate: String
+  publicationDate: DateTime
+  isFavorite: Boolean!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Query {
-  publications(filter: String!): [PublicationResponseDto!]!
+  publicationsByQuery(filter: String!): [PublicationResponseDto!]!
+  publicationsById(filter: String!): [PublicationResponseDto!]!
+  publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
+  oldest(source: PublicationSource!): PublicationResponseDto!
+  newest(source: PublicationSource!): PublicationResponseDto!
+  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
+  favorites: [PublicationResponseDto!]!
 }
 
-type Mutation {
-  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
-  savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
-  register(data: RegisterDto!): LoggedIn!
-  login(data: LoginDto!): LoggedIn!
-  refreshToken(token: String!): JwtDto!
+enum PublicationSource {
+  ARXIV
 }
 
 input PublicationVectorsRequestDto {
@@ -55,10 +63,19 @@ input PublicationVectorsRequestDto {
   chunkSize: Int = 100
 }
 
+type Mutation {
+  savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
+  markAsFavorite(id: String!): Boolean!
+  unmarkAsFavorite(id: String!): Boolean!
+  register(data: RegisterDto!): LoggedIn!
+  login(data: LoginDto!): LoggedIn!
+  refreshToken(token: String!): JwtDto!
+}
+
 input CreatePublicationDto {
   title: String!
   exId: String!
-  source: String!
+  source: PublicationSource!
   doi: String
   url: String
   publisher: String
@@ -67,11 +84,6 @@ input CreatePublicationDto {
   date: DateTime
   descriptor: DescriptorDto!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 input DescriptorDto {
   sentences: [SentenceDto!]!

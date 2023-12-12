@@ -1,9 +1,12 @@
 import 'dotenv/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
+import { Favorite } from '../../modules/core/publication/entities/favorite.entity';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 import { User } from '../../modules/core/user/entities/user.entity';
 import { Publications1698190282922 } from '../seeders/1698190282922-publications';
+import { Users1702173590422 } from '../seeders/1702173590422-users';
+import { Favorites1702173668297 } from '../seeders/1702173668297-favorites';
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
@@ -14,10 +17,10 @@ const options: DataSourceOptions & SeederOptions = {
   database: process.env.DB_DATABASE,
   synchronize: false,
   logging: false,
-  entities: [User, Publication],
+  entities: [User, Publication, Favorite],
   migrations: [`${__dirname}/../migrations/**/*{.ts,.js}`],
   subscribers: [],
-  seeds: [Publications1698190282922],
+  seeds: [Publications1698190282922, Users1702173590422, Favorites1702173668297],
   factories: [],
 };
 

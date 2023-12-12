@@ -13,9 +13,9 @@ def filter_short_texts(key) -> pd.DataFrame:
 
 
 def build_and_save():
-    recommender_system.add_to_mapping(dataset=data, data_key="article_text", id_key="article_id")
-    recommender_system.build_annoy()
-    recommender_system.save(model_name="arxiv_6k-v2")
+    new_mapping, embeddings = recommender_system.convert_to_mapping(data, "article_id", "article_text", "text")
+    recommender_system.build_annoy(new_mapping, embeddings, "override")
+    recommender_system.save(model_name="arxiv_6k-v3")
 
 
 def sample_test():
@@ -63,11 +63,10 @@ if __name__ == '__main__':
     print(data.sample().iloc[0]["article_id"])
     summy = Summarizer(transformer="all-mpnet-base-v2", debug=True, tokenize=False)
     recommender_system = Recommender(summarization=summy,
-                                     transformer="all-mpnet-base-v2",
                                      token_amount=5,
                                      annoy_input_length=768,
                                      annoy_n_trees=100)
-    recommender_system.load(model_name="arxiv_6k-v2-test")
-#    build_and_save()
+    recommender_system.load(model_name="arxiv_6k-v3")
+    build_and_save()
 #    sample_test()
 

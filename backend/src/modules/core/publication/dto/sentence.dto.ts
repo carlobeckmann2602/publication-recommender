@@ -7,7 +7,7 @@ export class SentenceDto {
   @Expose()
   value: string;
 
-  @Field((type) => [Float])
+  @Field(() => [Float])
   @Expose()
   vector: number[];
 }
