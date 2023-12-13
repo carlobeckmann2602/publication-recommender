@@ -1,0 +1,2123 @@
+Improved Frequency Estimation Algorithms with and
+without Predictions
+Anders Aamand
+MIT
+aamand@mit.eduJustin Y. Chen
+MIT
+justc@mit.eduHuy Lê Nguyê ˜n
+Northeastern University
+hu.nguyen@northeastern.edu
+Sandeep Silwal
+MIT
+silwal@mit.eduAli Vakilian
+TTIC
+vakilian@ttic.edu
+Abstract
+Estimating frequencies of elements appearing in a data stream is a key task in large-
+scale data analysis. Popular sketching approaches to this problem (e.g., CountMin
+and CountSketch) come with worst-case guarantees that probabilistically bound
+the error of the estimated frequencies for any possible input. The work of Hsu
+et al. (2019) introduced the idea of using machine learning to tailor sketching
+algorithms to the specific data distribution they are being run on. In particular, their
+learning-augmented frequency estimation algorithm uses a learned heavy-hitter
+oracle which predicts which elements will appear many times in the stream. We
+give a novel algorithm, which in some parameter regimes, already theoretically
+outperforms the learning based algorithm of Hsu et al. without the use of any pre-
+dictions. Augmenting our algorithm with heavy-hitter predictions further reduces
+the error and improves upon the state of the art. Empirically, our algorithms achieve
+superior performance in all experiments compared to prior approaches.
+1 Introduction
+In frequency estimation, we stream a sequence of elements from [n] :={1, . . . , n }, and the goal is to
+estimate fi, the frequency of the ith element, at the end of the stream using low-space. Frequency
+estimation is one of the central problems in data streaming with a wide range of applications from
+networking (gathering important monitoring statistics [ 31,62,46]) to machine learning (NLP [ 33],
+feature selection [ 3], semi supervised learning [ 58]). CountMin (CM) [ 20] and CountSketch (CS)
+[14] are arguably the most popular and versatile of the algorithms for frequency estimation, and are
+implemented in many popular packages such as Spark [63], Twitter Algebird [10], and Redis.
+Standard approaches to frequency estimation are designed to perform well in the worst-case due to
+the multitudinous benefits of worst-case guarantees. However, algorithms designed to handle any
+possible input do not exploit special structure of the particular distribution of inputs they are used
+for. In practice, these patterns can be described by domain experts or learned from historical data.
+Following the burgeoning trend of combining machine learning and classical algorithm design, [ 36]
+initiated the study of learning-augmented frequency estimation by extending the classical CM and CS
+algorithms in a simple but effective manner via a heavy-hitters oracle. During a training phase, they
+construct a classifier (e.g. a neural network) to detect whether an element iis “heavy” (e.g., whether
+fiis among the most frequent items). After such a classifier is trained, they scan the input stream,
+and apply the classifier to each element i. If the element is predicted to be heavy, it is allocated a
+unique bucket, so that an exact value of fiis computed. Otherwise, the stream element is inputted
+into the standard sketching algorithms.
+37th Conference on Neural Information Processing Systems (NeurIPS 2023).arXiv:2312.07535v1  [cs.DS]  12 Dec 2023The advantage of their algorithm was analyzed under the assumption that the true frequencies follow
+a heavy-tailed Zipfian distribution. This is a common and natural reoccurring pattern in real world
+data where there are a few very frequent elements and many infrequent elements. Experimentally,
+[36] showed several real datasets where the Zipfian assumption (approximately) held and useful
+heavy-hitter oracles could be trained in practice. Our paper is motivated by the following natural
+questions and goals in light of prior works:
+Can we design better frequency estimation algorithms (with and without predic-
+tions) for heavy-tailed distributions?
+In particular, we consider the setting of [ 36] where the underlying data follow a heavy-tailed distri-
+bution and investigate whether sketching algorithms can be further tailored for such distributions.
+Before tackling this question, we must tightly characterize the benefits–and limitations–of these
+existing methods, which is another goal of our paper:
+Give tight error guarantees for CountMin and CountSketch, as well as their
+learning-augmented variants, on Zipfian data.
+Lastly, any algorithms we design must possess worst case bounds in the case that either the data does
+not match our Zipfian (or more generally, heavy-tailed) assumption or the learned predictions have
+high error, leading to the following ‘best of both worlds’ goal:
+Design algorithms which exploit heavy tailed distributions and ML predictions but
+also maintain worst-case guarantees.
+We addresses these challenges and goals and our contributions can be summarized as follows:
+•We give tight upper and lower bounds for CM and CS, with and without predictions, for heavy
+tailed distributions. A surprising conclusion from our analysis is that (for a natural error metric)
+a constant number of rows is optimal for both CM and CS. In addition, our theoretical analysis
+shows that CS outperforms CM, both with and without predictions, validating the experimental
+results of [36].
+•We go beyond CM and CS based algorithms to give a better frequency estimation algorithm for
+heavy tailed distributions, with and without the use of predictions. We show that our algorithms can
+deliver up to a logarithmic factor improvement in the error bound over CS and its learned variant.
+In addition, our algorithm has worst case guarantees.
+•Prior learned approaches require querying an oracle for every element in the stream. In contrast,
+we obtain a parsimonious version of our algorithm which only requires a limited number of queries
+to the oracle. The number of queries we use is approximately equal to the given space budget.
+•Lastly, we evaluate our algorithms on two real-world datasets with and without ML based predic-
+tions and show superior empirical performance compared to prior work in all cases.
+1.1 Preliminaries
+Notation and Estimation Error The stream updates an ndimensional frequency vector and
+every stream element is of the form (i,∆)where i∈[n]and∆∈Rdenotes the update on the
+coordinate. The final frequency vector is denoted as f∈Rn. LetN=P
+i∈[n]fidenote the sum of
+all frequencies. To simplify notation, we assume that f1≥f2≥. . .≥fn.˜fidenotes the estimate of
+the frequency fi. Given estimates {˜fi}i∈[n], the error of a particular frequency is |˜fi−fi|. We also
+consider the following notion of overall weighted error as done in [36]:
+Weighted Error: =1
+NX
+i∈[n]fi· |˜fi−fi|. (1)
+The weighted error can be interpreted as measuring the error with respect to a query distribution
+which is the same as the actual frequency distribution. As stated in [ 36], theoretical guarantees of
+frequency estimation algorithms are typically phrased in the traditional (ε, δ)-error formulations.
+However as argued in there, the simple weighted objective (1)is a more holistic measure and does
+not require tuning of two different parameters, and is thus more natural from an ML perspective.
+2Zipfian Stream We also work under the common assumption that the frequencies follow the Zipfian
+law, i.e., the ith largest frequency fiis equal to A/ifor some parameter A. Note we know Aat the
+end of the stream since the stream length is A·Hn. By rescaling, we may assume that A= 1without
+loss of generality. We will make this assumption throughout the paper.
+CountMin (CM) For parameters kandB, which determine the total space used, CM uses k
+independent and uniformly random hash functions h1, . . . , h k: [n]→[B]. Letting Cbe an array of
+size[k]×[B]we let C[ℓ, b] =P
+j∈[n][hℓ(j) =b]fj. When querying i∈[n]the algorithm returns
+˜fi= min ℓ∈[k]C[ℓ, hℓ(i)]. Note that we always have that ˜fi≥fi.
+CountSketch (CS) In CS, we again have the hash functions hias above as well as sign functions
+s1, . . . , s k: [n]→ {− 1,1}. The array Cof size [k]×[B]is now tracks C[ℓ, b] =P
+j∈[n][hℓ(j) =
+b]sℓ(j)fj. When querying i∈[n]the algorithm returns the estimate ˜fi=median ℓ∈[k]sℓ(i)·
+C[ℓ, hℓ(i)].
+Learning-Augmented Sketches [ 36]Given a base sketching algorithm (either CM or CS) and
+a space budget B, the corresponding learning-augmented algorithm (learned CM or learned CS)
+allocates a constant fraction of the space Bto the base sketching algorithm and the rest of the space
+to store items identified as heavy by a learned predictor. These items predicted to be heavy-hitters are
+stored in a separate table which maintains their counts exactly, and their updates are not sent to the
+sketching algorithm.
+1.2 Summary of Main Results and Paper Outline
+Our analysis, both of CM and CS, our algorithm, and prior work, is summarized in Table 1.
+Algorithm Weighted Error Uses Predictions? Reference
+CountMin (CM) Θ
+logn
+B
+No Theorem B.1
+CountSketch (CS) Θ 1
+B
+No Theorem C.4
+Learned CountMin Θ
+log(n/B)2
+Blogn
+Yes [36]
+Learned CountSketch Θ
+log(n/B)
+Blogn
+Yes Theorem D.1
+Our (Without predictions) O
+logB+poly(log log n)
+Blogn
+No Theorem 2.1
+Our (Learned version) O
+1
+Blogn
+Yes Theorem 3.1
+Table 1: Bounds are stated assuming that the total space is Bwords of memory. Weighted error
+means that element iis queried with probability proportional to 1/i. Moreover, the table considers
+normalized frequencies, so that fi= 1/i.
+Summary of Theoretical Results We interpret Table 1. Bdenotes the space bound, which is the
+total number of entries used in the CM or CS tables. First note that CS achieves lower weighted
+error compared to CM, proving the empirical advantage observed in [ 36]. However, the learned
+version of CS only improves upon standard CS in the regime B=n1−o(1). While this setting does
+appear sometimes in practice [ 33,36] (referred to as high-accuracy regime), for CS, learning gives
+no asymptotic advantage in the low space regime.
+On the other hand, in the low space regime of B=poly(logn), our algorithm, without predictions,
+already archives close to a logarithmic factor improvement over even learned CS. Furthermore, our
+learning-augmented algorithm achieves a logarithmic factor improvement over classical CS across
+all space regimes, whereas the learned CS only achieves a logarithmic factor improvement in the
+regime B=n1−o(1).Furthermore, our learned version outperforms or matches learned CS in all
+space regimes.
+3Our learning-augmented algorithm can also be made parsimonious in the sense that we only query
+the heavy-hitter oracle ˜O(B)times. This is desirable in large-scale streaming applications where
+evaluating even a small neural network on every single element would be prohibitive.
+Remark 1.1. We remark that all bounds in this paper are proved by bounding the expected error
+when estimating the frequency of a single item, E[|˜fi−fi|], then using linearity of expectation. While
+we specialized our bounds to a query distribution which is proportional to the actual frequencies in
+(1), our bounds can be easily generalized to anyquery distribution by simply weighing the expected
+errors of different items according to the given query distribution.
+Summary of Empirical Results We compare our algorithm without prediction to CS and our
+algorithm with predictions to that of [ 36] on synthetic Zipfian data and on two real datasets corre-
+sponding to network traffic and internet search queries. In all cases, our algorithms outperform the
+baselines and often by a significant margin (up to 17xin one setting). The improvement is especially
+pronounced when the space budget is small.
+Outline of the Paper Our paper is divided into roughly two parts. One part covers novel and
+tight analysis of the classical algorithms CountMin (CM) and CountSketch (CS). The second part
+covers our novel algorithmic contributions which go beyond CM and CS. The main body of our
+paper focuses on our novel algorithmic components, i.e. the second part, and we defer our analysis
+of the performance of CountMin (CM) and CountSketch (CS), with and without predictions, to the
+appendix: in Section B we give tight analysis of CM for a Zipfian frequency distribution. In Section
+C we give the analogous bounds for CS. Lastly, Section D gives tight bounds for CS with predictions.
+Section 2 covers our better frequency estimation without predictions while Section 3 covers the
+learning-augmented version of the algorithm, as well as its extentions.
+1.3 Related Works
+Frequency Estimation While there exist other frequency estimation algorithms beyond CM and
+CS (such as [ 51,48,21,40,49,11] ) we study hashing based methods such as CM [ 20] and CS [ 14]
+as they are widely employed in practice and have additional benefits, such as supporting insertions
+and deletions , and have applications beyond frequency estimation, such as in machine learning
+(feature selection [3], compressed sending [13, 25], and dimensionality reduction [61, 18] etc.).
+Learning-augmented algorithms The last few years have witnessed a rapid growth in using
+machine learning methods to improve “classical” algorithmic problems. For example, they have
+been used to improve the performance of data structures [ 42,52], online algorithms [ 47,56,32,
+5,60,43,1,6,4,22,34], combinatorial optimization [ 41,7,43,53,23,16], similarity search and
+clustering [ 59,24,30,54,57]. Similar to our work, sublinear constraints, such as memory or sample
+complexity, have also been studied under this framework [36, 38, 39, 19, 27, 28, 15, 44, 57].
+2 Improved Algorithm without Predictions
+We first present our frequency estimation algorithm which does not use any predictions. Later, we
+build on top of it for our final learning-augmented frequency estimation algorithm.
+The main guarantees of of the algorithm is the following:
+Theorem 2.1. Consider Algorithm 1 with space parameter B≥lognupdated over a Zipfian stream.
+Let{ˆfi}n
+i=1denote the estimates computed by Algorithm 2. The expected weighted error (1)is
+Eh
+1
+N·Pn
+i=1fi· |fi−ˆfi|i
+=O
+logB+poly(log log n)
+Blogn
+.
+Algorithm and Proof intuition: LetB′=B/log log n. At a high level, we show that for
+every i≤B′, we execute line 10 of Algorithm 2 and the error satisfies |1/i−ˆfi| ≈1/B′(recall
+in the Zipfian case, the ith largest frequency is fi= 1/i). On the other hand, for i≥B′, we
+show that (with sufficiently high probability) line 8 of Algorithm 2 will be executed, resulting in
+|1/i−ˆfi|=|1/i−0|= 1/i.
+4Algorithm 1 (Not augmented) Frequency update algorithm
+1:Input: Stream of updates to an ndimensional vector, space budget B
+2:procedure UPDATE
+3: T←Θ(log log n)
+4: forj= 1toT−1do
+5: Sj←CountSketch table with 3rows andB
+6Tcolumns
+6: end for
+7: ST←CountSketch table with 3rows andB
+6columns
+8: forstream element (i,∆)do
+9: Input (i,∆)in each of the TCountSketch tables Sj
+10: end for
+11:end procedure
+Algorithm 2 (Not augmented) Frequency estimation algorithm
+1:Input: Index i∈[n]for which we want to estimate fi
+2:procedure QUERY
+3: forj= 1toT−1do
+4: ˆfj
+i←estimate of the ith frequency given by table Sj
+5: end for
+6: ˜fi←Median (ˆf1
+i, . . . , ˆfT−1
+i)
+7: if˜fi< O((log log n))/Bthen
+8: Return 0
+9: else
+10: Return ˆfT
+i, the estimate given by table ST
+11: end if
+12:end procedure
+It might be perplexing at first sight why we wish to set the estimate to be 0, but this idea has solid
+intuition: it turns out the additive error of standard CountSketch with B′columns is actually of the
+order 1/B′. Thus, it does not make sense to estimate elements whose true frequencies are much
+smaller than 1/B′using CountSketch. A challenge is that we do not know a priori which elements
+these are. We circumvent this via the following reasoning: if CountSketch itself outputs ≈1/B′as
+the estimate, then either one of the following must hold:
+•The element has frequency 1/i≪1/B′, in which case we should set the estimate to 0to obtain
+error 1/i, as opposed to error 1/B′−1/i≈1/B′.
+•The true element has frequency ≈1/B′in which case either using the output of the CountSketch
+table or setting the estimate to 0both obtain error approximately O(1/B′), so our choice is
+inconsequential.
+In summary, the output of CountSketch itself suggests whether we should output an estimated
+frequency as 0. We slightly modify the above approach with O(log log n)repetitions to obtain
+sufficiently strong concentration, leading to a robust method to identify small frequencies. The proof
+formalizes the above plan and is given in full detail in Section E.
+By combining our algorithm with predictions, we obtain improved guarantees.
+3 Improved Learning-Augmented Algorithm
+Theorem 3.1. Consider Algorithm 3 with space parameter B≥lognupdated over a Zipfian stream.
+Suppose we have access to a heavy-hitter oracle which correctly identifies the top B/2heavy-hitters
+in the stream. Let {ˆfi}n
+i=1denote the estimates computed by Algorithm 4. The expected weighted
+error (1)isEh
+1
+N·Pn
+i=1fi· |fi−ˆfi|i
+=O
+1
+Blogn
+.
+5Algorithm 3 (Learning-augmented) Frequency update algorithm
+1:Input: Stream of updates to an ndimensional vector, space budget B, access to a heavy-hitter
+oracle which correctly identifies the top B/2heavy-hitters
+2:procedure UPDATE
+3: T←O(log log n)
+4: forj= 1toT−1do
+5: Sj←CountSketch table with 3rows andB
+12Tcolumns
+6: end for
+7: ST←CountSketch table with 3rows andB
+12columns
+8: forstream element (i,∆)do
+9: ifiis a top B/2heavy-hitter then
+10: Maintain the frequency of iexactly
+11: else
+12: Input (i,∆)in each of the TCountSketch tables Sj
+13: end if
+14: end for
+15:end procedure
+Algorithm 4 (Learning-augmented) Frequency estimation algorithm
+1:Input: Index i∈[n]for which we want to estimate fi
+2:procedure QUERY
+3: ifiis a top B/2heavy-hitter then
+4: Output the exact maintained frequency of i
+5: else
+6: Return ˆfi←output of Alg. 2 using the CountSkech tables created in Alg.3
+7: end if
+8:end procedure
+Algorithm and Proof Intuition: Our final algorithm follows a similar high-level design pattern
+used in the learned CM algorithm of [ 36]: given an oracle prediction, we either store the frequency of
+heavy element directly, or input the element into our algorithm from the prior section which does not
+use any predictions.
+The workhorse of our analysis is the proof of Theorem 2.1. First note that we obtain 0error for
+i < B/ 2. Thus, all error comes from indices i≥B/2. Recall the intuition for this case from
+Theorem 2.1: we want to output 0as our estimates as this results in lower error than the additive error
+from CS. The same analysis as in the proof of Theorem 2.1 shows that we are able to detect small
+frequencies and appropriately output an estimate from either the Tth CS table or output 0.
+3.1 Parsimonious Learning
+In Theorem 3.1, we assumed access to a heavy-hitter oracle which we can use on every single stream
+element to predict if it is heavy. In practical streaming applications, this will likely be infeasible.
+Indeed, even if the oracle is a small neural network, it is unlikely that we can query it for every single
+element in a large-scale streaming application. We therefore consider the so called parsimonious
+setting with the goal of obtaining the same error bounds on the expected error but with an algorithm
+that makes limited queries to the heavy-hitter oracle. This setting has recently been explored for other
+problems in the learning-augmented literature [37, 9, 26].
+Our algorithm works similarly to Algorithm 3 except that when an element (i,∆)arrives, we only
+query the heavy-hitter oracle with some probability p(proportional to ∆). We will choose pso that
+we in expectation only query ˜O(B)elements, rather than querying the entire stream. To be precise,
+whenever an item arrives, we first check if it is already classified as one of the top B/2heavy-hitters
+in which case, we update its exact count (from the point in time where was classified as heavy).
+Otherwise, we query the heavy-hitter oracle with probability p. In case the item is queried and is
+indeed one of the top B/2heavy-hitters, we start an exact count of that item. An arriving item which
+6is not used as a query for the heavy-hitter oracle and was not earlier classified as a heavy-hitter is
+processed as in Algorithm 3.
+Querying for an element, we first check if it is classified as a heavy-hitter and if so, we use the
+estimate from the separate lookup table. If not, we estimate its frequency using Algorithm 4. With
+this algorithm, the count of a heavy-hitter will be underestimated since it may appear several times in
+the stream before it is used as a query for the oracle and we start counting it exactly. However, with
+our choice of sampling probability, with high probability it will be sampled sufficiently early to not
+affect its final count too much. We present the pseudocode of the algorithm as well as the precise
+result and its proof in Appendix G.
+3.2 Algorithm variant with worst case guarantees
+In this section we discuss a variant of our algorithm with worst case guarantees. To be more precise,
+we consider the case where the actual frequency distribution is not Zipfian. The algorithm we discuss
+is actually a more general case of Algorithm 2 and in fact, it completely recovers the asymptotic error
+guarantees of Theorem 2.1 (as well as Theorem 4 if we use predictions).
+Recall that Algorithm 2 outputs 0when the estimated frequency is below T/B forT=O(log log n).
+This parameter has been tuned to the Zipfian case. As stated in Section 2, the main intuition for
+this parameter is that it is of the same order as the additive error inherent in CountSketch, which we
+discuss now. Denote by fPthe frequency vector where we zero out the largest Pcoordinates. For
+every frequency, the expected additive error incurred by a CountSketch table with B′columns is
+O(∥fB′∥2/√
+B′). In the Zipfian case, this is equal to O∥fB′∥2√
+B′
+=O 1
+B′
+, which is exactly the
+threshold we set1. Thus, our robust variant simply replaces this tuned parameter O(T/B)with an
+estimate of O(∥fB′∥2/√
+B′)where B′=B/T . We given an algorithm which efficiently estimates
+this quantity in a stream. Note this quantity is only needed for the query phase.
+Lemma 3.2. With probability at least 1−exp (Ω ( B)), Algorithm 6 outputs an estimate Vsatisfying
+Ω
+∥f3B′∥2
+2/B′
+≤V≤OfB′/102
+2/B′
+.
+The algorithm and analysis are given in Section H. Replacing the threshold in Line 7of Algorithm
+2 with the output of Algorithm 6 (more precisely the square root of the value) readily gives us the
+following worst case guarantees. Lemma 3.3 states that the expected error of the estimates outputted
+by Algorithm 2 using B, regardless of the true frequency distribution, is no worse than that of a
+standard CountSketch table using slightly smaller O(B/log log n)space.
+Lemma 3.3. Suppose B≥logn. Let{ˆfi}n
+i=1denote the estimates of Algorithm 2 using B/2space
+and with Line 7replaced by the square root of the estimate of Algorithm 6, also using B/2space.
+Suppose the condition of Lemma 3.2 holds. Let {ˆf′
+i}n
+i=1denote the estates computed by a CountSketch
+table withcB
+log log ncolumns for a sufficiently small constant c. Then, E[|ˆfi−fi|]≤E[|ˆf′
+i−fi|].
+Remark 3.1. The learned version of the algorithm automatically inherits any worst case guarantees
+from the unlearned (without predictions) version. This is because we only set aside half the space to
+explicitly track the frequency of some elements, which has worst case guarantees, while the other half
+is used for the unlearned version, also with worst case guarantees.
+4 Experiments
+We experimentally evaluate our algorithms with and without predictions on real and synthetic
+datasets and demonstrate that the improvements predicted by theory hold in practice. Comprehensive
+additional figures are given in Appendix J.
+Algorithm Implementations In the setting without predictions, we compare our algorithm to
+CountSketch (CS) (which was shown to have favorable empirical performance compared to CountMin
+(CM) in [ 36] and better theoretical performance due to our work). In the setting with predictions, we
+compare the algorithm of [ 36], using CS as the base sketch and dedicated half of the space for items
+1Recall B′=B/T in Algorithm 2.
+7100101102103104105106
+Sorted Elements101103105FrequencyCAIDA Log-Log Frequencies
+100101102103104105
+Sorted Elements100101102103FrequencyAOL Log-Log FrequenciesFigure 1: Log-log plots of the sorted frequencies of the first day/minute of the CAIDA/AOL datasets.
+Both data distributions are heavy-tailed with few items accounting for much of the total stream.
+500 1000 1500 2000 2500 3000
+Space2468Weighted Error1e11
+ CAIDA Day #20
+CS
+CS (nonneg)
+Ours (C=1.0)
+Ours (C=2.0)
+Ours (C=5.0)
+0 10 20 30 40 50
+Minute1.52.02.53.03.54.04.5Weighted Error1e11
+ Space: 750.0
+CS
+CS (nonneg)
+Ours (C=5)
+Figure 2: Comparison of weighted error without predictions on the CAIDA dataset. The left plot
+compares the performance of various algorithms (including our algorithm with different choices
+ofC) for a fixed dataset and varying space. The right plot compares algorithms over time across
+separate streams for each minute of data for a specific choice of space being 750.
+which are predicted to be heavy by the learned oracle. For all implementations, we use three rows in
+the CS table and vary the number of columns. We additionally augment each of these baselines with a
+version that truncates all negative estimated frequencies to zero as none of our datasets include stream
+deletions. This simple change does not change the asymptotic (ε, δ)classic sketching guarantees but
+does make a big difference when measuring empirical weighted error.
+We implement a simplified and practical version of our algorithm which uses a single CS table. If the
+median estimate of an element is below a threshold of Cn/w for domain size n, sketch width w(a
+third of the total space), and a tunable constant C, the estimate is instead set to 0. As all algorithms
+use a single CS table as the basic building block with different estimation functions, for each trial we
+randomly sample hash functions for a single CS table and only vary the estimation procedure used.
+We evaluate algorithms according the weighted error as in Equation (1) but also according to
+unweighted error which is simply the sum over all elements of the absolute estimation error, given byP
+i|fi−˜fi|. Space is measured by the size of the sketch table, and all errors are averaged over 10
+independent trials with standard deviations shown shaded in.
+Datasets We compare our algorithm with prior work on three datasets. We use the same two real-
+world datasets and predictions from [ 36]: the CAIDA and AOL datasets. The CAIDA dataset [ 12]
+contains 50 minutes of internet traffic data. For each minute of data, the stream is formed of the IP
+addresses associated with packets going through a Tier1 ISP. A typical minute of data contains 30
+million packets accounted for by 1 million IPs. The AOL dataset [ 55] contains 80 days of internet
+search queries with a typical day containing ≈3·105total queries and ≈105unique queries. As
+shown in Figure 1, both datasets approximately follow a power law distribution. For both datasets, we
+use the predictions from prior work [ 36] formed using recurrent neural networks. We also generate
+synthetic data following a Zipfian distribution with n= 107elements and where the ith element has
+frequency n/i.
+Results Across the board, our algorithm outperforms the baselines. On the CAIDA and AOL
+datasets without predictions, our algorithm consistently outperforms the standard CS with up to 4x
+smaller error with space 300. This gap widens when we compare our algorithm with predictions
+8500 1000 1500 2000 2500 3000
+Space0.20.40.60.81.01.21.4Weighted Error1e12
+ CAIDA Day #20
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1.0)
+Ours (C=2.0)
+Ours (C=5.0)
+0 10 20 30 40 50
+Minute1234567Weighted Error1e11
+ Space: 750.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)Figure 3: Comparison of weighted error with predictions on the CAIDA dataset.
+500 1000 1500 2000 2500 3000
+Space0.00.51.01.52.02.53.03.5Weighted Error1e7
+ AOL Day #50
+CS
+CS (nonneg)
+Ours (C=1.0)
+Ours (C=2.0)
+Ours (C=5.0)
+0 10 20 30 40 50 60 70 80
+Day0.51.01.52.02.53.0Weighted Error1e7
+ Space: 750.0
+CS
+CS (nonneg)
+Ours (C=1)
+Figure 4: Comparison of weighted error without predictions on the AOL dataset.
+to that of [ 36] with a gap of up to 17xwith space 300. In all cases, the performance of CS and
+[36] is significantly improved by the simple trick of truncating negative estimates to zero. However,
+our algorithm still outperforms these “nonneg” baselines. The longitudinal plots which compare
+algorithms over time show that our algorithm consistently outperforms the state-of-the-art with and
+without predictions.
+In the case of the CAIDA dataset, predictions do not generally improve the performance of any
+of the algorithms. This is consistent with the findings of [ 36] where the prediction quality for the
+CAIDA dataset was relatively poor. However, for the AOL which has a more accurate learned oracle,
+our algorithm in particular is significantly improved when augmented with predictions. Intuitively,
+the benefit of our algorithm comes from removing error due to noise for low frequency elements.
+Conversely, good predictions help to obtain very good estimates of high frequency elements. In
+combination, this yields very small total weighted error.
+In Appendix J, we display comprehensive experiments of the performance of the algorithms across
+the CAIDA and AOL datasets with varying space and for both weighted and unweighted error as
+well as results for synthetic Zipfian data. In all cases, our algorithm outperforms the baselines. On
+synthetic Zipfian, the gap between our algorithm and the non-negative CS for weighted error is
+relatively small compared to that for the real datasets. While we mainly focus on weighted error in
+this work, the benefits of our algorithm are even more significant for unweighted error as setting
+estimates below the noise floor to zero is especially impactful for this error measure. In general, we
+see the trend, matching our theoretical results, that as space increases, the gap between the different
+algorithms shrinks as the estimates of the base CS become more accurate.
+Acknowledgements
+We are grateful to Piotr Indyk for insightful discussions. Anders Aamand is supported by DFF-
+International Postdoc Grant 0164-00022B from the Independent Research Fund Denmark and a
+Simons Investigator Award. Justin Chen is supported by an NSF Graduate Research Fellowship under
+Grant No. 174530. Huy Nguyen is supported by NSF Grants 2311649 and 1750716.
+9500 1000 1500 2000 2500 3000
+Space0.00.51.01.52.02.53.03.5Weighted Error1e7
+ AOL Day #50
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1.0)
+Ours (C=2.0)
+Ours (C=5.0)
+0 10 20 30 40 50 60 70 80
+Day0.00.51.01.52.02.53.0Weighted Error1e7
+ Space: 750.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)Figure 5: Comparison of weighted error with predictions on the AOL dataset.
+References
+[1]Anders Aamand, Justin Y . Chen, and Piotr Indyk. (Optimal) Online Bipartite Matching with
+Degree Information. In Advances in Neural Information Processing Systems , volume 35, 2022.
+[2]Noga Alon, Yossi Matias, and Mario Szegedy. The space complexity of approximating the
+frequency moments. In Proceedings of the twenty-eighth annual ACM symposium on Theory of
+computing , pages 20–29, 1996.
+[3]Amirali Aghazadeh and Ryan Spring and Daniel LeJeune and Gautam Dasarathy and Anshumali
+Shrivastava and Richard G. Baraniuk. Mission: Ultra large-scale feature selection using count-
+sketches. In International Conference on Machine Learning , pages 80–88. PMLR, 2018.
+[4]Keerti Anand, Rong Ge, and Debmalya Panigrahi. Customizing ml predictions for online
+algorithms. In International Conference on Machine Learning , pages 303–313, 2020.
+[5]Spyros Angelopoulos, Christoph Dürr, Shendan Jin, Shahin Kamali, and Marc Renault. Online
+computation with untrusted advice. In 11th Innovations in Theoretical Computer Science
+Conference (ITCS 2020) . Schloss Dagstuhl-Leibniz-Zentrum für Informatik, 2020.
+[6]Antonios Antoniadis, Christian Coester, Marek Eliáš, Adam Polak, and Bertrand Simon. Online
+metric algorithms with untrusted predictions. ACM Transactions on Algorithms , 19(2):1–34,
+2023.
+[7]Maria-Florina Balcan, Travis Dick, Tuomas Sandholm, and Ellen Vitercik. Learning to branch.
+InInternational Conference on Machine Learning , pages 353–362, 2018.
+[8]George Bennett. Probability inequalities for the sum of independent random variables. Journal
+of the American Statistical Association , 57(297):33–45, 1962.
+[9]Aditya Bhaskara, Ashok Cutkosky, Ravi Kumar, and Manish Purohit. Logarithmic regret from
+sublinear hints. In Advances in Neural Information Processing Systems 34: Annual Conference
+on Neural Information Processing Systems 2021 , pages 28222–28232, 2021.
+[10] Oscar Boykin, Avi Bryant, Edwin Chen, ellchow, Mike Gagnon, Moses Nakamura, Steven
+Noble, Sam Ritchie, Ashutosh Singhal, and Argyris Zymnis. Algebird. https://twitter.
+github.io/algebird/ , 2016.
+[11] Vladimir Braverman, Stephen R Chestnut, Nikita Ivkin, Jelani Nelson, Zhengyu Wang, and
+David P Woodruff. Bptree: an l2 heavy hitters algorithm using constant memory. In Proceedings
+of the 36th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems ,
+pages 361–376, 2017.
+[12] CAIDA. Caida internet traces, chicago. http://www.caida.org/data/monitors/passive-equinix-
+chicago.xml, 2016.
+[13] Emmanuel J Candès, Justin Romberg, and Terence Tao. Robust uncertainty principles: Exact
+signal reconstruction from highly incomplete frequency information. IEEE Transactions on
+information theory , 52(2):489–509, 2006.
+[14] Moses Charikar, Kevin Chen, and Martin Farach-Colton. Finding frequent items in data streams.
+InInternational Colloquium on Automata, Languages, and Programming , pages 693–703.
+Springer, 2002.
+10[15] Justin Y . Chen, Talya Eden, Piotr Indyk, Honghao Lin, Shyam Narayanan, Ronitt Rubinfeld,
+Sandeep Silwal, Tal Wagner, David P. Woodruff, and Michael Zhang. Triangle and four cycle
+counting with predictions in graph streams. In 10th International Conference on Learning
+Representations, ICLR , 2022.
+[16] Justin Y . Chen, Sandeep Silwal, Ali Vakilian, and Fred Zhang. Faster fundamental graph
+algorithms via learned predictions. In International Conference on Machine Learning, ICML ,
+volume 162 of Proceedings of Machine Learning Research , pages 3583–3602, 2022.
+[17] Herman Chernoff. A measure of asymptotic efficiency for tests of a hypothesis based on the
+sum of observations. Annals of Mathematical Statistics , 23(4):493–507, 1952.
+[18] Kenneth L Clarkson and David P Woodruff. Low-rank approximation and regression in input
+sparsity time. Journal of the ACM (JACM) , 63(6):1–45, 2017.
+[19] Edith Cohen, Ofir Geri, and Rasmus Pagh. Composable sketches for functions of frequencies:
+Beyond the worst case. In Proceedings of the 37th International Conference on Machine
+Learning , 2020.
+[20] Graham Cormode and Shan Muthukrishnan. An improved data stream summary: the count-min
+sketch and its applications. Journal of Algorithms , 55(1):58–75, 2005.
+[21] Erik D Demaine, Alejandro López-Ortiz, and J Ian Munro. Frequency estimation of internet
+packet streams with limited space. In Esa, volume 2, pages 348–360. Citeseer, 2002.
+[22] Ilias Diakonikolas, Vasilis Kontonis, Christos Tzamos, Ali Vakilian, and Nikos Zarifis. Learning
+online algorithms with distributional advice. In International Conference on Machine Learning ,
+pages 2687–2696, 2021.
+[23] Michael Dinitz, Sungjin Im, Thomas Lavastida, Benjamin Moseley, and Sergei Vassilvit-
+skii. Faster matchings via learned duals. Advances in neural information processing systems ,
+34:10393–10406, 2021.
+[24] Yihe Dong, Piotr Indyk, Ilya Razenshteyn, and Tal Wagner. Learning sublinear-time indexing
+for nearest neighbor search. arXiv preprint arXiv:1901.08544 , 2019.
+[25] David L Donoho. Compressed sensing. IEEE Transactions on information theory , 52(4):1289–
+1306, 2006.
+[26] Marina Drygala, Sai Ganesh Nagarajan, and Ola Svensson. Online algorithms with costly
+predictions. In Proceedings of The 26th International Conference on Artificial Intelligence
+and Statistics , volume 206 of Proceedings of Machine Learning Research , pages 8078–8101.
+PMLR, 2023.
+[27] Elbert Du, Franklyn Wang, and Michael Mitzenmacher. Putting the “learning" into learning-
+augmented algorithms for frequency estimation. In Proceedings of the 38th International
+Conference on Machine Learning , pages 2860–2869, 2021.
+[28] Talya Eden, Piotr Indyk, Shyam Narayanan, Ronitt Rubinfeld, Sandeep Silwal, and Tal Wagner.
+Learning-based support estimation in sublinear time. In 9th International Conference on
+Learning Representations, ICLR , 2021.
+[29] Paul Erd ˝os. On a lemma of littlewood and offord. Bulletin of the American Mathematical
+Society , 51(12):898–902, 1945.
+[30] Jon C. Ergun, Zhili Feng, Sandeep Silwal, David P. Woodruff, and Samson Zhou. Learning-
+augmented k-means clustering. In 10th International Conference on Learning Representations,
+ICLR , 2022.
+[31] Cristian Estan and George Varghese. New directions in traffic measurement and accounting:
+Focusing on the elephants, ignoring the mice. ACM Transactions on Computer Systems (TOCS) ,
+21(3):270–313, 2003.
+[32] Sreenivas Gollapudi and Debmalya Panigrahi. Online algorithms for rent-or-buy with expert
+advice. In Proceedings of the 36th International Conference on Machine Learning , pages
+2319–2327, 2019.
+[33] Amit Goyal, Hal Daumé III, and Graham Cormode. Sketch algorithms for estimating point
+queries in nlp. In Proceedings of the 2012 joint conference on empirical methods in natural
+language processing and computational natural language learning , pages 1093–1103, 2012.
+11[34] Anupam Gupta, Debmalya Panigrahi, Bernardo Subercaseaux, and Kevin Sun. Augmenting
+online algorithms with ε-accurate predictions. Advances in Neural Information Processing
+Systems , 35:2115–2127, 2022.
+[35] Wassily Hoeffding. Probability inequalities for sums of bounded random variables. Journal of
+the American Statistical Association , 58(301):13–30, 1963.
+[36] Chen-Yu Hsu, Piotr Indyk, Dina Katabi, and Ali Vakilian. Learning-based frequency estimation
+algorithms. In 7th International Conference on Learning Representations, ICLR 2019, New
+Orleans, LA, USA, May 6-9, 2019 . OpenReview.net, 2019.
+[37] Sungjin Im, Ravi Kumar, Aditya Petety, and Manish Purohit. Parsimonious learning-augmented
+caching. In International Conference on Machine Learning , pages 9588–9601. PMLR, 2022.
+[38] Piotr Indyk, Ali Vakilian, and Yang Yuan. Learning-based low-rank approximations. In
+Advances in Neural Information Processing Systems , pages 7400–7410, 2019.
+[39] Tanqiu Jiang, Yi Li, Honghao Lin, Yisong Ruan, and David P. Woodruff. Learning-augmented
+data stream algorithms. In International Conference on Learning Representations , 2020.
+[40] Richard M Karp, Scott Shenker, and Christos H Papadimitriou. A simple algorithm for finding
+frequent elements in streams and bags. ACM Transactions on Database Systems (TODS) ,
+28(1):51–55, 2003.
+[41] Elias Khalil, Hanjun Dai, Yuyu Zhang, Bistra Dilkina, and Le Song. Learning combinatorial
+optimization algorithms over graphs. In Advances in Neural Information Processing Systems ,
+pages 6348–6358, 2017.
+[42] Tim Kraska, Alex Beutel, Ed H Chi, Jeffrey Dean, and Neoklis Polyzotis. The case for learned
+index structures. In Proceedings of the 2018 International Conference on Management of Data ,
+pages 489–504, 2018.
+[43] Silvio Lattanzi, Thomas Lavastida, Benjamin Moseley, and Sergei Vassilvitskii. Online schedul-
+ing via learned weights. In Proceedings of the Fourteenth Annual ACM-SIAM Symposium on
+Discrete Algorithms , pages 1859–1877. SIAM, 2020.
+[44] Yi Li, Honghao Lin, Simin Liu, Ali Vakilian, and David Woodruff. Learning the positions in
+countsketch. In 11th International Conference on Learning Representations, ICLR , 2023.
+[45] John Edensor Littlewood and Albert C Offord. On the number of real roots of a random
+algebraic equation. ii. In Mathematical Proceedings of the Cambridge Philosophical Society ,
+volume 35, pages 133–148. Cambridge University Press, 1939.
+[46] Zaoxing Liu, Antonis Manousis, Gregory V orsanger, Vyas Sekar, and Vladimir Braverman.
+One sketch to rule them all: Rethinking network flow monitoring with univmon. In Proceedings
+of the 2016 ACM SIGCOMM Conference , pages 101–114, 2016.
+[47] Thodoris Lykouris and Sergei Vassilvitskii. Competitive caching with machine learned advice.
+InInternational Conference on Machine Learning , pages 3302–3311, 2018.
+[48] Gurmeet Singh Manku and Rajeev Motwani. Approximate frequency counts over data streams.
+InVLDB’02: Proceedings of the 28th International Conference on Very Large Databases , pages
+346–357. Elsevier, 2002.
+[49] Ahmed Metwally, Divyakant Agrawal, and Amr El Abbadi. Efficient computation of frequent
+and top-k elements in data streams. In International Conference on Database Theory , pages
+398–412. Springer, 2005.
+[50] Gregory T Minton and Eric Price. Improved concentration bounds for count-sketch. In
+Proceedings of the twenty-fifth annual ACM-SIAM symposium on Discrete algorithms , pages
+669–686. Society for Industrial and Applied Mathematics, 2014.
+[51] Jayadev Misra and David Gries. Finding repeated elements. Science of computer programming ,
+2(2):143–152, 1982.
+[52] Michael Mitzenmacher. A model for learned bloom filters and optimizing by sandwiching. In
+Advances in Neural Information Processing Systems , pages 464–473, 2018.
+[53] Michael Mitzenmacher. Scheduling with predictions and the price of misprediction. In 11th
+Innovations in Theoretical Computer Science Conference (ITCS 2020) . Schloss Dagstuhl-
+Leibniz-Zentrum für Informatik, 2020.
+12[54] Thy Nguyen, Anamay Chaturvedi, and Huy Le Nguyen. Improved learning-augmented algo-
+rithms for k-means and k-medians clustering. 2023.
+[55] Greg Pass, Abdur Chowdhury, and Cayley Torgeson. A picture of search. In Proceedings of the
+1st international conference on Scalable information systems , pages 1–es, 2006.
+[56] Manish Purohit, Zoya Svitkina, and Ravi Kumar. Improving online algorithms via ml predictions.
+InAdvances in Neural Information Processing Systems , pages 9661–9670, 2018.
+[57] Sandeep Silwal, Sara Ahmadian, Andrew Nystrom, Andrew McCallum, Deepak Ramachandran,
+and Seyed Mehran Kazemi. Kwikbucks: Correlation clustering with cheap-weak and expensive-
+strong signals. In The Eleventh International Conference on Learning Representations , 2023.
+[58] Partha Talukdar and William Cohen. Scaling graph-based semi supervised learning to large
+number of labels using count-min sketch. In Artificial Intelligence and Statistics , pages 940–947.
+PMLR, 2014.
+[59] Jun Wang, Wei Liu, Sanjiv Kumar, and Shih-Fu Chang. Learning to hash for indexing big data -
+a survey. Proceedings of the IEEE , 104(1):34–57, 2016.
+[60] Alexander Wei and Fred Zhang. Optimal robustness-consistency trade-offs for learning-
+augmented online algorithms. Advances in Neural Information Processing Systems , 33:8042–
+8053, 2020.
+[61] David P Woodruff et al. Sketching as a tool for numerical linear algebra. Foundations and
+Trends® in Theoretical Computer Science , 10(1–2):1–157, 2014.
+[62] Minlan Yu, Lavanya Jose, and Rui Miao. Software defined traffic measurement with opensketch.
+InNSDI , volume 13, pages 29–42, 2013.
+[63] Matei Zaharia, Reynold S Xin, Patrick Wendell, Tathagata Das, Michael Armbrust, Ankur Dave,
+Xiangrui Meng, Josh Rosen, Shivaram Venkataraman, Michael J Franklin, et al. Apache spark:
+a unified engine for big data processing. Communications of the ACM , 59(11):56–65, 2016.
+13A Organization of the Appendix
+In Section B, we give tight bounds for CM with Zipfians, as well as tight bounds for CS (in Section
+C) and its learning augmented variants (in Section D). Our results for CM and CS, with and without
+predictions, can be summarized in Table 2. We highlight the results of these sections are presented
+assuming that we use a total ofBbuckets. With khash functions, the range of each hash functions is
+therefore [B/k]. We make this assumption since we wish to compare the expected error incurred by
+the different sketches when the total sketch size is fixed.
+Sections E and F contain the proofs of Theorems 2.1 and 3.1, respectively. Section H contains omitted
+proofs of Section 3.2.
+In Section J, we include additional experimental results.
+Notation We use the bracket [·]notation for the indicator function. a≲bdenotes a≤Cbfor some
+fixed positive constant C.
+k= 1 k >1
+Count-Min (CM) Θ
+logn
+B
+[36] Θk·log(kn
+B)
+B
+Learned Count-Min (L-CM) Θlog2(n
+B)
+Blogn
+[36] Ωlog2(n
+B)
+Blogn
+[36]
+Count-Sketch (CS) Θ
+logB
+B
+Ω
+k1/2
+Blogk
+andO
+k1/2
+B
+Learned Count-Sketch (L-CS) Θlogn
+B
+Blogn
+Ωlogn
+B
+Blogn
+Table 2: This table summarizes our and previously known results on the expected frequency estimation
+error of Count-Min (CM), Count-Sketch (CS) and their learned variants (i.e., L-CM and L-CS) that
+usekfunctions and overall space k×B
+kunder Zipfian distribution. For CS, we assume that kis odd
+(so that the median of kvalues is well defined).
+B Tight Bounds for Count-Min with Zipfians
+For both Count-Min and Count-Sketch we aim at analyzing the expected value of the variableP
+i∈[n]fi· |˜fi−fi|where fi= 1/iand˜fiis the estimate of fioutput by the relevant sketching
+algorithm. Throughout this paper we use the following notation: For an event Ewe denote by [E]the
+random variable in {0,1}which is 1if and only if Eoccurs. We begin by presenting our improved
+analysis of Count-Min with Zipfians. The main theorem is the following.
+Theorem B.1. Letn, B, k ∈Nwithk≥2andB≤n/k. Let further h1, . . . , h k: [n]→[B]
+be independent and truly random hash functions. For i∈[n]define the random variable ˜fi=
+minℓ∈[k]P
+j∈[n][hℓ(j) =hℓ(i)]fj
+. For any i∈[n]it holds that E[|˜fi−fi|] = Θ
+log(n
+B)
+B
+.
+Replacing BbyB/k in Theorem B.1 and using linearity of expectation we obtain the desired bound
+for Count-Min in the upper right hand side of Table 2. The natural assumption that B≤n/k simply
+says that the total number of buckets is upper bounded by the number of items.
+To prove Theorem B.1 we start with the following lemma which is a special case of the theorem.
+Lemma B.2. Suppose that we are in the setting of Theorem B.1 and further that2n=B. Then
+E[|˜fi−fi|] =O1
+n
+.
+Proof. It suffices to show the result when k= 2since adding more hash functions and corresponding
+tables only decreases the value of |˜fi−fi|. Define Zℓ=P
+j∈[n]\{i}[hℓ(j) =hℓ(i)]fjforℓ∈[2]and
+2In particular we dispose with the assumption that B≤n/k.
+14note that these variables are independent. For a given t≥3/nwe wish to upper bound Pr[Zℓ≥t].
+Lets < t be such that t/sis an integer, and note that if Zℓ≥tthen either of the following two events
+must hold:
+E1: There exists a j∈[n]\ {i}withfj> sandhℓ(j) =hℓ(i).
+E2: The set {j∈[n]\ {i}:hℓ(j) =hℓ(i)}contains at least t/selements.
+To see this, suppose that Zℓ≥tand that E1does not hold. Then
+t≤Zℓ=X
+j∈[n]\{i}[hℓ(j) =hℓ(i)]fj≤s|{j∈[n]\ {i}:hℓ(j) =hℓ(i)}|,
+so it follows that E2holds. By a union bound,
+Pr[Zℓ≥t]≤Pr[E1] + Pr[ E2]≤1
+ns+n
+t/s
+n−t/s≤1
+ns+es
+tt/s
+.
+Choosing s= Θ(t
+log(tn))such that t/sis an integer, and using t≥3
+n, a simple calculation yields
+thatPr[Zℓ≥t] =O
+log(tn)
+tn
+. Note that |˜fi−fi|= min( Z1, Z2). AsZ1andZ2are independent,
+Pr[|˜fi−fi| ≥t] =O
+log(tn)
+tn2
+, so
+E[|˜fi−fi|] =Z∞
+0Pr[Z≥t]dt≤3
+n+O Z∞
+3/nlog(tn)
+tn2
+dt!
+=O1
+n
+.
+We can now prove the full statement of Theorem B.1.
+Proof of Theorem B.1. We start out by proving the upper bound. Let N1= [B]\ {i}andN2=
+[n]\([B]∪{i}). Letb∈[k]be such thatP
+j∈N1fj·[hb(j) =hb(i)]is minimal. Note that bis itself
+a random variable. We also define
+Y1=X
+j∈N1fj·[hb(j) =hb(i)],andY2=X
+j∈N2fj·[hb(j) =hb(i)].
+Then,|˜fi−fi| ≤Y1+Y2. Using Lemma B.2, we obtain that E[Y1] =O(1
+B). ForY2we observe that
+E[Y2|b] =X
+j∈N2fj
+B=O 
+log n
+B
+B!
+.
+We conclude that
+E[|˜fi−fi|]≤E[Y1] +E[Y2] =E[Y1] +E[E[Y2|b]] =O 
+log n
+B
+B!
+.
+Next we prove the lower bound. We have already seen that the main contribution to the error
+comes from the tail of the distribution. As the tail of the distribution is relatively “flat” we can
+simply apply a concentration inequality to argue that with probability Ω(1) , we have this asymptotic
+contribution for each of the khash functions. To be precise, for j∈[n]andℓ∈[k]we define
+X(j)
+ℓ=fj· 
+[hℓ(j) =hℓ(i)]−1
+B
+. Note that the variables (X(j)
+ℓ)j∈[n]are independent. We also
+define Sℓ=P
+j∈N2X(j)
+ℓforℓ∈[k]. Observe that |X(j)
+ℓ| ≤fj≤1
+Bforj≥B,E[X(j)
+ℓ] = 0 , and
+that
+Var[Sℓ] =X
+j∈N2f2
+j1
+B−1
+B2
+≤1
+B2.
+15Applying Bennett’s inequality(Theorem I.1 of Appendix I), with σ2=1
+B2andM= 1/Bthus gives
+that
+Pr[Sℓ≤ −t]≤exp (−h(tB)).
+Defining Wℓ=P
+j∈N2fj·[hℓ(j) =hℓ(i)]it holds that E[Wℓ] = Θ
+log(n
+B)
+B
+andSℓ=Wℓ−
+E[Wℓ], so putting t=E[Wℓ]/2in the inequality above we obtain that
+Pr[Wℓ≤E[Wℓ]/2] = Pr[ Sℓ≤ −E[Wℓ]/2]≤exp
+−h
+Ω
+logn
+B
+.
+Appealing to Remark I.1 and using that B≤n/k the above bound becomes
+Pr[Wℓ≤E[Wℓ]/2]≤exp
+−Ω
+logn
+B·log
+logn
+B+ 1
+= exp( −Ω(log k·log(log k+ 1))) = k−Ω(log(log k+1)). (2)
+By the independence of the events (Wℓ> E[Wℓ]/2)ℓ∈[k], we have that
+Pr
+|˜fi−fi| ≥E[Wℓ]
+2
+≥(1−k−Ω(log(log k+1)))k= Ω(1) ,
+and so E[|˜fi−fi|] = Ω( E[Wℓ]) = Ω
+log(n
+B)
+B
+, as desired.
+Remark B.1. We have stated Theorem B.1 for truly random hash functions but it suffices with
+O(logB)-independent hashing to prove the upper bound. Indeed, the only step in which we require
+high independence is in the union bound in Lemma B.2 over the n
+t/s
+subsets of [n]of size t/s. To
+optimize the bound we had to choose s=t/log(tn), so that t/s= log( tn). As we only need to
+consider values of twitht≤Pn
+i=1fi=O(logn), in fact t/s=O(logn)in our estimates. Finally,
+we applied Lemma B.2 with n=Bso it follows that O(logB)-independence is enough to obtain
+our upper bound.
+C (Nearly) Tight Bounds for Count-Sketch with Zipfians
+In this section we proceed to analyze Count-Sketch for Zipfians either using a single or more hash
+functions. We start with two simple lemmas which for certain frequencies (fi)i∈[n]of the items
+in the stream can be used to obtain respectively good upper and lower bounds on E[|˜fi−fi|]in
+Count-Sketch with a single hash function. We will use these two lemmas both in our analysis of
+standard and learned Count-Sketch for Zipfians.
+Lemma C.1. Letw= (w1, . . . , w n)∈Rn,η1, . . . , η nBernoulli variables taking value 1with
+probability p, and σ1, . . . , σ n∈ {− 1,1}independent Rademachers, i.e., Pr[σi= 1] = Pr[ σi=
+−1] = 1 /2. LetS=Pn
+i=1wiηiσi. Then, E[|S|] =O √p∥w∥2
+.
+Proof. Using that E[σiσj] = 0 fori̸=jand Jensen’s inequality E[|S|]2≤E[S2] =
+EPn
+i=1w2
+iηi
+=p∥w∥2
+2, from which the result follows.
+Lemma C.2. Suppose that we are in the setting of Lemma C.1. Let I⊂[n]and let wI∈Rnbe
+defined by (wI)i= [i∈I]·wi. Then
+E[|S|]≥1
+2p(1−p)|I|−1∥wI∥1.
+Proof. LetJ= [n]\I,S1=P
+i∈Iwiηiσi, andS2=P
+i∈Jwiηiσi. LetEdenote the event that S1
+andS2have the same sign or S2= 0. Then Pr[E]≥1/2by symmetry. For i∈Iwe denote by Ai
+the event that {j∈I:ηj̸= 0}={i}. Then Pr[Ai] =p(1−p)|I|−1and furthermore AiandEare
+independent. If Ai∩Eoccurs, then |S| ≥ |wi|and as the events (Ai∩E)i∈Iare disjoint it thus
+follows that E[|S|]≥P
+i∈IPr[Ai∩E]· |wi| ≥1
+2p(1−p)|I|−1∥wI∥1.
+With these tools in hand, we proceed to analyse Count-Sketch for Zipfians with one and more hash
+functions in the next two sections.
+16C.1 One hash function
+By the same argument as in the discussion succeeding Theorem B.1, the following theorem yields
+the desired result for a single hash function as presented in Table 2.
+Theorem C.3. Suppose that B≤nand let h: [n]→[B]ands: [n]→ {− 1,1}be truly random
+hash functions. Define the random variable ˜fi=P
+j∈[n][h(j) =h(i)]s(j)fjfori∈[n]. Then
+E[|˜fi−s(i)fi|] = ΘlogB
+B
+.
+Proof. Leti∈[n]be fixed. We start by defining N1= [B]\ {i}andN2= [n]\([B]∪ {i})and
+note that
+|˜fi−s(i)fi| ≤X
+j∈N1[h(j) =h(i)]s(j)fj+X
+j∈N2[h(j) =h(i)]s(j)fj:=X1+X2.
+Using the triangle inequality E[X1]≤1
+BP
+j∈N1fj=O(logB
+B). Also, by Lemma C.1, E[X2] =
+O 1
+B
+and combining the two bounds we obtain the desired upper bound. For the lower bound we
+apply Lemma C.2 with I=N1concluding that
+E[|˜fi−s(i)fi|]≥1
+2B
+1−1
+B|N1|−1X
+i∈N1fi= ΩlogB
+B
+.
+C.2 Multiple hash functions
+Letk∈Nbe odd. For a tuple x= (x1, . . . , x k)∈Rkwe denote by median xthe median of the
+entries of x. The following theorem immediately leads to the result on CS with k≥3hash functions
+claimed in Table 2.
+Theorem C.4. Letk≥3be odd, n≥kB, and h1, . . . , h k: [n]→[B]ands1, . . . , s k: [n]→
+{−1,1}be truly random hash functions. Define ˜fi=median ℓ∈[k]P
+j∈[n][hℓ(j) =hℓ(i)]sℓ(j)fj
+fori∈[n]. Assume that3k≤B. Then
+E[|˜fi−s(i)fi|] = Ω1
+B√
+klogk
+,and E[|˜fi−s(i)fi|] =O1
+B√
+k
+The assumption n≥kBsimply says that the total number of buckets is upper bounded by the number
+of items. Again using linearity of expectation for the summation over i∈[n]and replacing Bby
+B/k we obtain the claimed upper and lower bounds of√
+k
+Blogkand√
+k
+Brespectively. We note that
+even if the bounds above are only tight up to a factor of logkthey still imply that it is asymptotically
+optimal to choose k=O(1), e.g. k= 3. To settle the correct asymptotic growth is thus of merely
+theoretical interest.
+In proving the upper bound in Theorem C.4, we will use the following result by Minton and Price
+(Corollary 3.2 of [50]) proved via an elegant application of the Fourier transform.
+Lemma C.5 (Minton and Price [ 50]).Let{Xi:i∈[n]}be independent symmetric random variables
+such that Pr[Xi= 0]≥1/2for each i. LetX=Pn
+i=1Xiandσ2=E[X2] = Var[ X]. For ε <1
+it holds that Pr[|X|< εσ] = Ω( ε)
+Proof of Theorem C.4. IfB(and hence k) is a constant, then the results follow easily
+from Lemma C.1, so in what follows we may assume that Bis larger than a sufficiently large
+constant. We subdivide the exposition into the proofs of the upper and lower bounds.
+3This very mild assumption can probably be removed at the cost of a more technical proof. In our proof it
+can even be replaced by k≤B2−εfor any ε= Ω(1) .
+17Upper bound Define N1= [B]\ {i}andN2= [n]\([B]∪ {i}). Let for ℓ∈[k],X(ℓ)
+1=P
+j∈N1[hℓ(j) =hℓ(i)]sℓ(j)fjandX(ℓ)
+2=P
+j∈N2[hℓ(j) =hℓ(i)]sℓ(j)fjand let X(ℓ)=X(ℓ)
+1+
+X(ℓ)
+2.
+As the absolute error in Count-Sketch with one pair of hash functions (h, s)is always upper bounded
+by the corresponding error in Count-Min with the single hash function h, we can use the bound
+in the proof of Lemma B.2 to conclude that Pr[|X(ℓ)
+1| ≥t] =O(log(tB)
+tB), when t≥3/B. Also
+Var[X(ℓ)
+2] = (1
+B−1
+B2)P
+j∈N2f2
+j≤1
+B2, so by Bennett’s inequality (Theorem I.1) with M= 1/B
+andσ2= 1/B2and Remark I.1,
+Pr[|X(ℓ)
+2| ≥t]≤2 exp ( −h(tB))≤2 exp
+−1
+2tBlog (tB+ 1)
+=Olog(tB)
+tB
+,
+fort≥3
+B. It follows that for t≥3/B,
+Pr[|X(ℓ)| ≥2t]≤Pr[(|X(ℓ)
+1| ≥t)] + Pr( |X(ℓ)
+2| ≥t)] =Olog(tB)
+tB
+.
+LetCbe the implicit constant in the O-notation above. If |˜fi−s(i)fi| ≥2t, at least half of the
+values (|X(ℓ)|)ℓ∈[k]are at least 2t. Fort≥3/Bit thus follows by a union bound that
+Pr[|˜fi−s(i)fi| ≥2t]≤2k
+⌈k/2⌉
+Clog(tB)
+tB⌈k/2⌉
+≤2
+4Clog(tB)
+tB⌈k/2⌉
+. (3)
+Ifα=O(1)is chosen sufficiently large it thus holds that
+Z∞
+α/BPr[|˜fi−s(i)fi| ≥t]dt= 2Z∞
+α/(2B)Pr[|˜fi−s(i)fi| ≥2t]dt
+≤4
+BZ∞
+α/2
+4Clog(t)
+t⌈k/2⌉
+dt
+≤1
+B2k≤1
+B√
+k.
+Here the first inequality uses Equation (3) and a change of variable. The second inequality uses that
+4Clogt
+t⌈k/2⌉
+≤(C′/t)2k/5for some constant C′followed by a calculation of the integral. Now,
+E[|˜fi−s(i)fi|] =Z∞
+0Pr[|˜fi−s(i)fi| ≥t]dt,
+so for our upper bound it therefore suffices to show thatRα/B
+0Pr[|˜fi−s(i)fi| ≥t]dt=O
+1
+B√
+k
+.
+For this we need the following claim:
+Claim C.6. LetI⊂Rbe the closed interval centered at the origin of length 2t, i.e., I= [−t, t].
+Suppose that 0< t≤1
+2B. For ℓ∈[k],Pr[X(ℓ)∈I] = Ω( tB).
+Proof. Note that Pr[X(ℓ)
+1= 0]≥Pr[V
+j∈N1(hℓ(j)̸=hℓ(i))] = (1 −1
+B)N1= Ω(1) . Secondly
+Var[X(ℓ)
+2] = (1
+B−1
+B2)P
+j∈N2f2
+j≤1
+B2. Using that X(ℓ)
+1andX(ℓ)
+2are independent and Lemma C.5
+withσ2= Var[ X(ℓ)
+2], it follows that Pr[X(ℓ)∈I] = Ω
+Pr[X(ℓ)
+2∈I]
+= Ω(tB).
+Let us now show how to use the claim to establish the desired upper bound. For this let 0< t≤1
+2B
+be fixed. If |˜fi−s(i)fi| ≥t, at least half of the values (X(ℓ))ℓ∈[k]are at least tor at most −t.
+Let us focus on bounding the probability that at least half are at least t, the other bound being
+symmetric giving an extra factor of 2in the probability bound. By symmetry and Claim C.6,
+Pr[X(ℓ)≥t] =1
+2−Ω(tB). For ℓ∈[k]we define Yℓ= [X(ℓ)≥t], and we put S=P
+ℓ∈[k]Yℓ.
+18ThenE[S] =k 1
+2−Ω(tB)
+. If at least half of the values (X(ℓ))ℓ∈[k]are at least tthenS≥k/2.
+By Hoeffding’s inequality (Theorem I.3) we can bound the probability of this event by
+Pr[S≥k/2] = Pr[ S−E[S] = Ω( ktB)] = exp( −Ω(kt2B2)).
+It follows that Pr[|˜fi−s(i)fi| ≥t]≤2 exp(−Ω(kt2B2)). Thus
+Zα/B
+0Pr[|˜fi−s(i)fi| ≥t]dt≤Z 1
+2B
+02 exp(−Ω(kt2B2))dt+Zα/B
+1
+2B2 exp(−Ω(k))dt
+≤1
+B√
+kZ√
+k/2
+0exp(−t2)dt+2αexp(−Ω(k))
+B=O1
+B√
+k
+.
+Here the second inequality used a change of variable. The proof of the upper bound is complete.
+Lower Bound Fixℓ∈[k]and let M1= [Blogk]\ {i}andM2= [n]\([Blogk]∪ {i}). Write
+S:=X
+j∈M1[hℓ(j) =hℓ(i)]sℓ(j)fj+X
+j∈M2[hℓ(j) =hℓ(i)]sℓ(j)fj:=S1+S2.
+We also define J:={j∈M1:hℓ(j) =hℓ(i)}. LetI⊆Rbe the closed interval around sℓ(i)fiof
+length1
+B√
+klogk. We now upper bound the probability that S∈Iconditioned on the value of S2. To
+ease the notation, the conditioning on S2has been left out in the notation to follow. Note first that
+Pr[S∈I] =|M1|X
+r=0Pr[S∈I| |J|=r]·Pr[|J|=r]. (4)
+For a given r≥1we now proceed to bound Pr[S∈I| |J|=r]. This probability is the same as
+the probability that S2+P
+j∈Rσjfj∈I, where R⊆M1is a uniformly random r-subset and the
+σj’s are independent Rademachers. Suppose that we sample the elements from Ras well as the
+corresponding signs (σi)i∈Rsequentially, and let us condition on the values and signs of the first
+r−1sampled elements. At this point at mostBlogk√
+k+ 1possible samples for the last element in R
+can cause that S∈I. Indeed, the minimum distance between distinct elements of {fj:j∈M1}is
+at least 1/(Blogk)2and furthermore Ihas length1
+B√
+klogk. Thus, at most
+1
+B√
+klogk·(Blogk)2+ 1 =Blogk√
+k+ 1
+choices for the last element of Rensure that S∈I. For 1≤r≤(Blogk)/2we can thus upper
+bound
+Pr[S∈I| |J|=r]≤Blogk√
+k+ 1
+|M1| −r+ 1≤2√
+k+2
+Blogk≤3√
+k.
+Note that µ:=E[|J|]≤logkso for B≥6, it holds that
+Pr[|J| ≥(Blogk)/2]≤Pr
+|J| ≥µB
+2
+≤Pr
+|J| ≥µ
+1 +B
+3
+≤exp (−µh(B/3)) = k−Ω(h(B/3)),
+where the last inequality follows from the Chernoff bound of Theorem I.2. Thus, if we assume
+thatBis larger than a sufficiently large constant, then Pr[|J| ≥Blogk/2]≤k−1. Finally,
+Pr[|J|= 0] = (1 −1/B)Blogk≤k−1. Combining the above, we can continue the bound in (4)as
+follows.
+Pr[S∈I]≤Pr[|J|= 0] +(Blogk)/2X
+r=1Pr[S∈I| |J|=r]·Pr[|J|=r]
++|M1|X
+r=(Blogk)/2+1Pr[|J|=r] =O1√
+k
+, (5)
+19which holds even after removing the conditioning on S2. We now show that with probability
+Ω(1) at least half the values (X(ℓ))ℓ∈[k]are at least1
+2B√
+klogk. Let p0be the probability that
+X(ℓ)≥1
+2B√
+klogk. This probability does not depend on ℓ∈[k]and by symmetry and (5),p0=
+1/2−O(1/√
+k). Define the function f:{0, . . . , k } →Rby
+f(t) =k
+t
+pt
+0(1−p0)k−t.
+Then f(t)is the probability that exactly tof the values (X(ℓ))ℓ∈[k]are at least1
+B√
+klogk. Using that
+p0= 1/2−O(1/√
+k), a simple application of Stirling’s formula gives that f(t) = Θ
+1√
+k
+for
+t=⌈k/2⌉, . . . ,⌈k/2 +√
+k⌉when kis larger than some constant C. It follows that with probability
+Ω(1) at least half of the (X(ℓ))ℓ∈[k]are at least1
+B√
+klogkand in particular
+E[|˜fi−fi|] = Ω1
+B√
+klogk
+.
+Finally we handle the case where k≤C. It follows from simple calculations (e.g., using Lemma C.2)
+thatX(ℓ)= Ω(1 /B)with probability Ω(1) . Thus this happens for all ℓ∈[k]with probability Ω(1)
+and in particular E[|˜fi−fi|] = Ω(1 /B), which is the desired for constant k.
+D Learned Count-Sketch for Zipfians
+We now proceed to analyze the learned Count-Sketch algorithm. In Appendix D.1 we estimate the
+expected error when using a single hash function and in Appendix D.2 we show that the expected
+error only increases when using more hash functions. Recall that we assume that the number of
+buckets Bhused to store the heavy hitters that Bh= Θ( B−Bh) = Θ( B).
+D.1 One hash function
+By taking B1=Bh= Θ( B)andB2=B−Bh= Θ( B)in the theorem below, the result on L-CS
+fork= 1claimed in Table 2 follows immediately.
+Theorem D.1. Leth: [n]\[B1]→[B2]ands: [n]→ {− 1,1}be truly random hash functions
+where n, B 1, B2∈Nand4n−B1≥B2≥B1. Define the random variable ˜fi=Pn
+j=B1+1[h(j) =
+h(i)]s(j)fjfori∈[n]\[B1]. Then
+E[|˜fi−s(i)fi|] = Θ 
+logB2+B1
+B1
+B2!
+Proof. LetN1= [B1+B2]\([B1]∪{i})andN2= [n]\([B1+B2]∪{i}). LetX1=P
+j∈N1[h(j) =
+h(i)]s(j)fjandX2=P
+j∈N2[h(j) =h(i)]s(j)fj. By the triangle inequality and linearity of
+expectation,
+E[|X1|] =O 
+logB2+B1
+B1
+B2!
+.
+Moreover, it follows directly from Lemma C.1 that E[|X2|] =O
+1
+B2
+. Thus
+E[|˜fi−s(i)fi|]≤E[|X1|] +E[|X2|] =O 
+logB2+B1
+B1
+B2!
+,
+4The first inequality is the standard assumption that we have at least as many items as buckets. The second
+inequality says that we use at least as many buckets for non-heavy items as for heavy items (which doesn’t
+change the asymptotic space usage).
+20as desired. For the lower bound on Eh˜fi−s(i)fii
+we apply Lemma C.2 with I=N1to obtain
+that,
+Eh˜fi−s(i)fii
+≥1
+2B2
+1−1
+B2|N1|−1X
+i∈N1fi= Ω 
+logB2+B1
+B1
+B2!
+.
+Corollary D.2. Leth: [n]\[Bh]→[B−Bh]ands: [n]→ {− 1,1}be truly random hash functions
+where n, B, B h∈NandBh= Θ( B)≤B/2. Define the random variable ˜fi=Pn
+j=Bh+1[h(j) =
+h(i)]s(j)fjfori∈[n]\[Bh]. Then E[|˜fi−s(i)fi|] = Θ(1 /B).
+Remark D.1. The upper bounds of Theorem D.1 and Corollary D.2 hold even without the assumption
+of fully random hashing. In fact, we only require that handsare2-independent. Indeed Lemma C.1
+holds even when the Rademachers are 2-independent (the proof is the same). Moreover, we need hto
+be2-independent as we condition on h(i)in our application of Lemma C.1. With 2-independence the
+variables [h(j) =h(i)]forj̸=iare then Bernoulli variables taking value 1with probability 1/B2.
+D.2 More hash functions
+We now show that, like for Count-Sketch, using more hash functions does not decrease the expected
+error. We first state the Littlewood-Offord lemma as strengthened by Erd ˝os.
+Theorem D.3 (Littlewood-Offord [ 45], Erd ˝os [29]).Leta1, . . . , a n∈Rwith|ai| ≥1fori∈[n].
+Let further σ1, . . . , σ n∈ {− 1,1}be random variables with Pr[σi= 1] = Pr[ σi=−1] = 1 /2and
+define S=Pn
+i=1σiai. For any v∈Rit holds that Pr[|S−v| ≤1] =O(1/√n).
+Setting B1=Bh= Θ( B)andB2=B−B2= Θ( B)in the theorem below gives the final bound
+from Table 2 on L-CS with k≥3.
+Theorem D.4. Letn≥B1+B2≥2B1,k≥3odd, and h1, . . . , h k: [n]\[B1]→[B2/k]and
+s1, . . . , s k: [n]\[B1]→ {− 1,1}be independent and truly random. Define the random variable
+˜fi=median ℓ∈[k]P
+j∈[n]\[B1][hℓ(j) =hℓ(i)]sℓ(j)fj
+fori∈[n]\[B1]. Then
+E[|˜fi−s(i)fi|] = Ω1
+B2
+.
+Proof. Like in the proof of the lower bound of Theorem C.4 it suffices to show that for each i
+the probability that the sum Sℓ:=P
+j∈[n]\([B1]∪{i})[hℓ(j) =hℓ(i)]sℓ(j)fjlies in the interval
+I= [−1/(2B2),1/(2B2)]isO(1/√
+k). Then at least half the (Sℓ)ℓ∈[k]are at least 1/(2B2)with
+probability Ω(1) by an application of Stirling’s formula, and it follows that E[|˜fi−s(i)fi|] =
+Ω(1/B2).
+Letℓ∈[k]be fixed, N1= [2B2]\([B2]∪ {i}), and N2= [n]\(N1∪ {i}), and write
+Sℓ=X
+j∈N1[hℓ(j) =hℓ(i)]sℓ(j)fj+X
+j∈N2[hℓ(j) =hℓ(i)]sℓ(j)fj:=X1+X2.
+Now condition on the value of X2. Letting J={j∈N1:hℓ(j) =hℓ(i)}it follows by Theorem D.3
+that
+Pr[Sℓ∈I|X2] =O
+X
+J′⊆N1Pr[J=J′]p
+|J′|+ 1
+=O
+Pr[|J|< k/2] + 1 /√
+k
+.
+An application of Chebyshev’s inequality gives that Pr[|J|< k/ 2] = O(1/k), soPr[Sℓ∈I] =
+O(1/√
+k). Since this bound holds for any possible value of X2we may remove the conditioning and
+the desired result follows.
+Remark D.2. The bound above is probably only tight for B1= Θ( B2). Indeed, we know that it
+cannot be tight for all B1≤B2since when B1becomes very small, the bound from the standard
+Count-Sketch with k≥3takes over — and this is certainly worse than the bound in the theorem.
+It is an interesting open problem (that requires a better anti-concentration inequality than the
+Littlewood-Offord lemma) to settle the correct bound when B1≪B2.
+21E Proof of Theorem 2.1
+In this section we give the complete proof of Theorem 2.1. We need the following special case of a
+result about the behaviour of CountSketch, proved in the prior sections.
+Theorem E.1 (Theorem C.4) .Letˆfibe the estimate of the ith frequency given by a 3×B/3
+CountSketch table. There exists a universal constant Csuch that the following two inequalities hold:
+Pr
+|fi−ˆfj
+i| ≥C
+B
+≤1
+2, (6)
+∀t≥3/B, Pr
+|fi−ˆfj
+i| ≥t
+≤Clog(tB)
+tB2
+. (7)
+Proof of Theorem 2.1. Case 1: i > B/ log log n. Recall that ˆfj
+idenotes the estimate of the ith
+frequency given by table Sjin Algorithm 2. Furthermore, ˜fi←Median (ˆf1
+i, . . . , ˆfT−1
+i)denotes the
+median of the estimates of the first T−1tables in Algorithm 2. From Theorem E.1, we have that for
+every fixed j,
+Pr
+|fi−ˆfj
+i| ≥2Clog log n
+B
+≤1
+4
+and so it follows that
+Pr
+|fi−˜fi| ≥2Clog log n
+B
+≤exp(−Ω(T))≤1
+(logn)100(8)
+by adjusting the constant in front of T. We let 2Cbe the constant for the Onotation in line 7of
+Algorithm 2. Now consider the expected value of |ˆfi−1/i|, where the expectation is taken over the
+randomness used by the CountSketch tables of Algorithm 2. By conditioning on the event that we
+either output 0or output the estimate of the Tth table, we have
+E1
+i·ˆfi−1
+i
+≲Pr(We output 0)·1
+i2+ Pr( We output estimate of table T)·1
+iB
+where we have used the first inequality in Theorem E.1 in the above inequality and ≲denotes
+inequality up to a constant factor. We have bounded the second probability in Equation (8)which
+gives
+E1
+i·ˆfi−1
+i
+≲1
+i2+1
+iB·(logn)99. (9)
+Case 2: i≤B/(log log n)4. We employ the more refined tail bound for Count Sketch stated in the
+second inequality of Theorem E.1.
+For any ismaller than B/(log log n)4, we have that for any fixed j,
+Pr
+ˆfj
+i≤2Clog log n
+B
+≤Pr
+|fi−ˆfj
+i| ≥1
+2i
+≲log(B′/i)·i
+B′2
+where B′=B/(4T) = Θ( B/log log n). It follows that
+Pr
+˜fi≤2Clog log n
+B
+≤T·Pr
+|fi−ˆf1
+i| ≤2Clog log n
+B
+≲T·log(B′/i)·i
+B′2
+.
+Therefore, for i≤B/(log log n)4, we again have
+E1
+i·ˆfi−1
+i
+≲Pr(We output 0)·1
+i2+ Pr( We output estimate of table T)·1
+iB
+≲(log log n)3·log(B/i)
+B2
++1
+iB.
+22We can summarize this case as:
+E1
+i·ˆfi−1
+i
+≲(log log n)3·log(B/i)
+B2
++1
+iB. (10)
+Putting everything together. Equation (9) gives us
+1
+logn·X
+i>B/ log log nE1
+i·ˆfi−1
+i
+≲1
+lognX
+i>B/ log log n1
+i2+1
+B·(logn)100nX
+i=11
+i
+≲log log n
+Blogn.
+Equation (10) gives us
+1
+logn·X
+i≤B/(log log n)4E1
+i·ˆfi−1
+i
+≲1
+lognX
+i≤B/(log log n)4 
+(log log n)3·log(B/i)
+B2
++1
+iB!
+≲(log log n)3
+B2lognZB/(log log n)4
+1log(B/x)2dx+logB
+Blogn
+≲(log log n)3
+B2logn·B(log2(log log n))
+(log log n)4+logB
+Blogn
+≲logB
+Blogn
+where the second to last inequality follows from the indefinte integralR
+log2(c/x)dx=xlog2(c/x)+
+2xlog(c/x) + 2x+Constant.
+Finally, we deal with the remaining case: ibetween B/log log nandB/(log log n)4. For these i’s,
+the worst case error happens when we set their estimates to 0, incurring error 1/i, as opposed to
+incurring error O(1/B)if we used the estimate of table T:
+1
+logn·X
+B/(log log n)4≤i≤B/log log nE1
+i·ˆfi−1
+i
+≲1
+lognX
+B/(log log n)4≤i≤B/log log n1
+i2
+≲(log log n)4
+Blogn.
+Combining our three estimates completes the proof.
+F Proof of Theorem 3.1
+Proof of Theorem 3.1. We summarize the intuition and give the full proof. Recall the workhorse of
+our analysis is the proof of Theorem 2.1. First note that we obtain 0error for i < B/ 2. Thus, all our
+error comes from indices i≥B/2. Recall the intuition for this case from the proof of Theorem 2.1:
+we want to output 0as our estimates. Now the same analysis as in Case 1of Theorem 2.1 gives us
+that the probability we use the estimate of table Tcan be bounded by say1
+(logn)100. Thus, similar to
+Equation (9), we have
+E1
+i·ˆfi−1
+i
+≲Pr(We output 0)·1
+i2+ Pr( We output estimate of table T)·1
+iB
+≲1
+i2+1
+iB·(logn)99.
+23Thus, our total error consists of only one part of the total error calculation of Theorem 2.1:
+1
+logn·X
+i>BE1
+i·ˆfi−1
+i
+≲1
+lognX
+i>B1
+i2+1
+B·(logn)100nX
+i=11
+i
+≲1
+Blogn,
+as desired.
+Algorithm 5 Parsimonious frequency update algorithm
+1:Input: Stream of updates to an ndimensional vector, space budget B, access to a heavy hitter
+oracle which correctly identifies the top B/2heavy hitters.
+2:procedure UPDATE
+3: T←O(log log n)
+4: forj= 1toT−1do
+5: Sj←CountSketch table with 4rows andB
+16Tcolumns
+6: end for
+7: ST←CountSketch table with 4rows andB
+16columns
+8: forstream element (i,∆)do
+9: ifiis already classified as a top B/2heavy hitter then
+10: Maintain the count of iexactly (from the point of time it was detected as heavy).
+11: else
+12: Query the heavy hitter oracle with probability p= min 
+1, CB(logn)2∆
+13: ifigets queried and is classified as a top B/2heavy hitter then
+14: Maintain the count of iexactly (from this point of time).
+15: else
+16: Input (i,∆)in each of the TCountSketch tables Sj
+17: end if
+18: end if
+19: end for
+20:end procedure
+G Parsimonious learning
+In this appendix, we state our result on parsimonious learning precisely. We consider the modification
+to Algorithm 3 where whenever an element (i,∆)arrives, we only query the heavy hitter oracle with
+probability p= min 
+1, γB(logn)2∆
+forγa sufficiently large constant5. To be precise, when an
+itemiarrives, we first check if it is already classified as a top B/2heavy hitter. If so, we update
+its exact count (from the first point of time where it was classified as heavy). If not, we query the
+heavy hitter oracle with probability p. In case igets queried and classified as one of the top B/2
+heavy hitters, we store its count exactly (from this point of time). Otherwise, we input it to the
+CountSketch tables Sjsimilarly to Algorithm 1 and Algorithm 3. Algorithm 5 shows the pseudocode
+for the update procedure of our parsimonious learning algorithm. The query procedure is similar
+to Algorithm 4. We now state our main result on our parsimonious learning algorithm, namely that it
+achieves the same expected weighted error bound as in Theorem 3.1.
+Theorem G.1. Consider Algorithm 5 with space parameter B≥lognupdated over a Zipfian
+stream. Suppose the heavy-hitter oracle correctly identifies the top B/2heavy hitters in the stream.
+Let{ˆfi}n
+i=1denote the estimates computed by Algorithm 4. The expected weighted error (1)is
+Eh
+1
+N·Pn
+i=1fi· |fi−ˆfi|i
+=O
+1
+Blogn
+.The algorithm makes O(B(logn)3)queries to the heavy
+hitter oracle in expectation.
+5This sampling probability depends on the length of the stream which is likely unknown to us. We will
+discuss how this assumption can be removed shortly.
+24Proof of Theorem G.1. Introducing some notation, we denote the stream ((x1,∆1), . . . , (xm,∆m)).
+Letting Si={j∈[m]|xj=i}, we then have thatP
+j∈Si∆j=fj= 1/j. Then, whenever
+an element (xj,∆j)arrives, the algorithm queries the heavy hitter oracle with probability pj=
+min 
+1, CγB (logn)2∆j
+.
+Let us first consider the expected error when estimating the frequency of a heavy hitter i≤B/2. Let
+j0∈Sibe minimal such thatP
+j∈Si,j≤j0∆j≥1
+Blogn. Since iis a heavy hitter with total frequency
+fi≥2/B, such a j0exists. If there exists j∈Siwithj≤j0such that pj= 1, then iwill be
+classified as a heavy hitter by time j0with probability 1. Otherwise, the probability that iis not
+classified as a heavy hitter by time j0is upper bounded by
+Y
+j∈Si,j≤j0(1−pj)≤exp
+−X
+j∈Si,j≤j0pj
+= exp
+−γB(logn)2X
+j∈Si,j≤j0∆j
+
+≤exp(−γlogn) =n−γ.
+Union bounding over the B/2top heavy hitters we find that with high probability in nthey are indeed
+classified as heavy at the first point of time where they have appeared with weight at least1
+Blogn. In
+particular, with the same high probability the error when estimating each of the top B/2heavy hitters
+is at most1
+Blognand so,
+E
+1
+N·B/2X
+i=1fi· |fi−ˆfi|
+=O1
+Blogn
+.
+Let us now consider the light elements i > B/ 2. Such an element is never classified as heavy and
+consequently is estimated using the CountSketch tables Sjas in Algorithm 2. Denoting by Ethe
+event that we output 0(that is, the median of the first T−1CountSketch tables is small enough) and
+byEcthe event that we output the estimate from table T, as in Appendix F, we again have
+E1
+i·ˆfi−1
+i
+≲Pr(E)·1
+i2+ Pr( Ec)·1
+iB≤1
+i2+ Pr( Ec)·1
+iB.
+Here, the bound of O(1/B)on the expected error of table Tholds even though the B/2heavy hitters
+might appear in table T. The reason is with high probability, these heavy hitters appear with weight at
+most1
+Blognand conditioned on this event, we can plug into Lemma C.1 to get that the expected error
+is still O(1/B). It remains to bound Pr(Ec). Again, from Lemma C.1, it follows that the expected
+error of each of the first T−1tables is at most C2 log log n
+Bfor a sufficiently large constant C(even
+including the contribution from the heavy hitters), and so by Markov’s inequality,
+Pr
+|fi−ˆfj
+i| ≥2Clog log n
+B
+≤1
+4
+and again,
+Pr
+|fi−˜fi| ≥2Clog log n
+B
+≤exp(−Ω(T))≤1
+(logn)100.
+Thus, we can bound,
+E1
+i·ˆfi−1
+i
+≲1
+i2+·1
+(logn)100iB.
+Recalling that N=Hnand summing over i≥B/2we get that
+E
+1
+N·nX
+i=B/2+1fi· |fi−ˆfi|
+=O1
+Blogn+log(n/B)
+B(logn)100
+=O1
+Blogn
+,
+as desired. The expected number of queries to the heavy hitter oracle is
+mX
+j=1pj≤nX
+i=1X
+j∈SiγB(logn)2∆j=nX
+i=1γB(logn)2fi=O(B(logn)3).
+25Remark G.1. We note that Algorithm 5 makes use of the length of the stream to set p. Usually we
+would not know the length of the stream but at the cost of an extra log-factor in the number of queries
+made to the oracle, we can remedy this. Indeed, the query probability is p= min
+1,γB(logn)3
+m
+where mis the length of the stream. If we instead increase the query probability after we have seen j
+stream elements to pj= min
+1,γB(logn)3
+j
+, we obtain the same bound on the expected weighted
+error. Indeed, we will only detect the heavy hitters earlier. Moreover, the expected number of queries
+to the oracle is at mostmX
+j=1γB(logn)3
+j=O 
+B(logn)3logm
+.
+H Omitted Proofs of Section 3.2
+In this section, we discuss a version of our algorithm using a worst case estimate of the tail of the
+distribution, generalizing the value O(AT/B )designed for Zipfian distributions. The algorithm
+Basic-Tail-Sketch is essentially the classic AMS sketch [ 2] with c=O(1)counters for the
+elements whose hash value is 1. It is easy to see that the final algorithm, Algorithm 6 uses O(B)
+words of space.
+Algorithm 6 Estimating the tail of the frequency vector f
+1:Input: Stream of updates to an ndimensional vector f, space budget O(B)
+2:procedure TAIL-ESTIMATOR
+3: Initialize Bindependent copies of Basic-Tail-Sketch
+4: Update each copy of Basic-Tail-Sketch with updates from the stream
+5: for1≤i≤Bdo
+6: Vi←value outputted by ith copy of Basic-Tail-Sketch after stream ends
+7: end for
+8: Return V←theB/3-th largest value among {Vi}B
+i=1
+9:end procedure
+Algorithm 7 Auxilliary algorithm for Algorithm 6
+1:Input: Stream of updates to an ndimensional vector f
+2:procedure BASIC -TAIL-SKETCH
+3: T←Θ(log log n)
+4: B′←Θ(B/T)
+5: h: [n]→[B′](4-wise independent hash function)
+6: c←32
+7: for1≤j≤cdo
+8: sj: [n]→ {± 1}(4-wise independent hash function)
+9: end for
+10: Keep track of the sum1
+cPc
+j=1P
+i:h(i)=1fisj(i)2
+11:end procedure
+We now show that V, the output of Algorithm 6, satisfies V≈ ∥fΘ(B′)∥2
+2/B′, which is of the same
+order as the threshold value used in line 7of Algorithm 4, generalizing the Zipfian case.
+Proof of Lemma 3.2. We analyze one copy of the sketch V1, starting with the upper bound.
+Letabe the number of elements i∈[B′/10]such that h(i) = 1 . Because E[a] = 1/10, by Markov’s
+inequality, we have a≤9/10with probability at least 8/9. Next, let Wj=P
+i>B′/10:h(i)=1fisj(i).
+We have
+26E[W2
+j] =X
+i≥B′/10f2
+i·[h(i) = 1] =fB′/102
+2/B′
+By Markov’s inequality, we have1
+4P
+jW2
+j≤9fB′/102
+2/B′with probability 8/9. By the union
+bound, V2
+1≤9fB′/102
+2/Bwith probability at least 7/9.
+Next, we show the lower bound. Let X1=P
+i:h(i)=1min 
+f2
+i, f2
+3B′
+andY1=P
+i:h(i)=1f2
+i.
+Observe that X1≤Y1. We have
+E
+h[X1] =∥f3B′∥2
+2/B′+ 3f2
+3B′
+V ar(X1) =B′−1
+B′2 X
+i>3B′f4
+i+ 3Bf4
+3B′!
+By Chebyshev’s inequality,
+Prh
+X1≤ ∥f3B′∥2
+2/(3B′)i
+≤B′−1
+B′2 P
+i>3B′f4
+i+ 3B′f4
+3B′
+
+2∥f3B′∥2
+2/(3B′) + 3f2
+3B′2
+≤(B′−1) P
+i>3Bf4
+i+ 3B′f4
+3B′
+4∥f3B′∥4
+2/9 + 9 B′2f2
+3B′+ 4B′∥f3B′∥2
+2f2
+3B′
+≤1
+3.
+Thus, with probability at least 2/3, we have Y1≥ ∥f3B′∥2
+2/(3B′). Next we can bound V1in terms
+ofY1using the standard analysis of the AMS sketch. Let Zj=P
+i:h(i)=1fisj(i).
+E
+s
+Z2
+j|h
+=Y1
+E
+s
+Z4
+j|h
+=X
+i:h(i)=1f4
+i+ 6X
+i<j:h(i)=h(j)=1f2
+if2
+j= 3Y2
+1−2X
+i:h(i)=1f4
+i.
+By the Chebyshev’s inequality, Pr [V1≤Y1/2]≤2Y2
+1/c
+Y2
+1/4≤8
+c≤1
+4. By the union bound, we have
+V1≥ ∥f3B∥2
+2/(6B′)with probability at least 5/12.
+The lemma follows from applying the Chernoff bound to the independent copies V1, . . . , V B.
+Given the estimator V, we can output 0for elements whose squared estimated frequency is below V.
+Lemma H.1. LetEbe the event that Vis accurate, which holds with probability 1−exp (Ω ( B)). If
+f2
+i≤ ∥f3B′∥2
+2/(12B′)then with probability 1−exp (Ω ( B))−1/polylog (n), the algorithm outputs
+0. Iff2
+i≥ ∥f3B′∥2
+2/(12B′)then with constant probability,
+f2
+i−ˆf2
+i≤OfΩ(B′)2
+2/B′
+Proof. Observe that the error in the comparison between the threshold Vand˜fiis bounded by
+Vplus the estimation error of ˜fi. By the standard analysis of the CountSketch, with probability
+1−exp (Ω ( T)),f2
+i−˜f2
+i≤OfΩ(B′)2
+2/B′
+27Thus, if f2
+i≤ ∥f3B′∥2
+2/(12B′)then with probability 1−exp (Ω ( B))−1/polylog (n), we have
+V≥˜fiand the algorithm outputs 0.
+On the other hand, consider f2
+i≥ ∥f3B′∥2
+2/(12B′). First, consider the case when the algorithm
+outputs 0. Except for a failure probability of exp (Ω ( B)) + 1 /polylog (n), it must be the case that
+f2
+i=O
+∥f3B′∥2
+2/(12B′)
+so we have |f2
+i−0|=O
+∥f3B′∥2
+2/(12B′)
+. Next, consider the case
+when the algorithm outputs the answer from ST. The correctness guarantee of this case follows from
+the standard analysis of CountSketch, which guarantees that for a single row of CountSketch with B
+columns, with constant probability,f2
+i−˜f2
+i≤OfΩ(B)2
+2/B
+.
+Proof of Lemma 3.3. Note that we are assuming Lemma 3.2 is satisfied, which happens with
+probability 1−1/poly(n). For elements with true frequencies less than O(∥fB′∥2/√
+B′)for
+B′=O(B/log log n), we either we either use the last CS table in Algorithm 2 or we set the
+estimate to be 0. In either case, the inequality holds as O(∥fB′∥2/√
+B′)is the expected error of a
+standard 1×B′CS table.
+For elements with frequency larger than O(∥fB′∥2/√
+B′), we ideally want to use the last CS table in
+Algorithm 2. In such a case, we easily satisfy the desired inequality since we are using a CS table
+with even more columns. But there is a small probability we output 0. We can easily handle this
+as follows. Let fi=ℓ∥fB′∥2/√
+B′be the frequency of element iforℓ≥Cfor a large constant C.
+Any fixed CS table with B′columns gives us expected error ∥fB′∥2/√
+B′, so the probability that it
+estimates the frequency of fito be smaller than ∥fB′∥2/√
+B′is at most 1/Ω(ℓ)by a straightforward
+application of Markov’s inequality. Since we take the median across Θ(log log n)different CS tables
+in Algorithm 2, a standard Chernoff bound implies that the probability the median estimate is smaller
+thanO(|fB′∥2/√
+B′)is at most (1/ℓ)Ω(log log n). In particular, the expected error of our estimate is
+at most ≪
+ℓ∥fB′∥2/√
+B′
+·1/ℓ=O(∥fB′∥2/√
+B′), which can be upper bounded by the expected
+error of CS table with cB/log log ncolumns for a sufficiently small c, completing the proof.
+I Concentration bounds
+In this appendix we collect some concentration inequalities for reference in the main body of the
+paper. The inequality we will use the most is Bennett’s inequality. However, we remark that for
+our applications, several other variance based concentration result would suffice, e.g., Bernstein’s
+inequality.
+Theorem I.1 (Bennett’s inequality [ 8]).LetX1, . . . , X nbe independent, mean zero random variables.
+LetS=Pn
+i=1Xi, and σ2, M > 0be such that Var[S]≤σ2and|Xi| ≤Mfor all i∈[n]. For any
+t≥0,
+Pr[S≥t]≤exp
+−σ2
+M2htM
+σ2
+,
+where h:R≥0→R≥0is defined by h(x) = (x+ 1) log( x+ 1)−x. The same tail bound holds on
+the probability Pr[S≤ −t].
+Remark I.1. Forx≥0,1
+2xlog(x+1)≤h(x)≤xlog(x+1). We will use these asymptotic bounds
+repeatedly in this paper.
+A corollary of Bennett’s inequality is the classic Chernoff bounds.
+Theorem I.2 (Chernoff [ 17]).LetX1, . . . , X n∈[0,1]be independent random variables and
+S=Pn
+i=1Xi. Letµ=E[S]. Then
+Pr[S≥(1 +δ)µ]≤exp(−µh(δ)).
+Even weaker than Chernoff’s inequality is Hoeffding’s inequality.
+Theorem I.3 (Hoeffding [ 35]).LetX1, . . . , X n∈[0,1]be independent random variables. Let
+S=Pn
+i=1Xi. Then
+Pr[S−E[S]≥t]≤e−2t2
+n.
+28J Additional Experiments
+In this section, we display figures for synthetic Zipfian data and additional figures for the CAIDA and
+AOL datasets.
+500 1000 1500 2000 2500 3000
+Space012345Weighted Error1e11
+ Zipfian Data (n=1000000)
+CS
+CS (nonneg)
+Ours (C=1.0)
+Ours (C=2.0)
+Ours (C=5.0)
+500 1000 1500 2000 2500 3000
+Space0.00.51.01.52.02.53.0Unweighted Error1e10
+ Zipfian Data (n=1000000)
+CS
+CS (nonneg)
+Ours (C=1.0)
+Ours (C=2.0)
+Ours (C=5.0)
+Figure 6: Comparison of weighted and unweighted error without predictions on Zipfian data.
+0 10 20 30 40 50
+Minute0.20.40.60.81.01.21.4Weighted Error1e12
+ Space: 150.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute23456789Weighted Error1e11
+ Space: 300.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute1.52.02.53.03.54.04.5Weighted Error1e11
+ Space: 750.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute1.01.52.02.53.0Weighted Error1e11
+ Space: 1500.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.81.01.21.41.6Weighted Error1e11
+ Space: 3000.0
+CS
+CS (nonneg)
+Ours (C=5)
+Figure 7: Comparison of weighted errors without predictions on the CAIDA dataset
+290 10 20 30 40 50
+Minute0.51.01.52.0Weighted Error1e12
+ Space: 150.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.20.40.60.81.01.2Weighted Error1e12
+ Space: 300.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute1234567Weighted Error1e11
+ Space: 750.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute1.01.52.02.53.03.54.0Weighted Error1e11
+ Space: 1500.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.751.001.251.501.752.002.25Weighted Error1e11
+ Space: 3000.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)Figure 8: Comparison of weighted errors with predictions on the CAIDA dataset
+300 10 20 30 40 50
+Minute01234Unweighted Error1e10
+ Space: 150.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.00.51.01.52.02.53.0Unweighted Error1e10
+ Space: 300.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.20.40.60.81.01.21.41.6Unweighted Error1e10
+ Space: 750.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.20.40.60.81.0Unweighted Error1e10
+ Space: 1500.0
+CS
+CS (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute23456Unweighted Error1e9
+ Space: 3000.0
+CS
+CS (nonneg)
+Ours (C=5)Figure 9: Comparison of unweighted errors without predictions on the CAIDA dataset
+310 10 20 30 40 50
+Minute0246Unweighted Error1e10
+ Space: 150.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute01234Unweighted Error1e10
+ Space: 300.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.00.51.01.52.02.5Unweighted Error1e10
+ Space: 750.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute0.20.40.60.81.01.21.4Unweighted Error1e10
+ Space: 1500.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)
+0 10 20 30 40 50
+Minute2468Unweighted Error1e9
+ Space: 3000.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=5)Figure 10: Comparison of unweighted errors with predictions on the CAIDA dataset
+320 10 20 30 40 50 60 70 80
+Day0.20.40.60.81.0Weighted Error1e8
+ Space: 150.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day12345Weighted Error1e7
+ Space: 300.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.51.01.52.02.53.0Weighted Error1e7
+ Space: 750.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.250.500.751.001.251.501.75Weighted Error1e7
+ Space: 1500.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.20.40.60.81.01.2Weighted Error1e7
+ Space: 3000.0
+CS
+CS (nonneg)
+Ours (C=1)Figure 11: Comparison of weighted errors without predictions on the AOL dataset
+330 10 20 30 40 50 60 70 80
+Day02468Weighted Error1e7
+ Space: 150.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day012345Weighted Error1e7
+ Space: 300.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.00.51.01.52.02.53.0Weighted Error1e7
+ Space: 750.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.000.250.500.751.001.251.501.75Weighted Error1e7
+ Space: 1500.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.20.40.60.81.01.2Weighted Error1e7
+ Space: 3000.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)Figure 12: Comparison of weighted errors with predictions on the AOL dataset
+340 10 20 30 40 50 60 70 80
+Day012345Unweighted Error1e7
+ Space: 150.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.00.51.01.52.02.53.0Unweighted Error1e7
+ Space: 300.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.000.250.500.751.001.251.50Unweighted Error1e7
+ Space: 750.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.00.20.40.60.81.0Unweighted Error1e7
+ Space: 1500.0
+CS
+CS (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0123456Unweighted Error1e6
+ Space: 3000.0
+CS
+CS (nonneg)
+Ours (C=1)Figure 13: Comparison of unweighted errors without predictions on the AOL dataset
+350 10 20 30 40 50 60 70 80
+Day012345Unweighted Error1e7
+ Space: 150.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.00.51.01.52.02.53.0Unweighted Error1e7
+ Space: 300.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.000.250.500.751.001.251.501.75Unweighted Error1e7
+ Space: 750.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day0.00.20.40.60.81.0Unweighted Error1e7
+ Space: 1500.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)
+0 10 20 30 40 50 60 70 80
+Day01234567Unweighted Error1e6
+ Space: 3000.0
+Hsu et al.
+Hsu et al. (nonneg)
+Ours (C=1)Figure 14: Comparison of unweighted errors with predictions on the AOL dataset
+36

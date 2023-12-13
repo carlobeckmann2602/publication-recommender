@@ -89,66 +89,6 @@ class ArxivApiScraper:
             # else create new entry
         pass
     
-    # TODO
-    def get_db_entries(self):
-        #print("ArxivApiScraper.get_db_entries()")
-        self.db_entries = self.read_csv(ArxivApiScraper.dataset_path+"publications.csv")
-        
-        print("-- requesting publications from database ...")
-        db_entries = None
-        '''
-        file_param = {"file": open("/scraper/data/temp/"+arxiv_id+".txt", "rb")}
-        res_ai_api = requests.post("http://localhost:3001/graphql", files=file_param)
-        if res_ai_api.status_code == 200:
-            db_entries = res_ai_api.text
-            print("-- response: "+str(db_entries))
-        else:
-            print("-- failed to request publications in database.")
-            return db_entries
-        '''
-        return self.db_entries
-    
-    # TODO
-    def update_db_entries(self, update_list):
-        #print("ArxivApiScraper.update_db_entries(update_list)")
-        print("-- saving publications to database ...")
-        mutation = gql("""
-        mutation savePublication($query: CreatePublicationDto!) {
-            savePublication(createPublication: $query) {
-                id
-                title
-            }
-        }
-        """)
-        for pub in update_list:
-            params = {
-                "query": {
-                    "title": str(pub.title), 
-                    "exId": str(pub.arxiv_id),
-                    "source":str(pub.src),
-                    "doi": str(pub.doi),
-                    "url": str(pub.url),
-                    "abstract": str(pub.abstract),
-                    "authors": pub.authors,
-                    "date": pub.pub_date,
-                    "descriptor": pub.vector_dict
-  
-            }}
-            """  
-            {
-                '0': {
-                    'token': 'blabla', 
-                    'embedding': [-0.07583089172840118, -0.07275690138339996, ...]
-                }
-            }
-            """
-            try:
-                result = self.gql_client.execute(mutation, variable_values=params)
-                print("--- saving ..." + str(result))
-            except TransportQueryError as e:
-                print(e)
-        return self.write_csv(ArxivApiScraper.dataset_path+"publications.csv", update_list)
-    
     def scrape_newest_id(self):
         root = ArxivApiScraper.root
         method = "query"

@@ -9,20 +9,16 @@ transport = AIOHTTPTransport(url="http://nest:3000/graphql")
 client = Client(transport=transport, fetch_schema_from_transport=True)
 
 # Provide a GraphQL query
-mutation = gql("""
-mutation savePublication($query: CreatePublicationDto!) {
-  savePublication(createPublication: $query) {
-    id
-    title
-  }
-}
-""")
+#query = gql("""
+#query publicationCount($query: PublicationSource) {
+#    publicationCount(source: $query)
+#}
+#""")
 
-params = {"query": {"exId":"12345678","source":"arxiv", "title": "test1234567", "descriptor": {"sentences": [{"value":"blablubb","vector":[3.1]}]}}}
 
+params = {"query": {"source": "ARVIX"}}
 try:
-  # Execute the query on the transport
-  result = client.execute(mutation, variable_values=params)
-  print(result)
+    result = client.execute(query, variable_values=params)
+    print("--- saving ..." + str(result))
 except TransportQueryError as e:
-  print(e)
+    print(e)

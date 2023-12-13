@@ -1,4 +1,5 @@
-import requests
+import requests, json
+from enum import Enum
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.exceptions import TransportQueryError
@@ -7,7 +8,7 @@ _url = 'http://nest:3000/graphql'  # Replace with the actual URL of your GraphQL
 
 _transport = RequestsHTTPTransport(
     url=_url,
-    use_json=True,
+    use_json=True
 )
 
 client = Client(
@@ -16,20 +17,16 @@ client = Client(
 )
 
 # GraphQL mutation string
-mutation = gql("""
-mutation savePublication($query: CreatePublicationDto!) {
-  savePublication(createPublication: $query) {
-    id
-    title
-  }
+query = gql("""
+query publicationCount($query: PublicationSource) {
+    publicationCount(source: $query)
 }
 """)
 
-params = {"query": {"exId":"abcde73892","source":"arxiv", "title": "das ist einrandom titel", "descriptor": {"sentences": [{"value":"wuff","vector":[7.1]}]}}}
-
+dict_params = {"query": "ARXIV"}
 try:
   # Execute the query on the transport
-  result = client.execute(mutation, variable_values=params)
+  result = client.execute(query, variable_values=dict_params)
   print(result)
 except TransportQueryError as e:
   print(e)
