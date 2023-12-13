@@ -31,11 +31,17 @@ type PublicationChunkDataDto {
 type PublicationResponseDto {
   id: String!
   title: String!
+  exId: String!
+  source: PublicationSource!
   doi: String
   url: String
   authors: [String!]
   publicationDate: DateTime
   isFavorite: Boolean!
+}
+
+enum PublicationSource {
+  ARXIV
 }
 
 """
@@ -52,10 +58,6 @@ type Query {
   newest(source: PublicationSource!): PublicationResponseDto!
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
   favorites: [PublicationResponseDto!]!
-}
-
-enum PublicationSource {
-  ARXIV
 }
 
 input PublicationVectorsRequestDto {
