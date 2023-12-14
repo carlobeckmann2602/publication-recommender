@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { In, IsNull, Not, Repository } from 'typeorm';
+import { PublicationSourceWithSourceIdDto } from '../dto/PublicationBySource.dto.';
 import { AnnoyResultDto } from '../dto/annoy-result.dto';
 import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { Publication } from '../entities/publication.entity';
@@ -76,6 +77,10 @@ export class PublicationService {
       throw new NoPublicationWithDateForSourceException();
     }
     return result;
+  }
+
+  async getPublikationBySourceWithId(input: PublicationSourceWithSourceIdDto): Promise<Publication> {
+    return this.publicationRepository.findOneBy({ exId: input.exId, source: input.source });
   }
 
   async createPublication(dto: CreatePublicationDto): Promise<Publication> {
