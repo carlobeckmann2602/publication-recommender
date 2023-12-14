@@ -1,0 +1,11 @@
+query GetSearchResultsByQuery($query: String!) {
+  publicationsByQuery(filter: $query) {
+    id
+    title
+    source
+    doi
+    url
+    authors
+    publicationDate
+  }
+}

@@ -25,11 +25,11 @@ type Props = {
   value?: string;
 };
 
-export function Searchbar(props: Props) {
+export function Searchbar({ value }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      query: props.value,
+      query: value,
     },
   });
 
