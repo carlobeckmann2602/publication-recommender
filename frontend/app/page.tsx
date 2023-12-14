@@ -1,7 +1,4 @@
 import { Searchbar } from "@/components/search/Searchbar";
-import LiteratureCard, {
-  DOCUMENT_TYPES,
-} from "@/components/search/LiteratureCard";
 
 export default function Home() {
   return (

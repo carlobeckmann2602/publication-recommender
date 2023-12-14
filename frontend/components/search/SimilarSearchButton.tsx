@@ -10,7 +10,7 @@ type Props = {
 export default function SimilarSearchButton({ id }: Props) {
   return (
     <Link
-      href={`/search?q=${id}&searchType=id`}
+      href={`/search/${id}`}
       className={buttonVariants({ variant: "ghost", size: "icon" })}
     >
       <ClipboardDocumentIcon width={24} />

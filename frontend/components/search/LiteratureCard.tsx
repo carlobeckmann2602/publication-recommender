@@ -11,11 +11,11 @@ import {
   BookOpenIcon,
   ChatBubbleBottomCenterTextIcon,
   DocumentIcon,
-  HeartIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import SimilarSearchButton from "./SimilarSearchButton";
+import LikeButton from "./LikeButton";
 
 type Props = {
   id: string;
@@ -27,6 +27,8 @@ type Props = {
   matchedSentence?: string | null;
   doi?: string | null;
   documentType?: DOCUMENT_TYPES | null;
+  deactivateSearchSimilar?: boolean;
+  className?: string;
 };
 
 export default function LiteratureCard(props: Props) {
@@ -39,7 +41,7 @@ export default function LiteratureCard(props: Props) {
   const doiUrl = `https://www.doi.org/${props.doi}`;
 
   return (
-    <Card className="w-5/6" id={props.id}>
+    <Card className={props.className} id={props.id}>
       <CardHeader>
         <CardTitle className="flex flex-row gap-2 align-middle">
           {props.documentType === DOCUMENT_TYPES.PAPER && (
@@ -76,14 +78,16 @@ export default function LiteratureCard(props: Props) {
         )}
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row justify-between align-middle grow">
-          <div className="flex flex-row gap-2">
-            <SimilarSearchButton id={props.id} />
+        <div className="flex flex-row justify-between align-middle items-end grow">
+          <div className="flex flex-row">
+            {!props.deactivateSearchSimilar && (
+              <SimilarSearchButton id={props.id} />
+            )}
             {/* <TagIcon width={24} /> */}
-            <HeartIcon width={20} />
+            <LikeButton id={props.id} liked={false} />
           </div>
           {props.doi && (
-            <span>
+            <span className="h-fit">
               DOI:{" "}
               <a
                 href={doiUrl}
