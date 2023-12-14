@@ -1,0 +1,624 @@
+Prompt Engineering-assisted Malware Dynamic Analysis Using GPT-4
+Pei Yan
+1Guangdong Key Laboratory of
+Intelligent Information Processing
+2Shenzhen Key Laboratory of Media Security
+Shenzhen, China
+yanpei2022@email.szu.edu.cn
+Miaohui Wang
+1Guangdong Key Laboratory of
+Intelligent Information Processing
+2Shenzhen Key Laboratory of Media Security
+Shenzhen, China
+wang.miaohui@gmail.comShunquan Tan
+1Guangdong Key Laboratory of
+Intelligent Information Processing
+2Shenzhen Key Laboratory of Media Security
+Shenzhen, China
+tansq@szu.edu.cn
+Jiwu Huang∗
+1Guangdong Key Laboratory of
+Intelligent Information Processing
+2Shenzhen Key Laboratory of Media Security
+Shenzhen, China
+jwhuang@szu.edu.cn
+Abstract —Dynamic analysis methods effectively identify
+shelled, wrapped, or obfuscated malware, thereby preventing
+them from invading computers. As a significant representation
+of dynamic malware behavior, the API (Application
+Programming Interface) sequence, comprised of consecutive
+API calls, has progressively become the dominant feature of
+dynamic analysis methods. Though there have been numerous
+deep learning models for malware detection based on API
+sequences, the quality of API call representations produced
+by those models is limited. These models cannot generate
+representations for unknown API calls, which weakens both
+the detection performance and the generalization. Further, the
+concept drift phenomenon of API calls is prominent. To tackle
+these issues, we introduce a prompt engineering-assisted
+malware dynamic analysis using GPT-4 . In this method,
+GPT-4 is employed to create explanatory text for each API
+call within the API sequence. Afterward, the pre-trained
+language model BERT (Bidirectional Encoder Representations
+from Transformers) is used to obtain the representation of
+the text, from which we derive the representation of the
+API sequence. Theoretically, this proposed method is capable
+of generating representations for all API calls, excluding
+the necessity for dataset training during the generation
+process. Utilizing the representation, a CNN-based detection
+model is designed to extract the feature. We adopt five
+benchmark datasets to validate the performance of the
+proposed model. The experimental results reveal that the
+proposed detection algorithm performs better than the
+state-of-the-art method (TextCNN). Specifically, in cross-
+database experiments and few-shot learning experiments,
+*Corresponding authorthe proposed model achieves excellent detection performance
+and almost a 100% recall rate for malware, verifying its
+superior generalization performance. The code is available at:
+github.com/yan-scnu/Prompted_Dynamic_Detection .
+Index Terms —Computer security, malware detection, prompt
+engineering, large language model
+1. Introduction
+Malware poses a significant risk to the network and
+computer security, rendering effective malware detection
+an essential and challenging task[1], [2], [3]. A dynamic
+analysis method was proposed to achieve better detection
+performance. This method involves running the malware in
+a sandbox and recording its dynamic behavior. The code is
+judged based on its dynamic behavior, providing a better
+mechanism to detect obfuscated and packaged malware.
+For dynamic analysis methods, the most commonly used
+dynamic behavior is the API sequence, composed of API
+calls during the code’s runtime process. The encoded API
+sequence shares certain similarities with encoded natural
+text[4], [5]. As Deep Learning (DL) technology has yielded
+promising results in Natural Language Processing (NLP)
+tasks, many DL-based text classification models have been
+applied to identifying API sequences, achieving excellent
+classification performance[6], [7], [8]. With the recent rise
+of the Large Language Model (LLM)[9], [10], [11], Many
+fields are attempting to integrate large language models to
+solve problems [12], [13]. Malware analysts are exploring
+ways to further enhance detection performance using LLMs.arXiv:2312.08317v1  [cs.CR]  13 Dec 2023Figure 1. The comparison between the proposed and the existing represen-
+tation methods. When placing the suspicious code from the terminal into a
+sandbox for execution, the sandbox will output the API sequence called by
+code. We propose to employ GPT-4 for generating explanatory text for each
+API call within the API sequence. We then embed this explanatory text and
+concatenate the resulting embedded matrices to achieve representation. By
+introducing additional prior knowledge, our method enhances representation
+efficacy, thereby outperforming previous methods.
+For instance, Transformer-based network architectures are
+being designed for malware classification[14], [15].
+However, due to limited training data and the differences
+between API sequences and encoded text sequences, the
+detection performance of state-of-the-art(SOTA) methods
+remains constrained. Moreover, several issues persist in
+current API-based detection models.
+•Limited representation of malware features. The
+representation of API calls is refined during the
+training process. The quality of the training data
+significantly influences the effectiveness of the rep-
+resentation.
+•Weak generalization performance. The represen-
+tation, obtained during the training phase, may be
+susceptible to overfitting on a specific dataset. Con-
+sequently, this can lead to inferior performance when
+validated against other datasets.
+•Sensitive to concept drift. As systems and detec-
+tion tools iterate, API calls will also be updated
+accordingly. This can cause the current detection
+model to lack representation for new API calls.
+Consequently, it may affect the detection accuracy
+of future malware.
+To address the issues mentioned above, this paper in-
+troduces a method for generating representation based on a
+LLM. This approach employs LLM to produce explanatory
+text for each API call. We then perform embedding opera-
+tions on these texts, which serve as the representations for
+the API calls. With the high-quality explanatory text created
+by the LLM and the application of pre-trained models, wecan directly obtain the representation. This eliminates the
+need for training with the API sequence dataset, significantly
+enhancing the efficiency of representation generation.
+GPT-4 [16] had demonstrated its better performance than
+other models ( e.g., PaLm [17], Llama [18], ChatGLM [19])
+in various language tasks. Consequently, this study employs
+GPT-4 for the generation of explanatory text for API calls.
+We generate representations based on this explanatory text
+and concatenate the text’s representations to obtain the
+API sequence’s representation, as illustrated in Figure 1.
+We then design appropriate deep neural networks to learn
+these representations and classify malware based on them.
+The primary contributions of this paper are summarized as
+follows:
+1) We guide GPT-4 to generate explanatory texts for
+API calls, and these texts serve as a representation
+of each API call during both training and testing
+procedures. To the best of our knowledge, this is the
+first report to apply prompt engineering to dynamic
+malware analysis.
+2) With the assistance of descriptive explanatory text,
+the acquisition of API call representations does
+not require training with datasets. This approach
+introduces the representation with more additional
+knowledge, thereby improving the quality of the
+representations and enhancing their generalizability.
+3) Thanks to the substantial training corpus and ro-
+bust text restatement capabilities of the GPT-4 , it
+can theoretically generate the representation for all
+API calls. This not only makes the representation
+association denser, stronger, and more stable, but
+also benefits the coping mechanisms for data drift
+phenomena such as API call updates.
+2. Related Work
+2.1. Malware Dynamic Analysis
+The dynamic analysis method analyzes malware by ex-
+amining its dynamic behavioral features during execution
+[20]. By executing the executable file in a sandbox (such
+as Cuckoo1or Cape2), the sandbox records its behavioral
+characteristics, which enables us to analyze the file based on
+these attributes. In comparison with static analysis methods,
+which do not require execution during the analysis process,
+dynamic analysis methods can effectively detect shell, ob-
+fuscation, and packaged malware. As such, it is currently
+one of the primary detection methods.
+One of the most crucial dynamic behavioral characteris-
+tics is the API sequence [4], [5]. The API sequence reflects
+the interaction between the code and the operating system,
+providing an understanding of the malware behaviors, which
+is essential for designing effective malware defense strate-
+gies. Earlier research leveraged statistical learning [21], [22],
+1. https://github.com/cuckoosandbox/cuckoo
+2. https://github.com/mandiant/capa[23], machine learning [24], [25], and graph methods [26] to
+examine the API sequence and classify codes. Researchers
+also attempted to employ static analysis features for hybrid
+analysis [27], [28]. However, the simplicity of early models
+and the small amount of training data greatly constrained
+both the generalization and detection performance.
+2.2. NLP-based Methods
+With the significant success of deep learning technology
+in text classification tasks, researchers are attempting to ap-
+ply text classification methods to malware dynamic analysis,
+given that the encoded text bears a high resemblance to API
+sequences.
+Pascanu et al. [5] were the first to suggest the use of
+Recurrent Neural Networks (RNN) and Echo State Net-
+works (ESN) for dynamic malware detection, pioneering the
+application of NLP models in dynamic analysis. Nonethe-
+less, RNN demonstrated some degree of gradient vanish-
+ing and gradient explosion. To mitigate the issues of the
+RNN model, researchers [6], [7], [8], [29], [30] utilized the
+LSTM and GRU models to design dynamic detection models
+building on Pascanu’s work. Apart from RNN-based models,
+CNN-based [31], [32] models and CNN+RNN combination
+models [33] have also shown good performance.
+Although contemporary methods have achieved solid
+detection performance, they generally lack robustness and
+generalization, which are verified in Section 4.4 and Sec-
+tion 4.5.
+2.3. Transformer-based Methods
+The Transformer [9] is a deep learning model based on
+the attention mechanism, first employed in machine trans-
+lation tasks. The fundamental structure of the Transformer
+comprises an encoder and a decoder. The encoder is tasked
+with understanding the input data, while the decoder is used
+to generate the output results.
+Given the success of the Transformer architecture in the
+NLP field, researchers have sought to transfer this architec-
+ture to malware detection models. The Transformer is adept
+at handling long sequences and can be trained using parallel
+computing. Moreover, it calculates the attention between
+each API call to identify key API calls and categorizes the
+API sequences based on this attention.
+Numerous LLMs [10], [11], [34], [35], [36], [37] have
+been proposed, building upon the Transformer model. Some
+of these models have been applied to malware detection
+methods. Some research [38], [39], [40] directly utilize
+the LLM framework to construct detection models, while
+others [15], [41] refer to the pre-training methods of LLMs,
+obtain the pre-training weights of the model through self-
+supervised tasks, and then fine-tune it with specific datasets.
+It is important to note that the API sequence and text
+sequence bear somewhat dissimilarities in terms of statistical
+characteristics and vocabulary set. Furthermore, the local
+features of the API sequence are typically more significant
+than its global features. The weak contextual relevance mayaffect the application of the Transformer module in the
+malware detection model.
+3. Methodology
+In this study, GPT-4 is utilized to produce explanatory
+text for each API call within the API sequence. Given its
+training on a large-scale corpus, GPT-4 can rephrase and
+summarize the knowledge associated with API calls via
+prompt engineering. The prompt texts can guide GPT-4
+to generate high-quality explanatory text. Following this,
+BERT, a large language pre-training model, is employed to
+generate representations for this explanatory text, which are
+then concatenated to represent the entire API sequence. The
+deep neural network is subsequently deployed to extract fea-
+tures from these representations for learning automatically.
+Finally, the model is connected to various malware code
+categories through a fully connected layer with a softmax
+function. The overall architecture of the proposed model is
+illustrated in Figure 2.
+3.1. Representation Generation
+To generate a representation of the API sequence, we
+need to produce the explanatory text for each API call in
+the sequence. For a more detailed depiction of this process,
+we define a mapping relationship, Prompt , wherein we
+create a sentence for the description and explanation of each
+API call. We define an API sequence swith the length
+ofnass= [α1, ..., α n], where αisignifies a single API
+call. Through prompt engineering, each API call generates
+descriptive text, and we denote this descriptive text as ei.
+[e1, ..., e n] = [Prompt (α1), ..., Prompt (αn)].(1)
+However, this method consumes a significant amount
+of computational resources. Consequently, we construct a
+vocabulary for the API sequence and generate correspond-
+ing explanations for each API call within the vocabulary.
+Subsequently, the explanation text for each API call can
+be located in the vocabulary, thereby facilitating the reuse
+of explanation text and significantly reducing computational
+demands.
+Next, we segment the explanatory text using the
+WordPiece segmentation method, as shown in Eq.( 2).
+[CLS], ω1, ..., ω m,[SEP] =WordPiece (e). (2)
+It decomposes a word into multiple subwords or char-
+acters, proving more effective than the space-based method
+when handling unknown words, rare words, and complex
+words. We segment the explanatory text and tokenize it
+to obtain a sequence of tokens, then adjust the sequences
+to the same length m, by truncating the exceeding tokens
+and padding the shortened sequences with the special token
+[PAD] . Finally, we incorporate the [CLS] and[SEP]
+special tokens at the beginning and end of the sequenceFigure 2. The pipeline of the proposed model is divided into two main modules: Representation Generation and Representation Learning. In the
+Representation Generation stage, explanatory text for API calls is generated using GPT-4 . Following this, Bert is used to generate embeddings for
+the explanatory text, thereby generating the representation of the API sequence. In the Representation Learning phase, a multi-layer convolutional neural
+network is utilized to extract and subsequently learn feature information from the representation. A fully connected layer is ultimately used to connect to
+each malware category.
+respectively. A mapping relationship Embed is defined as
+Eq.( 3), generating the vectors that represent each token in
+the sequence.
+e=Embed ([[CLS], ω1, ..., ω m,[SEP]])
+= [vCLS, v1, ..., v m, vSEP].(3)
+A vector representation, denoted as vj(1≤j≤m), is
+generated for every token ωkwithin the tokens sequence.
+The pre-trained BERT is utilized to represent each token,
+and the dimension of its embedding layer is 768, thus
+vj∈R768. This further creates a representation matrix
+ek(1≤k≤n)∈R(m+2)×768that corresponds to one
+API call. Upon obtaining the representation of each API
+call, a concatenation, denoted as Concat , is performed
+on the representations of each API call ekin the API
+sequence. This process results in the representation tensor E
+∈Rn×(m+2)×768of the API sequence, as shown in Eq.( 4).
+E=Concat [e1, ...,en]. (4)3.2. Representation Learning
+The input for previous model methods is a two-
+dimensional API sequence representation matrix, but the
+proposed generated representation belongs to a three-
+dimensional tensor. Consequently, there is a need to de-
+sign a network architecture capable of accepting a three-
+dimensional tensor as input, and learning from the repre-
+sentation.
+First, to adjust the representation, a depth-wise convo-
+lution is performed. The obtained representation is derived
+from the representation of natural text, which differs some-
+what from the API sequence representation. Each embedded
+channel corresponds to a representation matrix, with each
+element in the representation matrix having a contextual cor-
+relation among the surrounding elements. Specifically, the
+vertical contextual correlation stems from the explanation
+text, and the horizontal contextual correlation comes from
+API sequences. The design of a module for representation
+adjustments and capturing semantic information is therefore
+necessary. The trained module can improve the adjustmentFigure 3. Heat map illustration of the cosine similarity among API call representations produced using different representation techniques, using Aliyun as
+the training dataset. The representations correlation created by the TextCNN (a)and BiLSTM (b)models have many zero values, while the representations
+correlation derived via the proposed method (c)are more closely related.
+of the natural text representation for better reflection of API
+calls and can also capture semantic association information
+among the surrounding elements.
+Considering that the representation of each dimension
+reflects the specific characteristics of the data and that the
+correlation of representations across the dimensions is not
+strong, we employ a per-layer convolutional network to
+fine-tune each dimension’s representation. Additionally, per-
+layer convolution can capture the correlation and exceptional
+features of local data.
+Unlike natural text sequences, API sequences exhibit
+significant local features. Therefore, after adjusting the rep-
+resentation, two-dimensional convolution blocks with vary-
+ing kernel sizes are used to generate respective feature
+maps. Max pooling and batch normalization operations are
+then performed on the feature maps. The max pooling
+operation can select the maximum value from each feature
+map, allowing the model to capture the important features
+in each map. It should be considered that the dimensions
+of the feature map have different statistical distributions,
+resulting in significant variations in max pooling results. To
+standardize the results of max pooling, a batch normalization
+layer is utilized. Finally, the results are concatenated and
+each classification category is connected through a fully
+connected layer containing a softmax function.
+3.3. Analysis of Representation Quality
+The method of representation maps discrete API calls
+to fixed-size continuous vectors. This method facilitates
+the calculation of the correlation between each API call
+through these vectors. For example, vectors corresponding
+to API calls with similar implications are closer in vector
+space. Therefore, representation vectors, once trained with
+datasets or other methods, are compelled to learn and mirror
+semantic associations between API calls more effectively.
+This enhances the vectors’ ability to deliver a higher qual-
+ity representation of API calls. Learning based on these
+high-quality representations, subsequent models can furtherimprove the learning capacity. It is clear that the quality
+of semantic association in API call representation greatly
+influences detection performance.
+To evaluate the semantic relationships of API calls under
+different models, we calculate the cosine similarity of API
+call representation produced by TextCNN, BiLSTM, and the
+proposed model. The API call representations of TextCNN
+and BiLSTM are vectors; conversely, the API call repre-
+sentation of the proposed method is a matrix, represented
+byAandBrespectively. The corresponding similarity cal-
+culation formula is provided in Eq.( 5). Since there is no
+negative correlation between the API call representation in
+the proposed method, to better showcase the differences in
+representation effects between our method and the previous
+methods, we utilize the absolute value of cosine similarity
+as the measure of representation similarity.
+Cosine (A,B) =|Pn
+j=1(Aij∗Bij)|qPn
+j=1(A2
+ij)∗qPn
+j=1(B2
+ij). (5)
+The heat map of API call representation association
+trained on the Aliyun dataset is depicted in Figure 3. For
+the API call representation generated by TextCNN and BiL-
+STM, there are approximately 18% of API calls that have
+almost no correlation with other API calls. One reason for
+this is that the quantity of training datasets is limited, hence
+the representation of some API calls cannot be learned.
+Additionally, after dividing the entire dataset into training
+and testing datasets, about 15% types of API calls are absent
+in the training dataset. Consequently, some correlations of
+API call representation are not learned during the training
+process, which results in poor generalization performance.
+API call representations are produced by the prompt
+text of GPT-4 . So even if certain API calls are absent
+in the training dataset, the proposed method can gener-
+ate a representation for these calls and calculate semantic
+correlations with other API calls. This method is able to
+generate representations for all API calls, facilitating theFigure 4. The Comparison of the output content generated by the GPT-4 model using both the direct prompt method and the designed prompt method.
+The red text represents the prompt text, while the blue text represents the content output generated by GPT-4 . The comments on this generated content
+are indicated in black text. For the answer of the direct prompt method, any text highlighted in Italics exhibits problematic content. The specific issues
+related to this answer are subsequently outlined in the comments provided to the right of these highlighted contents.
+calculation of similarity between any two API calls. Hence,
+the similarity matrix generated by this method is denser and
+contains more information compared to the previous two
+methods.
+The quality of representation is also a key criterion for
+evaluating representation generation methods. In the case
+of API calls, if API calls have similar meanings, then their
+cosine similarity will be higher. To measure the difference in
+representational quality between the proposed method and
+the previous methods, we carry out an analysis of two cases.
+Case 1: wide and narrow characters. Consider
+a pair of API calls, HttpSendRequestW and
+HttpSendRequestA , as an example. The only difference
+between their names is the final letter. These API calls are
+two different versions of the same function, with many
+functions in the Windows API having two versions each
+dealing with Unicode and ANSI. One version, ending
+with “A”, deals with narrow characters (ANSI), while the
+other version, ending with “W”, manages wide characters
+(Unicode). As such, the meanings of these two API calls
+are virtually identical, and their cosine similarity is close to
+one. Previous models learned semantic associations among
+API calls during the training procedure. However, they
+struggled to learn correlations under conditions of low data
+quality or a low occurrence of specific API calls in the
+datasets. Our method generates explanatory texts for the
+API calls leading to high similarity in the explanatory texts
+when their meanings are alike.
+Case 2: semantic chain analysis. Liet al. [33] proposed
+a semantic chain method. This method generates four at-
+tributes of an API call based on the API call name. Theseattributes are action ,object ,class , and category , collec-
+tively forming the semantic chain of the API call. If two
+API calls share the same semantic chain, their meanings are
+similar and their cosine distance similarities approach one.
+The case where the four attributes are identical corresponds
+to Case 1. Considering the strong distinguishing capacity of
+theobject attribute, we examine a pair of API calls that
+share identical action ,class , and category attributes. The
+proposed method effectively captures the relationships of
+API calls with similar semantic chains, posing a challenge
+for prior representation methods.
+Detailed illustrations of the aforementioned two cases,
+as well as a comparison between the performance of the
+proposed model and mainstream models on these cases, are
+provided in Section 5.1.
+To further assess the representation quality of the model,
+we train and test the models with two different datasets,
+a process known as cross-database experiments. When the
+similarity of the API call vocabulary is high, the represen-
+tation formed by the training datasets must adapt to the
+representation of the test datasets, a process referred to as
+Representation Adaptation . Conversely, when the vocabu-
+laric similarity is low, many API calls in the testing dataset
+would not have been encountered during training. This
+lack of significant feature representation poses challenges
+when testing on the testing dataset. We treat the API call
+vocabularies of the training and testing datasets as two mini-
+mally overlapping domains and apply the domain knowledge
+learned from the training dataset to the testing domain in
+a process termed Domain Adaptation . Domain adaptation
+exerts greater demands on generalization capabilities com-pared to representation adaptation, making it a considerable
+challenge for dynamic analysis models. Detailed accounts
+of the corresponding experiments and analyses are provided
+in Section 4.4 and Section 4.5.
+3.4. Design of Prompt Texts
+Once the model achieves a certain scale, its performance
+significantly improves, demonstrating strong capabilities,
+such as language comprehension, generation ability, logical
+reasoning, and so forth. Therefore, designing prompt texts
+that enable these large-scale models to exhibit such powerful
+capabilities is worth exploring. Wei et al. [42] suggested
+an enhanced strategy for generating prompt text, Chain of
+Thing (CoT). By providing auxiliary prompts for intermedi-
+ate reasoning steps, CoT allows large models to tackle more
+complex problems.
+In this paper, the representation is created by the GPT-
+4. Even though the GPT-4 is not required to execute com-
+plex reasoning, it must paraphrase its learned knowledge
+taking into account specific requirements. In this process,
+the prompt text directly influences the quality of the prompt
+content. Consequently, we take into account the following
+rules for designing prompt text, and the comprehensive
+design process of the prompt text is depicted in Figure. 5.
+•Identity Transformation. Yang et al. [43] demon-
+strated that hypothesizing specific identities and op-
+erating environments to the GPT-4 boosts its level
+of expression and reasoning, and thereby generates
+higher-quality prompt content. Therefore, we treat
+GPT-4 like an experienced software security analyst
+capable of carrying out the malware analysis task
+with high quality.
+•Restricted Rules. We explicitly instruct GPT-4 not
+to generate redundant content such as “XXX is a
+Windows API sequence”. This attribute is a typical
+characteristic of the API calls and cannot be used
+to differentiate them. Moreover, GPT-4 is required
+to present the generated content in a natural text
+form, without adding special symbols ( e.g., “\n”,
+“\t”) or presenting content in unusual formats ( e.g.,
+Markdown format).
+•Length Limitation. We have to accomplish Word-
+Piece tokenization on the generated text and process
+the token sequence to a fixed length to ensure that
+the representations produced from each text have the
+same form. Thus, we explicitly demand that the text
+created by GPT-4 is restricted to 100 words. Text
+that is too lengthy will substantially increase the time
+consumption and computation space required.
+Finally, we input both the direct prompt text and the
+designed prompt text into the GPT-4 , respectively. The
+comparison of the content generated by GPT-4 is illustrated
+in Figure 4. Clearly, if we guide GPT-4 with the designed
+prompt text, the content created is of superior quality, which
+finally improves the detection performance.
+Figure 5. The design process entails the creation of a prompt text, which
+guides GPT-4 in generating explanatory text of a higher quality.
+4. Experiments of Detection Models
+Five benchmark datasets are employed to evaluate the
+performance of the proposed model. The selection of two
+high-performance models (TextCNN, BiLSTM) is based on
+detection accuracy for further analysis. To assess the gener-
+alization performance of the proposed model, five datasets
+are classified into two groups, according to the association
+of the API call vocabulary. Concurrently, representation
+adaptation experiments are trained and tested within the
+same group, while domain adaptation representations are
+tested across different groups.
+4.1. Experiment Settings
+Implementation Details . All experiments in this paper are
+carried out on Ubuntu 20.04, utilizing an RTX 4090 GPU
+and 24 GB of memory. Python 3.9 and Pytorch 2.0 are
+used to construct the experimental model. Considering the
+GPU memory capacity limitations, the truncation length of
+the API sequence is set at 100, and the embedded token
+sequence of the explanatory text is set at 102 (including the
+initial [CLS] and final [SEP] token). The batch size is set
+at 8, and the learning rate is set at 0.001, with the Adam
+optimizer utilized.
+Compared Models. The models used for comparison
+can be mainly grouped into several categories: RNN-
+based networks [30], [43], [8], [44], CNN-based networks
+[31], CNN+RNN-based networks [45], [33], [46], and
+Transformer-based networks [14], [15].
+Datasets. To validate the effectiveness of the proposed
+model, it is trained or tested using five benchmark datasets
+of malware dynamic API call sequences: Aliyun [47], Catak
+[8],GraphMal [48], VirusShare [49], and VirusSample [49].
+Based on the similarity of their respective API call vocab-
+ularies, the five datasets are divided into two sets:
+Dbase={Aliyun, Catak, GraphMal },
+Dlarge ={V irusSample, V irusShare }.
+The number of vocabulary in the datasets of Dlarge is
+significantly higher than in that of Dbase. Besides, the
+Dlarge is more complex and contains abnormal contents.TABLE 1. S TATISTICS OF THE 5BENCHMARK DATASETS
+DatasetProportion
+of benignProportion
+of maliciousSamples
+AmountVocabulary Size
+of API CallCategory Distribution
+Aliyun 64.15% 35.85% 13887 301 1 kind of benign and 7 kinds of malware
+Catak 0% 100% 7107 281 8 kinds of malware
+Aliyun+Catak 23.71% 76.29% 20994 304 1 kind of benign and 1 kind of malware
+GraphMal 2.46% 97.54% 43876 304 1 kind of benign and 1 kind of malware
+VirusSample 0% 100% 9795 7964 all are malwares
+VirusShare 0% 100% 14616 23229 all are malwares
+The descriptive statistical features of these five datasets are
+displayed in Table 1.
+With regards to the Aliyun dataset, the proportion of
+malicious sequences is quite low, which could potentially
+impede the recall rate of unrecognized malicious sequences.
+As a solution, the Aliyun andCatak datasets are merged to
+produce an expanded Aliyun+Catak dataset. The benign se-
+quences originating from the Aliyun dataset form the base of
+benign sequences in this composite dataset. Conversely, the
+malicious sequences from all categories within the Aliyun
+dataset, along with all sequences from the Catak dataset,
+constitute the malicious sequences in this combined dataset.
+By increasing the proportion of malicious sequences in the
+dataset, it is expected to enhance the model’s recall rate for
+unknown malicious sequences.
+4.2. Statistical Properties Analysis of Datasets
+For a more intuitive understanding of each dataset, the
+statistical characteristics of the datasets used in the ex-
+periments are depicted in Table 1. We construct an API
+call vocabulary for each dataset and calculate the similarity
+between each API call vocabulary. IoU is adopted as the
+similarity measurement criteria, and its formula is provided
+in Eq.( 6).
+IoU(S1,S2) =|S1∩ S 2|
+|S1∪ S 2|, (6)
+where S1andS2denote the API call vocabulary for different
+datasets, respectively. The similarity among the API call
+vocabularies consistently increases as the value of IoU rises.
+The IoU values for the API call vocabulary of each
+dataset are depicted in Figure 6. There is a significant
+level of similarity among the Aliyun ,Catak , and GraphMal
+datasets, whereas these three datasets exhibit markedly low
+resemblance to the VirusSample and VirusShare datasets.
+This disparity is attributed to the dissimilar methods of
+dynamic feature extraction. Predominantly, Aliyun ,Catak ,
+andGraphMal record high-level API calls. By contrast, the
+VirusSample andVirusShare datasets have a more complex
+structure. They not only include high-level API calls but are
+also rich in low-level API calls, with some even presenting
+anomalies. This results in a comprehensive and considerably
+greater API call vocabulary for these datasets than for the
+aforementioned datasets in Dbase.
+Figure 6. The heatmap represents the Intersection over Union (IoU) values
+of API call vocabularies contained in different datasets.
+4.3. Performance of the Proposed Model
+We compare the performance of the proposed model
+with the SOTA model using three datasets ( Aliyun ,Catak
+and GraphMal ). To validate the effectiveness of the pro-
+posed representation generation method, we carry out an
+ablation study. Keeping the representation learning module
+unaltered, we employ the embedding layer to create the
+representation matrix of the API sequence, then duplicate
+this matrix to construct the representation tensor. This is
+designed to match the shape ( ∈R100∗102∗768) of the repre-
+sentation produced by the proposed method. This method is
+denoted as Embed3D+CNN .
+As shown in Table 2, the proposed model demonstrates
+improved detection performance on all three datasets in
+comparison to SOTA methods. The integration of additional
+external knowledge during training somewhat enhances the
+performance of the model. However, the extent of this
+improvement is not substantial. This method essentially em-
+ploys textual representation as the API call representation,
+which results in a small discrepancy between these two
+types of representation. Although the convolutional neural
+network (CNN) adjusts the representation to bridge the gap

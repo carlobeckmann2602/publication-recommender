@@ -7,6 +7,7 @@ from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportQueryError
 
 from publications import ArxivPublication
+from db import DatabaseApi
 from .pdf_scraper import PdfScraper
 
 class ArxivApiScraper:
@@ -14,48 +15,31 @@ class ArxivApiScraper:
     temp_path = "/scraper/data/temp/"
     dataset_path = "/scraper/data/arxiv_dataset/"
     id_patterns = {"current": r"\d{4}\.\d{4,5}","old": r"[a-z]+(?:-[a-z]+)?\/\d{7}"}
-    interval = 3
+    interval = 2
     
     def __init__(self):
         self.pdf_scraper = PdfScraper(ArxivApiScraper.temp_path)
-        self.gql_transport = AIOHTTPTransport(url="http://nest:3000/graphql")
-        self.gql_client = Client(transport=self.gql_transport, fetch_schema_from_transport=True)
+        self.db_api = DatabaseApi()
 
     def run(self):
         print("ArxivApiScraper.run()")
         update_list = list()
+
+        pub_count = int(self.db_api.get_arxiv_pub_count())
         
-        # TODO: get publication ids in database
-        id_list = self.get_db_entries() # TODO
         id_max = None
         id_min = None
-
-        # TODO: unterschiedliches id pattern beachten bei alten und neuen ids??
-        id_patterns = ArxivApiScraper.id_patterns
-        id_max_is_old = False
-        id_min_is_old = False
-        
-        # get newest and oldest ids
-        if len(id_list) > 0:
-            id_list.sort() # TODO: richtige sortierung beachten bei alten und neuen ids??
-            id_max = id_list[-1]
-            id_min = id_list[0]
-            # find gaps?
-        
-        # TODO: unterschiedliches id pattern beachten bei alten und neuen ids??
-        if id_max is not None:
-            yy_max = int(id_max[:2])
-            mm_max = int(id_max[2:4])
-            id_max_num = int(id_max[5:])
-            #match_current = re.search(id_patterns["current"], id_max)
-            #if bool(match_current):
-            #match_old = re.search(id_patterns["current"], id_max)
-        if id_min is not None:
-            yy_min = int(id_min[:2])
-            mm_min = int(id_min[2:4])
-            id_min_num = int(id_min[5:])
-            #match_current = re.search(id_patterns["current"], id_min)
-            #match_old = re.search(id_patterns["current"], id_min)
+        if pub_count > 0:
+            id_max = self.db_api.get_newest_arxiv_pub()
+            if id_max is not None:
+                yy_max = int(id_max[:2])
+                mm_max = int(id_max[2:4])
+                id_max_num = int(id_max[5:])
+            id_min = self.db_api.get_oldest_arxiv_pub()
+            if id_min is not None:
+                yy_min = int(id_min[:2])
+                mm_min = int(id_min[2:4])
+                id_min_num = int(id_min[5:])
 
         # get newer publications
         id_new = self.scrape_newest_id() # '2311.17055'
@@ -76,10 +60,9 @@ class ArxivApiScraper:
                     update_list += self.scrape_publications(start_at=0, max_results=ArxivApiScraper.interval, descending=True)
 
         # get the next x publications after publication count in db
-        update_list += self.scrape_publications(start_at=len(id_list), max_results=ArxivApiScraper.interval, descending=True)
+        update_list += self.scrape_publications(start_at=pub_count, max_results=ArxivApiScraper.interval, descending=True)
         
-        # TODO: update database
-        self.update_db_entries(update_list)
+        self.db_api.add_arxiv_pub(update_list)
     
     def run_alt(self):
         # get publications in database
@@ -122,7 +105,7 @@ class ArxivApiScraper:
         print("-- found newest publication with id '" + arxiv_id + "'.")
         return arxiv_id
 
-    def scrape_publications(self, start_at=0, max_results=25, descending=True, csv_path=None):
+    def scrape_publications(self, start_at, max_results, descending=True, csv_path=None):
         pub_list = list()
         root = ArxivApiScraper.root
         method = "query"
@@ -206,10 +189,10 @@ class ArxivApiScraper:
                             arxiv_id=arxiv_id, 
                             title=title, 
                             authors=authors, 
-                            src="https://arxiv.org/",
+                            src="ARXIV",
                             url=pdf_url,
-                            pub_date=pub_date,
-                            upd_date=upd_date,
+                            pub_date=pub_date_str,
+                            upd_date=upd_date_str,
                             doi=doi,
                             abstract=abstract,
                             vector_dict=vector_dict

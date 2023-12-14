@@ -1,0 +1,2440 @@
+arXiv:2312.08263v1  [math.DG]  13 Dec 2023Constraint Vector Bundles and Reduction of Lie (Bi-)Algebr oids
+Marvin Dippell∗
+Dipartimento di Matematica
+Università degli Studi di Salerno
+via Giovanni Paolo II, 132
+84084 Fisciano (SA)
+Italy
+David Kern†
+Mathematisches Institut
+Georg-August-Universität Göttingen
+Bunsenstraße 3 - 5
+37073 Göttingen
+Germany
+Abstract
+We present a framework for the reduction of various geometri c structures extending the classical
+coisotropic Poisson reduction. For this we introduce const raint manifolds and constraint vector
+bundles. A constraint Serre-Swan theorem is proven, identi fying constraint vector bundles with
+certain ﬁnitely generated projective modules, and a Cartan calculus for constraint diﬀerentiable
+forms and multivector ﬁelds is introduced. All of these cons tructions will be shown to be compatible
+with reduction. Finally, we apply this to obtain a reduction procedure for Lie (bi-)algebroids and
+Dirac manifolds.
+Contents
+1 Introduction 2
+2 Algebraic Preliminaries 4
+2.1 Constraint Algebras and their Modules . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+2.2 Constraint Index Sets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+2.3 Projective Modules . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+2.4 Graded Constraint (Lie) Algebras . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+3 Constraint Geometry 14
+3.1 Constraint Manifolds . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+3.2 Constraint Vector Bundles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+3.3 Sections of Constraint Vector Bundles . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+3.4 Constraint Cartan Calculus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+∗mdippell@unisa.it
+†david.kern@mathematik.uni-goettingen.de
+14 Applications of Constraint Reduction 41
+4.1 Reduction of Lie-Rinehart Algebras . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+4.2 Reduction of Lie (Bi-)Algebroids . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+4.3 Reduction of Dirac Manifolds . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+A Morphisms of Linear Connections 51
+References 55
+1 Introduction
+The reduction of Poisson manifolds by coisotropic submanif olds is a widely used tool in Poisson geometry,
+generalizing the classical Marsden-Weinstein reduction i n symplectic geometry [ MW74 ;Mey73 ] which
+itself can be seen as the mathematical incarnation of symmet ry reduction in classical mechanics. Given
+a coisotropic submanifold ι:C ֒→Mof a Poisson manifold ( M,π) there is an associated distribution
+D⊆TCwhich we call the characteristic distribution of C. IfCis closed and the leaf space of Dcarries
+a canonical smooth structure we denote it by
+Mred:=C/D, (1.1)
+and call it the reduced manifold of MbyC. It can be shown that there exists a canonical Poisson
+structureπredonMred, which can algebraically be constructed as follows: The ide alICof functions
+vanishing on Cis a Poisson subalgebra of the Poisson algebra C∞(M), with Poisson bracket { ·,· }
+induced by π. This allows us to consider its Poisson normalizer
+BC=/braceleftbig
+f∈C∞(M)| {f,IC} ⊆IC/bracerightbig
+, (1.2)
+which is the biggest Poisson subalgebra of C∞(M) containing ICas a Poisson ideal. Since BCconsists
+of all functions which are leafwise constant on Cwe obtain an isomorphism C∞(Mred)≃BC/ICwhich
+allows us to deﬁne πredas the Poisson structure corresponding to the quotient Pois son bracket on BC/IC.
+This procedure is presented in [ MR86 ;OR04 ].
+There are various reasons to consider reductions of other ge ometric objects. For a start, every
+Poisson manifold comes with related geometric structures, such as the Lie algebroid structure on the
+cotangent bundle T∗M. These structures are important in the study of Poisson mani folds and hence
+their behaviour under coisotropic reduction needs to be und erstood. Special cases of such a reduction
+in the context of Lie algebroids can be found in [ CNS05 ;Haw08 ;JO14 ]. But also for other general-
+ized geometric objects a reduction procedure is desirable a nd during the last two decades reduction
+procedures for a vast number of objects has been studied, e.g . for Courant algebroids [ Bur+23 ], Dirac
+structures [ MY07 ], generalized complex structures [ BCG05 ;SX08 ;Vai07 ;Zam08 ], contact structures
+[Wil02 ;LV19 ], cosymplectic manifolds [ Alb89 ], multisymplectic manifolds [ Bla21 ;BMR23 ], etc. Re-
+cently, reduction has also been put into the context of grade d geometry [ Bur+23 ], see also [ CZ09 ;
+CZ10 ].
+While many of the aforementioned works focus on reduction wi th respect to Lie group actions and
+momentum maps, in this article we want to present a framework for reduction focusing on the more
+general coisotropic point of view. For one thing, this will g eneralize many of the above constructions by
+allowing for quotients not necessarily given by group actio ns, while on the other hand it will provide a
+common language to treat reduction in many geometric (and al gebraic) situations. Thus it opens the
+door to study reduction of geometric structures not studied in the literature so far.
+2This framework is based on the notion of constraint algebra, which was ﬁrst introduced in [ DEW19 ],
+under the name of coisotropic algebra, to investigate the be haviour of Morita equivalence under reduction
+and used in [ DEW22 ] to study star products compatible with reduction. The main strategy of our
+approach is to replace the classical notion of smooth manifo lds by so-called constraint manifolds , which
+are essentially manifolds equipped with the additional str ucture needed to perform reduction. More
+precisely, a constraint manifold Mconsists of a smooth manifold Mtogether with a closed embedded
+submanifold C⊆Mand a simple distribution DonC. Every such constraint manifold Mcan now
+easily be reduced to Mred=C/D . Starting with this basic notion we will introduce constrai nt analogues
+of many other classical geometric concepts, such as constra int vector bundles, constraint vector ﬁelds
+and constraint diﬀerential forms. These will, by deﬁnition , be compatible with reduction in a speciﬁc
+sense. These building blocks can then be used to deﬁne constr aint versions of more sophisticated
+structures, which we will demonstrate by introducing const raint Lie-Rinehart algebras, constraint Lie
+(bi-)algebroids and constraint Dirac manifolds. In some se nse these constraint notions can be understood
+as the collection of data needed to perform reduction of the c orresponding classical structure.
+Beside the examples presented here, our approach lends itse lf to be applied to other situations, such
+as Courant algebroids and general Dirac structures, or the s tudy of constraint Lie groupoids as global
+counterparts of constraint Lie algebroids. However, this i s left for future work.
+The outline of this work is the following: In order to do const raint geometry eﬀectively we start
+with introducing (strong) constraint algebras and their pr ojective modules in Section 2 which later on
+will replace the classical algebras of functions and module s of sections. We will also give deﬁnitions of
+(graded) constraint Lie algebras and constraint Gerstenha ber algebras, as they will be useful later on.
+The main results of the paper are contained in Section 3 . Here, after the introduction of constraint
+manifolds and constraint vector bundles, we prove a constra int version of the classical Serre-Swan
+Theorem, see Theorem 3.32 , showing that taking sections gives an equivalence of categ ories between
+constraint vector bundles and ﬁnitely generated projectiv e strong constraint modules over the constraint
+algebra of functions on a constraint manifold. This result a llows us then to introduce the full constraint
+Cartan calculus given by constraint vector ﬁelds and constr aint diﬀerential forms together with insertion,
+Lie derivative and de Rham diﬀerential. Finally, in Section 4 we present ﬁrst applications of the
+previously developed theory to the reduction of Lie-Rineha rt algebras, Lie (bi-)algebroids and Dirac
+manifolds. In the appendix Appendix A we collect some well-known facts about morphisms between
+vector bundles with linear connections. Even though these a re considered to be general knowledge, it
+is hard to ﬁnd suitable sources for it in the literature.
+Remark on notation and convention We will heavily use the language of constraint algebraic
+(and geometric) objects. Many of these, such as constraint a lgebras, have been introduced in [ DEW19 ;
+DEW22 ;DMW22 ], albeit under a diﬀerent name and with slight changes in the deﬁnitions. For example
+acoisotropic triple of algebras as deﬁned in [ DEW19 ] is now called an embedded constraint algebra with
+the additional property of A0⊆ATbeing a left ideal. While in [ DEW22 ] the notion of coisotropic algebra
+corresponds to what we now call a constraint algebra.
+A consistent naming scheme has been introduced in [ Dip23 ] and we will mostly adhere to this.
+Nevertheless, though the distinction between constraint a nd embedded constraint objects is an important
+feature of the general theory, in our applications we will on ly need to consider embedded constraint
+objects. This is why we will implicitly assume that all our co nstraint objects are embedded. To keep a
+certain level of compatibility with [ Dip23 ] we will nevertheless refer to embedded constraint objects in
+deﬁnitions and names of categories.
+3Let us also ﬁx some conventions: Even though most results sti ll hold for (commutative) rings, from
+now on /CZwill always denote a ﬁeld. Moreover, all algebras are suppos ed to be associative and unital/CZ-algebras. When it comes to geometry all manifolds are suppo sed to be real, smooth and connected.
+Acknowledgement The ﬁrst author wants to thank Chiara Esposito and Stefan Wal dmann for the
+many discussions and their constant support, as well as Jona s Schnitzer and Andreas Kraft for all the
+valuable insights into the geometry of reduction.
+2 Algebraic Preliminaries
+In this preliminary chapter we introduce the basic algebrai c notions needed in the main part of this
+work. In particular we will need the concept of constraint al gebras for describing smooth functions on
+a constraint manifold, and constraint modules for sections of constraint vector bundles. As in classical
+diﬀerential geometry, modules of sections of constraint ve ctor bundles will be characterized by being
+ﬁnitely generated projective. Before we introduce this con cept in Section 2.3 we need to study constraint
+index sets in Section 2.2 . Finally, in Section 2.4 we recall the notion of (graded) constraint Lie algebras.
+This will be needed in our discussion of constraint Lie (bi)- algebroids in Section 4.2 .
+The basic notions of constraint algebras and their modules h ave already been introduced in [ DEW19 ]
+under the name of coisotropic algebras and coisotropic modu les. Finitely generated projective modules
+over such coisotropic algebras and their geometric counter parts have been studied in [ DMW22 ]. It
+should be noted that the notion of projective constraint mod ule used here is similar to that used in
+[DMW22 ], but diﬀers in important aspects.
+2.1 Constraint Algebras and their Modules
+Recall again the situation of coisotropic reduction in Pois son geometry: Given a coisotropic submanifold
+C⊆(M,π) we can consider the vanishing ideal ICand its Poisson normalizer BC⊆C∞(M). Note
+that in order to obtain the algebra of functions on the reduce d manifold only the fact that IC⊆BC
+is a two-sided ideal is needed. The triple ( C∞(M),BC,IC) motivates now the following deﬁnition of a
+constraint algebra.
+Deﬁnition 2.1 (Constraint algebra)
+i.) An (embedded) constraint algebra is a triple A= (AT,AN,A0)consisting of a unital associative/CZ-algebra ATtogether with a a unital subalgebra AN⊆ATand a two-sided ideal A0⊆AN.
+ii.) A morphismφ:A→Bof constraint /CZ-algebras is a unital algebra homomorphisms φ:AT→BT
+such thatφ(AN)⊆BNandφ(A0)⊆B0.
+iii.) A constraint algebra A= (AT,AN,A0)is called strong , ifA0⊆ATis a two-sided ideal.
+iv.) The category of constraint /CZ-algebras is denoted by CembAlg/CZ. Moreover, Cemb
+strAlg/CZthe full subcat-
+egory of strong constraint algebras.
+Remark 2.2 The above notion of an embedded constraint algebra can be rel axed to the notion of
+constraint algebra by allowing for a non-injective algebra homomorphism ιA:AN→ATinstead of
+the inclusion AN⊆AT. This more general concept becomes important when consider ing quotients of
+constraint algebras or constraint modules, and therefore i s needed in order to study cohomologies in the
+constraint setting, see [ DEW22 ]. Nevertheless, in the setting of this paper we will mostly b e concerned
+with embedded constraint algebraic objects and we will ther efore drop the word embedded most of the
+time. For an in-depth treatment of non-embedded constraint algebra see [ Dip23 ].
+4We will mostly drop the underlying ﬁeld /CZin the notation. Note that we can view /CZitself as a
+constraint algebra by using /CZ= ( /CZ, /CZ,0). Moreover, we often denote the restriction of a constrain t
+morphism to the N- or 0-component by φNandφ0, respectively.
+By the deﬁnition of constraint algebras we obtain a reductio n functor
+red: CembAlg→Alg (2.1)
+given by Ared:=AN/A0. The restriction to the subcategory Cemb
+strAlgwill also be denoted by red.
+Let us deﬁne modules over constraint algebras. In the follow ing we will only consider right modules,
+the deﬁnition of left- and bi-modules should be clear, detai ls can be found in [ DEW22 ;Dip23 ].
+Deﬁnition 2.3 (Modules over constraint algebras) LetA∈CembAlgbe a constraint algebra.
+i.) An (embedded) constraint A-module is a triple E= (ET,EN,E0), consisting of a right AT-module
+ETandAN-submodules EN⊆ETandE0⊆EN.
+ii.) A morphism Φ: E→Fbetween constraint A-modules is an AT-module morphism Φ:ET→FT
+such that Φ(EN)⊆FNandΦ(E0)⊆F0.
+iii.) A constraint A-module Eis called strong , ifE0⊆ETis aAT-submodule and ET·A0⊆E0holds.
+iv.) The category of constraint A-modules is denoted by CembMod(A). The full subcategory of strong
+constraint modules is denoted by Cemb
+strMod(A).
+It should be clear that morphisms of constraint modules can b e generalized to morphisms along a
+morphism of the underlying constraint algebras.
+Proposition 2.4 (Mono- and epimorphisms in CembMod(A))LetΦ:E→Fbe a morphism of
+constraint A-modules.
+i.)Φis a monomorphism if and only if Φis injective.
+ii.)Φis an epimorphism if and only if ΦandΦNare surjective.
+iii.) Φis a regular monomorphism if and only if it is a monomorphism w ithΦ−1
+N(F0) =E0.
+iv.)Φis a regular epimorphism if and only if it is an epimorphism wi thΦN(E0) =F0.
+v.)Φis an isomorphism if and only if Φis a monomorphism and a regular epimorphism.
+vi.)Φis an isomorphism if and only if Φis a regular monomorphism and an epimorphism.
+Deﬁnition 2.5 (Constraint submodule) LetEbe a constraint A-module. A constraint submodule
+ofEconsists of submodules FT⊆ETandFN⊆ENwithFN⊆FT.
+Every submodule can be understood as a regular monomorphism i:F→Edeﬁned on the constraint
+module F= (FT,FN, i−1
+N(E0)).
+Deﬁnition 2.6 (Constructions of constraint modules) LetΦ:E→Fbe a morphism of con-
+straint A-modules.
+i.) The kernel ofΦis deﬁned by
+ker(Φ) :=/parenleftbig
+ker(Φ T),ker(Φ N),ker(Φ N)∩E0/parenrightbig
+. (2.2)
+ii.) The image ofΦis deﬁned by
+im(Φ) :=/parenleftbig
+im(Φ T),im(Φ N),im(Φ N/vextendsingle/vextendsingle
+E0)/parenrightbig
+. (2.3)
+5iii.) The regular image ofΦis deﬁned by
+regim(Φ) :=/parenleftbig
+im(Φ T),im(Φ N),im(Φ N)∩F0/parenrightbig
+. (2.4)
+iv.) The direct sum ofEandFis deﬁned by
+(E⊕F):=/parenleftbig
+ET⊕FT,EN⊕FN,E0⊕F0/parenrightbig
+. (2.5)
+Observe that the regular image is a constraint submodule, wh ile the image is not.
+Proposition 2.7 (Module structure on module morphisms) LetAbe a constraint algebra and
+letE,F∈CembMod(A). Then the A-module morphisms form a constraint /CZ-module given by
+CHom A(E,F)T:= Hom AT(ET,FT),
+CHom A(E,F)N:=/braceleftbig
+Φ∈Hom AT(ET,FT)|Φ(EN)⊆FNandΦN(E0)⊆F0/bracerightbig
+,
+CHom A(E,F)0:={Φ∈Hom AT(ET,FT)|Φ(EN)⊆F0}.(2.6)
+IfAis commutative CHom A(E,F)becomes a constraint A-module.
+Deﬁnition 2.8 (Dual module) LetA∈CembAlgand let E∈CembMod(A)be a constraint A-module.
+We call the constraint /CZ-module E∗:=CHom A(E,A)thedual module of E. IfAis commutative E∗
+becomes a constraint A-module.
+Another important construction for constraint modules is t hat of tensor products. For strong con-
+straint modules there exist two slightly diﬀerent notions o f tensor product.
+Deﬁnition 2.9 (Constraint tensor products) LetA∈Cemb
+strAlgbe commutative and let E,F∈
+Cemb
+strMod(A).
+i.) The constraint module E⊗AF∈Cemb
+strMod(A)deﬁned by
+(E⊗AF)T:=ET⊗ATFT,
+(E⊗AF)N:=EN⊗ATFN,
+(E⊗AF)0:=E0⊗ATFN+EN⊗ATF0,(2.7)
+is called the tensor product ofEandF.
+ii.) The constraint module E⊠AF∈Cemb
+strMod(A)deﬁned by
+(E⊠AF)T:=ET⊗ATFT,
+(E⊠AF)N:=EN⊗ATFN+E0⊗ATFT+ET⊗ATF0,
+(E⊠AF)0:=E0⊗ATFT+ET⊗ATF0,(2.8)
+is called the strong tensor product ofEandF.
+Note that every constraint module CembMod(A) over a constraint algebra A∈CembAlgis in particu-
+lar a strong constraint /CZ-module. Hence the tensor products ⊗/CZand⊠/CZare also deﬁned for non-strong
+constraint modules.
+The reduction of a (strong) constraint A-module Eis the Ared-module deﬁned by
+Ered:=EN/E0. (2.9)
+This deﬁnes a functor red: CembMod(A)→Mod(Ared). Similarly we get reduction functors for all the
+diﬀerent categories of constraint modules as deﬁned above. Reduction is compatible with direct sums
+and inner homs in the following sense, see [ DEW22 ;Dip23 ].
+6Proposition 2.10 LetA∈CembAlgbe a constraint algebra and let E,F∈CembMod(A).
+i.) There exists a natural isomorphism (E⊕F)red≃Ered⊕Fred.
+ii.) There exist natural isomorphisms (E⊗/CZF)red≃Ered⊗/CZFred≃(E⊠/CZF)red.
+iii.) There exists a natural injective morphism CHom A(E,F)red→Hom Ared(Ered,Fred).
+Note that the compatibility of reduction with the two types o f tensor products was only shown for
+A= /CZ. For a general commutative constraint Athe reduction functor may not be compatible with the
+tensor products ⊗Aand⊠A, as the following example shows.
+Example 2.11 Let /CZ= /CAand consider the commutative strong constraint /CA-algebra A= ( /BV, /CA,0)
+and the A-module E= ( /BV, /BV,0). Then E⊗AE= ( /BV, /BV,0) reduces to ( E⊗AE)red= /BVwhile Ered⊗Ared
+Ered= /CA⊗/CA
+/CA≃ /CA.
+Nevertheless, we will see in Section 3 that in the case of Abeing a suitable algebra of functions the
+reduction functor will be compatible with these tensor prod ucts.
+2.2 Constraint Index Sets
+In this small section we introduce constraint index sets and some simple constructions for these. Con-
+straint index sets will be needed for the deﬁnition of ﬁnitel y generated projective constraint modules
+and will be a useful tool when working with sections of constr aint vector bundles.
+Deﬁnition 2.12 (Constraint index sets)
+i.) An (embedded) constraint index set consists of a set MTtogether with subsets M0⊆MN⊆MT.
+ii.) A morphism f:M→Nof constraint sets MandNis given by a map f:MT→NTsuch that
+f(MN)⊆NNandfN(M0)⊆N0.
+iii.) The category of constraint index sets and their morphi sms is denoted by Cemb
+indSet.
+As before we drop the preﬁx “embedded” in the following.
+Remark 2.13 The cardinality | · |yields a map from ﬁnite constraint index sets to
+C /C63
+0:={(nT,nN,n0)∈ /C63
+0|n0≤nN≤nT}, (2.10)
+and isomorphic constraint index sets have the same cardinal ity. Conversely, to every n∈C /C63
+0we can
+associate the ﬁnite constraint index set ( {1,...,n 0},{1,...,n N},{1,...,n T}). We will often use this
+identiﬁcation implicitly and, for example, write k∈nNinstead ofk∈ {1,...,n N}. In particular, when
+we apply the constructions below to triples of natural numbe rs this means we apply them to their
+associated ﬁnite constraint index sets, e.g. nred=nN\n0={n0+ 1,...,n N}.
+As in the case of constraint modules we can turn the set of morp hisms between constraint index sets
+into a constraint index set itself:
+Proposition 2.14 (Closed monoidal structure on Cemb
+indSet)LetM,N ∈Cemb
+indSetbe constraint in-
+dex sets. Setting
+CMap(M,N )T:= Map(MT,N N),
+CMap(M,N )N:={f∈Map(MT,N T)|f(MN)⊆NNandf(M0)⊆N0},
+CMap(M,N )0:={f∈Map(MT,N T)|f(MN)⊆N0}(2.11)
+deﬁnes a constraint index set CMap(M,N ).
+7The following constructions of constraint index sets will b e important later on.
+Deﬁnition 2.15 (Tensor products and dual) LetM,N ∈Cemb
+indSet.
+i.) The coproduct ofMandNis deﬁned by
+(M⊔N)T:=MT⊔NT,
+(M⊔N)N:=MN⊔NN,
+(M⊔N)0:= (M0⊔N0).(2.12)
+ii.) The tensor product ofMandNis deﬁned by
+(M⊗N)T:=MT×NT,
+(M⊗N)N:=MN×NN,
+(M⊗N)0:= (MN×N0)∪(M0×NN).(2.13)
+iii.) The strong tensor product ofMandNis deﬁned by
+(M⊠N)T:=MT×NT,
+(M⊠N)N:= (MN×NN)∪(MT×N0)∪(M0×NT),
+(M⊠N)0:= (MT×N0)∪(M0×NT).(2.14)
+iv.) The dual ofMis deﬁned by
+(M∗)T:=MT,
+(M∗)N:=MT\M0,
+(M∗)0:=MT\MN.(2.15)
+v.) The reduction ofMis deﬁned by
+Mred:=MN\M0. (2.16)
+The above constructions are compatible in the following way :
+Proposition 2.16 LetM,N ∈Cemb
+indSet.
+i.) We have
+(M⊗N)red=Mred×Nred. (2.17)
+ii.) We have
+(M⊠N)red=Mred×Nred. (2.18)
+iii.) We have
+(M∗)red=Mred. (2.19)
+iv.) We have
+(M⊗N)∗=M∗⊠N∗. (2.20)
+v.) We have
+(M⊠N)∗=M∗⊗N∗. (2.21)
+vi.) We have
+(M∗)∗=M. (2.22)
+82.3 Projective Modules
+In this section we collect some basics about projective cons traint modules. For more details see [ Dip23 ].
+There are multiple possible ways to introduce projective co nstraint modules. We will deﬁne them using
+constraint equivalents of dual bases.
+Deﬁnition 2.17 (Projective modules) LetA∈Cemb
+strAlgbe a strong constraint algebra and let M∈
+Cemb
+indSet.
+i.) A strong constraint right A-module E∈Cemb
+strMod(A)is called projective if there exist families
+(en)n∈MT⊆ETand(en)n∈MT⊆(ET)∗= Hom AT(ET,AT), such that
+x=/summationdisplay
+n∈MTenen(x) (2.23)
+for allx∈ET, where for ﬁxed xonly ﬁnitely many of the en(x)diﬀer from 0. Moreover, the
+following properties need to be satisﬁed:
+i.) It holds en∈ENforn∈MN.
+ii.) It holds en∈E0forn∈M0.
+iii.) It holds en∈(E∗)Nforn∈MT\M0= (M∗)N.
+iv.) It holds en∈(E∗)0forn∈MT\MN= (M∗)0.
+ii.) Such a projective strong constraint module Eis called ﬁnitely generated projective , ifMcan be
+chosen to be a ﬁnite constraint index set.
+iii.) The full subcategory of Cemb
+strMod(A)consisting of ﬁnitely generated projective strong constra int
+modules will be denoted by CstrProj(A).
+The families ( en)n∈MT⊆ETand (en)n∈MT⊆(ET)∗will be called a dual basis of Pand will often
+be denoted by ( {ei}i∈M,{ei}i∈M∗).
+The category CstrProj(A) is closed under the usual constructions introduced in Section 2 , as a
+straightforward computation shows. For more details see ag ain [Dip23 ].
+Proposition 2.18 LetA∈Cemb
+strAlgbe commutative and let E,F∈CstrProj(A)be given with dual
+bases ({ei}i∈M,{ei}i∈M∗)and({fi}i∈N,{fi}i∈N∗), respectively.
+i.)E⊕Fis ﬁnitely generated projective with dual basis ({ei,fi}i∈M⊔N,{ei,fi}i∈(M⊔N)∗).
+ii.)E∗is ﬁnitely generated projective with dual basis ({ei}i∈M∗,{ei}i∈M).
+iii.)E⊗AFis ﬁnitely generated projective with dual basis ({ei⊗fj}(i,j)∈M⊗N,{ei⊗fj}(i,j)∈(M⊗N)∗).
+iv.)E⊠AFis ﬁnitely generated projective with dual basis ({ei⊗fj}(i,j)∈M⊠N,{ei⊗fj}(i,j)∈(M⊠N)∗).
+These constructions for ﬁnitely generated projective modu les now exhibit various compatibilities.
+Proposition 2.19 LetA∈Cemb
+strAlgbe commutative and E,F∈CstrProj(A).
+i.) There exists a canonical isomorphism F⊠AE∗≃CHom A(E,F).
+ii.) There exists a canonical isomorphism E∗⊗AF∗≃(E⊠AF)∗.
+iii.) There exists a canonical isomorphism E∗⊠AF∗≃(E⊗AF)∗.
+iv.) There exists a canonical isomorphism CHom A(E⊗AF,G)≃CHom A(F,G⊠AE∗).
+9Proof: We ﬁrst construct constraint maps for i.),ii.)andiii.). In a second step show that these are
+isomorphisms. Thus for i.)consider the map
+FT⊗ATE∗
+T∋y⊗α/maps⊔o→(x/maps⊔o→y·α(x))∈Hom AT(ET,FT).
+To show that it is a constraint A-module morphism consider ﬁrst y⊗α∈(F⊠E∗)0. Ifx∈EN, then
+y·α(x)∈F0·AT+FT·A0⊆F0. Now let y⊗α∈FN⊗AT(E∗)N⊆(F⊠AE∗)N. Ifx∈E0, then
+y·α(x)∈FN·A0⊆F0. Ifx∈EN, theny·α(x)∈FN·AN⊆FN. Thus the above map is a constraint
+morphism.
+Forii.)andiii.)consider the map
+E∗
+T⊗ATF∗
+T∋α⊗β/maps⊔o→(x⊗y/maps⊔o→α(x)·β(y))∈(ET⊗ATFT)∗. (∗)
+We show that this induces a constraint morphism E∗⊗AF∗→(E⊠AF)∗. For this let α⊗β∈(E∗⊗AF∗)0.
+• Forx⊗y∈(E⊠AF)0we haveα(x)·β(y)∈A0·AT+AT·A0=A0.
+• Forx⊗y∈EN⊗ATFN⊆(E⊠AF)Nwe haveα(x)·β(y)∈A0·AN+AN·A0=A0.
+Next suppose α⊗β∈(E∗⊗AF∗)N.
+• Forx⊗y∈(E⊠AF)0we haveα(x)·β(y)∈A0·AT+AT·A0=A0.
+• Forx⊗y∈EN⊗ATFN⊆(E⊠AF)Nwe haveα(x)·β(y)∈AN·AN=AN.
+This shows that E∗⊗AF∗→(E⊠AF)∗is a constraint morphism. A completely analogous analysis
+shows that ( ∗) also induces a constraint morphism E∗⊠AF∗→(E⊗AF)∗, which is needed for iii.).
+In all three cases we show that the well-known inverse maps on the T-components are in fact
+constraint maps, and therefore yield constraint inverses. To do this we ﬁx dual bases ( {ei}i∈M,{ei}i∈M∗)
+and ( {fj}j∈N,{fj}j∈N∗) ofEandF, respectively. For the ﬁrst part consider the map
+Hom AT(ET,FT)∋Φ/maps⊔o→/summationdisplay
+i∈MTΦ(ei)⊗ei∈FT⊗E∗
+T. (∗∗)
+This is the classical inverse on the T-component. Hence we ne ed to show that ( ∗∗) is a constraint
+morphism. For this let Φ ∈CHom A(E,F)Nbe given.
+• Ifi∈MT\MN=M∗
+0, then Φ(ei)⊗ei∈FT⊗E∗
+0⊆(F⊠AE∗)0.
+• Ifi∈MN\M0⊆M∗
+N, then, since in particular i∈MNholds, we obtain Φ( ei)⊗ei∈FN⊗E∗
+N⊆
+(F⊠AE∗)N.
+• Ifi∈M0, then Φ(ei)⊗ei∈F0⊗E∗
+T⊆(F⊠AE∗)0.
+Hence ( ∗∗) preserves the N-component. To show that it also preserves t he 0-component, we only need
+to reconsider the second case from above.
+• Ifi∈MN\M0⊆M∗
+N, then, since in particular i∈MNholds, we obtain Φ( ei)⊗ei∈FN⊗E∗
+0⊆
+(F⊠AE∗)0.
+This shows that ( ∗∗) is a constraint inverse.
+For part ii.)we need to show that
+(ET⊗ATFT)∗∋α/maps⊔o→/summationdisplay
+(i,j)∈MT×NTα(ei⊗fj)·ei⊗fj∈E∗
+T⊗ATF∗
+T (∗∗)
+deﬁnes a constraint morphism ( E⊠AF)∗→E∗⊗AF∗. Recall that the families
+/parenleftbig
+{ei⊗fj}(i,j)∈M⊠N,{ei⊗fj}(i,j)∈M∗⊗N∗/parenrightbig
+10and/parenleftbig
+{ei⊗fj}(i,j)∈M∗⊗N∗,{ei⊗fj}(i,j)∈M⊠N/parenrightbig
+form dual bases of E⊠AFandE∗⊗AF∗, respectively. Now suppose α∈(E⊠AF)∗
+N.
+• If (i,j)∈(M∗⊗N∗)0, thenα(ei⊗fj)·ei⊗fj∈AT·(E∗⊗AF∗)0= (E∗⊗AF∗)0.
+• If (i,j)∈(MN\M0)×(NN\N0)⊆(M∗⊗N∗)N, then, since also ( i,j)∈(M⊠N)Nholds, we get
+α(ei⊗fj/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+∈(E⊠F)N)·ei⊗fj∈AN·(E∗⊗AF∗)N= (E∗⊗AF∗)N.
+• If (i,j)∈(M⊠N)0, then
+α(ei⊗fj/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+(E⊠F)0)·ei⊗fj∈A0·(E∗⊗AF∗)T⊆(E∗⊗AF∗)0.
+Thus ( ∗∗) preserves the N-component. Next take α∈(E⊠AF)∗
+0. Since ( E⊠AF)∗
+0⊆(E⊠AF)∗
+Nwe only
+need to check one of the above cases.
+• If (i,j)∈(MN\M0)×(NN\N0)⊆(M∗⊗N∗)N, then, since also since ( i,j)∈(M⊠N)Nholds,
+we get
+α(ei⊗fj/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+∈(E⊠F)N)·ei⊗fj∈A0·(E∗⊗AF∗)N= (E∗⊗AF∗)0.
+Hence ( ∗∗) also preserves the 0-component, showing that it is a constr aint inverse.
+For part iii.) we would proceed similarly, but this time we would need to sho w that ( ∗∗) deﬁnes a
+constraint morphism ( E⊗AF)∗→E∗⊠AF∗.
+Part iv.)then follows using the above isomorphisms:
+CHom A(E⊗AF,G)≃G⊠A(E⊗AF)∗≃G⊠AE∗⊠AF∗≃CHom A(F,G⊠AE∗). /square
+In particular it follows from Proposition 2.19 i.)that also CHom A(E,F) is ﬁnitely generated pro-
+jective.
+The notion of projectivity is compatible with the reduction functor of strong constraint modules:
+Proposition 2.20 (Reduction of projective strong constrai nt modules) LetA∈Cemb
+strAlgand
+E∈CstrProj(A)with dual basis given by ({ei}i∈M,{ei}i∈M∗). Then Eredis ﬁnitely generated projective,
+with dual basis ({(ei)red}i∈Mred,{(ei)red}i∈Mred)
+2.4 Graded Constraint (Lie) Algebras
+Let us quickly recall the notion of graded constraint /CZ-modules from [ DEW22 ]. If not mentioned
+otherwise we will always consider /CI-gradings: A (embedded) graded constraint module M•is given by a
+graded /CZ-module M•
+Ttogether with graded submodules M•
+0⊆M•
+N⊆M•
+T. For every x∈Mk
+Twe denote
+its degree by deg( x) =k. Amorphism between graded constraint /CZ-modules of degree kbetween M•
+andN•is a /CZ-module morphism Φ: M•
+T→N•+k
+T, such that
+Φ(M•
+N)⊆N•+k
+N and Φ( M•
+0)⊆N•+k
+0. (2.24)
+11An(embedded) graded constraint /CZ-algebra is an graded constraint /CZ-module A•= (A•
+T,A•
+N,A•
+0)
+together with an associative multiplication given by a grad ed constraint morphism of degree 0
+µ:A•⊗/CZA•→A•, µ (a⊗b) =a·b, (2.25)
+together with a unit 1 A∈AN. If the multiplication is deﬁned as a graded constraint morp hism of degree
+0
+µ:A•⊠/CZA•→A•, µ (a⊗b) =a·b, (2.26)
+thenA•is called strong . The grading on the tensor products ⊗and⊠is given as usual by deg( a⊗b) =
+deg(a) + deg(b).
+Note, a graded constraint /CZ-algebra A•concentrated in degree 0 is a constraint /CZ-algebra. Recall
+that a homogeneous ideal is an ideal such that all projection s to a ﬁxed degree are again contained in
+it, see [ Har77 ] for a deﬁnition. In general, the 0-component of a graded con straint algebra A•forms a
+homogeneous algebra ideal in A•
+N(and in A•
+T, ifA•is strong). For another graded constraint /CZ-algebra
+B•amorphism of graded constraint /CZ-algebras between A•andB•is a degree 0 graded constraint/CZ-module morphism Φ: A•→B•, which preserves the graded multiplication.
+Example 2.21 LetAbe a commutative constraint algebra and Ebe a constraint A-module. Then
+the exterior algebra
+Λ•
+⊗E=∞/circleplusdisplay
+i=0Λi
+⊗E (2.27)
+with respect to ⊗Aforms an /C60-graded constraint algebra with Λ0
+⊗E=A. Assuming AandEto be
+a strong constraint algebra and a strong constraint module, respectively, leads to the strong graded
+constraint algebra Λ•
+⊠Ewith respect to ⊠Aby an analogous construction.
+Deﬁnition 2.22 (Diﬀerential graded constraint algebras) An(embedded) diﬀerential graded
+constraint algebra is a graded constraint algebra A•together with a morphism d:A•→A•+1on the
+underlying graded constraint /CZ-module, such that
+d2= 0, (2.28)
+and which satisﬁes the graded Leibniz rule
+d(a·b) = d(a)·b+ (−1)deg(a)a·d(b) (2.29)
+fora,b∈A•
+T. It is called diﬀerential graded strong constraint algebra ifAis a graded strong constraint
+algebra.
+Every diﬀerential graded constraint algebra Acan be reduced to a diﬀerential graded algebra given
+byAred=AN/A0with diﬀerential d red.
+A classical deﬁnition of the following can be found among oth ers in [ Sch93 ].
+Deﬁnition 2.23 (Graded constraint /CZ-Lie algebra)
+i.) An (embedded) graded constraint Lie algebra of degree kis given by an graded constraint /CZ-module
+g•= (g•
+T,g•
+N,g•
+0)together with a graded constraint morphism of degree k
+[·,·]:g⊗/CZg→g, (2.30)
+called graded Lie bracket of degree k, such that
+12i.)[ξ,η] =−(−1)(deg( ξ)+k)(deg( η)+k)[η,ξ]and
+ii.)[ξ,[η,χ]] = [[ξ,η],χ] + (−1)(deg( ξ)+k)(deg( η)+k)[η,[ξ,χ]]
+for allξ,η,χ ∈gT.
+ii.) A morphism Φ:g→hof graded constraint Lie algebras is a morphism of graded con straint /CZ-
+modules which forms a commutative square with the graded Lie brackets viewed as graded constraint
+morphisms, i.e. the following diagram commutes:
+g⊗/CZg g
+h⊗/CZh h[·,·]g
+Φ⊗Φ Φ
+[·,·]h(2.31)
+iii.) The category of graded constraint Lie algebras will be denoted by CembLieAlg•.
+A graded constraint Lie algebra g•of degree 0 concentrated in g0is simply given by a constraint/CZ-module together with a constraint morphism [ ·,·]:g⊗/CZg→gfulﬁlling the usual properties of a Lie
+bracket. These objects will simply be called constraint Lie algebras .
+Example 2.24
+i.)LetEbe a constraint /CZ-module. The endomorphisms CEnd/CZ(E):=CHom/CZ(E,E) form a constraint
+Lie algebra with Lie bracket given by the usual commutator [ ·,·]ETonCEnd/CZ(E)T.
+ii.)LetA∈CembAlgbe a constraint algebra. The constraint derivations CDer(A) deﬁned by
+CDer(A)T:= Der( AT),
+CDer(A)N:=/braceleftbig
+D∈Der(AT)/vextendsingle/vextendsingleD(AN)⊆ANandD(A0)⊆A0/bracerightbig
+,
+CDer(A)0:=/braceleftbig
+D∈Der(AT)/vextendsingle/vextendsingleD(AN)⊆A0/bracerightbig(2.32)
+form a constraint Lie algebra which can be seen as a constrain t Lie subalgebra of CEnd/CZ(A).
+Note that we used ⊗/CZand not the strong tensor product ⊠/CZin (2.30). The reason being that
+CDer(A) would in general not be a constraint Lie algebra if we would h ave used ⊠/CZ.
+Since by ( 2.30) for every graded constraint Lie algebra gwe know that g0is a Lie ideal inside gNwe
+obtain a well-deﬁned reduction functor
+red: CembLieAlg•→LieAlg•(2.33)
+by mapping every graded constraint Lie algebra gtogred:=gN/g0.
+According to Proposition 2.10 there is a natural injection
+CDer(A)red֒→Der(Ared) (2.34)
+for any constraint algebra A. But in general we can not expect to have equality here. In the geometric
+situation we will ﬁnd that ( 2.34) actually becomes an isomorphism.
+A ﬁnal algebraic concept we will need is that of a constraint G erstenhaber algebra.
+13Deﬁnition 2.25 (Constraint Gerstenhaber algebras) An(embedded) constraint Gerstenhaber
+algebra is a graded constraint algebra G•= (G•
+T,G•
+N,G•
+0), which is equipped with an embedded graded
+constraint Lie algebra structure /llbracket·,·/rrbracketof degree −1, where /llbracket·,·/rrbracketis called constraint Gerstenhaber
+bracket , such that the graded Leibniz rule
+/llbracketξ,η·χ/rrbracket=/llbracketξ,η/rrbracket·χ+ (−1)(deg( ξ)−1) deg( η)η·/llbracketξ,χ/rrbracket (2.35)
+is satisﬁed for every ξ,η,χ ∈GT. A constraint Gerstenhaber algebra G•is called strong , if the underlying
+graded constraint algebra is strong.
+Since every constraint Gerstenhaber algebra is in particul ar a graded constraint algebra and a graded
+constraint Lie algebra we know that Gredcarries the structures of a graded algebra and a graded Lie
+algebra. Moreover, it is easy to see that the graded Leibniz r ule on Ginduces a graded Leibniz rule on
+Gred, showing that Gredforms itself a Gerstenhaber algebra.
+3 Constraint Geometry
+In this chapter we study the reduction of geometric structur es by applying the constraint approach from
+Section 2 to diﬀerential geometry. Section 3.1 introduces constraint manifolds as our main objects of
+interest and shows that functions on such constraint manifo lds yields constraint algebras. After deﬁning
+constraint vector bundles and their most important constru ctions in Section 3.2 we take a closer look
+at their relation with constraint modules in Section 3.3 . In particular, we prove a constraint version
+of the classical Serre-Swan Theorem, showing that taking se ctions gives an equivalence of categories
+between constraint vector bundles and ﬁnitely generated pr ojective constraint modules in the sense of
+Section 2.3 . Finally, in Section 3.4 a Cartan calculus for constraint manifolds.
+3.1 Constraint Manifolds
+The basic motivation for the deﬁnition of a constraint manif old is that it is supposed to capture the
+minimal geometric information needed to do reduction. For u s this means we have a smooth manifold
+Mtogether with an embedded submanifold Cwhich itself carries an equivalence relation allowing for
+a smooth quotient. In the following we will always assume tha t this equivalence relation is given by a
+distribution DonC. Distributions admitting a smooth leaf space will be called simple . Note that these
+are in particular regular and involutive.
+Deﬁnition 3.1 (Constraint manifold)
+i.) A constraint manifold M= (MT,M N,DM)consists of a smooth manifold MT, a closed embedded
+submanifold ιM:MN→MTand a simple distribution DM⊆TM NonMN.
+ii.) A smooth map φ:M→N(orconstraint map ) between constraint manifolds is given by a smooth
+mapφ:MT→NTsuch thatφ(MN)⊆NNandTφ(DM)⊆DN.
+iii.) The category of constraint manifolds and smooth maps i s denoted by CManifold .
+If we consider only a single constraint manifold we will ofte n writeM= (M,C,D ), withD⊆TC
+the distribution on the closed submanifold C⊆M, instead of using subscripts. Additionally, we will
+denote the inclusion of CinMbyι:C→M.
+We will call the ﬁnite constraint index set dim( M):=/parenleftbig
+dim(M),dim(C),rank(D)/parenrightbig
+theconstraint
+dimension of the constraint manifold M= (M,C,D ).
+14Since for every constraint manifold M= (M,C,D ) the distribution Dis simple we always obtain a
+smooth reduced manifold
+Mred:=C/D. (3.1)
+Thus we can deﬁne the reduction functor red: CManifold →Manifold by mapping every constraint
+manifold MtoMredand every constraint morphism φ:M→Nto
+φred:Mred→Nred, φ red([p]):= [φ(p)]. (3.2)
+Example 3.2
+i.)Let G be a Lie group acting via Φ: G ×C→Cin a free and proper way on a closed submanifold
+C⊆M. Then the images of the inﬁnitesimal action TeΦp:g→TpC, for allp∈C, deﬁne a simple
+distribution on C, inducing the structure of a constraint manifold. The reduc tion is then given
+by the orbit space C/G.
+ii.)LetC⊆Mbe a closed coisotropic submanifold of a Poisson manifold ( M,π). Then, if the
+characteristic distribution Dis simple, M= (M,C,D ) deﬁnes a constraint manifold, and the
+reduction is given by Mred=C/D .
+iii.) Letd= (dT,dN,d0)∈ /C63such thatdT≥dN≥d0. Then /CAdN⊆ /CAdTtogether with the distribution
+T /CAd0⊆T /CAdNdeﬁnes a constraint manifold, which we denote by /CAd= ( /CAdT, /CAdN, /CAd0). The
+reduction is then given by ( /CAd)red≃ /CAdN−d0= /CAdred.
+Constraint submanifolds can be introduced as (equivalence classes of) constraint injective immersions.
+To do this we would need the additional concept of constraint sets, see [ Dip23 ]. Instead let us give a
+more direct deﬁnition of constraint submanifolds as follow s. Note that all submanifolds are considered
+to be embedded.
+Deﬁnition 3.3 (Constraint submanifold) Aconstraint submanifold Nof a constraint manifold
+M= (MT,M N,D)consists of a submanifold NT⊆MTand a submanifold NN⊆MNsuch thatNN⊆NT
+is a closed submanifold and the distribution Dis tangent to NN, i.e.D/vextendsingle/vextendsingle
+NN⊆TN N.
+We will also write N⊆Mfor a constraint submanifold.
+Lemma 3.4 (Local structure of constraint manifolds) LetM= (M,C,D )be a constraint mani-
+fold of dimension d= (dT,dN,d0).
+i.) IfU⊆Mis open, then M/vextendsingle/vextendsingle
+U:= (U,U ∩C,D/vextendsingle/vextendsingle
+U)is a constraint submanifold manifold of M.
+ii.) For every p∈Cthere exists a coordinate chart (U,x)aroundpsuch that
+x(U∩C) =/parenleftbig/CAdN× {0}/parenrightbig
+∩x(U) (3.3)
+and
+x(U∩Lp) =/parenleftbig/CAd0× {0}/parenrightbig
+∩x(U), (3.4)
+whereLpdenotes the leaf of the distribution Dthroughp.
+Proof: The ﬁrst part is clear. For the second part choose a foliation chart onC∩Uand extend it as
+a submanifold chart to U. /square
+15To every constraint manifold we can associate a strong const raint algebra of smooth functions.
+Proposition 3.5 (Functions on constraint manifolds) Associating to every constraint manifold
+M= (M,C,D )the constraint algebra
+CC∞(M)T:=C∞(M, /CA),
+CC∞(M)N:=/braceleftbig
+f∈C∞(M, /CA)|LXf/vextendsingle/vextendsingle
+C= 0for allX∈Γ∞(D)/bracerightbig
+,
+CC∞(M)0:=/braceleftbig
+f∈C∞(M, /CA)|f/vextendsingle/vextendsingle
+C= 0/bracerightbig
+,(3.5)
+and to every constraint morphism φ:M→Nof constraint manifolds the constraint algebra morphism
+φ∗:CC∞(N)→CC∞(M), φ∗(f):=f◦φ (3.6)
+yields a functor CC∞:CManifold →Cemb
+strAlgopp.
+Proof: Note that CC∞(M)Nis a subalgebra of C∞(M, /CA) by the fact that LXis /CA-linear and satisﬁes
+a Leibniz rule. The 0-component is obviously contained in th e N-component and, since it is just
+the vanishing ideal of C, it is a two-sided ideal in C∞(M, /CA). This shows that CC∞(M) is indeed
+an embedded strong constraint algebra. Now given a smooth co nstraint map φ:M→Nwe have
+(φ∗f)(p) =f(φ(p)) = 0 forf∈CC∞(N)0and allp∈MN. Thusφ∗(CC∞(N)0)⊆CC∞(N)0. To show
+thatφ∗also preserves the N-component let f∈CC∞(N)Nbe given. Then for Xp∈DM/vextendsingle/vextendsingle
+p,p∈MNwe
+haveXp(φ∗f) =Tpφ(Xp)f= 0 sinceTpφ(Xp)∈DN/vextendsingle/vextendsingle
+φ(p)by assumption. This shows φ∗f∈CC∞(M)N./square
+Example 3.6
+i.)LetM= (M,C,D ) be a constraint manifold of dimension d= (dT,dN,d0),p∈Cand (U,x) an
+adapted chart around pas in Lemma 3.4 . Then
+xi∈C∞(M/vextendsingle/vextendsingle
+U)0ifi∈ {dN+ 1,...,d T}= (d∗)0,
+xi∈C∞(M/vextendsingle/vextendsingle
+U)Nifi∈ {d0+ 1,...,d T}= (d∗)N,
+xi∈C∞(M/vextendsingle/vextendsingle
+U)Tifi∈ {1,...,d T}= (d∗)T.(3.7)
+ii.)LetC⊆Mbe a coisotropic submanifold of a Poisson manifold ( M,π) and denote as before by
+M= (M,C,D ) the corresponding constraint manifold. Then, as for any co nstraint manifold, the
+0-component CC∞(M)0=ICis the vanishing ideal of C, and additionally
+CC∞(M)N=BC={f∈C∞(M)| {f,g} ∈ICfor allg∈IC} (3.8)
+is the Poisson normalizer of IC.
+Constructing the embedded strong constraint algebra of smo oth functions on a constraint manifold
+then commutes with reduction:
+Proposition 3.7 (Constraint functions vs. reduction) There exists a natural isomorphism such
+that the following diagram commutes:
+CManifold Cemb
+strAlgopp
+Manifold AlgoppCC∞
+red red
+C∞(3.9)
+16Proof: Observe that every f∈CC∞(M)Ndrops to a function fred∈C∞(Mred), and the kernel of this
+map is exactly given by the vanishing ideal CC∞(M)0. Hence we obtain an inclusion CC∞(M)red⊆
+C∞(Mred). To show surjectivity of this map, choose a tubular neighbo urhoodVofCwith projection
+prV:V→Cand a bump function χ∈C∞(M, /CA) withχ/vextendsingle/vextendsingle
+C= 1 andχ/vextendsingle/vextendsingle
+M\V= 0. Note that the
+closedness of Cis needed for the existence of such a χ. Then every function f∈C∞(Mred) can
+ﬁrst be pulled back to a function π∗
+redfonCand afterwards pulled back to Vvia pr∗
+V(π∗
+redf), where
+πred:C→Mreddenotes the projection to the quotient. Finally, we can exte nd it to all of Musingχ
+obtaining ˆf:=χ·(pr∗
+V(π∗
+redf)). Since ˆf/vextendsingle/vextendsingle
+C=π∗
+redfwe clearly get ˆf∈CC∞(M)Nand ( ˆf)red=f. Hence
+we get CC∞(M)red=C∞(Mred). For the naturality consider a smooth constraint map φ:M→N.
+Then for every f∈C∞(N)redwe have
+(φ∗)red(fred) = (φ∗(f))red= (f◦φ)red=fred◦φred= (φred)∗(fred).
+This shows that ( 3.9) commutes up to a natural isomorphism. /square
+3.2 Constraint Vector Bundles
+To introduce the notion of constraint vector bundle we need t he concept of a partial connection (or
+partial covariant derivative), cf. [ Bot72 ]. IfD⊆Cis an involutive regular distribution on a smooth
+manifoldCandE→Cis a vector bundle over C, then aD-connection on Eis a /CA-linear map
+∇: Γ∞(D)⊗/CAΓ∞(E)→Γ∞(E) (3.10)
+fulﬁlling the usual properties of a covariant derivative. N ote thatD-connections always exist by restrict-
+ing a connection on EtoD. Moreover, every D-connection can be extended to a covariant derivative
+onEby choosing a complement D⊥ofDinsideTCand aD⊥-connection, then taking the sum of those.
+Given a curve γ:I→Cinside a ﬁxed leaf of Dconnecting p,q∈Cwe obtain corresponding parallel
+transport P γ:Ep→Eq. If this parallel transport is independent of the chosen (le afwise) path, we will
+call theD-connection ∇holonomy-free .
+Deﬁnition 3.8 (Constraint vector bundle) LetM= (MT,M N,DM)andN= (NT,N N,DN)be con-
+straint manifolds.
+i.) A constraint vector bundle E= (ET,E N,E 0,∇)overMconsists of a vector bundle ET→MT, a
+subbundleEN→MNofι#ET, a subbundle E0→MNofENand a holonomy-free DM-connection
+∇onEN/E 0.
+ii.) LetE= (ET,E N,E 0,∇E)andF= (FT,FN,F0,∇F)be constraint vector bundles over MandN,
+respectively. A morphism Φ:E→Fof constraint vector bundles over φ:M→Nis given by a
+vector bundle morphism ΦT:ET→FTsuch that
+a.)ΦTrestricts to a vector bundle morphism ΦN= Φ T/vextendsingle/vextendsingle
+EN:EN→FN,
+b.)ΦN(E0)⊆F0and
+c.) the induced vector bundle morphism Φ:EN/E 0→FN/F0is a morphism between vector bun-
+dles with linear connections , i.e.
+∇E∗
+vpΦ∗α= (Φp)∗/parenleftbig
+∇F∗
+T φ(vp)α/parenrightbig
+(3.11)
+holds for all vp∈DM/vextendsingle/vextendsingle
+p,α∈Γ∞((FN/F0)∗)andp∈C, see Deﬁnition A.1 .
+17iii.) The category of constraint vector bundles with morphi sms over arbitrary smooth maps is denoted
+byCVect , while the category of constraint vector bundles over a ﬁxed constraint manifold Mwith
+morphisms over idMis denoted by CVect (M).
+Remark 3.9 In classical diﬀerential geometry vector bundles can be vie wed as manifolds with a linear ﬁ-
+bration. Using this viewpoint for constraint geometry mean s the following: Let us start with a constraint
+vector bundle E= (ET→M,E N→C,E 0→C,∇) over the constraint manifold M= (M,C,D M), then
+the corresponding constraint manifold is given by E= (ET,E N,DE), where the simple distribution DE
+is equivalent to the information ( DM,E 0,∇). This was worked out in [ JO14 ], see also [ Ker23 ], where
+they are called linear distributions.
+Starting with the triple ( DM,E 0,∇) we identify EN/E 0with a subbundle EN/upslope0inEN, such that
+EN≃E0⊕EN/upslope0. Extending ∇to a linear connection on ENgives an equivalent, but non-canonical,
+linear splitting Σ of the double vector bundle TE N, and an isomorphism TE N≃EN×CTC×CEN,
+called decomposition, see [ Jot18b ]. For more information on double vector bundles, see e.g. [ GM10 ;
+Mac92 ]. Under this identiﬁcation we can deﬁne DE:=EN×CDM×CE0and thus obtain a double
+subbundle
+DEDM
+ENC⊆TE NTC
+ENC, (3.12)
+see [JO14 ]. Moreover, the linear splitting leads to a direct sum decom position
+DE≃Ver(E0)⊕HorΣ(DM), (3.13)
+where Ver(E0) denotes the vertical bundle over ENpointing in E0-direction, i.e.
+Ver(E0) =/braceleftBigd
+dt/vextendsingle/vextendsingle/vextendsingle/vextendsingle
+t=0(sp+trp)∈TE N/vextendsingle/vextendsinglesp∈EN,rp∈E0,p∈C/bracerightBig
+, (3.14)
+and HorΣ(DM) denotes the horizontally lifted vectors over DM, i.e.
+HorΣ(DM) =/braceleftBig
+Σ(sp,vp)∈TE N/vextendsingle/vextendsinglesp∈EN,vp∈DM,p∈C/bracerightBig
+. (3.15)
+Conversely, suppose a double subbundle DEsubordinate to TE Nis given. We deﬁne E0to be the
+core ofDEand together with the side bundles ENandDMand a chosen linear splitting Ω, there is an
+isomorphism EN×CDM×CE0≃DEof double vector bundles. Every such linear splitting Ω can b e
+extended to a linear splitting Σ for TE N, leading to an isomorphism EN×CTC×CEN≃TE N. The
+linear splitting Σ corresponds to a linear connection /hatwide∇: Γ∞(TC)⊗/CAΓ∞(EN)→Γ∞(EN), which in turn
+gives rise to a linear DM-connection ∇onEN/E 0. This leads to the claimed triple ( DM,E 0,∇).
+For every constraint vector bundle Eover a constraint manifold M= (M,C,D ) andp∈Mwe
+can consider the ﬁbre ET/vextendsingle/vextendsingle
+p. Ifp∈Cis a point in the submanifold, we have subspaces deﬁned by the
+subbundles ENandE0, leading to a constraint vector space, i.e. a constraint mod ule over the constraint
+algebra ( /CA, /CA,0), given by
+E/vextendsingle/vextendsingle
+p:=/parenleftbig
+ET/vextendsingle/vextendsingle
+p,E N/vextendsingle/vextendsingle
+p,E 0/vextendsingle/vextendsingle
+p/parenrightbig
+. (3.16)
+Forp∈M\Cwe deﬁneE/vextendsingle/vextendsingle
+p:= (ET/vextendsingle/vextendsingle
+p,0,0). SinceMandCare supposed to be connected the dimension
+of this constraint vector space is independent of the base po intp∈C. Thus we call the constraint index
+set
+rank(E):=/parenleftbig
+rank(ET),rank(EN),rank(E0)/parenrightbig
+(3.17)
+therank ofE.
+18Example 3.10 Instances of constraint vector bundles have, under diﬀeren t names, appeared in the
+literature before.
+i.)In [CO22 , Def 2.2] the notion of quotient data ( qM,K,∆) for a vector bundle E→Mis introduced,
+see also [ Mac05 , §2.1]. Here qM:M→˜Mdenotes a surjective submersion with connected ﬁbres,
+K⊆Eis a subbundle and ∆ is a smooth assignment taking a pair of poi ntsx,y∈Mon the same
+qM-ﬁbre to a linear isomorphism ∇x,y:Ey/Ky→Ex/Kx. This directly gives a constraint vector
+bundle (E,E,K ) over (M,M, ker(TyM)) with ¯∇the partial connection induced by ∆.
+ii.)By Batchelor’s Theorem [ Bat80 ;BP13 ] graded manifolds of degree one correspond to vector
+bundles over manifolds. Under this identiﬁcation a graded s ubmanifold of a degree one graded
+manifold corresponds to a constraint vector bundle ( E,ι#E,F) over (M,C, 0), see [ Cue19 ].
+Example 3.11 (Trivial constraint vector bundle) LetM= (M,C,D ) be a constraint manifold
+andk= (kT,kN,k0) a ﬁnite constraint index set. Then
+M× /CAk:=/parenleftbig
+M× /CAkT,C× /CAkN,C× /CAk0,L/parenrightbig
+(3.18)
+deﬁnes a constraint vector bundle. Here Ldenotes the component-wise Lie derivative.
+We will call a constraint vector bundle of that form trivial . Constraint vector bundles isomorphic
+to trivial vector bundles will be called trivializable .
+Deﬁnition 3.12 (Constraint sub-bundle) LetE= (ET,E N,E 0,∇E)be a constraint vector bundle
+over a constraint manifold M= (M,C,D ). Aconstraint sub-bundle FofEconsists of a vector sub-
+bundleFT⊆ETtogether with a subbundle FN⊆ENsuch that the following properties hold:
+i.)FNis a subbundle of ι#FToverC.
+ii.) The intersection FN∩E0is a subbundle of E0andFN.
+iii.) ∇Erestricts to a D-connection onFN+E0
+E0.
+Note thatFN+E0
+E0≃FN
+FN∩E0, and therefore every constraint sub-bundle Fcan be seen as a constraint
+vector bundle ( FT,FN,FN∩E0,∇F), with ∇Fbeing the restrictions of ∇EtoFN
+FN∩E0. The inclusion
+i:F ֒→Ethen forms a morphism of constraint vector bundles. In combi nation with Deﬁnition 3.3 it
+should be clear how to deﬁne constraint sub-bundles on const raint submanifolds, but we will not need
+this generalization in the following.
+Proposition 3.13 LetEandFbe constraint vector bundles over a constraint manifold M. Suppose
+Φ:E→Fis a constraint vector bundle morphism over idMsuch that ΦT,ΦNandΦN/vextendsingle/vextendsingle
+E0have constant
+rank. Then ker Φ given by
+(ker Φ) T:= ker(Φ T)
+(ker Φ) N:=ι#ker(Φ T)∩EN(3.19)
+is a constraint sub-bundle of E.
+Proof: Since Φ Tand Φ Nhave constant rank we know that (ker Φ) Tand (ker Φ) N= ker(Φ N) are
+subbundles, and clearly (ker Φ) N⊆(ker Φ T) is a subbundle. Moreover, (ker Φ) N∩E0≃ker(Φ 0) is a
+subbundle since Φ 0has constant rank. Finally, the fact that Φ is compatible wit h∇shows that ∇
+restricts toker(Φ N)
+ker(Φ 0). /square
+19Recall from [ Bot72 ] that for a given manifold Cwith a regular involutive distribution D⊆TCthere
+exists a canonical D-connection on the normal bundle TC/D , the so-called Bott connection , given by
+∇Bott
+XY=[X,Y ] (3.20)
+forX∈Γ∞(D) andY∈Γ∞(TC/D ). HereYdenotes the equivalence class of Y∈Γ∞(TC). Moreover,
+it is well-known that since C/D is smooth the Bott connection is holonomy free.
+Deﬁnition 3.14 (Constraint tangent bundle) LetM= (M,C,D )be a constraint manifold. The
+constraint vector bundle TM:= (TM,TC,D, ∇Bott)overMis called the (constraint) tangent bundle
+ofM.
+Proposition 3.15 (Constraint tangent bundle functor) Mapping every constraint manifolds to
+its constraint tangent bundle and smooth maps φ:M→Nbetween constraint manifolds MandN
+to the tangent map Tφ:TM→TNdeﬁnes a functor
+T:CManifold →CVect. (3.21)
+Proof: For the T-components the statement is clear, and since Tφis completely determined by
+Tφ:TM T→TN Tthe only thing left to show is that Tφis actually a constraint morphism. Since
+φmapsMNtoNNwe immediately get that ι#Tφrestricts to Tφ:TM N→TN N. Moreover, by Deﬁni-
+tion 3.1 we haveTφ(DM)⊆DN. It remains to show that Tφis compatible with the Bott connections.
+For this let vp∈DM/vextendsingle/vextendsingle
+pandX∈Γ∞(DM) such that X(p) =vp. Moreover, we know there exist open
+subsetsV⊆MaroundpandU⊆NNaroundφ(p) withV⊆φ−1(U) andY∈Γ∞(TU) such that
+X/vextendsingle/vextendsingle
+V∼φY. Then for arbitrary α∈Γ∞(Ann(DN)) andwp∈TpMNwe compute
+/parenleftBig
+∇T∗M
+vp(Tφ)∗α/parenrightBig
+(wp) =LX(Tφ)∗α/vextendsingle/vextendsingle
+p(wp)
+=(Tφ)∗LYα/vextendsingle/vextendsingle
+p(wp)
+=LYα/vextendsingle/vextendsingle
+φ(p)/parenleftBig
+Tφ(wp)/parenrightBig
+=/parenleftBig
+∇T∗N
+Y(φ(p))α/parenrightBig/parenleftBig
+Tφ(wp)/parenrightBig
+= (Tpφ)∗/parenleftBig
+∇T∗N
+T φ(vp)α/parenrightBig
+(wp),
+which proves the claim. /square
+On every constraint vector bundle Ethe subbundle E0together with the D-connection ∇Edeﬁnes
+an equivalence relation on ENbyvp∼Ewpif and only if p∼Mqand there exists a path γ:I→C
+in the leaf of psuch thatwq= P γ,p→q(vp) is the parallel transport of vpalongγ. Here ·denotes the
+equivalence class in EN/E 0. Since ∇Eis holonomy-free this is independent of the chosen leafwise path,
+and thus indeed gives a well-deﬁned equivalence relation. I nﬁnitesimally, the equivalence relation ∼E
+corresponds to the distribution DEwhich is induced by ( DM,E 0,∇), see Remark 3.9 .
+Proposition 3.16 (Reduction of constraint vector bundles) LetE= (ET,E N,E 0,∇E)be a con-
+straint vector bundle over a constraint manifold M= (M,C,D ).
+i.) There exists a unique vector bundle structure on
+prEred:EN/∼E→Mred, prE([vp]) =πM(p), (3.22)
+20withπM:C→Mred, such that the quotient map
+πE:EN→EN/∼E, π E(vp) = [vp] (3.23)
+is a submersion and a vector bundle morphism over πM.
+ii.) There exists an isomorphism
+Θ: (EN/E 0)→π#
+M(EN/∼E), Θ(vp) = (p,[vp]) (3.24)
+of vector bundles fulﬁlling
+Θ−1(q,[vp]) = P γ,p→q(vp) (3.25)
+forvp∈EN/vextendsingle/vextendsingle
+pandp∼Mq.
+Proof: We can split the quotient procedure into two steps. First we c onsider the quotient vector bundle
+EN/E 0→Cwith quotient map πE0:EN→EN/E 0being a submersion and vector bundle morphism.
+Now theD-connection ∇Einduces an equivalence relation on EN/E 0byvp∼∇Ewpif and only if p∼Mq
+andwp= P γ,p→q(vp). In the language of Lie groupoids it is easy to see that the pa rallel transport of
+∇Edeﬁnes a linear action of the Lie groupoid R(πM) =C ×πMπMCon (EN/E 0). Then [ HM90 , Lemma
+4.1] gives the existence of a unique vector bundle structure on pr∇: (EN/E 0)/∼∇E→Mredsuch that
+the quotient map π∇: (EN/E 0)→(EN/E 0)/∼∇Eis a submersion and a vector bundle morphism over
+πM. Combining these we obtain a unique vector bundle structure onEN/∼E≃(EN/E 0)/∼∇Esuch
+thatπE=π∇E◦πE0is a submersion and vector bundle morphism over πM. The second part is again
+directly given by [ HM90 , Lemma 4.1]. /square
+Deﬁnition 3.17 (Reduced vector bundle) LetE= (ET,E N,E 0,∇E)be a constraint vector bundle
+over a constraint manifold M= (M,C,D ). Then the vector bundle Ered:= (EN/E 0)/∼∇EoverMred
+is called the reduced vector bundle ofE.
+Example 3.18 Consider a trivial bundle M× /CAkas in Example 3.11 . Then
+(C× /CAkN)/(C× /CAk0)≃C× /CAkN−k0(3.26)
+and since the D-connection is just given by the Lie derivative we get ( M× /CAk)red≃Mred× /CAkN−k0.
+Morphisms of constraint vector bundles are designed to yiel d well-deﬁned morphisms between the
+reduced vector bundles, allowing for a reduction functor, a s expected.
+Proposition 3.19 (Reduction functor) Mapping constraint vector bundles to their reduced bundles
+deﬁnes a functor red: CVect →Vect.
+Proof: We need to show that morphisms of constraint vector bundles i nduce morphisms between
+the respective reduced bundles. For this let Φ: E→Fbe a morphism of constraint vector bundles
+E→MandF→Nover a smooth map φ:M→N. Since Φ restricts to a vector bundle morphism
+ΦN:EN→FNwhich maps the subbundle E0toF0we obtain a well-deﬁned vector bundle morphism
+ΦN:EN/E 0→FN/F0, which is compatible with the covariant derivates in the sen se of ( 3.11). Now
+suppose that vp∼Ewq. Then by Proposition A.4 v.)we know Φ( wq) = P ˆγ,φ(p)→φ(q)Φ(vp), showing
+that Φ preserves the equivalence relation and thus drops to a map Φ red:Ered→Fred. It is smooth since
+locally there exist sections of the projection map πred:EN→Ered. Moreover, it is clearly ﬁberwise
+linear, hence deﬁning a vector bundle morphism Φ red:Ered→Fred. /square
+21Proposition 3.20 There exists a natural isomorphism making the following dia gram commute:
+CManifold CVect
+Manifold VectT
+red red
+T(3.27)
+Proof: For every constraint manifold Mwe construct an isomorphism Ψ M:π#
+M(TM)red→π#
+MT(Mred).
+From Proposition 3.16 we know that π#
+M(TM)red≃TC/D . Moreover, recall that we can pull back every
+germf[p]∈C∞
+[p](Mred) toπ∗
+Mf[p]∈C∞
+p(C). Thus we can deﬁne
+ΨM:TC/D ∋[vp]/maps⊔o→(p,vp◦π∗
+M)∈π#
+MT(Mred),
+giving a ﬁberwise injective vector bundle morphism since Dis obviously the kernel. To show surjectivity
+let (p,w [p])∈π#
+MT(Mred) be given. Since πMis a surjective submersion, there exists a local section
+σ:V→Con an open neighbourhood V⊆Mredaround [p]. With this we can set vp(fp):=w[p]((σ∗f)[p])
+for anyf∈C∞(π−1
+M(V)), and thus Ψ M([vp]) = (p,w [p]). This shows that Ψ Mis a ﬁberwise isomorphism
+and hence an isomorphism of vector bundles. Then Ψ Minduces the isomorphism ( TM)red≃T(Mred)
+as required. /square
+As an important tool to work with constraint vector bundles w e need the existence of local frames
+adapted to the additional structures. For this observe that every constraint vector bundle E=
+(ET,E N,E 0,∇) over a constraint manifold M= (M,C,D ) can be restricted to an open subset U⊂M
+giving a constraint vector bundle E/vextendsingle/vextendsingle
+U= (ET/vextendsingle/vextendsingle
+U,E N/vextendsingle/vextendsingle
+U∩C,E 0/vextendsingle/vextendsingle
+U∩C,∇/vextendsingle/vextendsingle
+U∩C) overM/vextendsingle/vextendsingle
+U.
+Lemma 3.21 LetE= (ET,E N,E 0,∇)be a constraint vector bundle of rank k= (kT,kN,k0)over a
+constraint manifold M= (M,C,D ). Let furthermore EN/upslope0→CandET/upslopeN→Cbe subbundles of ι#ET
+such thatEN=E0⊕EN/upslope0andι#ET=EN⊕ET/upslopeN. Then for every p∈Cthere exists a local frame
+e1,...,e kT∈Γ∞(ET/vextendsingle/vextendsingle
+U)on an open neighbourhood U⊆Maroundpsuch that
+i.)ι#ei∈Γ∞(E0/vextendsingle/vextendsingle
+U∩C)for alli= 1,...,k 0,
+ii.)ι#ei∈Γ∞(EN/upslope0/vextendsingle/vextendsingle
+U∩C)and∇Xι#ei= 0for allX∈Γ∞(D)andi=k0+ 1,...,k N,
+iii.)ι#ei∈Γ∞(ET/upslopeN/vextendsingle/vextendsingle
+U∩C)for alli=kN+ 1,...,k T.
+Proof: Take a local frame g1,...,g kN−k0ofEredon an open neighbourhood ˇV⊆MredofπM(p). Using
+Proposition 3.16 ii.)we obtain a local frame g1,...,g kN−k0ofEN/upslope0≃EN/E 0on the open neighbourhood
+π−1
+M(ˇV) with ∇Xgi= 0 for all X∈Γ∞(D) andi= 1,...,k N−k0. Choose additionally local frames
+f1,...,f k0ofE0andh1,...,h kT−kNofET/upslopeNon a possibly smaller open neighbourhood V. Using a
+tubular neighbourhood prU:U→C∩VofC∩VinsideVwe can pull back those local frames to a
+local frame
+ei:=
+
+pr#
+Ufi ifi= 1,...,k 0
+pr#
+Ugi−n0ifi=k0+ 1,...,k N
+pr#
+Uhi−nNifi=kN+ 1,...,k T
+ofETfulﬁlling the required properties. /square
+In order to introduce the usual constructions of vector bund les also in the constraint setting we will
+need the following lemma concerning the constraint homomor phism bundles:
+22Lemma 3.22 LetE,F be constraint vector bundles over a constraint manifold M= (M,C,D ). Deﬁne
+vector bundles
+CHom(E,F)N:=/braceleftBig
+Φp∈Hom(ι#ET,ι#FT)/vextendsingle/vextendsingleΦp(EN/vextendsingle/vextendsingle
+p)⊆FN/vextendsingle/vextendsingle
+pandΦp(E0/vextendsingle/vextendsingle
+p)⊆F0/vextendsingle/vextendsingle
+p/bracerightBig
+(3.28)
+and
+CHom(E,F)0:=/braceleftBig
+Φp∈Hom(ι#ET,ι#FT)/vextendsingle/vextendsingleΦp(EN/vextendsingle/vextendsingle
+p)⊆F0/vextendsingle/vextendsingle
+p/bracerightBig
+(3.29)
+overC. Then
+Θ:CHom(E,F)N/CHom(E,F)0→Hom(EN/E 0,FN/F0) (3.30)
+deﬁned by
+Θ(Φp)(vp):=Φp(vp) (3.31)
+is an isomorphism of vector bundles. Here ·denotes the projection to the quotient.
+Proof: It is clear that Θ is a well-deﬁned map. Moreover, it is a vecto r bundle morphism since
+it is essentially given by evaluation. The ﬁberwise injecti vity is again clear by deﬁnition, while for
+the ﬁberwise surjectivity we need to choose complements E⊥
+0andE⊥
+NofE0insideENandENinside
+ι#ET. Thusι#ET=E0⊕E⊥
+0⊕E⊥
+NandEN/E 0≃E⊥
+0. Then for every Ψ p∈Hom(EN/E 0,FN/F0) set
+Φ(vp) = Ψ(vp) for allvp∈E⊥
+0and Φ(vp) = 0 for all vp∈E0orvp∈E⊥
+N. With this we have Θ(Φ p) = Ψ p.
+Thus we have an isomorphism of vector bundles as claimed. /square
+Let us now introduce some important constructions on constr aint vector bundles.
+Proposition 3.23 LetE= (ET,E N,E 0,∇E)andF= (FT,FN,F0,∇F)be constraint vector bundles
+over the constraint manifold M= (MT,M N,DM). LetN= (NT,N N,DN)be another constraint manifold
+andφ:N→Mbe a constraint map.
+i.) Deﬁning E⊕Fby
+(E⊕F)T:=ET⊕FT,
+(E⊕F)N:=EN⊕FN,
+(E⊕F)0:=E0⊕F0,
+∇E⊕F:=∇E⊕ ∇F(3.32)
+yields a constraint vector bundle over M, called the direct sum , with
+rank(E⊕F) = rank(E) + rank(F). (3.33)
+ii.) Deﬁning E⊗Fby
+(E⊗F)T:=ET⊗FT,
+(E⊗F)N:=EN⊗FN,
+(E⊗F)0:=E0⊗FN+EN⊗F0,
+∇E⊗F:=∇E⊗id + id ⊗∇F(3.34)
+yields a constraint vector bundle over M, called the tensor product , with
+rank(E⊗F) = rank(E)⊗rank(F). (3.35)
+23iii.) Deﬁning E⊠Fby
+(E⊠F)T:=ET⊗FT,
+(E⊠F)N:=EN⊗FN+E0⊗ι#FT+ι#ET⊗F0,
+(E⊠F)0:=E0⊗ι#FT+ι#ET⊗F0,
+∇E⊠F:=∇E⊗id + id ⊗∇F(3.36)
+yields a constraint vector bundle over M, called the strong tensor product , with
+rank(E⊠F) = rank(E)⊠rank(F). (3.37)
+iv.) Deﬁning E∗by
+(E∗)T= (ET)∗,
+(E∗)N= Annι#ET(E0),
+(E∗)0= Annι#ET(EN),(3.38)
+with Annι#ET(E0)andAnnι#ET(EN)the annihilator subbundles of E0andENwith respect to ι#ET
+and∇E∗the dual covariant derivative, yields a constraint vector b undle over M, called the dual
+vector bundle , with
+rank(E∗) = rank(E)∗. (3.39)
+v.) Deﬁning CHom(E,F)by
+CHom(E,F)T:= Hom(ET,FT),
+CHom(E,F)N:=/braceleftBig
+Φp∈Hom(ι#ET,ι#FT)/vextendsingle/vextendsingleΦp(EN/vextendsingle/vextendsingle
+p)⊆FN/vextendsingle/vextendsingle
+p
+andΦp(E0/vextendsingle/vextendsingle
+p)⊆F0/vextendsingle/vextendsingle
+p/bracerightBig
+,
+CHom(E,F)0:=/braceleftBig
+Φp∈Hom(ι#ET,ι#FT)/vextendsingle/vextendsingleΦp(EN/vextendsingle/vextendsingle
+p)⊆F0/vextendsingle/vextendsingle
+p/bracerightBig
+,
+∇Hom
+XA:=∇F
+X◦A−A◦ ∇E
+X,(3.40)
+whereA∈Γ∞(CHom(E,F)N/CHom(E,F)0)is identiﬁed with A: Γ∞(EN/E 0)→Γ∞(FN/F0)us-
+ingLemma 3.22 andX∈Γ∞(D), yields a constraint vector bundle, called the homomorphism
+bundle , with
+rank( CHom(E,F)) = rank(E∗)⊠rank(F). (3.41)
+vi.) Deﬁning φ#Fby
+/parenleftBig
+φ#F/parenrightBig
+T:=φ#
+TFT,
+/parenleftBig
+φ#F/parenrightBig
+N:=φ#
+NFN,
+/parenleftBig
+φ#F/parenrightBig
+0:=φ#
+NF0,
+∇φ#F:=φ#
+N∇F,(3.42)
+whereφ#
+N∇Fdenotes the pull-back linear connection of ∇F, see Proposition A.3 , yields a constraint
+vector bundle over N, called the constraint pull-back vector bundle of F, with
+rank(φ#F) = rank(F). (3.43)
+24Proof: i.): Note that the direct sum of subbundles is a subbundle of the d irect sum and we have
+(E⊕F)N/(E⊕F)0≃(EN/E 0)⊕(FN/F0). Moreover, the parallel transport of ∇E⊕Fis given by the
+direct sum of the parallel transports of ∇Eand∇F, and thus it is holonomy-free.
+ii.): We need to show that ( E⊗F)0actually forms a subbundle of EN⊗FN. Letp∈Cbe given,
+then the dimension of ( E0⊗FN)/vextendsingle/vextendsingle
+p∩(EN⊗F0)/vextendsingle/vextendsingle
+p= (E0⊗F0)/vextendsingle/vextendsingle
+pis independent of p, and thus ( E⊗F)0
+has constant rank and therefore deﬁnes a subbundle of EN⊗FN. The parallel transport of ∇E⊗Fon
+(E⊗F)N/(E⊗F)0≃(EN/E 0)⊗(FN/F0) is given by the tensor product of the parallel transports, a nd
+hence is holonomy-free.
+iii.): With an analogous argument we see that ( E⊠F)Nand (E⊠F)0are well-deﬁned subbundles
+with (E⊠F)N/(E⊠F)0≃(EN/E 0)⊗(FN/F0) and holonomy-free covariant derivative.
+iv.): For the dual bundle we have by deﬁnition subbundles
+Annι#ET(EN)⊆Annι#ET(E0)⊆ι#(ET)∗
+holds. Moreover, Annι#ET(E0)/Annι#ET(EN)≃(EN/E 0)∗holds and since ∇Eis holonomy-free so is
+the dual covariant derivative ∇E∗.
+v.): For the homomorphism bundle note that ι#Hom(ET,FT)≃Hom(ι#ET,ι#FT). By using
+adapted local frames as in Lemma 3.21 it is then easy to see that CHom(E,F)NandCHom(E,F)0
+form subbundles of ι#CHom(E,F)T. Moreover, since ∇Homis the covariant derivative obtained from
+the isomorphism Hom( EN/E 0,FN/F0)≃(EN/E 0)∗⊗(FN/F0) and duals as well as tensor products of
+holonomy-free covariant derivatives are again holonomy-f ree, so is ∇Hom.
+vi.): By choosing an adapted local frame for Fon some open neighbourhood U⊆MTas in
+Lemma 3.21 immediately clariﬁes why ( φ#F)Nand (φ#F)0are subbundles of ( φ#F)T. Since we have
+(φ#F)N/(φ#F)0≃φ#(FN/F0), it follows by Proposition A.3 that ∇φ#Fis holonomy-free. /square
+Note that the dual bundle E∗is indeed given by the homomorphism bundle CHom(E,M× /CA), and
+we clearly have ( E∗)∗≃E. Moreover, all the above constructions can easily seen to be functorial. In
+particular, dualizing is a contravariant endofunctor of CVect (M).
+Example 3.24 LetM= (M,C,D ) be a constraint manifold.
+i.)The constraint cotangent bundle of Mis given by
+(T∗M)T=T∗M
+(T∗M)N= Annι#T∗M(D)
+(T∗M)0= Annι#T∗M(TC).(3.44)
+Note that we can canonically identify Annι#T∗M(D)/Annι#T∗M(TC)≃Ann T C(D). Under this
+identiﬁcation ι#αbecomes just the pullback (or restriction) ι∗α∈Ann T C(D) of the form αtoC.
+Then the dual Bott connection is given by
+∇Bott
+Xι∗α=LXι∗α. (3.45)
+ii.)For any given constraint vector bundle EoverMwe can construct its antisymmetric tensor powers
+with respect to both ⊗and⊠. Denoting by ∧the antisymmetric tensor product of classical vector
+bundles we obtain
+(Λk
+⊗E)T= ΛkET,
+(Λk
+⊗E)N= ΛkEN,
+(Λk
+⊗E)0= Λk−1EN∧E0,and(Λk
+⊠E)T= ΛkET,
+(Λk
+⊠E)N= ΛkEN+ Λk−1ET∧E0,
+(Λk
+⊠E)0= Λk−1ET∧E0.(3.46)
+25Here we suppressed the pullback ι#for the T-bundles, since from the context it is clear that we
+only can take tensor products of vector bundles over C.
+At this point we could prove the expected compatibilities be tween the various constructions of
+constraint vector bundles, but we will postpone this in orde r to be able to reuse Proposition 2.19 .
+3.3 Sections of Constraint Vector Bundles
+In order to motivate the deﬁnition of sections of constraint vector bundles consider the total space of a
+constraint vector bundle E= (ET,E N,E 0,∇) over a constraint manifold M= (M,C,D ) in the following
+way: The vector bundle ETis clearly a smooth manifold, and since C⊆Mis a closed submanifold so is
+EN⊆ET. Additionally, by identifying EN/E 0withEN/upslope0such thatEN≃E0⊕EN/upslope0, there is a distribution
+DEonENwhich is given by DE:= Ver(E0)⊕HorΣ(DM), see Remark 3.9 . Thus we can understand
+the total space of a constraint vector bundle as a constraint manifold. The vector bundle projection
+pr:E→Mturns out to be a smooth map of constraint manifolds. Thus a co nstraint section of E
+should be a constraint map s:M→Esuch that pr ◦s= idM. This means in particular that srestricted
+toCyields a section ι#sofEN. Moreover, ι#sshould map equivalent points in Cto equivalent vectors
+inEN. In other words, ι#sshould either map to E0or be covariantly constant along the leaves of D.
+These considerations motivate the following deﬁnition of t he constraint module of sections.
+Proposition 3.25 (Functor of constraint sections) LetM= (M,C,D )be a constraint manifold.
+Mapping a constraint vector bundle E= (ET,E N,E 0,∇)to
+CΓ∞(E)T:= Γ∞(ET)
+CΓ∞(E)N:=/braceleftBig
+s∈Γ∞(ET)/vextendsingle/vextendsingleι#s∈Γ∞(EN),∇Xι#s= 0for allX∈Γ∞(D)/bracerightBig
+,
+CΓ∞(E)0:=/braceleftBig
+s∈Γ∞(ET)/vextendsingle/vextendsingleι#s∈Γ∞(E0)/bracerightBig
+,(3.47)
+and a constraint vector bundle morphism Φ:E→Fover the identity to
+Φ:CΓ∞(E)→CΓ∞(F), Φ(s)(p):= Φ/parenleftbig
+s(p)/parenrightbig
+(3.48)
+deﬁnes a functor CΓ∞:CVect (M)→Cemb
+strMod(CC∞(M)).
+Proof: First note that CΓ∞(E)Tis clearly a CC∞(M)T-module. In general we have ι#(f·s) =ι∗f·ι#s
+fors∈Γ∞(ET) andf∈C∞(M). Thus for f∈CC∞(M)Nands∈CΓ∞(E)Nwe haveι#(f·s)∈Γ∞(EN)
+and
+∇E
+X(ι#(f·s)) = ∇E
+X(ι∗f·ι#s) =LXι∗f·ι#s+ι∗f· ∇E
+Xι#s=ι∗f· ∇E
+Xι#s= 0
+for allX∈Γ∞(D), where we used LXι∗f= 0. Now let s∈Γ∞(ET) andf∈CC∞(M)0be given, then
+ι#(f·s) =ι∗f·ι#s= 0∈Γ∞(E0). Ifs∈Γ∞(E)0andf∈C∞(M), we get again ι#(f·s)∈Γ∞(E0).
+Hence we see that CΓ∞(E) is indeed a strong CC∞(M)-module. Let now Φ: E→Fbe a constraint
+morphism of constraint vector bundles over id M. Then Φ can be restricted to a morphism between the
+N- or 0-components, meaning that Φ commutes with ι#. Moreover, since Φ is by deﬁnition compatible
+with the partial connections, it maps ﬂat sections to ﬂat sec tions. Hence Φ induces a constraint module
+morphism between the modules of sections. /square
+26It should be stressed that CΓ∞(E)NandCΓ∞(E)0consist of globally deﬁned sections, with additional
+properties on C. In particular, CΓ∞(E)0consists of those sections of ETwhich onCare sections of the
+subbundleE0, while CΓ∞(E)Nconsists of sections of ETsuch that on Cit is a section of the subbundle
+ENwhoseE0component can be arbitrary, but everything complementary t oE0needs to be covariantly
+constant along the leaves.
+Example 3.26 ((Co-)Vector ﬁelds) LetM= (M,C,D ) be a constraint manifold.
+i.)For the constraint tangent bundle TMwe get
+CΓ∞(TM)T= Γ∞(TM),
+CΓ∞(TM)N=/braceleftbig
+X∈Γ∞(TM)/vextendsingle/vextendsingleX/vextendsingle/vextendsingle
+C∈Γ∞(TC) and
+[X,Y ]∈Γ∞(D) for allY∈Γ∞(D)},
+CΓ∞(TM)0=/braceleftbig
+X∈Γ∞(TM)/vextendsingle/vextendsingleX/vextendsingle/vextendsingle
+C∈Γ∞(D)/bracerightbig
+,(3.49)
+by the deﬁnition of the Bott connection, see ( 3.20).
+ii.)For the constraint cotangent bundle T∗Mwe get
+CΓ∞(T∗M)T= Γ∞(T∗M),
+CΓ∞(T∗M)N=/braceleftbig
+α∈Γ∞(T∗M)/vextendsingle/vextendsingleiXι∗α= 0,LXι∗α= 0 for allX∈Γ∞(D)/bracerightbig
+,
+CΓ∞(T∗M)0=/braceleftbig
+α∈Γ∞(T∗M)/vextendsingle/vextendsingleι∗α= 0/bracerightbig
+,(3.50)
+by the deﬁnition of the dual vector bundle in ( 3.38). In other words CΓ∞(T∗M)Nare exactly those
+one-forms on Mwhich are basic when restricted to C, and CΓ∞(T∗M)0are those which vanish
+onC. Here we have to carefully distinguish between the pullback ι#αas a section of the pullback
+bundleι#T∗Mand the pullback (or restriction) ι∗α∈Γ∞(T∗C) of the form αalongι.
+Example 3.27 (Sections of sub-bundles) LetF⊆Ebe a constraint sub-bundle of a constraint
+vector bundle Eover a constraint manifold M. Then the inclusion i:F ֒→Einduces a morphism
+i:CΓ∞(F)→CΓ∞(E) of constraint CC∞(M)-modules. Note that this is in fact a regular monomor-
+phism, see Proposition 2.4 , and thus CΓ∞(F) is a constraint submodule of CΓ∞(E).
+Example 3.28 LetM= (M,C,D ) be a constraint manifold of dimension d= (dT,dN,d0),p∈Cand
+(U,x) an adapted chart around pas in Lemma 3.4 . Then
+∂
+∂xi∈CΓ∞(TM/vextendsingle/vextendsingle
+U)Tifi∈ {1,...,d T},
+∂
+∂xi∈CΓ∞(TM/vextendsingle/vextendsingle
+U)Nifi∈ {1,...,d N},
+∂
+∂xi∈CΓ∞(TM/vextendsingle/vextendsingle
+U)0ifi∈ {1,...,d 0}.(3.51)
+This example motivates the deﬁnition of a constraint local f rame.
+Deﬁnition 3.29 (Constraint local frame) LetE= (ET,E N,E 0,∇)be a constraint vector bundle of
+rankkover a constraint manifold M= (M,C,D ). Alocal frame ofEon an open subset U⊆M, is a
+local frame e1,...,e kTofETonU, such that
+i.)e1,...,e kN∈CΓ∞(E/vextendsingle/vextendsingle
+U)Nandι#e1,...,ι#ekNis a local frame for ENonU∩C, and
+ii.)e1,...,e k0∈CΓ∞(E/vextendsingle/vextendsingle
+U)0andι#e1,...,ι#ek0is a local frame for E0onU∩C.
+27The existence of local frames for constraint vector bundles is guaranteed by Lemma 3.21 . To show
+that everyvp∈ET/vextendsingle/vextendsingle
+pis the value of some section s∈Γ∞(ET) one can simply extend a local frame for
+ETto all ofMby means of a cut-oﬀ function. Now for vp∈EN/vextendsingle/vextendsingle
+pthis is not so easy any more, since a
+cut-oﬀ function would need to be an element of CC∞(M)Nitself to end up with a section in CΓ∞(E)N.
+Corollary 3.30 LetE= (ET,E N,E 0,∇)be a constraint vector bundle over a constraint manifold
+M= (M,C,D ).
+i.) For each p∈Candvp∈E0/vextendsingle/vextendsingle
+pthere exists an s∈CΓ∞(E)0such thats(p) =vp.
+ii.) For each p∈Candvp∈EN/vextendsingle/vextendsingle
+pthere exists an s∈CΓ∞(E)Nsuch thats(p) =vp.
+Proof: For the ﬁrst part choose a local frame e1,...,e n0ofE0aroundpwithn0= rank(E0). Then
+usingvp=/summationtextn0
+k=1vk
+pek(p) we can deﬁne a local section/summationtextn0
+k=1vk
+pekwhich we extend to a section ˜ s∈
+Γ∞(E0)⊆Γ∞(ι#ET) by means of a bump function. In order to extend ˜ sto a section of ETchoose
+a tubular neighbourhood V⊆MofCwith bundle projection πV:V→C. Then pulling back ˜ s
+toVviaπVand afterwards extending to all of Musing a suitable bump function gives a globally
+deﬁned section s∈Γ∞(ET) withι#s= ˜s∈Γ∞(E0) ands(p) = ˜s(p) =vp. Note that the existence
+of such a bump function requires the closedness of C. For ii.)choose a complementary vector bundle
+EN/upslope0→CtoE0inside ofEN, i.e.EN=E0⊕EN/upslope0and henceEN/upslope0≃EN/E 0. Thenvp=v0
+p+v⊥
+pwith
+v0
+p∈E0/vextendsingle/vextendsingle
+pandv⊥
+p∈EN/upslope0/vextendsingle/vextendsingle
+p. By i.)we ﬁnd a section s0∈Γ∞(E)0such thats0(p) =v0
+p. Now choose
+ˇs∈Γ∞(Ered) such that ˇ s(πM(p)) = [v⊥
+p]. Then by Proposition 3.16 ii.)we can identify π#
+Mˇswith a
+sections⊥∈Γ∞(EN/E 0) such that ∇Xs⊥= 0 for allX∈Γ∞(D). Then using a tubular neighbourhood
+as before to extend s0+s⊥to all ofMwe obtain the desired section. /square
+In classical diﬀerential geometry the famous Serre-Swan Th eorem states that the category Vect(M) of
+vector bundles over a ﬁxed manifold Mis equivalent to the category Proj(C∞(M)) of ﬁnitely generated
+projective C∞(M)-modules. By Proposition 3.25 we know that sections of constraint vector bundles
+form strong constraint modules over the commutative strong constraint algebra CC∞(M) of functions
+on the constraint manifold M. In fact, every module of sections is ﬁnitely generated proj ective in the
+sense of Deﬁnition 2.17 , as the following lemma shows:
+Lemma 3.31 LetE= (ET,E N,E 0,∇)be a constraint vector bundle over a given constraint manifo ld
+M= (M,C,D ). Suppose the following data is given:
+i.) A dual basis {fj,fj}j∈J0/upslopeIofΓ∞(E0)indexed by some set J0/upslopeI.
+ii.) A complementary vector bundle EN/upslope0⊆ENofE0together with a dual basis {gj,gj}j∈JN/upslope0of
+Γ∞(EN/upslope0), indexed by some set JN/upslope0, such that ∇Egj= 0and∇E∗gj= 0.
+iii.) A complementary vector bundle ET/upslopeN⊆ι#ETofENtogether with a dual basis {hj,hj}j∈JT/upslopeNof
+Γ∞(ET/upslopeN), indexed by some set JT/upslopeN.
+Then there exists a ﬁnite set JIand a constraint dual basis ({ej}j∈J,{ej}j∈J∗), indexed by the constraint
+index setJ= (JT,JN,J0)deﬁned by
+JT:=JI⊔J0/upslopeI⊔JN/upslope0⊔JT/upslopeN,
+JN:=JI⊔J0/upslopeI⊔JN/upslope0,
+J0:=JI⊔J0/upslopeI,(3.52)
+28such that
+ej/vextendsingle/vextendsingle
+C= 0
+ej/vextendsingle/vextendsingle
+C=fj
+ej/vextendsingle/vextendsingle
+C=gj
+ej/vextendsingle/vextendsingle
+C=hjej/vextendsingle/vextendsingle
+C= 0
+ej/vextendsingle/vextendsingle
+C=fj
+ej/vextendsingle/vextendsingle
+C=gj
+ej/vextendsingle/vextendsingle
+C=hjfor allj∈JI,
+for allj∈J0/upslopeI,
+for allj∈JN/upslope0,
+for allj∈JT/upslopeN.(3.53)
+Proof: From the given data we obtain a dual basis {cj,cj}i∈JCofι#ETwithJC=J0⊔JN/upslope0⊔JT/upslopeN
+cj=
+
+fjifj∈J0
+gjifj∈JN/upslope0
+hjifj∈JT/upslopeNandcj=
+
+fjifj∈J0
+gjifj∈JN/upslope0
+hjifj∈JT/upslopeN.
+To extend the dual basis to all of Mwe choose a tubular neighbourhood prV:V→C, withιV:V ֒→M
+an open neighbourhood of C. Then we can pull back the cjandcjto obtain a dual basis of ι#
+VET, which
+we again denote by {cj,cj}j∈JC. On the open subset ιM\C:M\C ֒→Mchoose another dual basis
+{dj,dj}j∈JIofι#
+M\CET. We now need to patch these dual bases together. For this choo se a quadratic
+partition of unity χ1,χ2∈C∞(M) withχ2
+1+χ2
+2= 1 and supp χ1⊆Vand suppχ2⊆M\C. Then
+{ej,ej}j∈JTwithJT=JC⊔JIdeﬁned by
+ej=/braceleftBigg
+χ1·cjifj∈JC
+χ2·djifj∈JIandei=/braceleftBigg
+χ1·cjifj∈JC
+χ2·djifj∈JI
+forms a dual basis for ET. It remains to show that this dual basis fulﬁls the propertie s ofDeﬁnition 2.17 .
+For this consider the constraint set JwithJTas above,JN:=JI⊔J0/upslopeI⊔JN/upslope0andJ0=JI⊔J0/upslopeI.
+By construction we have ei∈CΓ∞(E)Nfori∈INandei∈CΓ∞(E)0fori∈I0. From the fact that
+gj∈Γ∞(AnnE0) andhj∈Γ∞(AnnEN) it follows that ei∈CΓ∞(E∗)Nfori∈IT\I0andei∈CΓ∞(E∗)0
+fori∈IT\IN. /square
+Conversely, it can be shown that every ﬁnitely generated pro jective strong constraint module over
+CC∞(M) is given by the sections of a constraint vector bundle. Toge ther this is the content of the
+constraint Serre-Swan theorem:
+Theorem 3.32 (Constraint Serre-Swan) LetM= (M,C,D )be a constraint manifold. The functor
+CΓ∞:CVect (M)→CstrProj(CC∞(M))is an equivalence of categories.
+Proof: We can always ﬁnd complements and dual bases as required in Lemma 3.31 . In particular,
+by choosing a dual basis for Eredand pulling it back to Cwo obtain a dual basis of EN/upslope0fulﬁlling the
+required properties. This shows that CΓ∞is indeed a functor into the category of ﬁnitely generated
+projective strong constraint modules. This functor is full y-faithful by the classical Serre-Swan Theorem.
+The fact that every ﬁnitely generated projective constrain t module over CC∞(M) is given by sections
+of a constraint vector bundle is somewhat easier to prove and will not be important to us. A proof for
+that can be found in [ Dip23 ] and in a slightly diﬀerent setting in [ DMW22 ]. Together this shows that
+CΓ∞is an equivalence of categories /square
+Remark 3.33 In [DMW22 ] a similar result for non-strong projective constraint mod ules over CC∞(M)
+as a non-strong constraint algebra was found. The geometric objects used there are similar but not
+identical to the notion of constraint vector bundles, in par ticular the vector bundle ENis a subbundle
+ofETdeﬁned on all of M, and ∇is a partial connection on ι#ENinstead ofEN/E 0.
+29As a ﬁrst important property of the sections functor we show t hat it is compatible with direct sums.
+Proposition 3.34 LetE= (ET,E N,E 0,∇E)andF= (FT,FN,F0,∇F)be constraint vector bundles
+over a constraint manifold M= (M,C,D ). Then
+CΓ∞(E⊕F)≃CΓ∞(E)⊕CΓ∞(F) (3.54)
+as strong constraint CC∞(M)-modules.
+Proof: From classical diﬀerential geometry we know that Φ: Γ∞(ET)⊕Γ∞(FT)→Γ∞(ET⊕FT)
+given by Φ( s,s′)(p):=s(p)⊕s′(p) is an isomorphism of C∞(M)-modules. Now let s∈CΓ∞(E)Nand
+s′∈CΓ∞(F)Nbe given. Then clearly Φ( s,s′)(p) =s(p)⊕s′(p)∈EN/vextendsingle/vextendsingle
+p⊕FN/vextendsingle/vextendsingle
+pfor allp∈C. Moreover,
+it holds
+∇⊕
+XΦ(s,s′) =∇E
+Xs⊕ ∇F
+Xs′= 0 (3.55)
+by the deﬁnition of ∇⊕inProposition 3.23 . Thus Φ preserves the N-component. Next, let s∈CΓ∞(E)0
+ands′∈CΓ∞(F)0be given. Then Φ( s,s′)(p) =s(p)⊕s′(p)∈E0/vextendsingle/vextendsingle
+p⊕F0/vextendsingle/vextendsingle
+pfor allp∈Cshows that
+Φ also preserves the 0-components. For Φ to be a constraint is omorphism it remains to show that
+Φ−1(CΓ∞(E⊕F)0) =CΓ∞(E)0⊕CΓ∞(F)0, cf.Proposition 2.4 . For this let t∈CΓ∞(E⊕F)0be given.
+Then we know that t=s⊕s′for somes∈Γ∞(ET) andt∈Γ∞(FT). For allp∈Cwe have
+s(p)⊕s′(p) = (s⊕s′)(p) =t(p)∈(E⊕F)0/vextendsingle/vextendsingle
+p=E0/vextendsingle/vextendsingle
+p⊕F0/vextendsingle/vextendsingle
+p,
+and thuss∈CΓ∞(E)0ands′∈CΓ∞(F)0. Therefore, Φ is a constraint isomorphism. /square
+Similarly, sections of constraint vector bundles are compa tible with internal homs:
+Proposition 3.35 LetE= (ET,E N,E 0,∇E)andF= (FT,FN,F0,∇F)be constraint vector bundles
+over a constraint manifold M= (M,C,D ). Then
+CΓ∞(CHom(E,F))≃CHom CC∞(M)(CΓ∞(E),CΓ∞(F)) (3.56)
+as strong constraint CC∞(M)-modules.
+Proof: On the T-component we have the isomorphism
+η: Γ∞(Hom(ET,FT))→Hom C∞(M)(Γ∞(ET),Γ∞(FT))
+given by
+η(A)(s)/vextendsingle/vextendsingle
+p:=A/vextendsingle/vextendsingle
+p(s/vextendsingle/vextendsingle
+p)
+for allp∈Mands∈Γ∞(ET). We ﬁrst show that ηis indeed a constraint morphism: If A∈
+CΓ∞(CHom(E,F))0, then for every p∈Cands∈CΓ∞(E)0we haveη(A)(s)/vextendsingle/vextendsingle
+p=A/vextendsingle/vextendsingle
+p(s/vextendsingle/vextendsingle
+p)∈F0/vextendsingle/vextendsingle
+psince
+s/vextendsingle/vextendsingle
+p∈E0/vextendsingle/vextendsingle
+p. Thusηpreserves the 0-component. Consider now A∈CΓ∞(CHom(E,F))N. For allp∈C
+ands∈CΓ∞(E)0we haveη(A)(s)/vextendsingle/vextendsingle
+p=A/vextendsingle/vextendsingle
+p(s/vextendsingle/vextendsingle
+p)∈F0/vextendsingle/vextendsingle
+psinces/vextendsingle/vextendsingle
+p∈E0/vextendsingle/vextendsingle
+p. Moreover, if s∈CΓ∞(E)N,
+thenη(A)(s)/vextendsingle/vextendsingle
+p=A/vextendsingle/vextendsingle
+p(s/vextendsingle/vextendsingle
+p)∈FN/vextendsingle/vextendsingle
+pand
+∇F
+Xη(A)(s)/vextendsingle/vextendsingle
+C=η/parenleftbig
+∇CHom
+XA/vextendsingle/vextendsingle
+C/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+=0/parenrightbig
+(s/vextendsingle/vextendsingle
+C) +η(A)(∇E
+Xs/vextendsingle/vextendsingle
+C/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+=0) = 0.
+30Thusη(A)(s)∈CΓ∞(F)N. Summarizing, this shows that ηis a constraint morphism.
+It remains to show that ηis regular surjective. For this recall from classical diﬀer ential geometry that
+for everyA∈Hom C∞(M)(Γ∞(ET),Γ∞(FT)) the corresponding preimage is given by A(p)(sp):=A(s)(p)
+for allsp∈ET/vextendsingle/vextendsingle
+pands∈Γ∞(ET) such that s(p) =sp. Note that this does not depend on the choice of
+the section s. Here we use the usual abuse of notation.
+Now letA∈CHom CC∞(M)(CΓ∞(E),CΓ∞(F))Nbe given. Then for every p∈Candsp∈EN/vextendsingle/vextendsingle
+pthere
+exists a section s∈CΓ∞(E)Nwiths(p) =spbyCorollary 3.30 . Then we have A(p)(sp) =A(s)(p)∈FN/vextendsingle/vextendsingle
+p
+sinceA(s)∈CΓ∞(F)N. Similarly, if sp∈E0/vextendsingle/vextendsingle
+p, then there exists s∈CΓ∞(E)0withs(p) =spand thus
+A(p)(sp) =A(s)(p)∈F0/vextendsingle/vextendsingle
+p. We also need to show that ∇CHom
+XA/vextendsingle/vextendsingle
+C= 0 for allX∈Γ∞(D). For this let
+p∈Candsp∈(EN/E 0)/vextendsingle/vextendsingle
+pbe given. Again by Corollary 3.30 we ﬁnd a section s∈CΓ∞(E)Nsuch that
+s(p) =sp. Then
+/parenleftbig
+∇CHom
+XA/vextendsingle/vextendsingle
+C/parenrightbig
+(p)(sp) =/parenleftbig
+∇CHom
+XA/vextendsingle/vextendsingle
+C/parenrightbig
+(s/vextendsingle/vextendsingle
+C)(p)
+=∇F
+X/parenleftbig
+A/vextendsingle/vextendsingle
+C(s/vextendsingle/vextendsingle
+C)/parenrightbig
+(p)−A/vextendsingle/vextendsingle
+C/parenleftbig
+∇E
+Xs/vextendsingle/vextendsingle
+C/parenrightbig
+=∇F
+X/parenleftbig
+A(s)/vextendsingle/vextendsingle
+C/parenrightbig
+(p)
+= 0,
+since ∇E
+Xs/vextendsingle/vextendsingle
+C= 0 andA(s)/vextendsingle/vextendsingle
+C∈CΓ∞(F)N. This shows A∈CΓ∞(CHom(E,F))N, and hence ηis
+surjective on the N-component.
+Recall that we additionally have to check that ηis also surjective on the 0-component. Thus let
+A∈CHom CC∞(M)(CΓ∞(E),CΓ∞(F))0be given. Then for p∈Candsp∈EN/vextendsingle/vextendsingle
+pwe ﬁnd again by
+Corollary 3.30 a sections∈CΓ∞(E)Nwiths(p) =sp. ThenA(p)(sp) =A(s)(p)∈F0/vextendsingle/vextendsingle
+pholds since
+we haveA(s)∈CΓ∞(F)0. This ﬁnally shows that ηis a regular epimorphism and hence a constraint
+isomorphism. /square
+Corollary 3.36 LetE= (ET,E N,E 0,∇E)be a constraint vector bundle over a constraint manifold
+M= (M,C,D ). Then
+CΓ∞(E∗)≃CΓ∞(E)∗(3.57)
+as strong constraint CC∞(M)-modules.
+Proof: ChooseF=M× /CAinProposition 3.35 . /square
+Proposition 3.37 LetE= (ET,E N,E 0,∇E)andF= (FT,FN,F0,∇F)be constraint vector bundles
+over a constraint manifold M= (M,C,D ).
+i.) The sections functor CΓ∞: (CVect (M),⊗)→/parenleftbig
+CstrProj/parenleftbig
+CC∞(M)/parenrightbig
+,⊗/parenrightbig
+is monoidal, i.e. there exist
+natural isomorphisms
+CΓ∞(E)⊗CC∞(M)CΓ∞(F)≃CΓ∞(E⊗F) (3.58)
+of strong constraint CC∞(M)-modules.
+ii.) The sections functor CΓ∞: (CVect (M),⊠)→/parenleftbig
+CstrProj/parenleftbig
+CC∞(M)/parenrightbig
+,⊠/parenrightbig
+is monoidal, i.e. there exist
+natural isomorphisms
+CΓ∞(E)⊠CC∞(M)CΓ∞(F)≃CΓ∞(E⊠F) (3.59)
+of strong constraint CC∞(M)-modules.
+31Proof: Consider the maps
+IE,F:CΓ∞(E)⊗CC∞(M)CΓ∞(F)→CΓ∞(E⊗F), I E,F(s⊗t)(p):=s(p)⊗t(p)
+and
+JE,F:CΓ∞(E)⊠CC∞(M)CΓ∞(F)→CΓ∞(E⊠F), J E,F(s⊗t)(p):=s(p)⊗t(p).
+By carefully checking the deﬁnitions of the N- and 0-compone nts it can be shown that these maps are in
+fact constraint, see [ Dip23 ] for details. Moreover, by classical theory it is clear that these are components
+of a natural transformation. Let us show that the natural tra nsformations IandJare in fact natural
+isomorphisms. For this we construct inverses. Let E,F ∈CVect (M) and let ( {ei}i∈M,{ei}i∈M∗) as
+well as ( {fj}j∈N,{fj}j∈N∗) be ﬁnite dual bases of EandF, respectively. From classical diﬀerential
+geometry we know that ( {ei⊗fj}(i,j)∈MT×NT,{ei⊗fj}(i,j)∈MT×NT) is a dual basis of Γ∞(ET⊗FT) and
+that
+K(X) =/summationdisplay
+i∈MT/summationdisplay
+j∈NT(ei⊗fj)(X)·ei⊗C∞(M)fj,
+forX∈Γ∞(ET⊗FT), deﬁnes an inverse K: Γ∞(E⊗F)→Γ∞(E)⊗C∞(M)Γ∞(F) toI. To show that
+Kis a constraint morphism we prove that the families ( {ei⊗fj}(i,j)∈M⊗N,{ei⊗fj}(i,j)∈(M⊗N)∗) form
+a dual basis for CΓ∞(E⊗F):
+• (i,j)∈(M⊗N)N: Then we know that
+ei⊗fj=IE,F(ei⊗C∞(M)fj)∈CΓ∞(E⊗F)N.
+• (i,j)∈(M⊗N)0: Then we know that ei⊗fj=IE,F(ei⊗C∞(M)fj)∈CΓ∞(E⊗F)0.
+• (i,j)∈(M⊗N)∗
+N= (M∗⊠N∗)N: Then we know that
+ei⊗fj=JE∗,F∗(ei⊗C∞(M)fj)∈CΓ∞(E∗⊠F∗)N≃CΓ∞(E⊗F)∗
+N.
+• (i,j)∈(M⊗N)∗
+0: Then we know that
+ei⊗fj=JE∗,F∗(ei⊗C∞(M)fj)∈CΓ∞(E∗⊠F∗)0≃CΓ∞(E⊗F)∗
+0.
+This shows that Kis a constraint morphism, and therefore Iis an isomorphism. With completely
+analogous arguments, on can show that Jis an isomorphism as well. The unit object in CVect (M) is
+for both products given by M× /CA. Since CΓ∞(M× /CA)≃CC∞(M) the section functor preserves the
+monoidal units, and hence gives a monoidal functor in both ca ses. /square
+From now on we will write ⊗and⊠instead of ⊗CC∞(M)and⊠CC∞(M). We only indicate the algebra
+if it is not the algebra of functions on the underlying manifo ld.
+Since CΓ∞is compatible with direct sums and tensor products, we also g et
+Λ•
+⊗CΓ∞(E)≃CΓ∞(Λ•
+⊗E), (3.60)
+and
+Λ•
+⊠CΓ∞(E)≃CΓ∞(Λ•
+⊠E) (3.61)
+for any constraint vector bundle E.
+Moreover, we can use now Proposition 2.19 to infer the following compatibilities of the constraint
+homomorphism bundle, dual and tensor products:
+32Proposition 3.38 LetM= (M,C,D )be a constraint manifold and let E,F,Gbe constraint vector
+bundles over M.
+i.) We have (E⊕F)∗≃E∗⊕F∗.
+ii.) We have CHom(E,F)≃E∗⊠F.
+iii.) We have (E⊗F)∗≃E∗⊠F∗.
+iv.) We have (E⊠F)∗≃E∗⊗F∗.
+v.) We have CHom(E⊗F,G)≃CHom(E,F∗⊠G).
+So far we only consider the sections functor CΓ∞on the category CVect (M) of constraint vector
+bundles over a ﬁxed constraint manifold. Already in classic al diﬀerential geometry the sections functor
+will not be functorial when extended to the category of vecto r bundles over arbitrary base manifolds.
+Nevertheless, as in classical geometry, we can remedy this d efect by instead taking sections of the dual
+bundle.
+Proposition 3.39 For every morphism of constraint vector bundles Φ:E→Foverφ:M→Ndeﬁn-
+ing
+Φ∗(α)/vextendsingle/vextendsingle
+p(sp):=α/vextendsingle/vextendsingle
+φ(p)(Φ(sp)) (3.62)
+yields a morphism Φ∗:CΓ∞(F∗)→CΓ∞(E∗)of strong constraint modules along the constraint algebra
+morphismφ∗:CC∞(N)→CC∞(N)given as in Proposition 3.5
+Proof: From classical diﬀerential geometry we know that Φ∗deﬁnes a module morphism along φ∗on
+the total components. Thus it only remains to show that Φ∗is indeed a constraint morphism. This is
+a straightforward check using ( 3.62): Ifα∈CΓ∞(F∗)N, then for every sp∈E0/vextendsingle/vextendsingle
+pwe get Φ(sp)∈F0/vextendsingle/vextendsingle
+φ(p)
+and thusα/vextendsingle/vextendsingle
+φ(p)(Φ(sp)) = 0. Moreover, for ∇E∗
+Xαvanishes for all X∈Γ∞(D) since Φ is a constraint
+morphism, see ( 3.11). Thus we know that Φ∗preserves the N-component. Similarly, one obtains that
+Φ∗also preserves the 0-component. /square
+We ﬁnish this section with the compatibility of reduction wi th taking sections.
+Proposition 3.40 (Constraint sections vs. reduction) LetM= (M,C,D )be a constraint mani-
+fold. There exists a natural isomorphism making the followi ng diagram commute:
+CVect (M) CstrProj(CC∞(M))
+Vect(Mred) CstrProj(C∞(Mred))CΓ∞
+red red
+Γ∞(3.63)
+Proof: Our goal is to construct an isomorphism ηE:CΓ∞(E)red→Γ∞(Ered) for every constraint
+vector bundle EoverM. Thus let s∈CΓ∞(E)Nbe given. For any (possibly non-smooth) section
+σ:Mred→Cof the quotient map πMwe can deﬁne a map ηE(s):Mred→EredbyηE(s)(p):= [s(σ(p))],
+which is a section of the vector bundle projection prEred. Note that this map is independent of the
+choice of the section σ, sinces∈CΓ∞(E)N. ThusηE(s) is also smooth, since locally we can choose σto
+be smooth. So we end up with ηE(s)∈Γ∞(Ered). Note also that ηEis clearly CC∞(M)N-linear along
+the projection πCC∞(M):CC∞(M)N→C∞(Mred). Now suppose ηE(s) = 0. Then [ s(σ(p))] = 0 for all
+p∈Mredand every section σ. Thusι#s∈Γ∞(E0). This means that ker ηE=CΓ∞(E)0and therefore
+it induces an injective morphism ηE:CΓ∞(E)red→Γ∞(Ered) ofCC∞(M)red≃C∞(Mred)-modules. It
+33remains to show that ηEis also surjective. For this let t∈Γ∞(Ered) be given. Now choose a splitting
+EN≃E0⊕ι#Eredusing Proposition 3.16 ii.) and deﬁne s(q):= Θ−1(t(πM(q))) for allq∈Cand
+extend it to a section of ETby use of a tubular neighbourhood. By ( 3.25)sis covariantly constant as
+a section of EN/E 0, and therefore we have s∈CΓ∞(E)N. Finally, we have ηE(s) =t, showing that ηE
+is surjective, and thus an isomorphism. /square
+ByProposition 2.10 we know that the reduction of constraint modules is compatib le with direct
+sums. Using the constraint Serre-Swan Theorem we obtain an a nalogous argument for constraint vec-
+tor bundles. The fact that reduction is also compatible with inner homs and tensor products needs
+additional geometric features.
+Proposition 3.41 LetM= (MT,M N,DM)andN= (NT,N N,DN)be constraint manifolds and φ:M→
+Na constraint map. Moreover, let E,F ∈Vect(M)be constraint vector bundles over Mand letG∈
+Vect(N)be a constraint vector bundle over N.
+i.) There exists a canonical isomorphism (E⊕F)red≃Ered⊕Fred.
+ii.) There exists a canonical isomorphism (E⊗F)red≃Ered⊗Fred.
+iii.) There exists a canonical isomorphism (E⊠F)red≃Ered⊗Fred.
+iv.) There exists a canonical isomorphism CHom(E,F)red≃Hom(Ered,Fred).
+v.) There exists a canonical isomorphism (E∗)red≃(Ered)∗.
+vi.) There exists a canonical isomorphism (φ#G)red≃φ#
+redGred.
+Proof: Statement i.)follows directly from Proposition 2.10 . Moreover, statement v.)follows from
+iv.). And iii.)can be proved completely analogous to ii.). Thus we only show ii.),iv.)andvi.).
+For this we pull all vector bundles back to MNalongπM:MN→Mredand then use Proposition 3.16
+ii.)to compare them. We have
+π#
+M(E⊗F)red≃(E⊗F)N
+(E⊗F)0≃EN
+E0⊗FN
+F0≃Ered⊗Fred≃π#
+M(Ered⊗Fred),
+as well as
+π#
+MCHom(E,F)red≃CHom(E,F)N
+CHom(E,F)0≃Hom(EN
+E0,FN
+F0)
+≃Hom(π#
+MEred,π#
+MFred)
+≃π#
+MHom(Ered,Fred),
+and similarly
+π#
+M(φ#G)red≃φ#
+NGN
+φ#
+NG0≃φ#
+NGN
+G0≃φ#
+Nπ#
+NGred≃π#
+Mφ#
+redGred.
+SinceπMis a surjective submersion this is be enough to infer isomorp hy onMred. /square
+The above isomorphisms can be shown to be part of natural isom orphisms, turning the functor
+red: CVect (M)→Vect(Mred) into an additive, closed and monoidal functor with respect to both tensor
+products.
+Example 3.42 (Almost complex structures) LetM= (M,C,D ) be a constraint manifold and let
+J∈Γ∞(End(TM)) be an almost complex structure on M, i.e.J2=−idT M. IfJ∈CΓ∞(CEnd(TM))N,
+then it reduces to an almost complex structure JredonMred.
+343.4 Constraint Cartan Calculus
+In this last section on the geometry of constraint manifolds we extend the classical Cartan calculus to
+the constraint setting. In particular we want to study the re lation between constraint diﬀerential forms
+and constraint multivector ﬁelds. Let us start with a local c haracterization of constraint vector ﬁelds.
+For this recall from Section 2.2 that the dual n∗of a constraint index set n= (nT,nN,n0) is given by
+n∗= (nT, n T\n0, n T\nN).
+Lemma 3.43 LetM= (M,C,D )be a constraint manifold of dimension n= (nT,nN,n0)and consider
+X∈Γ∞(TM).
+i.) We have X∈CΓ∞(TM)Nif and only if for every adapted chart (U,x)aroundp∈Cit holds
+Xi∈CC∞(M/vextendsingle/vextendsingle
+U)Nifi∈(n∗)N, (3.64)
+Xi∈CC∞(M/vextendsingle/vextendsingle
+U)0ifi∈(n∗)0, (3.65)
+whereX/vextendsingle/vextendsingle
+U=/summationtextnT
+i=1Xi∂
+∂xi.
+ii.) We have X∈CΓ∞(TM)0if and only if for every adapted chart around p∈Cit holds
+Xi∈CC∞(M/vextendsingle/vextendsingle
+U)0ifi∈(n∗)N, (3.66)
+whereX/vextendsingle/vextendsingle
+U=/summationtextnT
+i=1Xi∂
+∂xi.
+Proof: ByExample 3.28 locally we always ﬁnd adapted coordinates such that
+ι#(∂
+∂xi)∈Γ∞(D/vextendsingle/vextendsingle
+U),ifi∈ {1,...,n 0},
+and
+ι#(∂
+∂xi)∈Γ∞(TC/vextendsingle/vextendsingle
+U),ifi∈ {n0+ 1,...,n N}.
+We haveX∈CΓ∞(TM)Nif and only if ι#X∈Γ∞(TC) and [Y,ι#X]∈Γ∞(D) hold for all Y∈Γ∞(D).
+The ﬁrst condition exactly means that locally we have Xi∈CC∞(M/vextendsingle/vextendsingle
+U)0for alli∈ {nN+ 1,...,n T}=
+(n∗)0. Moreover, since Dis locally spanned by∂
+∂x1,...,∂
+∂xn0the second condition shows Xi∈CC∞(M)N
+fori∈ {n0+1,...,n T}= (n∗)N. This shows the ﬁrst part. The second part follows since X∈CΓ∞(TM)0
+if and only if ι#X∈Γ∞(D). /square
+With the help of this local characterization we can now ident ify constraint vector ﬁelds with con-
+straint derivations, see Example 2.24 ii.), using the Lie derivative:
+Proposition 3.44 LetM= (M,C,D )be a constraint manifold. Then
+L:CΓ∞(TM)→CDer(CC∞(M)) (3.67)
+given by the Lie derivative is an isomorphism of constraint CC∞(M)-modules.
+Proof: From classical diﬀerential geometry we know that Lis an isomorphism on the T-components.
+To show that Lis a constraint morphism consider X∈CΓ∞(TM)0andf∈CC∞(M)N. Then
+(LXf)/vextendsingle/vextendsingle
+C=Lι#Xf/vextendsingle/vextendsingle
+C= 0,
+35sinceX/vextendsingle/vextendsingle
+C∈Γ∞(D). Thus Lmaps the 0-component to the 0-component. Now let X∈CΓ∞(TM)Nbe
+given. Then for f∈CC∞(M)Nwe get
+LY(LXf)/vextendsingle/vextendsingle
+C=L[Y,ι#X]f/vextendsingle/vextendsingle
+C+Lι#XLYf/vextendsingle/vextendsingle
+C/bracehtipupleft/bracehtipdownright/bracehtipdownleft/bracehtipupright
+=0=L[Y,ι#X]f/vextendsingle/vextendsingle
+C= 0,
+for allY∈Γ∞(D), since [Y,ι#X]∈Γ∞(D) by ( 3.49). Finally, for f∈CC∞(M)0we havef/vextendsingle/vextendsingle
+C= 0 and
+therefore
+(LXf)/vextendsingle/vextendsingle
+C=Lι#Xf/vextendsingle/vextendsingle
+C= 0,
+which shows that Lis a constraint morphism. Since the T-component of Lis just the classical Lie
+derivative, which is an isomorphism, Lis a constraint monomorphism. To show that Lis also a regular
+epimorphism let D∈CDer(CC∞(M))Nbe given. Since Dis in particular a derivation of C∞(M) we
+know that there exists X∈Γ∞(TM) such that LX=D. Choose an adapted chart ( U,x) aroundp∈C,
+thenX/vextendsingle/vextendsingle
+U=/summationtextnT
+i=1Xi∂
+∂xi. Since LXis a constraint derivation we get Xi=LX(xi)∈CC∞(M/vextendsingle/vextendsingle
+U)0for
+alli∈ {nN+ 1,...,n T}= (n∗)0andXi=LX(xi)∈CC∞(M/vextendsingle/vextendsingle
+U)Nfor alli∈ {n0+ 1,...,n T}= (n∗)N,
+byExample 3.6 i.). And thus X∈CΓ∞(TM)Nusing Lemma 3.43 i.). With the same line of reasoning
+we obtainX∈CΓ∞(TM)0ifD∈CDer(CC∞(M))0, showing that Lis a regular epimorphism, and
+therefore an isomorphism. /square
+With this we can transport the constraint Lie algebra struct ure on CDer(CC∞(M)), see Exam-
+ple 2.24 ii.), toCΓ∞(TM), giving a constraint map
+[·,·]:CΓ∞(TM)⊗CΓ∞(TM)→CΓ∞(TM). (3.68)
+This is just the usual Lie bracket of vector ﬁelds, but now we s ee that it is actually compatible with
+the constraint structure. Alternatively, one could direct ly check that the classical Lie bracket of vector
+ﬁelds yields a constraint Lie algebra structure.
+Example 3.45 (Nijenhuis and complex structures) LetM= (M,C,D ) be a constraint manifold
+and letA∈Γ∞(End(TM)) be a Nijenhuis tensor, i.e. the associated Nijenhuis tors ionNA, deﬁned by
+NA(X,Y ):= [A(X),A(Y)]−A([A(X),Y])−A([X,A(Y)]) +A2([X,Y ]) (3.69)
+forX,Y ∈Γ∞(TM), vanishes. If A∈CΓ∞(CEnd(TM))Nis a constraint section, then its Nijenhuis
+torsion is clearly a constraint morphism NA:CΓ∞(TM)∧CΓ∞(TM)→CΓ∞(TM), which can be
+reformulated as NA∈CΓ∞(Λ2
+⊠T∗M⊠TM)NbyProposition 3.38 . Since the Nijenhuis torsion NA
+reduces to the Nijenhuis torsion NAredof the reduced Nijenhuis manifold, we immediately see that i f
+NAvanishes, then so does NAred. Hence ifAis a Nijenhuis structure on M, thenAredis a Nijenhuis
+structure on Mred, see also [ Vai96 ]. In case the Nijenhuis structure is given by an almost compl ex
+structureJ∈CΓ∞(CEnd(TM))N, see Example 3.42 , it is called complex structure and it descends to a
+complex structure JredonMred.
+With this at hand let us introduce constraint diﬀerential fo rms. Since there are two tensor products
+available we can deﬁne constraint diﬀerential forms in two w ays.
+Deﬁnition 3.46 (Constraint Diﬀerential Forms) LetM= (M,C,D )be a constraint manifold. We
+denote by
+CΩ•
+⊗(M):= Λ•
+⊗CΓ∞(T∗M) =∞/circleplusdisplay
+k=0Λk
+⊗CΓ∞(T∗M) (3.70)
+36and
+CΩ•
+⊠(M):= Λ•
+⊠CΓ∞(T∗M) =∞/circleplusdisplay
+k=0Λk
+⊠CΓ∞(T∗M) (3.71)
+the graded strong constraint modules of constraint diﬀerential forms onM.
+Note that CΩ•
+⊗(M)≃(Λ•
+⊠CΓ∞(TM))∗andCΩ•
+⊠(M)≃(Λ•
+⊗CΓ∞(TM))∗. Thusα∈CΩk
+⊗(M) can be
+evaluated at X1⊗...⊗Xk∈Λ•
+⊠CΓ∞(TM), whileα∈CΩk
+⊠(M) can be evaluated at X1⊗...⊗Xk∈
+Λ•
+⊗CΓ∞(TM). For CΩ•
+⊠(M) there is a good constraint Cartan calculus as we see in the fo llowing.
+Proposition 3.47 (Cartan calculus) LetM= (M,C,D )be a constraint manifold.
+i.)CΩ•
+⊠(M)is a graded commutative strong constraint algebra with resp ect to the wedge product ∧.
+ii.) The insertion of vector ﬁelds into forms deﬁnes a constr aintCC∞(M)-module morphism
+i:CΓ∞(TM)→CDer−1(CΩ•
+⊠(M)), (3.72)
+with CDer−1(CΩ•
+⊠(M))denoting the graded constraint derivations of degree −1.
+iii.) The Lie derivative deﬁnes a /CA-linear constraint morphism
+L:CΓ∞(TM)→CDer0(CΩ•
+⊠(M)) (3.73)
+into the graded constraint derivations of degree 0ofCΩ•
+⊠(M).
+iv.) The de Rham diﬀerential deﬁnes a graded constraint deri vation
+d:CΩ•
+⊠(M)→CΩ•+1
+⊠(M) (3.74)
+of degree +1, turning CΩ•
+⊠(M)into a diﬀerential graded strong constraint algebra.
+Proof: In all cases we only need to show that the involved maps are act ually constraint maps. For
+the ﬁrst part this is clear by the deﬁnition of CΩ•(M). For the insertion consider X∈CΓ∞(TM)0.
+Then i Xα∈CΓ∞(TM)0for allα∈CΓ∞(T∗M)N. Since i Xis a derivation of the wedge product it maps
+CΩ•(M)NtoCΩ•(M)0. Now consider X∈CΓ∞(TM)N. Then again by the derivation property it is easy
+to see that i X(CΩ•(M)N)⊆CΩ•(M)Nand i X(CΩ•(M)0)⊆CΩ•(M)0. Thus i is a constraint morphism.
+Since the Lie derivative is again a derivation and we know, by Proposition 3.44 and from the fact that
+LXY= [X,Y ], that LXis a constraint endomorphism of CΓ∞(TM), it follows that Lis a constraint
+morphism. For the de Rham diﬀerential we can argue with the fo rmula
+(dα)(X0,...,X k) =k/summationdisplay
+i=0(−1)kLXi(α(X0,...,i∧,...,X k))
++/summationdisplay
+i<j(−1)i+jα([Xi,Xj],X0,...,i∧,...,j
+∧,...,X k),
+forX0⊗...⊗Xk∈(Λ•
+⊗CΓ∞(TM))Tto see that d is a constraint morphism. For example, if α∈CΩk
+⊠(M)0
+is given, we have
+(dα)(X0,...,X k)∈CC∞(M)0
+for allX0,...,X k∈CΓ∞(TM)N, since from
+α(X0,...,i∧,...,X k)∈CC∞(M)0
+37it follows that
+LXiα(X0,...,i∧,...,X k)∈CC∞(M)0
+and from [Xi,Xj]∈CΓ∞(TM)0it follows
+α([Xi,Xj],X0,...,i∧,...,j
+∧,...,X k)∈CC∞(M)0.
+Thus we have d α∈CΩk+1
+⊠(M)0. In a similar way we can argue for α∈CΩk
+⊠(M)N. /square
+Since i, Land d are completely determined by their T-components, we im mediately get all the usual
+formulas from the classical Cartan calculus, e.g. Cartan’s magic formula
+LX= [i X,d]. (3.75)
+We cannot expect a similarly well behaved Cartan calculus on CΩ•
+⊗(M), since in this case the de Rham
+diﬀerential is not well-deﬁned, as the next example shows.
+Example 3.48 Consider M= ( /CAnT, /CAnN, /CAn0) withnT>n 0≥1 and letα=xn0dxnT∈CΓ∞(T∗M)0.
+Then we have
+dα= dxn0∧dxnT∈CΓ∞(T∗M)T∧CΓ∞(T∗M)0/notsubseteqlCΩ2
+⊗(M)0. (3.76)
+Let us now turn our attention to constraint multivector ﬁeld s. As for constraint diﬀerential forms
+we can deﬁne multivector ﬁelds using both tensor products av ailable.
+Deﬁnition 3.49 (Constraint multivector ﬁelds) LetM= (M,C,D )be a constraint manifold, then
+we denote by
+CX•
+⊗(M):= Λ•
+⊗CΓ∞(TM)≃CΓ∞(Λ•
+⊗TM) (3.77)
+and
+CX•
+⊠(M):= Λ•
+⊠CΓ∞(TM)≃CΓ∞(Λ•
+⊠TM) (3.78)
+the graded strong constraint modules of constraint multivector ﬁelds onM.
+The following example shows that every constraint manifold constructed from a coisotropic subman-
+ifold of a Poisson manifold carries a constraint bivector ﬁe ld in CX2
+⊠(M), while a Poisson submanifold
+yields a constraint bivector ﬁeld in CX2
+⊗(M).
+Example 3.50 Let (M,π) be a Poisson manifold.
+i.)IfC⊆Mis a closed coisotropic submanifold allowing for a smooth re duction we denote by
+M= (M,C,D ) the constraint manifold with Dthe characteristic distribution of the coisotropic
+submanifold C. Letn= (nT,nN,n0) be its constraint dimension. Then π∈Λ2Γ∞(TM) is a
+bivector ﬁeld, fulﬁlling ι#π∈Γ∞(TC∧TC+ι#TM∧D) = Γ∞((Λ2
+⊠TM)N). In an adapted
+coordinate chart ( U,x) aroundp∈C, cf.Lemma 3.21 , we have
+ι#π/vextendsingle/vextendsingle
+U∪C=nN/summationdisplay
+i,j=n0+1πij∂
+∂xi∧∂
+∂xj, (3.79)
+and thus for all ℓ= 1,...n 0
+∇ ∂
+∂xℓι#π/vextendsingle/vextendsingle
+U∪C=nN/summationdisplay
+i,j=n0+1πij/bracketleftbigg∂
+∂xℓ,∂
+∂xi/bracketrightbigg
+∧∂
+∂xj+nN/summationdisplay
+i,j=n0+1πij∂
+∂xi∧/bracketleftbigg∂
+∂xℓ,∂
+∂xj/bracketrightbigg
+= 0
+holds. Here we crucially use that πij∈CC∞(U)Nfor alli,j=n0+ 1,...,n N. SinceDis locally
+spanned by∂
+∂x1,...,∂
+∂xn0we haveπ∈CX2
+⊠(M)N.
+38ii.)Since every Poisson submanifold is in particular coisotrop ic, every closed Poisson submanifold
+gives a constraint manifold M= (M,C, 0) the constraint manifold with trivial distribution. Let
+n= (nT,nN,0) be its constraint dimension. Then π∈Λ2Γ∞(TM) restricts to a bivector ﬁeld
+π/vextendsingle/vextendsingle
+C∈Λ2Γ∞(TC) = Γ∞((Λ2TM)N). SinceDis trivial we thus get π∈CX2
+⊗(M)N.
+iii.) Every closed Poisson submanifold Cof a Poisson manifold Mcan also be equipped with another
+distribution Dgiven by the symplectic leaves of C. In general, the leaf space will not be smooth,
+but e.g. for certain types of Poisson manifolds of compact ty pe at least an orbifold structure
+on the leaf space can be achieved, see [ CFM19b ;CFM19a ]. Note that in the case of a smooth
+leaf space we obtain a constraint manifold M= (M,C,D ) with a constraint Poisson structure
+π∈Λ2CX2
+⊗(M)N. The reduced space then describes the transversal structur e.
+This suggests that a constraint manifold equipped with a con straint bivector ﬁeld π∈CX2
+⊠(M)N
+fulﬁlling the Jacobi identity induces a coisotropic struct ure on its submanifold. On the other hand
+π∈CX2
+⊗(M)Nfulﬁlling the Jacobi identity seems to induce a Poisson stru cture onC, which drops to
+Mred. To make this precise we ﬁrst introduce the Schouten bracket for constraint multivector ﬁelds.
+Proposition 3.51 (Constraint Schouten bracket) LetM= (M,C,D )be a constraint manifold.
+The classical Schouten bracket deﬁnes constraint graded Li e algebra structures of degree −1
+/llbracket·,·/rrbracket:CXk
+⊗(M)⊗/CZCXℓ
+⊗(M)→CXk+ℓ−1
+⊗ (M) (3.80)
+onCX•
+⊗(M), and
+/llbracket·,·/rrbracket:CXk
+⊠(M)⊗/CZCXℓ
+⊠(M)→CXk+ℓ−1
+⊠(M) (3.81)
+onCX•
+⊠(M).
+Proof: This follows directly from the formula
+/llbracketX0∧ · · · ∧Xk,Y0∧ · · · ∧Yℓ/rrbracket=k/summationdisplay
+i=0ℓ/summationdisplay
+j=0(−1)i+j[Xi,Yj]∧X1· · ·i∧ · · ·Xk∧Y0∧ · · ·j
+∧ · · · ∧Yℓ
+and the fact that [ ·,·] is a constraint Lie bracket on CX1(M). /square
+It is important to note that even for CX•
+⊠(M) we do notobtain a strong constraint Lie algebra
+structure. One way to see this is to note that CDer(CC∞(M)) is only a constraint Lie algebra, even
+though CC∞(M) is a strong constraint algebra. Ultimately, this comes fro m the fact that CHom is
+adjoint to ⊗and not⊠.
+Corollary 3.52 LetMbe a constraint manifold. Then
+i.)/parenleftbig
+CX•+1
+⊗(M),∧,/llbracket·,·/rrbracket/parenrightbig
+is a constraint Gerstenhaber algebra.
+ii.)/parenleftbig
+CX•+1
+⊠(M),∧,/llbracket·,·/rrbracket/parenrightbig
+is a strong constraint Gerstenhaber algebra.
+In contrast to constraint diﬀerential forms there is no pref erred choice of the tensor products, at
+least from the point of view of available algebraic structur e. Nevertheless, Example 3.50 i.)shows that
+if we are interested in coisotropic submanifolds we are forc ed to consider CX2
+⊠(M) instead of CX2
+⊗(M).
+Both types of constraint forms and constraint multivector ﬁ elds are well behaved under reduction:
+39Proposition 3.53 (Constraint forms and multivector ﬁelds v s. reduction) LetMbe a constr-
+aint manifold.
+i.) There exists a canonical isomorphism CΩ•
+⊗(M)red≃Ω•(Mred)of graded CC∞(M)red-modules.
+ii.) There exists a canonical isomorphism CΩ•
+⊠(M)red≃Ω•(Mred)of diﬀerential graded algebras.
+iii.) There exists a canonical isomorphism CX•
+⊗(M)red≃X•(Mred)of Gerstenhaber algebras.
+iv.) There exists a canonical isomorphism CX•
+⊠(M)red≃X•(Mred)of Gerstenhaber algebras.
+Proof: We combine established results to the following chain of can onical isomorphisms:
+CΩ•
+⊗(M)red=/parenleftbig∞/circleplusdisplay
+k=0Λk
+⊗CΓ∞(T∗M)/parenrightbig
+red≃∞/circleplusdisplay
+k=0(Λk
+⊗CΓ∞(T∗M))red
+≃∞/circleplusdisplay
+k=0ΛkCΓ∞(T∗M)red≃∞/circleplusdisplay
+k=0ΛkΓ∞(T∗Mred) = Ωk(Mred).
+Since we know that the reduction of ⊠and⊗agree and the reduced de Rham diﬀerential d redfulﬁls
+the same local characterization as the de Rham diﬀerential o nMredthe second part follows. Similar we
+have for the constraint multi-vector ﬁelds:
+CX•
+⊗(M)red=/parenleftbig∞/circleplusdisplay
+k=0Λk
+⊗CΓ∞(TM)/parenrightbig
+red≃∞/circleplusdisplay
+k=0(Λk
+⊗CΓ∞(TM))red
+≃∞/circleplusdisplay
+k=0ΛkCΓ∞(TM)red≃∞/circleplusdisplay
+k=0ΛkΓ∞(TMred) =Xk(Mred).
+Since the deﬁning equation of the Schouten bracket holds for the reduced Schouten bracket we get an
+isomorphism of Gerstenhaber algebras. The last part follow s again since ⊠and⊗agree after reduction,
+and the Schouten bracket is given by the same formula. /square
+Example 3.54
+i.)For this let ( M,π) be a Poisson manifold. From Example 3.50 we know that for every closed Pois-
+son submanifold C⊆Mwith smooth leaf space we have π∈CX2
+⊠(M)N, and clearly /llbracketπ,π/rrbracket= 0. On
+the other hand, given any constraint manifold M= (M,C,D ) and a bivector ﬁeld π∈CX2
+⊠(M)N
+with/llbracketπ,π/rrbracket= 0 it is easy to see that C⊆Mis a coisotropic submanifold with characteristic
+distribution DC⊆DandC∞
+D(M) is closed under the Poisson bracket. Then πred∈X2(Mred)
+satisﬁes /llbracketπred,πred/rrbracket= 0 and hence ( M,π) reduces to a Poisson manifold ( Mred,πred).
+ii.)LetM= (M,C,D ) be a constraint manifold and ω∈CΩ2
+⊠(M)Nbe presymplectic constraint 2-form.
+This means ι∗ω∈Γ∞(ι∗T∗M∧TCann+Dann∧Dann) = Γ∞((Λ2
+⊠T∗M)N) and an evaluation of ι∗ω
+shows that ( TC)⊥⊆D⊆TC, which makes Ca coisotropic submanifold. Then ωred∈Ω2(Mred)
+satisﬁes d redωred= 0, which yields a reduced presymplectic manifold ( Mred,ωred).
+iii.) LetM= (M,C,D ) be a constraint manifold together with a constraint Poisso n tensorπ∈
+CX2
+⊠(M)Nand a constraint Nijenhuis tensor A∈CΓ∞(CEnd(TM))N, see Example 3.54 i.)and
+Example 3.45 , respectively. The triple ( M,π,A ) is called Poisson-Nijenhuis manifold, if
+π♯◦A∗=A◦π♯(3.82)
+and the Schouten invariant Cπ,Adeﬁned by
+Cπ,A(α,X,β ):=β/parenleftBig
+(Lπ♯(α)A)X/parenrightBig
+−α/parenleftBig
+(Lπ♯(β)A)X/parenrightBig
++A(X)π(α,β)−X(π(A∗α,β)),(3.83)
+40forα,β∈Γ∞(T∗M) andX∈Γ∞(TM), vanishes. For the given data the ﬁrst condition descends
+clearly, since on both sides we have a composition of constra int morphisms, whereas the second
+condition descends by the constraint calculus established before. This leads to a reduced Poisson
+tensorπred∈Γ∞(Λ2TMred) and a reduced Nijenhuis tensor Ared∈Γ∞(End(TMred)) satisfying
+the conditions of a Poisson-Nijenhuis manifold. This examp le recovers the results of [ Vai96 ].
+4 Applications of Constraint Reduction
+In this section we show how the theory developed so far can be a pplied to the reduction of some geometric
+examples. In the ﬁrst subsection, Section 4.1 , we give the notion of constraint Lie-Rinehart algebra and
+study its reduction The results obtained there will then be u sed for the reduction of Lie (bi-)algebroids
+inSection 4.2 . This will unify and generalize many well-known constructi ons of Lie algebroids. Finally,
+inSection 4.3 the reduction of Dirac structures is discussed.
+4.1 Reduction of Lie-Rinehart Algebras
+We ﬁrst state the deﬁnition of a constraint Lie-Rinehart alg ebra, cf. [ Rin63 ;Hue90 ] for the classical
+notion.
+Deﬁnition 4.1 (Constraint Lie-Rinehart algebra)
+i.) A constraint Lie-Rinehart algebra ( A,g)consists of the following data:
+a.) A commutative constraint /CZ-algebra A.
+b.) A constraint A-module gtogether with a constraint Lie algebra structure [·,·]ong.
+c.) An action of gonAby derivations, i.e. a constraint morphism ρ:g→CDer(A)of constraint
+Lie algebras and constraint A-modules, called anchor .
+Additionally, these structures are supposed to be compatib le via the Leibniz rule
+[ξ,a·η] = (ρ(ξ)a)·η+a[ξ,η], (4.1)
+for allξ,η∈gTanda∈AT.
+ii.) A constraint Lie-Rinehart algebra (A,g)is called strong ifAis a strong constraint algebra and g
+is a strong constraint A-module.
+Note, in the following the conditions in iii.) are summarized by calling Aaconstraint Lie module
+overgwith action ρ. In [ Ker23 ] there was given a similar but equivalent deﬁnition.
+Example 4.2 (Constraint Lie-Rinehart algebras)
+i.)A constraint Lie-Rinehart algebra of the form (( A,A,0),(g,g,0)) is the same as a classical Lie-
+Rinehart algebra ( A,g).
+ii.)In [Alb+21 ] subalgebras of Lie-Rinehart algebras are deﬁned as follow s: Let (A,L) be a Lie-
+Rinehart algebra. Then a Lie-Rinehart subalgebra of ( A,L) is given by a Lie subalgebra S⊆L
+such thatA·S⊆S. This is equivalent to a constraint Lie-Rinehart algebra ( A,g) of the form
+g= (L,S, 0) and A= (A,A, 0). (4.2)
+41iii.) Again in [ Alb+21 ] also a notion of ideal of a Lie-Rinehart algebra is deﬁned. S uch an ideal of
+a Lie-Rinehart algebra ( A,L) is given by a Lie ideal I⊆Lsatisfyingρ(I)(A)L⊆I. This is
+equivalently given by a constraint Lie-Rinehart algebra ( A,g) of the form
+g= (L,L,I ) and A=/parenleftbig
+A,A, /a\}b∇acke⊔le{⊔ρ(I)(A)/a\}b∇acke⊔∇i}h⊔/parenrightbig
+, (4.3)
+with /a\}b∇acke⊔le{⊔ρ(I)(A)/a\}b∇acke⊔∇i}h⊔denoting the ideal generated by the subset ρ(I)(A)⊆A.
+iv.)A more general version of an ideal in a Lie-Rinehart algebra, a so called weak ideal, was introduced
+in [Jot18a ]. Such a weak ideal in a Lie-Rinehart algebra ( A,L) is given by a unital subalgebra
+B⊆A, a Lie subalgebra L⊆Land a Lie ideal J⊆L, s.t.
+•Lis aB-module,
+• (L,B) is a Lie-Rinehart algebra,
+•ρ(J)(B) = 0 and
+•Jis anA-module.
+This data is equivalently given by a constraint Lie-Rinehar t algebra ( A,g) of the form
+g= (L,L,J) and A= (A,B, 0). (4.4)
+As for classical Lie-Rinehart algebras there exist diﬀeren t notions of structure preserving maps of
+constraint Lie-Rinehart algebras, see e.g. [ HM93 ]. In the following we will only consider morphisms.
+Deﬁnition 4.3 (Morphism of constraint Lie-Rinehart algebr as) Let(A,g)and(B,h)be con-
+straint Lie-Rinehart algebras.
+i.) A morphism ( φ,Φ): (A,g)→(B,h) of constraint Lie-Rinehart algebras consists of a constraint
+Lie algebra morphism Φ:g→hand a constraint algebra morphism φ:A→B, such that
+a.)Φis a morphism of constraint modules along the constraint alg ebra morphism φ:A→B,
+b.)φis a morphism of constraint Lie modules along the constraint Lie algebra morphism Φ, i.e.
+ρh(Φ(ξ))φ(a) =φ(ρg(ξ)a) (4.5)
+holds forξ∈ganda∈A.
+ii.) The category of constraint Lie-Rinehart algebras and c onstraint Lie-Rinehart algebra morphisms
+is denoted by CembLieRinehartAlg . The full subcategory of strong constraint Lie-Rinehart al gebras
+is denoted by Cemb
+strLieRinehartAlg .
+The reduction of all ingredients used in the deﬁnition of con straint Lie-Rinehart algebra have been
+studied in Section 2 . Thus we obtain the following reduction procedure. Note tha t similar results were
+given in [ Ker23 ].
+Theorem 4.4 (Reduction of Lie-Rinehart algebras) Let(A,g)and(B,h)be constraint Lie-Ri-
+nehart algebras.
+i.) The pair (Ared,gred)together with the anchor ρred:gred→Der(A)red⊆Der(Ared)is a Lie-
+Rinehart algebra.
+ii.) Let (φ,Φ): (A,g)→(B,h)be a morphism of constraint Lie-Rinehart algebras. Then the pair of
+reduced morphisms (φred,Φred): (Ared,gred)→(Bred,hred)is a morphism of Lie-Rinehart algebras.
+42iii.) Mapping every constraint Lie Rinehart algebra (A,g)to(Ared,gred)and every map (φ,Φ)of
+constraint Lie-Rinehart algebras to (φred,Φred)deﬁnes a functor
+red: CembLieRinehartAlg →LieRinehartAlg . (4.6)
+Proof: The /CZ-algebra structure of Ared=AN/A0as well as the Ared-module structure of gred=gN/g0
+follow from Section 2.1 , while the Lie algebra structure on gredwas discussed in Section 2.4 . There
+it was also shown that the constraint A-module and constraint Lie algebra morphism ρdescends to
+ρred:gred→Der(A)red. Since Der( A)red⊆Der(Ared), see ( 2.34), this is equivalent to a reduced
+Lie module structure on Ared. Together the reduced structures give rise to a Lie-Rinehar t algebra
+(Ared,gred), since the Leibniz rule can be easily shown to descends a wel l.
+The morphisms φand Φ of constraint /CZ-algebras as well as of constraint Lie algebras and constrai nt
+modules over /CZ-algebras, respectively, give rise to reduced morphisms φredand Φ red. By using the
+quotient projections relating the reduced with the origina l structures it follows that the pair ( φred,Φred)
+forms a reduced morphism of Lie modules, which makes it a Lie- Rinehart algebra morphism.
+The third part follows by the two previous ones and the veriﬁc ations for red are straight-forward. /square
+4.2 Reduction of Lie (Bi-)Algebroids
+The combination of constraint vector bundles, as introduce d inSection 3.2 , with constraint Lie-Rinehart
+algebras enables us now to deﬁne constraint Lie algebroids i n the following way.
+Deﬁnition 4.5 (Constraint Lie algebroid) Aconstraint Lie algebroid consists of
+i.) a constraint vector bundle A= (AT,A N,A 0,∇)over a constraint manifold M= (M,C,D )and
+ii.) a constraint Lie-Rinehart algebra structure on (CC∞(M),CΓ∞(A)).
+In [Ker23 ] a more hands-on deﬁnition was given. For a deﬁnition of clas sical Lie algebroids, see
+[Mac05 ]. The link between classical and constraint Lie algebroids becomes more transparent using the
+following reformulation.
+Lemma 4.6 LetA= (AT,A N,A 0,∇)be a constraint vector bundle over M= (M,C,D ). Then a
+constraint Lie algebroid structure on Ais equivalent to
+i.) a constraint vector bundle morphism ρ:A→TMover idMand
+ii.) a constraint Lie algebra on CΓ∞(A)with Lie bracket [·,·],
+such that
+[a,fb] = (ρ(a)f)b+f[a,b] (4.7)
+holds fora,b∈CΓ∞(A)Tandf∈CC∞(M)T.
+With this it follows that for any constraint Lie algebroid Athe T-component ATis a classical Lie
+algebroid. This is not true for the N-component: Even though ρN:AN→TCyields a candidate for the
+anchor there is no canonical way to deﬁne a Lie bracket on Γ∞(AN). To see this, recall that CΓ∞(A)N
+consists of certain sections deﬁned an all of M. Nevertheless, constraint Lie algebroids reduce to Lie
+algebroids on the reduced manifold as we will see later.
+Lemma 4.7 LetA= (AT,A N,A 0,∇)be a constraint Lie algebroid over M= (M,C,D ), then the
+constraint Lie-Rinehart algebra (CC∞(M),CΓ∞(A))is strong.
+43Proof: Since CC∞(M)0is by deﬁnition the vanishing ideal of C, it is a two-sided ideal in CC∞(M)T,
+which makes CC∞(M) a strong constraint /CZ-algebra. Moreover, for f∈CC∞(M)0ands∈CΓ∞(A)T
+it follows that fs/vextendsingle/vextendsingle
+C= 0, i.e.fs∈CΓ∞(A)0. Forf∈CC∞(M)Tands∈CΓ∞(A)0we obtain
+fs/vextendsingle/vextendsingle
+C∈Γ∞(A0), i.e.fs∈CΓ∞(A)0. Consequently, CΓ∞(A) is a strong constraint CC∞(M)-module
+and thus ( CC∞(M),CΓ∞(A)) is strong as constraint Lie-Rinehart algebra. /square
+We can now deﬁne morphisms of constraint Lie algebroids. The classical notion of Lie algebroid
+morphism can be found in [ HM90 ;HM93 ].
+Deﬁnition 4.8 (Constraint Lie algebroid morphism) LetA→MandB→Nbe constraint Lie
+algebroids.
+i.) A constraint vector bundle morphism Φ:A→Boverφ:M→Nis called constraint Lie alge-
+broid morphism , if the corresponding morphisms Φ:CΓ∞(A)→CΓ∞(φ#B)andφ∗:CC∞(N)→
+CC∞(M)satisfy the following two conditions:
+a.) The equation of constraint morphisms
+Tφ◦ρA=ρB◦Φ (4.8)
+holds.
+b.) For/hatwideΦ(a) =/summationtext
+ifiφ#aiand/hatwideΦ(b) =/summationtext
+jgjφ#bj∈CΓ∞(φ#B)T, one has
+/hatwideΦ([a,b]A) =/summationdisplay
+i,jfigjφ#[ai,bj]B+/summationdisplay
+jρA(a)gjφ#bj−/summationdisplay
+iρA(b)fiφ#ai (4.9)
+fora,b∈CΓ∞(A)T,ai,bj∈CΓ∞(B)Tandfi,gj∈CC∞(M)T, where/hatwideΦ:A→φ#Bis the
+induced morphism between constraint vector bundles over idM, see (A.2).
+ii.) The category of constraint Lie algebroids with morphis ms of constraint Lie algebroids is denoted
+byCLieAlgd .
+Additionally, we can use the notion of morphism of constrain t Lie-Rinehart algebras as introduced in
+Section 4.1 to deﬁne comorphisms of constraint Lie algebroids. The deﬁn ition of classical Lie algebroid
+comorphisms can be found in [ CDW13 ].
+Deﬁnition 4.9 (Constraint Lie algebroid comorphism) LetA→MandB→Nbe constraint
+Lie algebroids.
+i.) A constraint vector bundle morphism Φ:B∗→A∗alongφ:N→Mis called a constraint Lie
+algebroid comorphism , if the corresponding morphism between constraint modules of sections
+Φ∗:CΓ∞(A)→CΓ∞(B)overφ∗:CC∞(M)→CC∞(N)forms a Lie-Rinehart algebra morphism.
+ii.) The category of constraint Lie algebroids with comorph ism of constraint Lie algebroids is denoted
+byCLieAlgdco.
+The reduction of constraint Lie algebroids becomes functor ial for both types of morphisms. The
+results of the following theorem coincide with those in [ Ker23 ].
+Theorem 4.10 (Reduction of constraint Lie algebroids)
+i.) LetAbe a constraint Lie algebroid over Mwith anchor ρand Lie bracket [·,·]. ThenAredis a
+Lie algebroid over Mredwith anchor ρredand Lie bracket [·,·]red.
+44ii.) Let Φ:A→Bbe a Lie algebroid morphism over φ:M→N. Then Φred:Ared→Bredis a
+morphism of Lie algebroids over φred:Mred→Nred.
+iii.) Mapping every constraint Lie algebroid AoverMtoAredoverMredand every morphism Φof
+constraint Lie algebroids to Φreddeﬁnes a functor
+red: CLieAlgd →LieAlgd. (4.10)
+iv.) Let Φ:B∗→A∗be a Lie algebroid comorphism over φ:N→M. Then Φred:B∗
+red→A∗
+redis a
+Lie algebroid comorphism over φ:Nred→Mred.
+v.) Mapping every constraint Lie algebroid AoverMtoAredoverMredand every comorphism Φof
+constraint Lie algebroids to Φreddeﬁnes a functor
+red: CLieAlgdco→LieAlgdco. (4.11)
+Proof: i.): We only need to collect the necessary results: Every constr aint vector bundle A→M
+reduces to a vector bundle Ared→MredbyProposition 3.16 . Moreover, the constraint tangent bundle
+TMreduces to the tangent bundle TMredbyProposition 3.20 and by Proposition 3.19 the vector bundle
+morphismρreduces to a vector bundle morphism ρred:Ared→TMred. Finally, the constraint module
+CΓ∞(A) reduces to Γ∞(Ared) by Proposition 3.40 and the constraint functions CC∞(M) reduce to
+C∞(Mred) according to Proposition 3.7 . Together with Theorem 4.4 the Leibniz rule descends as well,
+showing that we obtain a reduced Lie algebroid.
+ii.): In order to prove this assertion note that by Proposition 3.19 the reduction functor maps Φ to a
+reduced vector bundle morphism Φ redoverφred. By the same proposition it follows that condition ( 4.8)
+descends to the reduction. It remains to show that the reduce d vector bundle morphism also satisﬁes
+condition ( 4.9). The constraint vector bundle morphism Φ leads to a constra int vector bundle morphism
+/hatwideΦ:E→φ#Fover id M, which by Theorem 3.32 becomes a morphism between the constraint modules of
+sections. Since taking the pull-back vector bundle commute s with reduction, see Proposition 3.41 vi.),
+and taking sections commutes with reduction as well, see Proposition 3.40 , it follows that reduction
+commutes with taking sections of a pull-back vector bundle. Consequently, for a∈CΓ∞(A)N,fi∈
+CC∞(M)Nandai∈CΓ∞(B)N, which are related by /hatwideΦ(a) =/summationtext
+ifiφ#ai, we obtain
+/hatwider(Φred)(ared) =/hatwideΦ(a)red=/parenleftBig/summationdisplay
+ifiφ#ai/parenrightBig
+red=/summationdisplay
+ifi
+redφ#
+red(ai)red,
+where we used the coincidence of /hatwider(Φred) with (/hatwideΦ)redup to the natural isomorphism in Proposition 3.41
+vi.). Letb∈CΓ∞(A)N,gj∈CC∞(M)Nandbj∈CΓ∞(B)N, which are related by /hatwideΦ(b) =/summationtext
+jgjφ#bj, we
+obtain
+/hatwider(Φred)([ared,bred]A,red) =/hatwideΦ([a,b]A)red
+=/summationdisplay
+i,jfi
+redgj
+redφ#
+red[ai,red,bj,red]B,red−/summationdisplay
+iρA,red(bred)fi
+redφ#
+redai,red
++/summationdisplay
+jρA,red(ared)gj
+redφ#
+redbj,red
+by using ( 4.9) and exploiting the equation shown before. This proves the c ondition on the Lie brackets
+and makes the vector bundle morphism Φ red:Ared→Bredoverφred:Mred→Nreda Lie algebroid
+morphism.
+45iii.): This follows by the ﬁrst and the second assertion and straig ht-forward computations show that
+red constitutes a covariant functor.
+iv.): This follows directly from the reduction of morphism of Lie -Rinehart algebras, see Theorem 4.4 ,
+together with the fact that taking sections of the dual is fun ctorial and commutes with reduction, see
+Proposition 3.39 .
+v.): This is a combination of the ﬁrst and the fourth one as well as a straight-forward computation
+to verify that red yields a covariant functor. /square
+Example 4.11 (Constraint Lie algebroids)
+i.)A constraint Lie algebroid with trivial 0-components, i.e. a constraint Lie algebroid of the form
+A= (AT,A N,0,0) overM= (M,C, 0), corresponds to a Lie subalgebroid on the submanifold C.
+The reduction is given by this Lie algebroid ANoverC.
+ii.)The classical extreme cases for Lie algebroids also hold in t he constraint setting: Over a point
+M= ({pt},{pt},0) a constraint Lie algebroid is exactly a constraint Lie alg ebra, see Section 2.4 .
+Moreover, for any constraint manifold Mthe constraint tangent bundle TMis a constraint Lie
+algebroid with ρ= id.
+iii.) LetC⊆Mbe a closed coisotropic submanifold with simple characteri stic distribution D⊆TC
+and letM= (M,C,D ) be the corresponding constraint manifold. It is well-know n thatT∗M,
+equipped with the anchor π#:T∗M→TM, given byπ#(α) =π(α,·) forα∈Γ∞(T∗M), and
+the Lie bracket deﬁned by
+[α,β]:=Lα#β−Lβ#α−d(π(α,β)) (4.12)
+for allα,β ∈Γ∞(T∗M), is a Lie algebroid. One could check by hand that all these st ructures
+actually deﬁne a constraint Lie algebroid on T∗M. More conceptually we can also argue as follows:
+ByExample 3.50 i.)we know that
+π∈CΓ∞(Λ2
+⊠TM)N⊆CΓ∞(TM⊠TM)N≃CΓ∞(CHom(T∗M,TM))N, (4.13)
+see also Proposition 2.19 . This shows that π#:T∗M→TMis a a constraint morphism. Moreover,
+byProposition 3.47 we know that the Lie derivative and the de Rham diﬀerential ar e constraint
+morphisms, and hence ( 4.12) is a constraint morphism. The fact that we have a classical L ie
+algebroid on the T-component then ensures that all required compatibilities hold, and we thus get
+a constraint Lie algebroid on T∗M. This constraint Lie algebroid then reduces to the classica l Lie
+algebroid structure on T∗Mredinduced by the reduced Poisson structure on Mred.
+iv.)Inﬁnitesimal ideal systems were introduced in [ JO14 ] as the inﬁnitesimal counterpart to foliated
+Lie groupoids, see also [ CNS05 ;Haw08 ]. Given a classical Lie algebroid A→Mwith anchor ρand
+Lie bracket [ ·,·] an inﬁnitesimal ideal system is given by an involutive dist ributionFM⊆TM, a
+subalgebroid K⊆A, such that ρ(K)⊆FM, and a ﬂat FM-connection ∇onA/K such that the
+following properties are fulﬁlled:
+a.)[a,b]∈Γ∞(K), for alla∈Γ∞(A),b∈Γ∞(K) with ∇a= 0,
+b.)∇[a,b] = 0, for all a,b∈Γ∞(A) with ∇a= 0 = ∇b,
+c.)∇Bottρ(a) = 0, for all a∈Γ∞(A) with ∇a= 0, where ∇Bottis the Bott connection associated
+toFM.
+IfFMis simple this corresponds exactly to a constraint Lie algeb roid structure on the constraint
+vector bundle ( A,A,K, ∇) over the constraint manifold ( M,M,F M). Thus from the constraint
+46point of view it becomes clear that inﬁnitesimal ideal syste ms capture the correct structure to
+reduce a Lie algebroid along a distribution.
+Recall that in the the classical situation, given a vector bu ndleAover a manifold M, there is a
+bijective correspondence
+{Lie algebroid ρ:A→TM}⇆{Gerstenhaber algebra Γ∞(Λ•A)}, (4.14)
+relating Lie algebroid structures on Awith Gerstenhaber algebra structures on Γ∞(Λ•A). See [ Kos95 ;
+Xu99 ] and the references therein for more details. There is a seco nd correspondence
+{Lie algebroid ρ:A→TM}⇆{diﬀerential graded algebra Γ∞(Λ•A∗)}, (4.15)
+characterizing Lie algebroid structures as diﬀerential gr aded algebra structures on Γ∞(Λ•A∗), see [ Kos95 ;
+Xu99 ]. In the constraint setting we have to carefully choose the t ensor products used in both character-
+izations.
+Theorem 4.12 (Characterization of Lie algebroids) LetA= (AT,A N,A 0,∇)be a constraint vec-
+tor bundle over a constraint manifold M= (M,C,D ). Then the following structures are equivalent:
+i.) A constraint Lie algebroid structure [·,·]onAwith anchor ρ:A→TM.
+ii.) A strong constraint Gerstenhaber structure /llbracket·,·/rrbracketonCΓ∞(Λ•
+⊠A)with respect to the associative
+product ∧.
+iii.) A constraint Gerstenhaber structure /llbracket·,·/rrbracketonCΓ∞(Λ•
+⊗A)with respect to the associative product
+∧.
+iv.) A diﬀerential graded strong constraint algebra struct ure on CΓ∞(Λ•
+⊠A∗)with diﬀerential dAof
+degree +1with respect to ∧.
+The relation between these structures are given as follows:
+•The Gerstenhaber bracket /llbracket·,·/rrbracketonCΓ∞(Λ•
+⊗A)andCΓ∞(Λ•
+⊠A)is uniquely determined by
+/llbracketf,g/rrbracket= 0,/llbracketa,f/rrbracket=ρ(a)f=−/llbracketf,a/rrbracket, and /llbracketa,b/rrbracket= [a,b] (4.16)
+fora,b∈Γ∞(AT)andf,g∈C∞(M).
+•The diﬀerential donCΓ∞(Λ•
+⊠A∗)is given by
+(dα)(a0,...,a k) =k/summationdisplay
+i=0(−1)iρ(ai)α(a0,...,i∧,...,α k)
++/summationdisplay
+i<j(−1)i+jα([ai,aj],a0,...,i∧,...,j
+∧,...,a k)(4.17)
+forα∈Γ∞(ΛkA∗
+T)anda0,...,a k∈Γ∞(AT).
+Proof: SupposeAis a constraint Lie algebroid with anchor ρand bracket [ ·,·]. The exterior algebra
+CΓ∞(Λ•
+⊠A)≃Λ•
+⊠CΓ∞(A) forms a graded strong constraint algebra with respect to th e associative
+product ∧induced by ⊠, see Example 2.21 . SinceATis a classical Lie algebroid it corresponds to a
+classical Gerstenhaber structure on Λ•AT, which is given by ( 4.16). Thus it only remains to show that
+47the Gerstenhaber bracket /llbracket·,·/rrbracketis a constraint Lie bracket. For this note that ( 4.16) implies that the
+Gerstenhaber bracket is given by
+/llbracketa,b/rrbracket=k/summationdisplay
+i=0ℓ/summationdisplay
+j=0(−1)i+j[ai,bj]∧a0∧...i∧...∧ak∧b0∧...j
+∧...∧bℓ, (∗)
+for elementary tensors a=a0∧...∧ak∈Γ∞(Λk+1AT) andb=b0∧...∧bℓ∈Γ∞(Λℓ+1AT). see [ Hue98 ].
+Now let e.g. a=a0∧...∧ak∈CΓ∞(Λk+1
+⊠A)0andb=b0∧...∧bℓ∈CΓ∞(Λℓ+1
+⊠A)Nbe elementary tensors,
+thenacontains at least one factor in CΓ∞(A)0, and thus all summands of ( ∗) end up in CΓ∞(Λ•
+⊠A)0.
+The other cases can be checked equivalently. With this we obt ain a strong constraint Gerstenhaber
+structure on Λ•
+⊠CΓ∞(A). Completely analogous considerations show that ( ∗) also deﬁnes a constraint
+Gerstenhaber structure on Λ•
+⊗CΓ∞(A).
+Conversely, assume that Λ•
+⊗CΓ∞(A) carries a constraint Gerstenhaber structure. Using ( 4.16) we
+see that the Lie bracket [ ·,·] and the anchor ρare constraint maps. Moreover, since we already now
+thatATis a classical Lie algebroid this is enough to obtain a constr aint Lie algebroid structure on A.
+Moreover, every strong constraint Gerstenhaber algebra st ructure on Λ•
+⊠CΓ∞(A) restricts to a con-
+straint Gerstenhaber algebra on Λ•
+⊗CΓ∞(A), and thus induces a constraint Lie algebroid structure on
+Aas before.
+Let us now show the equivalence with diﬀerential graded alge bras. For this suppose again that Ais
+a constraint Lie algebroid.
+It is well-known that the classical Lie algebroid structure onATcorresponds to a classical diﬀerential
+graded algebra structure on Λ•Γ∞(AT)∗with diﬀerential given by ( 4.17). Thus it only remains to show
+that d: Λ•
+⊠CΓ∞(A∗)→Λ•
+⊠CΓ∞(A∗) is a constraint morphism. This can be done by evaluating ( 4.17)
+ona0∧...∧ak∈CΓ∞(Λk+1
+⊗A)Nanda0∧...∧ak∈CΓ∞(Λk+1
+⊗A)0.
+Conversely, starting with a diﬀerential graded strong cons traint algebra structure on Λ•
+⊠CΓ∞(A∗)
+we know that ( AT,gT) is a classical Lie algebroid. It remains to show that ρand [ ·,·] are constraint
+morphisms. Evaluating d on degree 0 and 1 elements leads to
+ρ(a)f= df(a) ( ∗∗)
+forf∈C∞(M) and
+η([a,b]) = d(η(b))(a)−d(η(a))(b)−(dη)(a,b) ( ∗∗∗)
+forη∈Γ∞(A∗
+T) anda,b∈Γ∞(AT), see [ Xu99 ]. Since the anchor is given by ( ∗∗) a straightforward
+check shows that ρis indeed constraint. To show that the Lie bracket given by ( ∗∗∗) is constraint we
+use the fact that ( A∗)∗≃A. Then we need to show that for all a⊗b∈(CΓ∞(A)⊗CΓ∞(A))Nwe have
+η([a,b])∈CΓ∞(A)Nforη∈CΓ∞(A∗)Nandη([a,b])∈CΓ∞(A)0forη∈CΓ∞(A∗)0. Moreover, for all
+a⊗b∈(CΓ∞(A)⊗CΓ∞(A))0we need to have η([a,b])∈CΓ∞(A)0forη∈CΓ∞(A∗)N. This follows
+directly by checking the right-hand side of ( ∗∗∗) and using that d is constraint. Thus Abecomes a
+constraint Lie algebroid. /square
+Surprisingly, the non-strong Gerstenhaber structure on Λ•
+⊗CΓ∞(A) is enough to obtain a Lie alge-
+broid structure on A. This comes from the fact that both the Gerstenhaber structu re on Λ•
+⊗CΓ∞(A)
+and Λ•
+⊠CΓ∞(A) are generated by degrees 0 and 1. On the other hand, the const raint diﬀerential graded
+algebra structure needs to be strong. On Λ•
+⊗CΓ∞(A∗) the diﬀerential d would not be a constraint
+morphism, cf. Example 3.48 .
+48Remark 4.13 Since for modules of sections the tensor products ⊗and⊠are both compatible with re-
+duction, see Proposition 3.41 , it is clear that the Gerstenhaber structures on CΓ∞(Λ•
+⊠A) and CΓ∞(Λ•
+⊗A)
+both reduce to a Gerstenhaber structure on Γ∞(Λ•Ared) corresponding to the reduced Lie algebroid
+Ared. Similarly, the diﬀerential graded algebra structure on CΓ∞(Λ•
+⊠A∗) reduces to a diﬀerential graded
+algebra structure on Γ∞(Λ•A∗
+red) corresponding to the reduced Lie algebroid Ared.
+Example 4.14
+i.)ForA=TMwe obtain the constraint Schouten bracket and the constrain t de Rham diﬀerential
+from Section 3.4 .
+ii.)Given a constraint Lie algebra gconsidered as a constraint Lie algebroid over ( {pt},{pt},0) the
+associated DGLA Λ•
+⊠g∗with diﬀerential d ggiven by
+(dgα)(ξ1,...,x k+1) =/summationdisplay
+i<j(−1)i+jα([ξi,ξj],ξ1,...,i∧,...,j
+∧,...,ξ k+1), (4.18)
+forξ1,...,ξ k+1∈g, can be understood as the constraint Chevalley-Eilenberg c omplex with scalar
+coeﬃcients.
+We ﬁnish this treatment of constraint Lie algebroids with a s hort discussion of the reduction of Lie
+bialgebroids. Using the above characterization of constra int Lie algebroids we can introduce constraint
+Lie bialgebroids as follows:
+Deﬁnition 4.15 (Constraint Lie bialgebroids) LetA→MandB→Nbe a constraint vector
+bundles.
+i.) A constraint Lie bialgebroid over Mis given by a constraint vector bundle Atogether with con-
+straint Lie algebroid structures on Aand its dual A∗, which satisfy
+dA∗/llbracketa,b/rrbracketA=/llbracketdA∗(a),b/rrbracketA+ (−1)deg(a)/llbracketa,dA∗(b)/rrbracketA (4.19)
+for everya,b∈CΓ∞(Λ•
+⊠A)T, where dA∗denotes the diﬀerential and /llbracket·,·/rrbracketAthe Gerstenhaber
+bracket on CΓ∞(Λ•
+⊠A).
+ii.) A constraint morphism of vector bundles Φ∗:B∗→A∗overφ:N→Mis called morphism
+between constraint Lie bialgebroids, if Φ∗is a constraint Lie algebroid morphism and a constraint
+Lie algebroid comorphism. The morphism of constraint Lie bi algebroids with underlying constraint
+vector bundle morphism Φ∗:B∗→A∗is denoted by Φ: (A,A∗)→(B,B∗).
+iii.) The category of constraint Lie bialgebroids and their morphisms is denoted by CLieBiAlgd and
+the full subcategory of constraint Lie bialgebroids over th e constraint manifold Mis denoted by
+CLieBiAlgd (M).
+Theorem 4.16 (Reduction of Lie bialgebroids)
+i.) Let (A,A∗)be a constraint Lie bialgebroid over M. Then (Ared,A∗
+red)is a Lie bialgebroid over
+Mred.
+ii.) Let Φ∗: (A,A∗)→(B,B∗)be a morphism of constraint Lie bialgebroids over φ:N→M. Then
+Φ∗
+red: (Ared,A∗
+red)→(Bred,B∗
+red)is a morphism of Lie bialgebroids over φred:Nred→Mred.
+iii.) Mapping every constraint Lie bialgebroid (A,A∗)overMto(Ared,A∗
+red)overMredand every
+morphism Φ∗of constraint Lie bialgebroids to Φ∗
+reddeﬁnes a functor
+red: CLieBiAlgd →LieBiAlgd. (4.20)
+49
