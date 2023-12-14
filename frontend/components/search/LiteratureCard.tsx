@@ -10,11 +10,12 @@ import {
 import {
   BookOpenIcon,
   ChatBubbleBottomCenterTextIcon,
-  ClipboardDocumentIcon,
   DocumentIcon,
   HeartIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
+import { DOCUMENT_TYPES } from "@/constants/enums";
+import SimilarSearchButton from "./SimilarSearchButton";
 
 type Props = {
   id: string;
@@ -28,19 +29,15 @@ type Props = {
   documentType?: DOCUMENT_TYPES | null;
 };
 
-export enum DOCUMENT_TYPES {
-  "PAPER" = 1,
-  "BOOK" = 2,
-  "SPEECH" = 3,
-}
-
 export default function LiteratureCard(props: Props) {
   const domain = props.link.replace(
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"
   );
+
   //const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
   const doiUrl = `https://www.doi.org/${props.doi}`;
+
   return (
     <Card className="w-5/6" id={props.id}>
       <CardHeader>
@@ -81,7 +78,7 @@ export default function LiteratureCard(props: Props) {
       <CardFooter>
         <div className="flex flex-row justify-between align-middle grow">
           <div className="flex flex-row gap-2">
-            <ClipboardDocumentIcon width={24} />
+            <SimilarSearchButton id={props.id} />
             {/* <TagIcon width={24} /> */}
             <HeartIcon width={20} />
           </div>
