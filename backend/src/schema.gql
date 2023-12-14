@@ -57,12 +57,18 @@ type Query {
   oldest(source: PublicationSource!): PublicationResponseDto!
   newest(source: PublicationSource!): PublicationResponseDto!
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
+  searchPublicationBySourceAndSourceId(publicationSourceAndSourceId: PublicationSourceWithSourceIdDto!): PublicationResponseDto
   favorites: [PublicationResponseDto!]!
 }
 
 input PublicationVectorsRequestDto {
   chunk: Int!
   chunkSize: Int = 100
+}
+
+input PublicationSourceWithSourceIdDto {
+  exId: String!
+  source: PublicationSource!
 }
 
 type Mutation {

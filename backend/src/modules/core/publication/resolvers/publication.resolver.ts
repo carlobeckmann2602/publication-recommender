@@ -4,6 +4,7 @@ import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from '../../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { User } from '../../user/entities/user.entity';
+import { PublicationSourceWithSourceIdDto } from '../dto/PublicationBySource.dto.';
 import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
@@ -106,6 +107,19 @@ export class PublicationResolver {
     dto: PublicationVectorsRequestDto,
   ): Promise<PublicationChunkDto> {
     return await this.descriptorService.getVectorsChunk(dto);
+  }
+
+  @Query(() => PublicationResponseDto, { nullable: true })
+  async searchPublicationBySourceAndSourceId(
+    @Args('publicationSourceAndSourceId', { type: () => PublicationSourceWithSourceIdDto })
+    dto: PublicationSourceWithSourceIdDto,
+  ): Promise<PublicationResponseDto> | null {
+    try {
+      const publication = await this.publicationService.getPublikationBySourceWithId(dto);
+      return new PublicationResponseDto(publication);
+    } catch (e) {
+      return null;
+    }
   }
 
   @Mutation(() => PublicationResponseDto)
