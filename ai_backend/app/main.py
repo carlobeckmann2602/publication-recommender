@@ -1,6 +1,6 @@
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile, Query
 from fastapi.responses import FileResponse
-from typing import List, Dict
+from typing import List, Dict, Annotated
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
@@ -106,13 +106,31 @@ async def get_recommendation(publication_id: str, amount: int = 5):
 @rec_api.get("/match_token/{token}/")
 async def get_recommendation(token: str, amount: int = 5):
     """
-    Runs the recommendation engine for a publication ID.
+    Runs the recommendation engine for a token.
     - **token**: The input token. For example a sentence
     - **amount**: The amount of matches to be included
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
     task = tasks.recommend_by_token.apply_async(args=[str(token), amount])
+    result = task.get()
+    return result
+
+
+@rec_api.get("/match_group/")
+async def get_recommendation(group: Annotated[list[str], Query()] = [], amount: int = 5):
+    """
+    Runs the recommendation engine for a list of publication IDs as a group.
+    This can be used to recommend based of a user library for example.
+    - **group**: A list of publication IDs
+    - **amount**: The amount of matches to be included
+
+    **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
+    """
+    print(group)
+    if group is None:
+        return {}
+    task = tasks.recommend_by_group.apply_async(args=[group, amount])
     result = task.get()
     return result
 

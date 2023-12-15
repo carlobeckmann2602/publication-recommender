@@ -4,6 +4,8 @@ import pickle
 import pandas as pd
 import numpy as np
 import torch
+import random
+from sklearn.decomposition import PCA
 from .util.misc import add_array_column
 from sentence_transformers import SentenceTransformer, util
 from .util.LexRank import degree_centrality_scores
@@ -217,15 +219,19 @@ class Recommender:
 
     def get_match_by_token(self, token: str | List[float], amount: int = 1) -> pd.DataFrame:
         original_token = token
+        printable_token = None
         if isinstance(token, str):
             token = self.summarizer.transformer.encode(token, convert_to_numpy=True)
+            printable_token = original_token
+        else:
+            printable_token = f"Vector with: {np.array(original_token).shape} -> (0:10): {original_token[0:10]}"
 
         nns_amount = amount * self.token_amount
         neighbours, distances = self.annoy_database.get_nns_by_vector(token, nns_amount, include_distances=True)
         nns_output = pd.DataFrame(data={
             self.ANNOY_INDEX_KEY: neighbours,
             "distance": distances,
-            "input_token": np.full(len(neighbours), original_token)
+            "input_token": np.full(len(neighbours), printable_token)
         })
 
         nns_output = pd.merge(
@@ -269,3 +275,23 @@ class Recommender:
         nns_output.sort_values(by="distance", ascending=True, inplace=True)
         nns_output.drop_duplicates(subset=self.PUBLICATION_ID_KEY, keep="first", inplace=True)
         return nns_output.iloc[0:amount].reset_index(drop=True)
+
+    def get_match_by_group(self, publications_ids: List[str], amount: int = 1) -> pd.DataFrame:
+        publication_df = self.mapping[self.mapping[self.PUBLICATION_ID_KEY].isin(publications_ids)].copy()
+
+        def get_embedding_from_annoy(annoy_id: int) -> list:
+            return self.annoy_database.get_item_vector(annoy_id)
+
+        publication_df["embedding"] = publication_df[self.ANNOY_INDEX_KEY].apply(get_embedding_from_annoy)
+        embeddings = np.array(publication_df["embedding"].to_list())
+        print(embeddings.shape)
+        pca = PCA(n_components=3)
+        pca.fit(embeddings)
+        print(pca.components_.shape)
+        pca1 = pca.components_[0]
+        pca2 = pca.components_[1]
+        pca3 = pca.components_[2]
+        anchor_point = (random.uniform(0, 1) * pca1) + (random.uniform(0, 1) * pca2) + (random.uniform(0, 1) * pca3)
+        # TODO: Exclude input publications
+        return self.get_match_by_token(anchor_point, amount)
+

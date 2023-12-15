@@ -213,3 +213,14 @@ def get_random_id(self: StrictEngineTask, amount: int):
     sample = self.recommender.mapping.sample(int(amount))
     sample = sample[self.recommender.PUBLICATION_ID_KEY].to_list()
     return sample
+
+
+@celery.task(name="recommend_group",
+             base=StrictEngineTask,
+             bind=True)
+def recommend_by_group(self: StrictEngineTask,
+                       publication_ids: List[str], amount: int) -> dict:
+    # TODO: Check if publications in mapping
+    print("made it here")
+    matches = self.recommender.get_match_by_group(publication_ids, amount)
+    return convert_matching_to_response(matches, self.recommender.PUBLICATION_ID_KEY)
