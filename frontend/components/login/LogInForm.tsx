@@ -29,6 +29,7 @@ import Link from "next/link";
 import GoogleButton from "@/components/login/GoogleButton";
 import TextSeparator from "@/components/TextSeparator";
 import { useRouter } from "next/navigation";
+import { allowBackgroundScrolling } from "@/lib/modal-controlls";
 
 const FormSchema = z.object({
   email: z
@@ -71,6 +72,7 @@ export function LogInForm(props: Props) {
       callbackUrl: props.callbackUrl ?? "/",
     });
     if (res?.ok) {
+      allowBackgroundScrolling();
       router.back();
     } else if (res?.error) {
       setErrorMsg(res?.error);

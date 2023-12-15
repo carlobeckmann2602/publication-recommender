@@ -30,6 +30,7 @@ import Link from "next/link";
 
 import { useMutation } from "@apollo/client";
 import { RegisterDocument } from "@/graphql/mutation/RegisterUser.generated";
+import { allowBackgroundScrolling } from "@/lib/modal-controlls";
 
 const FormSchema = z
   .object({
@@ -104,6 +105,7 @@ export function SignUpForm(props: Props) {
           redirect: true,
           callbackUrl: props.callbackUrl ?? "/",
         });
+        allowBackgroundScrolling();
       }
     } catch (error: any) {
       console.error(error.message);

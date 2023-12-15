@@ -3,13 +3,12 @@ import { useRouter } from "next/navigation";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import React, { useCallback } from "react";
+import { allowBackgroundScrolling } from "@/lib/modal-controlls";
 
 export default function ModalCloseButton() {
   const router = useRouter();
   const onExit = useCallback(() => {
-    if (typeof window != "undefined" && window.document) {
-      document.body.style.overflow = "unset";
-    }
+    allowBackgroundScrolling();
     router.back();
   }, [router]);
   return (

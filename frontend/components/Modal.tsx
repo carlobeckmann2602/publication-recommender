@@ -1,6 +1,10 @@
 "use client";
 import { useCallback, useRef, useEffect, MouseEventHandler } from "react";
 import { useRouter } from "next/navigation";
+import {
+  allowBackgroundScrolling,
+  preventBackgroundScrolling,
+} from "@/lib/modal-controlls";
 
 export default function Modal({ children }: { children: React.ReactNode }) {
   const overlay = useRef(null);
@@ -8,9 +12,7 @@ export default function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const onDismiss = useCallback(() => {
-    if (typeof window != "undefined" && window.document) {
-      document.body.style.overflow = "unset";
-    }
+    allowBackgroundScrolling();
     router.back();
   }, [router]);
 
@@ -36,9 +38,7 @@ export default function Modal({ children }: { children: React.ReactNode }) {
   }, [onKeyDown]);
 
   useEffect(() => {
-    if (typeof window != "undefined" && window.document) {
-      document.body.style.overflow = "hidden";
-    }
+    preventBackgroundScrolling();
   }, []);
 
   return (
