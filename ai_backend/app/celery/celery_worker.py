@@ -2,10 +2,11 @@ import pandas as pd
 from celery import Celery
 from celery.signals import worker_ready
 from app.celery import celeryconfig
+import app.celery.errors as worker_error
 from app.engine import Recommender, Summarizer, device
 from app.util.misc import create_file_structure
 from app.graphql_backend import get_all_vectors
-from typing import Dict, List
+from typing import Dict, List, Literal
 import shutil
 import requests
 import os
@@ -14,36 +15,23 @@ celery = Celery(__name__)
 celery.config_from_object(celeryconfig)
 celery.data_path = os.environ["DATA_PATH"]
 celery.recommender_name = "recommender"
+celery.zip_path = f"{celery.data_path}/{celery.recommender_name}.zip"
+celery.unzip_path = f"{celery.data_path}/{celery.recommender_name}"
 celery.api = "http://ai_backend:" + os.environ["API_PORT"]
 
 create_file_structure(celery.data_path)
 
 
-@worker_ready.connect
-def on_worker_ready(**_):
-    print("Starting Worker")
-    update_recommender()
-    print(f"Runing Worker on {device}")
+def get_last_changed_on_disk(path) -> float:
+    if os.path.exists(path):
+        return os.path.getmtime(path)
+    else:
+        return 0.0
 
 
-def get_recommender() -> Recommender:
-    recommender = Recommender(Summarizer())
-    recommender.load(path=celery.data_path, model_name=celery.recommender_name)
-    return recommender
-
-
-def recommend_by_token(token: str, amount: int) -> dict:
-    recommender = get_recommender()
-    matches = recommender.get_match_by_token(str(token), amount)
-    return convert_matching_to_response(matches, recommender.PUBLICATION_ID_KEY)
-
-
-def recommend_by_publication(publication_id: str, amount: int) -> dict:
-    recommender = get_recommender()
-    if publication_id not in recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
-        raise MissingPublication(f"Publication <{publication_id}> not in mapping")
-    matches = recommender.get_match_by_id(str(publication_id), amount)
-    return convert_matching_to_response(matches, recommender.PUBLICATION_ID_KEY)
+def get_blank_recommender() -> Recommender:
+    summarizer = Summarizer()
+    return Recommender(summarizer)
 
 
 def convert_matching_to_response(mathing: pd.DataFrame, pub_id_key: str) -> Dict[str, List[Dict[str, str | int]]]:
@@ -60,103 +48,167 @@ def convert_matching_to_response(mathing: pd.DataFrame, pub_id_key: str) -> Dict
     return result
 
 
-def summarize(input_text: str, amount: int, tokenize: bool | None = None):
-    recommender = get_recommender()
+def download_recommender(zip_path: str = None, unzip_path: str = None):
+    print("Starting recommender download")
+    archive = requests.get(f"{celery.api}/model.zip")
+    delete = False
+    print("Received archive")
+    if zip_path is None:
+        delete = True
+        zip_path = f"{celery.data_path}/temp_download.zip"
+    with open(zip_path, "wb") as zip_file:
+        zip_file.write(archive.content)
+        print(f"Archive written to {zip_path}")
+        if unzip_path is not None:
+            if os.path.exists(unzip_path):
+                print("Deleting exsisting recommender")
+                shutil.rmtree(unzip_path)
+            print("Unzipping")
+            shutil.unpack_archive(zip_file.name, unzip_path)
+            print(f"Recommender written to {unzip_path}")
+    if delete:
+        os.remove(zip_path)
+        print("Removed temp file")
+
+
+def upload_recommender(path: str = None, zip_mode: Literal["none", "temp", "permanent"] = True):
+    print("Starting recommender upload")
+    if zip_mode != "none":
+        shutil.make_archive(path, format="zip", root_dir=path)
+        path = path + ".zip"
+        print(f"Created archive at {path}")
+#        model_name = path.split("/")[-1].split("0")[0]
+#        model_location = os.path.dirname(path)
+    with open(path, "rb") as file:
+        requests.post(celery.api + "/update_model/", files={"file": file})
+    print("Uploaded recommender")
+    if zip_mode == "temp":
+        os.remove(path)
+        print(f"Removed {path}")
+
+
+class EngineTask(celery.Task):
+    recommender: Recommender = None
+    last_changed: float = 0.0
+
+    def before_start(self, task_id, *args, **kwargs):
+        self.update_engine()
+        if self.recommender is None:
+            print(f"Executing task {task_id} without up-to-date engine")
+            self.recommender = get_blank_recommender()
+        print(self.get_start_string())
+
+    def update_engine(self):
+        last_changed_on_disk = get_last_changed_on_disk(celery.unzip_path)
+
+        if last_changed_on_disk > self.last_changed:
+            if self.recommender is None:
+                self.recommender = get_blank_recommender()
+            self.recommender.load(path=celery.data_path, model_name=celery.recommender_name)
+            self.last_changed = last_changed_on_disk
+    
+    def get_start_string(self):
+        return f"Starting {self.name} with recommender:" + "\n" + str(self.recommender.__dict__) + "\n" + "summarizer:" + "\n" + str(self.recommender.summarizer.__dict__)
+
+
+class StrictEngineTask(EngineTask):
+    def before_start(self, task_id, *args, **kwargs):
+        self.update_engine()
+        if self.recommender is None:
+            raise worker_error.MissingPublication(self.__name__)
+
+
+@worker_ready.connect
+def on_worker_ready(**_):
+    print("Starting Worker")
+    try:
+        download_recommender(celery.zip_path, celery.unzip_path)
+    except Exception as e:
+        print("Could not download because" + "\n" + str(e))
+    print(f"Running Worker on {device}")
+
+
+@celery.task(name="update_recommender")
+def update_recommender(remote_change_time: float | None = None, forced=False):
+    if forced:
+        do_update = True
+    else:
+        if remote_change_time is None:
+            try:
+                remote_change_time = requests.get(f"{celery.api}/last_changed/")["last_changed"]
+            except requests.HTTPError:
+                remote_change_time = 0
+        do_update = remote_change_time > get_last_changed_on_disk(celery.unzip_path)
+
+    if do_update:
+        print(f"Run recommender update with forced={forced} and remote time: {remote_change_time}")
+        download_recommender(celery.zip_path, celery.unzip_path)
+    else:
+        print("No recommender update needed")
+
+
+@celery.task(name="recommend_publication_id",
+             base=StrictEngineTask,
+             bind=True)
+def recommend_by_publication(self: StrictEngineTask, 
+                             publication_id: str, amount: int) -> dict:
+    if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
+        raise worker_error.MissingPublication(publication_id)
+    matches = self.recommender.get_match_by_id(str(publication_id), amount)
+    return convert_matching_to_response(matches, self.recommender.PUBLICATION_ID_KEY)
+
+
+@celery.task(name="recommend_token",
+             base=StrictEngineTask,
+             bind=True)
+def recommend_by_token(self: StrictEngineTask, 
+                       token: str, amount: int) -> dict:
+    matches = self.recommender.get_match_by_token(str(token), amount)
+    return convert_matching_to_response(matches, self.recommender.PUBLICATION_ID_KEY)
+
+
+@celery.task(name="summarize",
+             base=EngineTask,
+             bind=True)
+def summarize(self: EngineTask, 
+              input_text: str, amount: int, tokenize: bool | None):
+    amount = int(amount)
     if tokenize is not None:
-        recommender.summarizer.tokenize = tokenize
-    ranked_tokens, ranked_embeddings = recommender.summarizer.run(input_data=input_text, amount=amount,
+        original_tokenize = self.recommender.summarizer.tokenize
+        self.recommender.summarizer.tokenize = tokenize
+    ranked_tokens, ranked_embeddings = self.recommender.summarizer.run(input_data=input_text, amount=amount,
                                                                   add_embedding=True)
     output_dict = {}
     for index, (token, embedding) in enumerate(zip(ranked_tokens[0], ranked_embeddings[0])):
         output_dict[index] = {"token": token, "embedding": list(embedding)}
+
+    if tokenize is not None:
+        self.recommender.summarizer.tokenize = original_tokenize
     return output_dict
 
 
-def update_recommender():
-    zip_path = f"{celery.data_path}/{celery.recommender_name}.zip"
-    unzip_path = f"{celery.data_path}/{celery.recommender_name}"
-
-    archive = requests.get(f"{celery.api}/model.zip")
-    print("Received archive")
-    with open(zip_path, "wb") as zip_file:
-        zip_file.write(archive.content)
-        if os.path.exists(unzip_path):
-            print("Deleting exsisting recommender")
-            shutil.rmtree(unzip_path)
-        print("Unzipping")
-        shutil.unpack_archive(zip_file.name, unzip_path)
-        print("Unzipped")
-        zip_file.close()
-        print("Closed Zip File")
-
-
-def recommender_outdated(remote_change_time: float = None):
-    zip_path = f"{celery.data_path}/{celery.recommender_name}.zip"
-    if os.path.exists(zip_path):
-        local_change_time = os.path.getmtime(zip_path)
-    else:
-        local_change_time = 0
-    try:
-        if remote_change_time is None:
-            result = requests.get(f"{celery.api}/last_changed").json()
-            remote_change_time = result["last_changed"]
-        return local_change_time < remote_change_time
-    except Exception:
-        return False
-
-
-class MissingPublication(Exception):
-    pass
-
-
-class Tasks:
-    @staticmethod
-    @celery.task(name="update_recommender")
-    def update_recommender():
-        update_recommender()
-
-    @staticmethod
-    @celery.task(name="recommend_publication_id",
-                 # autoretry_for=[MissingPublication],
-                 # retry_kwargs={"max_retries": 5}
-                 )
-    def recommend_by_publication(publication_id: str, amount: int) -> dict:
-        return recommend_by_publication(publication_id, amount)
-
-    @staticmethod
-    @celery.task(name="recommend_token")
-    def recommend_by_token(token: str, amount: int) -> dict:
-        return recommend_by_token(token, amount)
-
-    @staticmethod
-    @celery.task(name="summarize")
-    def summarize(text: str, amount: int, tokenize: bool | None):
-        return summarize(text, amount=int(amount), tokenize=tokenize)
-
-    @staticmethod
-    @celery.task(name="update")
-    def triggered_update(remote_change_time: float):
-        print(f"Run triggered update with time: {remote_change_time}")
-        if recommender_outdated(remote_change_time):
-            print("Updating")
-            update_recommender()
-        else:
-            print("Recommender already up to date")
-
-    @staticmethod
-    @celery.task(name="build_annoy")
-    def build_annoy():
-        recommender = get_recommender()
-        recommender.annoy_input_length = 500
-        result = get_all_vectors()
-        new_mapping, embeddings = recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
-        recommender.build_annoy(new_mapping, embeddings, "override")
-        if os.path.exists(celery.data_path + "/temp"):
-            shutil.rmtree(celery.data_path + "/temp")
-        recommender.save(path=celery.data_path, model_name="temp")
-        shutil.make_archive(celery.data_path + "/temp", format="zip", root_dir=celery.data_path + "/temp")
-        requests.post(celery.api + "/update_model/", files={"file": open(celery.data_path + "/temp.zip", "rb")})
+@celery.task(name="build_annoy",
+             base=EngineTask,
+             bind=True)
+def build_annoy(self: EngineTask):
+    result = get_all_vectors()
+    new_mapping, embeddings = self.recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
+    original_annoy_input_length = self.recommender.annoy_input_length
+    self.recommender.annoy_input_length = embeddings.shape[1]
+    self.recommender.build_annoy(new_mapping, embeddings, "override")
+    if os.path.exists(celery.data_path + "/temp"):
         shutil.rmtree(celery.data_path + "/temp")
-        os.remove(celery.data_path + "/temp.zip")
-        print(new_mapping.info())
-        print(new_mapping.head(10))
+    self.recommender.save(path=celery.data_path, model_name="temp")
+    upload_recommender(celery.data_path + "/temp", zip_mode="temp")
+    shutil.rmtree(celery.data_path + "/temp")
+    self.recommender.annoy_input_length = original_annoy_input_length
+    return {"length": len(new_mapping)}
+
+
+@celery.task(name="random_id",
+            base=StrictEngineTask,
+            bind=True)
+def get_random_id(self: StrictEngineTask, amount: int):
+    sample = self.recommender.mapping.sample(int(amount))
+    sample = sample[self.recommender.PUBLICATION_ID_KEY].to_list()
+    return sample
