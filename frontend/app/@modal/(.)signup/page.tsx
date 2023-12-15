@@ -14,7 +14,7 @@ import ModalCloseButton from "@/components/ModalCloseButton";
 export default function SignUpModal() {
   return (
     <Modal>
-      <Card className="w-[550px] shadow-lg">
+      <Card className="shadow-lg relative">
         <CardHeader>
           <ModalCloseButton />
           <CardTitle className="text-center">Create Account</CardTitle>

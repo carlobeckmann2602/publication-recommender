@@ -18,7 +18,7 @@ type Props = {
 export default function SignInModal(props: Props) {
   return (
     <Modal>
-      <Card className="w-[550px] shadow-lg">
+      <Card className="shadow-lg relative">
         <CardHeader>
           <ModalCloseButton />
           <CardTitle className="text-center">Sign In</CardTitle>
