@@ -1,7 +1,7 @@
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportQueryError
-
+from db import DatabaseApi
 # Select your transport with a defined url endpoint
 transport = AIOHTTPTransport(url="http://nest:3000/graphql")
 
@@ -16,9 +16,12 @@ client = Client(transport=transport, fetch_schema_from_transport=True)
 #""")
 
 
-params = {"query": {"source": "ARVIX"}}
-try:
-    result = client.execute(query, variable_values=params)
-    print("--- saving ..." + str(result))
-except TransportQueryError as e:
-    print(e)
+#params = {"query": {"source": "ARVIX"}}
+##try:
+#    result = client.execute(query, variable_values=params)
+ #   print("--- saving ..." + str(result))
+#except TransportQueryError as e:
+#    print(e)
+
+db_api = DatabaseApi()
+print(db_api.get_arxiv_pub_by_id("2312.16793"))

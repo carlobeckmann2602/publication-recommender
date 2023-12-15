@@ -15,7 +15,7 @@ class ArxivApiScraper:
     temp_path = "/scraper/data/temp/"
     dataset_path = "/scraper/data/arxiv_dataset/"
     id_patterns = {"current": r"\d{4}\.\d{4,5}","old": r"[a-z]+(?:-[a-z]+)?\/\d{7}"}
-    interval = 2
+    interval = 25
     
     def __init__(self):
         self.pdf_scraper = PdfScraper(ArxivApiScraper.temp_path)
@@ -23,23 +23,23 @@ class ArxivApiScraper:
 
     def run(self):
         print("ArxivApiScraper.run()")
-        update_list = list()
 
         pub_count = int(self.db_api.get_arxiv_pub_count())
         
         id_max = None
         id_min = None
         if pub_count > 0:
-            id_max = self.db_api.get_newest_arxiv_pub()
+            id_max = self.db_api.get_newest_arxiv_pub() 
             if id_max is not None:
                 yy_max = int(id_max[:2])
                 mm_max = int(id_max[2:4])
                 id_max_num = int(id_max[5:])
-            id_min = self.db_api.get_oldest_arxiv_pub()
-            if id_min is not None:
-                yy_min = int(id_min[:2])
-                mm_min = int(id_min[2:4])
-                id_min_num = int(id_min[5:])
+                #print("--- id_max: " + str(id_max) + " -> YY:" + str(yy_max)+", MM: "+str(mm_max)+", NUM: " + str(id_max_num))
+            #id_min = self.db_api.get_oldest_arxiv_pub() # müsste in db 2312.06793 sein am 2023-12-11
+            #if id_min is not None:
+            #    yy_min = int(id_min[:2])
+            #    mm_min = int(id_min[2:4])
+            #    id_min_num = int(id_min[5:])
 
         # get newer publications
         id_new = self.scrape_newest_id() # '2311.17055'
@@ -47,6 +47,7 @@ class ArxivApiScraper:
             yy_new = int(id_new[:2])
             mm_new = int(id_new[2:4])
             id_new_num = int(id_new[5:])
+            print("--- id_new: " + str(id_new) + " -> YY:" + str(yy_new)+", MM: "+str(mm_new)+", NUM: " + str(id_new_num))
         else:
             return
 
@@ -55,14 +56,13 @@ class ArxivApiScraper:
                 # get distance from newest id
                 if yy_max == yy_new and mm_max == mm_new:
                     distance = id_new_num - id_max_num
-                    update_list += self.scrape_publications(start_at=0, max_results=distance, descending=True)
+                    self.scrape_publications(start_at=0, max_results=distance, descending=True)
                 else:
-                    update_list += self.scrape_publications(start_at=0, max_results=ArxivApiScraper.interval, descending=True)
+                    self.scrape_publications(start_at=0, max_results=ArxivApiScraper.interval, descending=True)
 
         # get the next x publications after publication count in db
-        update_list += self.scrape_publications(start_at=pub_count, max_results=ArxivApiScraper.interval, descending=True)
-        
-        self.db_api.add_arxiv_pub(update_list)
+        print("--- pub_count: " + str(pub_count) + ", interval: " + str(ArxivApiScraper.interval))
+        self.scrape_publications(start_at=pub_count, max_results=ArxivApiScraper.interval, descending=True)
     
     def run_alt(self):
         # get publications in database
@@ -137,11 +137,11 @@ class ArxivApiScraper:
                         upd_date_str = entry.find(xml_tag_prefix+'updated').text
                         upd_date = datetime.datetime.strptime(upd_date_str,"%Y-%m-%dT%H:%M:%SZ") #2023-11-29T18:57:18Z
                         # find title
-                        title = entry.find(xml_tag_prefix+'title').text.strip()
-                        title = title.replace("\n", " ")
+                        title = entry.find(xml_tag_prefix+'title').text
+                        title = self.clean(title)
                         # find abstract
-                        abstract = entry.find(xml_tag_prefix+'summary').text.strip()
-                        abstract = abstract.replace("\n", " ")
+                        abstract = entry.find(xml_tag_prefix+'summary').text
+                        abstract = self.clean(abstract)
                         # find author/s
                         authors = list()
                         for author_tag in entry.findall(xml_tag_prefix+'author'):
@@ -162,56 +162,65 @@ class ArxivApiScraper:
                         #    category += category_tag.get('term') + ", "
                         #category = category[:-2]
 
-                        # scrape pdf contents and calculate vectors
-                        print("-- collect pdf content of publication id '" + str(arxiv_id) + "' ...")
-                        pdf_content = self.read_pdf(pdf_url, arxiv_id)
-                        if pdf_content is not None:
-                            pdf_content = pdf_content.strip()
-                            pdf_content = pdf_content.replace("\n", " ")
-                        else:
-                            return pub_list
-                        
-                        # calculate vectors with ai backend
-                        print("-- calculate vectors for publication id '" + str(arxiv_id) + "' ...")
-                        vector_dict = None
-                        #'''
-                        file_param = {"file": open("/scraper/data/temp/"+arxiv_id+".txt", "rb")}
-                        res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param)
-                        if res_ai_api.status_code == 200:
-                            vector_dict = json.loads(res_ai_api.text)
-                            #print("-- response: "+str(vector_dict["0"]["token"]))
-                        else:
-                            print("-- vector calculation for publication id '" + str(arxiv_id) + "' failed.")
-                            return pub_list
-                        #'''
-                        
-                        pub = ArxivPublication(
-                            arxiv_id=arxiv_id, 
-                            title=title, 
-                            authors=authors, 
-                            src="ARXIV",
-                            url=pdf_url,
-                            pub_date=pub_date_str,
-                            upd_date=upd_date_str,
-                            doi=doi,
-                            abstract=abstract,
-                            vector_dict=vector_dict
-                            #category=category
-                        )
-                        pub_list.append(pub)
-                        self.pdf_scraper.delete()
+                        # check if publication is alread in database
+                        if not self.db_api.get_arxiv_pub_by_id(arxiv_id):
+
+                            # scrape pdf contents and calculate vectors
+                            print("- collect pdf content of publication id '" + str(arxiv_id) + "' ...")
+                            pdf_content = self.pdf_scraper.read_pdf(pdf_url, arxiv_id)
+                            if pdf_content is None:
+                                continue
+                            
+                            # calculate vectors with ai backend
+                            print("- calculate vectors for publication id '" + str(arxiv_id) + "' ...")
+                            vector_dict = None
+                            
+                            file_param = {"file": open("/scraper/data/temp/"+arxiv_id+".txt", "rb")}
+                            res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param)
+                            if res_ai_api.status_code == 200:
+                                vector_dict = json.loads(res_ai_api.text)
+                                #print("-- response: "+str(vector_dict["0"]["token"]))
+                            else:
+                                print("-- vector calculation for publication id '" + str(arxiv_id) + "' failed.")
+                                continue
+                            
+                            pub = ArxivPublication(
+                                arxiv_id=arxiv_id, 
+                                title=title, 
+                                authors=authors, 
+                                src="ARXIV",
+                                url=pdf_url,
+                                pub_date=pub_date_str,
+                                upd_date=upd_date_str,
+                                doi=doi,
+                                abstract=abstract,
+                                vector_dict=vector_dict
+                                #category=category
+                            )
+                            pub_list.append(pub)
+                            self.pdf_scraper.delete()
+
+                            self.db_api.add_arxiv_pub(pub)
                 else:
                     print(f"-- failed to retrieve data. status code: {self.response.status}")
-                    return pub_list
+                    return False
         except ConnectionResetError as e:
                 print(f"-- failed to retrieve data. error: {e.args}")
-                return pub_list
+                return False
         except requests.exceptions.ConnectionError as e:
                 print(f"-- failed to retrieve data. error: {e.args}")
-                return pub_list
-        
-        print("-- successfully collected and stored " + str(len(pub_list)) + " arxiv publications.")
-        return pub_list
+                return False
+        return True
+    
+    def clean(self, text):
+        text = text.strip()
+        text = text.replace("\n", " ")
+        text = text.replace('´´', '"')
+        text = text.replace('``', '"')
+        text = text.replace("\'\'", '"')
+        text = re.sub(' +', ' ', text)
+        text = re.sub(r'\\x[0-9a-fA-F]{2}', ' ', text)
+        return text
 
     def scrape_doi(self, url):
         doi = None
@@ -235,13 +244,6 @@ class ArxivApiScraper:
             print(f"- failed to retrieve data. error: {e.args}")
             return doi
         return doi
-    
-    def read_pdf(self, url, filename):
-        if self.pdf_scraper.pull(url, filename):
-            full_text = self.pdf_scraper.read()
-        else: full_text = None
-
-        return full_text
 
     def write_csv(self, csv_path, pub_list):
         print("writing " + str(len(pub_list)) + " entries to '" + csv_path + "' ...")

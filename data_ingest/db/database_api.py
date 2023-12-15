@@ -1,3 +1,4 @@
+import re
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportQueryError
@@ -24,20 +25,28 @@ class DatabaseApi:
     
     def get_arxiv_pub_by_id(self, arxiv_id):
         query = gql("""
-        query publicationsById($query: String!) {
-            publicationsById(filter: $query) {
-                id
+        query searchPublicationBySourceAndSourceId($query:PublicationSourceWithSourceIdDto!) {
+            searchPublicationBySourceAndSourceId(publicationSourceAndSourceId:$query) {
+                exId
             }
         }
         """)
-        params = {"query": arxiv_id}
+        params = {"query": {"exId": str(arxiv_id), "source": "ARXIV"}}
         try:
+            print("- requesting db api if arxiv id is already in database ...")
             result = self.gql_client.execute(query, variable_values=params)
-            print("--- saving ..." + str(result))
+            if result["searchPublicationBySourceAndSourceId"] is not None:
+                if result["searchPublicationBySourceAndSourceId"]["exId"] == arxiv_id:
+                    print("-- requested arxiv id is already in database. skipping "+str(arxiv_id)+" ...")
+                    return True
+            else:
+                print("-- requested arxiv id is not in database. proceeding ...")
+                return False
         except TransportQueryError as e:
             print(e)
+            return False
     
-    def get_oldest_arxiv_pub(self):
+    def get_newest_arxiv_pub(self):
         query = gql("""
         query timing {
             oldest(source: ARXIV) {
@@ -47,15 +56,15 @@ class DatabaseApi:
         }
         """)
         try:
-            print("-- requesting db api for oldest arxiv publication ...")
+            print("- requesting db api for oldest arxiv publication ...")
             result = self.gql_client.execute(query)
-            print("--- found arxiv id " + str(result["oldest"]["exId"]) + ".")
+            print("-- found arxiv id " + str(result["oldest"]["exId"]) + ", published " + str(result["oldest"]["publicationDate"])+".")
             return result["oldest"]["exId"]
         except TransportQueryError as e:
             print(e)
             return None
     
-    def get_newest_arxiv_pub(self):
+    def get_oldest_arxiv_pub(self):
         query = gql("""
         query timing {
             newest(source: ARXIV) {
@@ -67,16 +76,54 @@ class DatabaseApi:
         try:
             print("- requesting db api for newest arxiv publication ...")
             result = self.gql_client.execute(query)
-            print("-- found arxiv id " + str(result["newest"]["exId"]) + ".")
+            print("-- found arxiv id " + str(result["newest"]["exId"]) + ", published " + str(result["newest"]["publicationDate"])+".")
             return result["newest"]["exId"]
         except TransportQueryError as e:
             print(e)
             return None
     
-    # TODO
-    def add_arxiv_pub(self, pub_list):
+    def add_arxiv_pub(self, pub):
         #print("ArxivApiScraper.update_db_entries(update_list)")
-        print("-- saving publications to database ...")
+        print("- saving publication to database ...")
+        mutation = gql("""
+        mutation savePublication($query: CreatePublicationDto!) {
+            savePublication(createPublication: $query) {
+                exId
+                title
+            }
+        }
+        """)
+        sentences = list()
+        for key in pub.vector_dict:
+            #text = self.clean(pub.vector_dict[key]["token"])
+            sentences.append({"value": pub.vector_dict[key]["token"], "vector": pub.vector_dict[key]["embedding"]})
+        
+        params = {
+            "query": {
+                "title": str(pub.title), 
+                "exId": str(pub.arxiv_id),
+                "source":str(pub.src),
+                "doi": str(pub.doi),
+                "url": str(pub.url),
+                "abstract": str(pub.abstract),
+                "authors": pub.authors,
+                "date": pub.pub_date,
+                "descriptor": {
+                    "sentences": sentences
+                }
+        }}
+
+        try:
+            result = self.gql_client.execute(mutation, variable_values=params)
+            print("-- successfully saved " + str(result) + " to database.")
+            return True
+        except TransportQueryError as e:
+            print(e)
+            return False
+
+    def add_arxiv_pub_list(self, pub_list):
+        #print("ArxivApiScraper.update_db_entries(update_list)")
+        print("- saving publications to database ...")
         mutation = gql("""
         mutation savePublication($query: CreatePublicationDto!) {
             savePublication(createPublication: $query) {
@@ -88,7 +135,8 @@ class DatabaseApi:
         for pub in pub_list:
             sentences = list()
             for key in pub.vector_dict:
-                sentences.append({"value": pub.vector_dict[key]["token"], "vector": pub.vector_dict[key]["embedding"]})
+                text = self.clean(pub.vector_dict[key]["token"])
+                sentences.append({"value": text, "vector": pub.vector_dict[key]["embedding"]})
             params = {
                 "query": {
                     "title": str(pub.title), 
@@ -113,6 +161,17 @@ class DatabaseApi:
             """
             try:
                 result = self.gql_client.execute(mutation, variable_values=params)
-                print("--- saving ..." + str(result))
+                print("-- successfully saved " + str(result) + " to database.")
             except TransportQueryError as e:
                 print(e)
+    
+    def clean(self, text):
+        text = text.strip()
+        text = text.replace("\n", " ")
+        text = text.replace('´´', '"')
+        text = text.replace('``', '"')
+        text = text.replace("\'\'", '"')
+        text = text.replace("- ", '')
+        text = re.sub(r" +", " ", text)
+        text = re.sub(r"\\x[0-9a-fA-F]{2}", " ", text)
+        return text
