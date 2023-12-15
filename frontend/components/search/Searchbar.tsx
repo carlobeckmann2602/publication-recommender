@@ -29,7 +29,7 @@ export function Searchbar({ value }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      query: value,
+      query: value || "",
     },
   });
 
