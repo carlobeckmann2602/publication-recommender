@@ -8,6 +8,9 @@ export default function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const onDismiss = useCallback(() => {
+    if (typeof window != "undefined" && window.document) {
+      document.body.style.overflow = "unset";
+    }
     router.back();
   }, [router]);
 
@@ -32,10 +35,16 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [onKeyDown]);
 
+  useEffect(() => {
+    if (typeof window != "undefined" && window.document) {
+      document.body.style.overflow = "hidden";
+    }
+  }, []);
+
   return (
     <div
       ref={overlay}
-      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+      className="fixed  inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
       onClick={onClick}
     >
       <div
