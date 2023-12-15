@@ -116,6 +116,7 @@ class StrictEngineTask(EngineTask):
         self.update_engine()
         if self.recommender is None:
             raise worker_error.MissingPublication(self.__name__)
+        print(self.get_start_string())
 
 
 @worker_ready.connect
