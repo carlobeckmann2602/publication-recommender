@@ -65,21 +65,14 @@ services:
       - BROKER=${AI_BACKEND_BROKER}
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - API_PORT=${AI_BACKEND_PORT}
-      - GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
-  
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+
   ai_backend_worker:
     container_name: ai_backend_worker
-    build: 
+    build:
       context: ./ai_backend
       dockerfile: Dockerfile
     command: celery -A app.celery.celery_worker.celery worker -P eventlet --loglevel=warning
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     networks:
       - pr_network
     volumes:
@@ -89,7 +82,7 @@ services:
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - DATA_PATH=${AI_BACKEND_DATA_PATH}
       - API_PORT=${AI_BACKEND_PORT}
-      - GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
     depends_on:
       - rabbitmq
       - redis
@@ -97,7 +90,7 @@ services:
 
   ai_backend_flower:
     container_name: ai_backend_flower
-    build: 
+    build:
       context: ./ai_backend
       dockerfile: Dockerfile
     command: celery -A app.celery.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT} --conf=app/celery/flowerconfig.py
@@ -106,7 +99,7 @@ services:
       - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
       - DATA_PATH=${AI_BACKEND_DATA_PATH}
       - API_PORT=${AI_BACKEND_PORT}
-      - GRAPHQL_ENDPOINT=${FRONTEND_BACKEND_GRAPHQL_ENDPOINT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
     volumes:
       - ./ai_backend/app/:/code/app/
     networks:
@@ -153,7 +146,7 @@ services:
     networks:
       - pr_network
     environment:
-      - SERVER_BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_SERVER_BACKEND_GRAPHQL_ENDPOINT}
+      - SERVER_BACKEND_GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
       - NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT}
       - NEXTAUTH_SECRET=${FRONTEND_NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${FRONTEND_NEXTAUTH_URL}
@@ -192,7 +185,7 @@ services:
       - DB_PASSWORD=${BACKEND_DB_PASSWORD}
       - DB_DATABASE=${BACKEND_DB_DATABASE}
       - DB_PORT=${BACKEND_DB_PORT}
-  
+
   redis:
     container_name: redis
     image: redis:6.2-alpine
