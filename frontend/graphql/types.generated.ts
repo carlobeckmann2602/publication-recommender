@@ -33,6 +33,7 @@ export type DescriptorDto = {
 export type JwtDto = {
   __typename?: 'JwtDto';
   accessToken: Scalars['String'];
+  expiresIn: Scalars['Int'];
   refreshToken: Scalars['String'];
 };
 
