@@ -38,11 +38,18 @@ type PublicationResponseDto {
   isFavorite: Boolean!
 }
 
+type RecommendationResponseDto {
+  id: String!
+  publications: [PublicationResponseDto!]!
+  createdAt: String!
+}
+
 type Query {
   publications(filter: String!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
   favorites: [PublicationResponseDto!]!
+  recommendations: [RecommendationResponseDto!]!
 }
 
 enum PublicationSource {
@@ -50,13 +57,24 @@ enum PublicationSource {
 }
 
 type Mutation {
+  register(data: RegisterDto!): LoggedIn!
+  login(data: LoginDto!): LoggedIn!
+  refreshToken(token: String!): JwtDto!
   provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
   savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
   markAsFavorite(id: String!): Boolean!
   unmarkAsFavorite(id: String!): Boolean!
-  register(data: RegisterDto!): LoggedIn!
-  login(data: LoginDto!): LoggedIn!
-  refreshToken(token: String!): JwtDto!
+}
+
+input RegisterDto {
+  email: String!
+  password: String!
+  name: String!
+}
+
+input LoginDto {
+  email: String!
+  password: String!
 }
 
 input PublicationVectorsRequestDto {
@@ -89,15 +107,4 @@ input DescriptorDto {
 input SentenceDto {
   value: String!
   vector: [Float!]!
-}
-
-input RegisterDto {
-  email: String!
-  password: String!
-  name: String!
-}
-
-input LoginDto {
-  email: String!
-  password: String!
 }

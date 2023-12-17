@@ -20,15 +20,15 @@ export class FavoriteService {
   async mark(user: User, id: string): Promise<void> {
     const publication = await this.publicationService.findOne(id);
     const favorite = new Favorite();
-    favorite.user_id = user.id;
-    favorite.publication_id = publication.id;
+    favorite.userId = user.id;
+    favorite.publicationId = publication.id;
     await this.favoriteRepository.save(favorite);
   }
 
   async all(user: User): Promise<Publication[]> {
     const favorites = await this.favoriteRepository.find({
       where: {
-        user_id: user.id,
+        userId: user.id,
       },
       relations: ['publication'],
       order: { createdAt: 'DESC' },
@@ -40,8 +40,8 @@ export class FavoriteService {
   async unmark(user: User, publicationId: string): Promise<void> {
     const favorite = await this.favoriteRepository.findOne({
       where: {
-        user_id: user.id,
-        publication_id: publicationId,
+        userId: user.id,
+        publicationId: publicationId,
       },
       relations: ['publication'],
     });

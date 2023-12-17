@@ -8,13 +8,12 @@ import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
 import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
-import { Publication } from '../entities/publication.entity';
 import { DescriptorService } from '../services/descriptor.service';
 import { FavoriteService } from '../services/favorites.service';
 import { PublicationService } from '../services/publication.service';
 import { SourceVo } from '../vo/source.vo';
 
-@Resolver(() => Publication)
+@Resolver()
 export class PublicationResolver {
   constructor(
     private readonly publicationService: PublicationService,

@@ -131,6 +131,7 @@ export type Query = {
   publication: PublicationResponseDto;
   publicationCount: Scalars['Int'];
   publications: Array<PublicationResponseDto>;
+  recommendations: Array<RecommendationResponseDto>;
 };
 
 
@@ -146,6 +147,13 @@ export type QueryPublicationCountArgs = {
 
 export type QueryPublicationsArgs = {
   filter: Scalars['String'];
+};
+
+export type RecommendationResponseDto = {
+  __typename?: 'RecommendationResponseDto';
+  createdAt: Scalars['String'];
+  id: Scalars['String'];
+  publications: Array<PublicationResponseDto>;
 };
 
 export type RegisterDto = {
