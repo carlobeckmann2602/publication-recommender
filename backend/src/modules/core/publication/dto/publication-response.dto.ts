@@ -21,14 +21,14 @@ export class PublicationResponseDto {
   @Field()
   title: string;
 
+  @Field(() => [String])
+  doi: string[];
+
   @Field()
   exId: string;
 
   @Field(() => SourceVo)
   source: SourceVo;
-
-  @Field({ nullable: true })
-  doi: string | null;
 
   @Field({ nullable: true })
   url: string | null;

@@ -38,9 +38,9 @@ export class Publication {
   @Expose()
   title: string;
 
-  @Column({ nullable: true })
+  @Column('varchar', { array: true, default: [] })
   @Expose()
-  doi: string | null;
+  doi: string[] = [];
 
   @Column({ nullable: true })
   @Expose()
