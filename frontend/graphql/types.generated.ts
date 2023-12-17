@@ -18,7 +18,7 @@ export type CreatePublicationDto = {
   authors?: InputMaybe<Array<Scalars['String']>>;
   date?: InputMaybe<Scalars['DateTime']>;
   descriptor: DescriptorDto;
-  doi?: InputMaybe<Scalars['String']>;
+  doi?: InputMaybe<Array<Scalars['String']>>;
   exId: Scalars['String'];
   publisher?: InputMaybe<Scalars['String']>;
   source: PublicationSource;
@@ -108,7 +108,7 @@ export type PublicationChunkDto = {
 export type PublicationResponseDto = {
   __typename?: 'PublicationResponseDto';
   authors?: Maybe<Array<Scalars['String']>>;
-  doi?: Maybe<Scalars['String']>;
+  doi: Array<Scalars['String']>;
   id: Scalars['String'];
   isFavorite: Scalars['Boolean'];
   publicationDate?: Maybe<Scalars['String']>;
