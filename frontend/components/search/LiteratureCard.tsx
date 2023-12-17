@@ -10,11 +10,12 @@ import {
 import {
   BookOpenIcon,
   ChatBubbleBottomCenterTextIcon,
-  ClipboardDocumentIcon,
   DocumentIcon,
-  HeartIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
+import { DOCUMENT_TYPES } from "@/constants/enums";
+import SimilarSearchButton from "./SimilarSearchButton";
+import LikeButton from "./LikeButton";
 
 type Props = {
   id: string;
@@ -26,23 +27,21 @@ type Props = {
   matchedSentence?: string | null;
   doi?: string | null;
   documentType?: DOCUMENT_TYPES | null;
+  deactivateSearchSimilar?: boolean;
+  className?: string;
 };
-
-export enum DOCUMENT_TYPES {
-  "PAPER" = 1,
-  "BOOK" = 2,
-  "SPEECH" = 3,
-}
 
 export default function LiteratureCard(props: Props) {
   const domain = props.link.replace(
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"
   );
+
   //const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
   const doiUrl = `https://www.doi.org/${props.doi}`;
+
   return (
-    <Card className="w-5/6" id={props.id}>
+    <Card className={props.className} id={props.id}>
       <CardHeader>
         <CardTitle className="flex flex-row gap-2 align-middle">
           {props.documentType === DOCUMENT_TYPES.PAPER && (
@@ -79,14 +78,16 @@ export default function LiteratureCard(props: Props) {
         )}
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row justify-between align-middle grow">
-          <div className="flex flex-row gap-2">
-            <ClipboardDocumentIcon width={24} />
+        <div className="flex flex-row justify-between align-middle items-end grow">
+          <div className="flex flex-row">
+            {!props.deactivateSearchSimilar && (
+              <SimilarSearchButton id={props.id} />
+            )}
             {/* <TagIcon width={24} /> */}
-            <HeartIcon width={20} />
+            <LikeButton id={props.id} liked={false} />
           </div>
           {props.doi && (
-            <span>
+            <span className="h-fit">
               DOI:{" "}
               <a
                 href={doiUrl}

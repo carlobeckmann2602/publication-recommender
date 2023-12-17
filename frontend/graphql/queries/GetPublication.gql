@@ -1,0 +1,11 @@
+query GetPublication($id: String!) {
+  publication(id: $id) {
+    id
+    title
+    source
+    doi
+    url
+    authors
+    publicationDate
+  }
+}
