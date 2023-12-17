@@ -10,7 +10,7 @@ export class UpdatePublicationsTable1700631916114 implements MigrationInterface 
     await queryRunner.query(`ALTER TABLE "publications" ADD "url" VARCHAR`);
     await queryRunner.query(`ALTER TABLE "publications" ADD "abstract" VARCHAR`);
     await queryRunner.query(`ALTER TABLE "publications" ADD "descriptor" jsonb NOT NULL`);
-    await queryRunner.query(`ALTER TABLE "publications" ALTER COLUMN "id" SET DEFAULT uuid_generate_v4()`);
+    await queryRunner.query(`ALTER TABLE "publications" ALTER COLUMN "id" SET DEFAULT gen_random_uuid()`);
     await queryRunner.query(`ALTER TABLE "publications" ADD CONSTRAINT ex_id_source UNIQUE ("ex_id", "source");`);
   }
 
