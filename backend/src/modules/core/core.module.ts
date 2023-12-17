@@ -9,7 +9,6 @@ import { PublicationController } from './publication/controllers/publication.con
 import { Favorite } from './publication/entities/favorite.entity';
 import { Publication } from './publication/entities/publication.entity';
 import { Recommendation } from './publication/entities/recommendation.entity';
-import { RecommendationPublication } from './publication/entities/recommendation_publication.entity';
 import { FavoriteResolver } from './publication/resolvers/favorite.resolver';
 import { PublicationResolver } from './publication/resolvers/publication.resolver';
 import { RecommendationResolver } from './publication/resolvers/recommendation.resolver';
@@ -22,7 +21,7 @@ import { UserService } from './user/services/user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Publication, Favorite, Recommendation, RecommendationPublication]),
+    TypeOrmModule.forFeature([User, Publication, Favorite, Recommendation]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

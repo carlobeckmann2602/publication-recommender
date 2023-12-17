@@ -5,24 +5,17 @@ export class CreateRecommendationsTable1702740363202 implements MigrationInterfa
     await queryRunner.query(`
             CREATE TABLE recommendations (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            user_id UUID NOT NULL,
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             created_at TIMESTAMP NOT NULL DEFAULT now(),
             updated_at TIMESTAMP NOT NULL DEFAULT now()
       )`);
 
     await queryRunner.query(`
-            CREATE TABLE recommendation_publications (
-            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            recommendation_id UUID NOT NULL,
-            publication_id UUID NOT NULL
+        CREATE TABLE recommendation_publications (
+            recommendation_id UUID NOT NULL REFERENCES recommendations(id) ON DELETE CASCADE,
+            publication_id UUID NOT NULL REFERENCES publications(id) ON DELETE CASCADE,
+            PRIMARY KEY (recommendation_id, publication_id)
       )`);
-
-    await queryRunner.query(`ALTER TABLE recommendations 
-        ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE`);
-    await queryRunner.query(`ALTER TABLE recommendation_publications
-        ADD FOREIGN KEY (recommendation_id) REFERENCES recommendations(id) ON DELETE CASCADE`);
-    await queryRunner.query(`ALTER TABLE recommendation_publications
-        ADD FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE`);
 
     await queryRunner.query(`
       CREATE INDEX ON recommendations(user_id);
