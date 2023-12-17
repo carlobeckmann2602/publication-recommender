@@ -45,7 +45,6 @@ export default function LikeButton(props: Props) {
       try {
         console.log(`Like State: ${liked}`);
         if (!liked) {
-          console.log("Like");
           const response = await markFavoriteFunction({
             variables: { id: props.id },
           });
@@ -55,7 +54,6 @@ export default function LikeButton(props: Props) {
             console.error("Like failed");
           }
         } else {
-          console.log("Unlike");
           const response = await unmarkFavoriteFunction({
             variables: { id: props.id },
           });
