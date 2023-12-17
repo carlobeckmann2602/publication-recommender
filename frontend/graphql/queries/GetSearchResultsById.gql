@@ -1,0 +1,11 @@
+query GetSearchResultsById($id: String!) {
+  publicationsById(filter: $id) {
+    id
+    title
+    source
+    doi
+    url
+    authors
+    publicationDate
+  }
+}

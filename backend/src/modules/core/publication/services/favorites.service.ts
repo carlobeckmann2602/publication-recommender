@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { Favorite } from '../entities/favorite.entity';
 import { Publication } from '../entities/publication.entity';
 import { PublicationService } from './publication.service';
@@ -49,5 +50,19 @@ export class FavoriteService {
     if (favorite instanceof Favorite) {
       await this.favoriteRepository.remove(favorite);
     }
+  }
+
+  async publicationsWithFavorites(publications: Publication[], user: User | null) {
+    const favorites: Set<string> = user
+      ? new Set((await this.all(user)).map((publication) => publication.id))
+      : new Set([]);
+
+    return publications.map((publication) => {
+      const dto = new PublicationResponseDto(publication);
+      if (favorites.has(dto.id)) {
+        dto.isFavorite = true;
+      }
+      return dto;
+    });
   }
 }
