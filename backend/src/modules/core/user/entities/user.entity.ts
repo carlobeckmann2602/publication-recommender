@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Favorite } from '../../publication/entities/favorite.entity';
+import { Recommendation } from '../../publication/entities/recommendation.entity';
 
 @ObjectType()
 @Entity('users')
@@ -40,6 +41,12 @@ export class User {
   })
   @JoinColumn({ name: 'user_id' })
   favorites: Favorite[];
+
+  @OneToMany(() => Recommendation, (recommendation) => recommendation.user, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'user_id' })
+  recommendations: Recommendation[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

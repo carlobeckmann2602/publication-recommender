@@ -1,8 +1,19 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 import { DescriptorDto } from '../dto/descriptor.dto';
 import { DescriptorTransformer } from '../transformers/descriptor.transformer';
 import { SourceVo } from '../vo/source.vo';
+import { Recommendation } from './recommendation.entity';
 
 @Entity('publications')
 @Unique('ex_id_source', ['exId', 'source'])
@@ -49,7 +60,7 @@ export class Publication {
   @Expose()
   authors: string[] = [];
 
-  @Column({ nullable: true, type: 'date' })
+  @Column({ nullable: true, type: Date })
   @Expose()
   date: Date;
 
@@ -57,6 +68,14 @@ export class Publication {
   @Expose()
   @Type(() => DescriptorDto)
   descriptor: DescriptorDto;
+
+  @ManyToMany(() => Recommendation, (recommendation) => recommendation.publications)
+  @JoinTable({
+    name: 'recommendation_publications',
+    joinColumn: { name: 'publication_id' },
+    inverseJoinColumn: { name: 'recommendation_id' },
+  })
+  recommendations: Recommendation[];
 
   @Exclude()
   @CreateDateColumn({ name: 'created_at' })

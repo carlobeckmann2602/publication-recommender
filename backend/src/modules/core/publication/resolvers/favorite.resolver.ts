@@ -5,10 +5,9 @@ import { AuthUser } from '../../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { User } from '../../user/entities/user.entity';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
-import { Publication } from '../entities/publication.entity';
 import { FavoriteService } from '../services/favorites.service';
 
-@Resolver(() => Publication)
+@Resolver()
 export class FavoriteResolver {
   constructor(private favoriteService: FavoriteService) {}
 

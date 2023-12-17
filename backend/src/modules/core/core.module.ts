@@ -8,17 +8,21 @@ import { TokenService } from './auth/services/token.service';
 import { PublicationController } from './publication/controllers/publication.controller';
 import { Favorite } from './publication/entities/favorite.entity';
 import { Publication } from './publication/entities/publication.entity';
+import { Recommendation } from './publication/entities/recommendation.entity';
+import { RecommendationPublication } from './publication/entities/recommendation_publication.entity';
 import { FavoriteResolver } from './publication/resolvers/favorite.resolver';
 import { PublicationResolver } from './publication/resolvers/publication.resolver';
+import { RecommendationResolver } from './publication/resolvers/recommendation.resolver';
 import { DescriptorService } from './publication/services/descriptor.service';
 import { FavoriteService } from './publication/services/favorites.service';
 import { PublicationService } from './publication/services/publication.service';
+import { RecommendationService } from './publication/services/recommendation.service';
 import { User } from './user/entities/user.entity';
 import { UserService } from './user/services/user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Publication, Favorite]),
+    TypeOrmModule.forFeature([User, Publication, Favorite, Recommendation, RecommendationPublication]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -35,9 +39,11 @@ import { UserService } from './user/services/user.service';
     PublicationService,
     DescriptorService,
     FavoriteService,
+    RecommendationService,
+    AuthResolver,
     PublicationResolver,
     FavoriteResolver,
-    AuthResolver,
+    RecommendationResolver,
   ],
   controllers: [PublicationController],
 })
