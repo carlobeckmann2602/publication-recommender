@@ -43,7 +43,6 @@ export default function LikeButton(props: Props) {
   const onLiked = async () => {
     if (session.status == "authenticated") {
       try {
-        console.log(`Like State: ${liked}`);
         if (!liked) {
           const response = await markFavoriteFunction({
             variables: { id: props.id },

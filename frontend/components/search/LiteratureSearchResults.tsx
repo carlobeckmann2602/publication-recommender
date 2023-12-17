@@ -33,10 +33,7 @@ export default async function LiteratureSearchResults({
                 id={publication.id}
                 title={publication.title}
                 link={publication.url ? publication.url : ""}
-                authors={JSON.stringify(publication.authors)
-                  .replaceAll('"', "")
-                  .replaceAll(",", ", ")
-                  .slice(1, -1)}
+                authors={publication.authors}
                 date={
                   publication.publicationDate
                     ? new Date(publication.publicationDate)
@@ -62,10 +59,7 @@ export default async function LiteratureSearchResults({
                 id={publication.id}
                 title={publication.title}
                 link={publication.url ? publication.url : ""}
-                authors={JSON.stringify(publication.authors)
-                  .replaceAll('"', "")
-                  .replaceAll(",", ", ")
-                  .slice(1, -1)}
+                authors={publication.authors}
                 date={
                   publication.publicationDate
                     ? new Date(publication.publicationDate)
