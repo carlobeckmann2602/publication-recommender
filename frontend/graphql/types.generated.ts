@@ -18,7 +18,7 @@ export type CreatePublicationDto = {
   authors?: InputMaybe<Array<Scalars['String']>>;
   date?: InputMaybe<Scalars['DateTime']>;
   descriptor: DescriptorDto;
-  doi?: InputMaybe<Scalars['String']>;
+  doi?: InputMaybe<Array<Scalars['String']>>;
   exId: Scalars['String'];
   publisher?: InputMaybe<Scalars['String']>;
   source: PublicationSource;
@@ -33,6 +33,7 @@ export type DescriptorDto = {
 export type JwtDto = {
   __typename?: 'JwtDto';
   accessToken: Scalars['String'];
+  expiresIn: Scalars['Int'];
   refreshToken: Scalars['String'];
 };
 
@@ -102,7 +103,7 @@ export type PublicationChunkDto = {
 export type PublicationResponseDto = {
   __typename?: 'PublicationResponseDto';
   authors?: Maybe<Array<Scalars['String']>>;
-  doi?: Maybe<Scalars['String']>;
+  doi: Array<Scalars['String']>;
   exId: Scalars['String'];
   id: Scalars['String'];
   isFavorite: Scalars['Boolean'];
@@ -136,6 +137,7 @@ export type Query = {
   publicationCount: Scalars['Int'];
   publicationsById: Array<PublicationResponseDto>;
   publicationsByQuery: Array<PublicationResponseDto>;
+  recommendations: Array<RecommendationResponseDto>;
   searchPublicationBySourceAndSourceId?: Maybe<PublicationResponseDto>;
 };
 
@@ -177,6 +179,13 @@ export type QueryPublicationsByQueryArgs = {
 
 export type QuerySearchPublicationBySourceAndSourceIdArgs = {
   publicationSourceAndSourceId: PublicationSourceWithSourceIdDto;
+};
+
+export type RecommendationResponseDto = {
+  __typename?: 'RecommendationResponseDto';
+  createdAt: Scalars['String'];
+  id: Scalars['String'];
+  publications: Array<PublicationResponseDto>;
 };
 
 export type RegisterDto = {

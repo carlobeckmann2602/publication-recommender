@@ -110,7 +110,7 @@ services:
       - rabbitmq
       - redis
       - ai_backend
-
+  
   postgres:
     image: postgres:16.0-alpine3.18
     environment:
@@ -152,6 +152,20 @@ services:
       - NEXTAUTH_URL=${FRONTEND_NEXTAUTH_URL}
       - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
+  
+  arxiv_api_scraper:
+    build:
+      context: ./data_ingest
+      dockerfile: Dockerfile
+    volumes:
+      - ./data_ingest/:/scraper/
+    networks:
+      - pr_network
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
 
   adminer:
     image: adminer

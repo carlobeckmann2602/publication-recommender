@@ -12,7 +12,7 @@ import { RegisterDto } from '../dto/register.dto';
 import { TokenInvalidException } from '../exceptions/token-invalid.exception';
 import { AuthService } from '../services/auth.service';
 
-@Resolver(() => JwtDto)
+@Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
