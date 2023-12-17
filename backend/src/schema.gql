@@ -31,7 +31,7 @@ type PublicationChunkDataDto {
 type PublicationResponseDto {
   id: String!
   title: String!
-  doi: String
+  doi: [String!]!
   url: String
   authors: [String!]
   publicationDate: String
@@ -86,7 +86,7 @@ input CreatePublicationDto {
   title: String!
   exId: String!
   source: PublicationSource!
-  doi: String
+  doi: [String!]
   url: String
   publisher: String
   abstract: String

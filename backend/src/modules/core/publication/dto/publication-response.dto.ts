@@ -18,8 +18,8 @@ export class PublicationResponseDto {
   @Field()
   title: string;
 
-  @Field({ nullable: true })
-  doi: string | null;
+  @Field(() => [String])
+  doi: string[];
 
   @Field({ nullable: true })
   url: string | null;
