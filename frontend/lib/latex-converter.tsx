@@ -36,5 +36,5 @@ export default function Latex({ children }: Props) {
       );
     }
   }
-  return <span>{result}</span>;
+  return <>{result}</>;
 }

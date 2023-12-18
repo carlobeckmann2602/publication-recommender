@@ -95,7 +95,7 @@ export default function LiteratureCard(props: Props) {
               <SimilarSearchButton id={props.id} />
             )}
             {/* <TagIcon width={24} /> */}
-            <LikeButton id={props.id} liked={false} />
+            <LikeButton id={props.id} />
           </div>
           {props.doi && (
             <span className="h-fit">

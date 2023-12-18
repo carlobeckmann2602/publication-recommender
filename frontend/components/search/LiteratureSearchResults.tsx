@@ -6,6 +6,7 @@ import LiteratureCard from "@/components/search/LiteratureCard";
 import { GetSearchResultsByQueryDocument } from "@/graphql/queries/GetSearchResultsByQuery.generated";
 import { SEARCH_TYPES } from "@/constants/enums";
 import { GetSearchResultsByIdDocument } from "@/graphql/queries/GetSearchResultsById.generated";
+import { getServerSession } from "next-auth";
 
 type Props = {
   query: string;

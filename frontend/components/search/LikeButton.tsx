@@ -1,23 +1,50 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as FullHeartIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { MarkAsFavoriteDocument } from "@/graphql/mutation/MarkAsFavorite.generated";
 import { UnmarkAsFavoriteDocument } from "@/graphql/mutation/UnmarkAsFavorite.generated";
+import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 
 type Props = {
-  liked: boolean;
   id: string;
 };
 
 export default function LikeButton(props: Props) {
-  const [liked, setLiked] = useState(props.liked);
+  const [liked, setLiked] = useState(false);
   const router = useRouter();
   const session = useSession();
+
+  const [getFavorites, { data }] = useLazyQuery(GetFavoritesDocument, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${session.data?.userToken.jwtToken}`,
+      },
+    },
+  });
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (session.status === "authenticated") {
+        await getFavorites();
+
+        if (
+          data?.favorites.find((element) => {
+            return element.id === props.id;
+          })
+        ) {
+          setLiked(true);
+        }
+      }
+    };
+
+    loadFavorites();
+  }, [session, data?.favorites, getFavorites, props.id]);
 
   const [markFavoriteFunction, { error: markFavoriteError }] = useMutation(
     MarkAsFavoriteDocument,
@@ -27,8 +54,10 @@ export default function LikeButton(props: Props) {
           Authorization: `Bearer ${session.data?.userToken.jwtToken}`,
         },
       },
+      refetchQueries: [GetFavoritesDocument],
     }
   );
+
   const [unmarkFavoriteFunction, { error: unmarkFavoriteError }] = useMutation(
     UnmarkAsFavoriteDocument,
     {
@@ -37,6 +66,7 @@ export default function LikeButton(props: Props) {
           Authorization: `Bearer ${session.data?.userToken.jwtToken}`,
         },
       },
+      refetchQueries: [GetFavoritesDocument],
     }
   );
 
