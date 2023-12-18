@@ -22,7 +22,9 @@ async function refreshToken(token: JWT): Promise<JWT> {
     jwtRefreshToken: data?.refreshToken.refreshToken
       ? data.refreshToken.refreshToken
       : "",
-    jwtExpiresIn: 100000000000000000,
+    jwtExpiresIn: data?.refreshToken.expiresIn
+      ? data.refreshToken.expiresIn
+      : 0,
   };
 
   return {
@@ -56,6 +58,8 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
+        if (!data) return null;
+
         const user = {
           id: data?.login.user.id,
           name: data?.login.user.name,
@@ -66,7 +70,7 @@ export const authOptions: NextAuthOptions = {
         const userToken = {
           jwtToken: data?.login.jwt.accessToken,
           jwtRefreshToken: data?.login.jwt.refreshToken,
-          jwtExpiresIn: new Date().getTime() + 10000000, //TODO use correct expiry date
+          jwtExpiresIn: new Date().getTime() + data?.login.jwt.expiresIn, //TODO use correct expiry date
         };
 
         if (user) {
@@ -129,9 +133,7 @@ export const authOptions: NextAuthOptions = {
         token.userToken = {
           jwtToken: account.access_token ? account.access_token : "",
           jwtRefreshToken: account.refresh_token ? account.refresh_token : "",
-          jwtExpiresIn: /* account.expires_at
-            ? account.expires_at
-            : */ 100000000000000000,
+          jwtExpiresIn: account.expires_at ? account.expires_at : 0,
         };
         if (user.name && user.email)
           token.user = {

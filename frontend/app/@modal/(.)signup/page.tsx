@@ -24,7 +24,7 @@ export default function SignUpModal() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col w-full gap-6">
-            <SignUpForm />
+            <SignUpForm callbackUrl={""} />
           </div>
         </CardContent>
         <CardFooter className="flex justify-between"></CardFooter>

@@ -27,10 +27,7 @@ export default async function LiteratureCardById({
         id={data.publication.id}
         title={data.publication.title}
         link={data.publication.url ? data.publication.url : ""}
-        authors={JSON.stringify(data.publication.authors)
-          .replaceAll('"', "")
-          .replaceAll(",", ", ")
-          .slice(1, -1)}
+        authors={data.publication.authors}
         date={
           data.publication.publicationDate
             ? new Date(data.publication.publicationDate)

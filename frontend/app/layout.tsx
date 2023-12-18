@@ -18,7 +18,7 @@ export default function RootLayout(props: {
 }) {
   return (
     <html lang="en">
-      <head />
+      <head></head>
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen flex flex-col">
