@@ -12,23 +12,23 @@ export const metadata: Metadata = {
   description: "Find your academic publication",
 };
 
-export default function RootLayout({
-  children,
-}: {
+export default function RootLayout(props: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <head />
+      <head></head>
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen flex flex-row">
             <Sidebar className="" />
             <div className="flex-grow">
-              {children}
+              {props.children}
               <Toaster />
             </div>
           </div>
+          {props.modal}
         </Providers>
       </body>
     </html>

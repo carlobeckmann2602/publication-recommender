@@ -2,5 +2,6 @@ mutation RefreshToken($token: String!) {
   refreshToken(token: $token) {
     accessToken
     refreshToken
+    expiresIn
   }
 }

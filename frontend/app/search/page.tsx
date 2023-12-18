@@ -13,7 +13,7 @@ type SearchParams = {
 export default function Search({ searchParams }: SearchParams) {
   return (
     <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
-      <Searchbar value={searchParams.q}></Searchbar>
+      <Searchbar value={searchParams.q} />
       <Suspense key={searchParams.q} fallback={<div>Loading...</div>}>
         <LiteratureSearchResults
           query={searchParams.q}

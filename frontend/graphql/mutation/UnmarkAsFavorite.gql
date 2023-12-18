@@ -1,0 +1,3 @@
+mutation UnmarkAsFavorite($id: String!) {
+  unmarkAsFavorite(id: $id)
+}

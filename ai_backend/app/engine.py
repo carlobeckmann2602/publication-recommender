@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 import numpy as np
 import torch
-from .util.misc import add_array_column, load_json_dict
+from .util.misc import add_array_column
 from sentence_transformers import SentenceTransformer, util
 from .util.LexRank import degree_centrality_scores
 from annoy import AnnoyIndex

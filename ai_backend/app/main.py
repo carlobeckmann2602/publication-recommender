@@ -2,8 +2,7 @@ from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from typing import List, Dict
 from .util.misc import create_file_structure
-from celery.app import control
-from .celery.celery_worker import Tasks, MissingPublication
+from . import celery as tasks
 import os
 import aiofiles
 
@@ -23,6 +22,10 @@ create_file_structure(rec_api.model_path, rec_api.upload_path, rec_api.archive_p
 
 # Initiate model
 rec_api.current_model = f"{rec_api.archive_path}/arxiv_6k-v3.zip"
+if os.path.exists(rec_api.current_model):
+    rec_api.last_changed = os.path.getmtime(rec_api.current_model)
+else:
+    rec_api.last_changed = 0
 
 
 @rec_api.get("/build_annoy/")
@@ -30,7 +33,13 @@ async def build_annoy():
     """
     Forces to build a new annoy index
     """
-    Tasks.build_annoy.apply_async(args=[])
+    tasks.build_annoy.apply_async(args=[])
+
+
+@rec_api.get("/random/")
+async def get_random_id(amount = 5):
+    task = tasks.get_random_id.apply_async(args=[amount])
+    return {"id:": task.get()}
 
 
 @rec_api.get("/last_changed/")
@@ -41,6 +50,7 @@ async def get_model_modification_date():
     **return**: The UNIX time value with pattern: {last_changed: float}
     """
     if os.path.exists(rec_api.current_model):
+        # TODO: Decide if read should stay or rec_api.last_changed
         return {"last_changed": os.path.getmtime(rec_api.current_model)}
     else:
         raise HTTPException(status_code=404, detail=fr"No models archive found for {rec_api.current_model}")
@@ -56,8 +66,9 @@ async def update_model(file: UploadFile):
                               delete_buffer=False, return_raw=True,
                               destination=rec_api.archive_path)
     rec_api.current_model = f"{rec_api.archive_path}/current_model.zip"
-    Tasks.triggered_update.apply_async(
-        args=[os.path.getmtime(rec_api.current_model)],
+    rec_api.last_changed = os.path.getmtime(rec_api.current_model)
+    tasks.update_recommender.apply_async(
+        args=[rec_api.last_changed],
         queue='ml_broadcast'
     )
 
@@ -84,11 +95,11 @@ async def get_recommendation(publication_id: str, amount: int = 5):
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = Tasks.recommend_by_publication.apply_async(args=[str(publication_id), amount])
+    task = tasks.recommend_by_publication.apply_async(args=[str(publication_id), amount])
     try:
         result = task.get()
         return result
-    except MissingPublication as e:
+    except tasks.MissingPublication as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 
@@ -101,7 +112,7 @@ async def get_recommendation(token: str, amount: int = 5):
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = Tasks.recommend_by_token.apply_async(args=[str(token), amount])
+    task = tasks.recommend_by_token.apply_async(args=[str(token), amount])
     result = task.get()
     return result
 
@@ -138,7 +149,7 @@ async def summarize_text(text: str, amount=5, tokenize: bool | None = None):
 
     **return**: The summarization with pattern: {*n*: {token: str, embedding: [float]} *for n in amount*}
     """
-    task = Tasks.summarize.apply_async(args=[text, amount, tokenize])
+    task = tasks.summarize.apply_async(args=[text, amount, tokenize])
     return task.get()
 
 

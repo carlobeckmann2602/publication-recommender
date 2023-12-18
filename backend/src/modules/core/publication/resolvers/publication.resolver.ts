@@ -9,14 +9,13 @@ import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
 import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
-import { Publication } from '../entities/publication.entity';
 import { NoPublicationWithDateForSourceException } from '../exceptions/no-publication-with-date-for-source.exception';
 import { DescriptorService } from '../services/descriptor.service';
 import { FavoriteService } from '../services/favorites.service';
 import { PublicationService } from '../services/publication.service';
 import { SourceVo } from '../vo/source.vo';
 
-@Resolver(() => Publication)
+@Resolver()
 export class PublicationResolver {
   constructor(
     private readonly publicationService: PublicationService,
@@ -113,7 +112,7 @@ export class PublicationResolver {
   async searchPublicationBySourceAndSourceId(
     @Args('publicationSourceAndSourceId', { type: () => PublicationSourceWithSourceIdDto })
     dto: PublicationSourceWithSourceIdDto,
-  ): Promise<PublicationResponseDto> | null {
+  ): Promise<PublicationResponseDto | null> {
     try {
       const publication = await this.publicationService.getPublikationBySourceWithId(dto);
       return new PublicationResponseDto(publication);

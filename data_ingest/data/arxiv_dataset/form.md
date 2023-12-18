@@ -1,9 +1,9 @@
 ## Publication Dataset Aquisition
 ### TODO
-+ WELCHE DATEN GENAU SOLLEN FÜR DEN ARXIV DATENSATZ GECRAWLT WERDEN
-+ web crawler ueber arxiv
++ WELCHE DATEN GENAU SOLLEN FÜR DEN ARXIV DATENSATZ GESCRAPT WERDEN
++ web scraper ueber arxiv
 	+ bisher sämtliche publikations ids von 2023 bis 2017 ermittelt: 
-		- soll bei der menge erstmal auf eine kategorie (z.B nur cs?) beschränkt werden oder sollen einfach alle publikationen gecrawlt werden
+		- soll bei der menge erstmal auf eine kategorie (z.B nur cs?) beschränkt werden oder sollen einfach alle publikationen gescrapt werden
 	+ publikationsdaten wie doi, autor, abstract, und pdf text werden jetzt über bisher ermittelte arxiv ids abgerufen
 		- welche form soll datensatz haben: der arxiv datensatz von hugging face hat ja article, abstract, section_names
 			- umgesetzt habe ich jetzt id,src,src_id,doi,author,title,abstract,full_text
@@ -15,6 +15,9 @@
 		- besserer pdf 
 		
 	- dann fehlt nur noch cronjob+celery
+
+    - das abrufen der metadaten, der pdf und die generierung der vektoren dauert so lange, dass ich entweder den cronjob intervall oder die anzahl der  gescrapten publikationen senken muss.
+    - aber die dauer ist ja vor allem von der dauer der einzelnen responses abhängig, also müsste ich einen timeout implementieren
 ### Bisher ermittelte Arxiv-IDs (über alle Kategorien)
 - 2017: 111.823
 - 2018: 120.037
@@ -34,7 +37,7 @@ classDiagram
         + src_id: string [source-abhängige id z.B. die arxiv id "2301.00001"]
         + doi: string | NULL
         + author: string
-        + title: string [subtitle direkt mit drin, also "title: subtitle"? arxiv zeigt zb nur title an, für "title: subtitle" müsste ich die pdf crawlen]
+        + title: string [subtitle direkt mit drin, also "title: subtitle"? arxiv zeigt zb nur title an, für "title: subtitle" müsste ich die pdf auslesen]
         + abstract: string
         + full_text: string [inwiefern bereinigt? was soll raus oder aufgeteilt werden?]
         ? section_names: string [wie aus dem hugging face dataset, oder nicht relevant?]

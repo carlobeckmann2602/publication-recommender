@@ -11,7 +11,7 @@ client = Client(transport=transport, fetch_schema_from_transport=True)
 
 provide_vectors = gql(
     """
-    mutation provideVectors($query: PublicationVectorsRequestDto!) {
+    query provideVectors($query: PublicationVectorsRequestDto!) {
         provideVectors(provideVectors: $query) {
             chunk,data{id, vectors}
         }

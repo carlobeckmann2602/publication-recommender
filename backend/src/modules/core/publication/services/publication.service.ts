@@ -93,7 +93,7 @@ export class PublicationService {
     publication.descriptor = dto.descriptor;
     publication.authors = dto.authors;
     publication.url = dto.url;
-    publication.doi = dto.doi;
+    publication.doi = Array.isArray(dto.doi) ? dto.doi : [];
     publication.date = dto.date;
     return await this.publicationRepository.save(publication);
   }

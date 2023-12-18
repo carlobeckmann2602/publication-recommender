@@ -13,18 +13,18 @@ import { User } from '../../user/entities/user.entity';
 import { Publication } from './publication.entity';
 
 @Entity('favorites')
-@Unique('favorites_user_id_publication_id_key', ['user_id', 'publication_id'])
+@Unique('favorites_user_id_publication_id_key', ['userId', 'publicationId'])
 export class Favorite {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ name: 'user_id' })
   @Index('favorites_user_id_idx')
-  user_id: string;
+  userId: string;
 
-  @Column()
+  @Column({ name: 'publication_id' })
   @Index('favorites_publication_id_idx')
-  publication_id: string;
+  publicationId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', foreignKeyConstraintName: 'favorites_user_id_fkey' })

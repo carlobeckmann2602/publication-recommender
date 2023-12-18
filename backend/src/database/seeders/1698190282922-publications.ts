@@ -32,7 +32,11 @@ export class Publications1698190282922 implements Seeder {
       publication.publisher = Math.floor(Math.random() * 2) === 1 ? faker.company.name() : null;
       publication.authors = this.generateAuthors();
       publication.date = Math.floor(Math.random() * 2) === 1 ? faker.date.past() : null;
-      publication.doi = faker.commerce.isbn();
+
+      if (Math.random() > 0.5) {
+        publication.doi = new Array(Math.floor(Math.random() * 3)).fill(faker.commerce.isbn());
+      }
+
       publication.url = faker.internet.url();
       publication.descriptor = descriptor;
       publications.push(publication);

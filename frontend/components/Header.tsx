@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 
 export function Header({
@@ -9,7 +8,7 @@ export function Header({
   subtitle?: string;
 }) {
   return (
-    <div className="bg-slate-100">
+    <div className="bg-neutral-100">
       <div className="relative isolate px-6 pt-6 lg:px-8">
         <div className="mx-auto max-w-2xl py-10 sm:py-18 lg:py-12">
           <div className="text-center">

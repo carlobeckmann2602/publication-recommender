@@ -14,8 +14,8 @@ export class CreatePublicationDto {
   @Field(() => SourceVo)
   source: SourceVo;
 
-  @Field({ nullable: true })
-  doi?: string;
+  @Field(() => [String], { nullable: true })
+  doi?: string[];
 
   @Field({ nullable: true })
   @IsOptional()

@@ -10,55 +10,65 @@ import {
 import {
   BookOpenIcon,
   ChatBubbleBottomCenterTextIcon,
-  ClipboardDocumentIcon,
   DocumentIcon,
-  HeartIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
+import { DOCUMENT_TYPES } from "@/constants/enums";
+import SimilarSearchButton from "./SimilarSearchButton";
+import LikeButton from "./LikeButton";
+import Latex from "@/lib/latex-converter";
 
 type Props = {
   id: string;
   title: string;
-  authors?: string | null;
+  authors?: string[] | null;
   date?: Date;
   link: string;
   abstract?: string | null;
   matchedSentence?: string | null;
-  doi?: string | null;
+  doi?: string[] | null;
   documentType?: DOCUMENT_TYPES | null;
+  deactivateSearchSimilar?: boolean;
+  className?: string;
 };
-
-export enum DOCUMENT_TYPES {
-  "PAPER" = 1,
-  "BOOK" = 2,
-  "SPEECH" = 3,
-}
 
 export default function LiteratureCard(props: Props) {
   const domain = props.link.replace(
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"
   );
+
   //const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
-  const doiUrl = `https://www.doi.org/${props.doi}`;
+  const doiUrl = `https://www.doi.org/${props.doi?.slice(0, 1)}`;
+
+  let authorsString = props.authors?.slice(0, 4).join(", ");
+  if (props.authors && props.authors?.length >= 5)
+    authorsString = authorsString + "...";
+
   return (
-    <Card className="w-5/6" id={props.id}>
+    <Card className={props.className} id={props.id}>
       <CardHeader>
-        <CardTitle className="flex flex-row gap-2 align-middle">
-          {props.documentType === DOCUMENT_TYPES.PAPER && (
-            <DocumentIcon width={24} />
-          )}
-          {props.documentType === DOCUMENT_TYPES.BOOK && (
-            <BookOpenIcon width={24} />
-          )}
-          {props.documentType === DOCUMENT_TYPES.SPEECH && (
-            <ChatBubbleBottomCenterTextIcon width={24} />
-          )}
-          {!props.documentType && <DocumentIcon width={24} />}
-          {props.title}
-        </CardTitle>
+        <div className="flex flex-row gap-2">
+          <div className="w-[32px] min-w-[32px]">
+            {props.documentType === DOCUMENT_TYPES.PAPER && (
+              <DocumentIcon className="text-2xl font-semibold leading-none w-full" />
+            )}
+            {props.documentType === DOCUMENT_TYPES.BOOK && (
+              <BookOpenIcon className="text-2xl font-semibold leading-none w-full" />
+            )}
+            {props.documentType === DOCUMENT_TYPES.SPEECH && (
+              <ChatBubbleBottomCenterTextIcon className="text-2xl font-semibold leading-none w-full" />
+            )}
+            {!props.documentType && (
+              <DocumentIcon className="text-2xl font-semibold leading-none w-full" />
+            )}
+          </div>
+          <CardTitle className="grow">
+            <Latex>{props.title}</Latex>
+          </CardTitle>
+        </div>
         <CardDescription>
-          {props.authors} {props.authors && " - "} {props.date?.getFullYear()}
+          {authorsString} {props.authors && " - "} {props.date?.getFullYear()}
           {props.date && " - "}
           <a
             href={props.link}
@@ -79,21 +89,23 @@ export default function LiteratureCard(props: Props) {
         )}
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row justify-between align-middle grow">
-          <div className="flex flex-row gap-2">
-            <ClipboardDocumentIcon width={24} />
+        <div className="flex flex-row justify-between align-middle items-end grow">
+          <div className="flex flex-row">
+            {!props.deactivateSearchSimilar && (
+              <SimilarSearchButton id={props.id} />
+            )}
             {/* <TagIcon width={24} /> */}
-            <HeartIcon width={20} />
+            <LikeButton id={props.id} />
           </div>
           {props.doi && (
-            <span>
+            <span className="h-fit">
               DOI:{" "}
               <a
                 href={doiUrl}
                 className="text-blue-500 hover:text-gray-800 underline"
                 target="_blank"
               >
-                {props.doi}
+                {props.doi.slice(0, 1)}
               </a>
             </span>
           )}
