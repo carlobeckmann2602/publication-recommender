@@ -1,16 +1,18 @@
 "use client";
-import { ReactNode } from "react";
 import { SessionProvider } from "next-auth/react";
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
+import { SidebarProvider } from "@/context/SidebarContext";
 
 type Props = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 const Providers = ({ children }: Props) => {
   return (
     <SessionProvider>
-      <ApolloWrapper>{children}</ApolloWrapper>
+      <ApolloWrapper>
+        <SidebarProvider>{children}</SidebarProvider>
+      </ApolloWrapper>
     </SessionProvider>
   );
 };

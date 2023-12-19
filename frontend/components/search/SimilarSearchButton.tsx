@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
+import { FileSearch2 } from "lucide-react";
 
 type Props = {
   id: string;
@@ -13,7 +13,7 @@ export default function SimilarSearchButton({ id }: Props) {
       href={`/search/${id}`}
       className={buttonVariants({ variant: "ghost", size: "icon" })}
     >
-      <ClipboardDocumentIcon width={24} />
+      <FileSearch2 width={24} />
     </Link>
   );
 }

@@ -3,7 +3,7 @@ import { getClient } from "@/lib/client";
 import React from "react";
 import LiteratureCard from "@/components/search/LiteratureCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { AlertTriangle } from "lucide-react";
 
 type Props = {
   id: string;
@@ -41,7 +41,7 @@ export default async function LiteratureCardById({
   } catch (error: any) {
     return (
       <Alert variant="destructive" className="w-1/4 self-center">
-        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error.message}</AlertDescription>
       </Alert>
