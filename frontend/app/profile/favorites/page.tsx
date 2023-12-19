@@ -1,9 +1,9 @@
 import { Header } from "@/components/Header";
 
-export default function Profile() {
+export default function Favorites() {
   return (
     <div>
-      <Header title="Profile" />
+      <Header title="Favorites" />
     </div>
   );
 }

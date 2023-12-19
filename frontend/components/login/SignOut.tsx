@@ -7,12 +7,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
 type Props = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 export default function SignOut({ children }: Props) {

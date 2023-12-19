@@ -46,7 +46,7 @@ export default function LiteratureCard(props: Props) {
     authorsString = authorsString + "...";
 
   return (
-    <Card className={props.className} id={props.id}>
+    <Card className={`w-full ${props.className}`} id={props.id}>
       <CardHeader>
         <div className="flex flex-row gap-2">
           <div className="w-[32px] min-w-[32px]">

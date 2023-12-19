@@ -41,7 +41,6 @@ export default async function LiteratureSearchResults({
                     : undefined
                 }
                 doi={publication.doi}
-                className="w-5/6"
               />
             ))}
           </>
@@ -67,7 +66,6 @@ export default async function LiteratureSearchResults({
                     : undefined
                 }
                 doi={publication.doi}
-                className="w-5/6"
               />
             ))}
           </>
