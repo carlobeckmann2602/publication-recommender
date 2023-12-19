@@ -1,12 +1,11 @@
 import React from "react";
 import { getClient } from "@/lib/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import LiteratureCard from "@/components/search/LiteratureCard";
 import { GetSearchResultsByQueryDocument } from "@/graphql/queries/GetSearchResultsByQuery.generated";
 import { SEARCH_TYPES } from "@/constants/enums";
 import { GetSearchResultsByIdDocument } from "@/graphql/queries/GetSearchResultsById.generated";
-import { getServerSession } from "next-auth";
+import { AlertTriangle } from "lucide-react";
 
 type Props = {
   query: string;
@@ -74,7 +73,7 @@ export default async function LiteratureSearchResults({
   } catch (error: any) {
     return (
       <Alert variant="destructive" className="w-1/4">
-        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error.message}</AlertDescription>
       </Alert>

@@ -17,11 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/react/24/outline";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
@@ -30,6 +25,7 @@ import GoogleButton from "@/components/login/GoogleButton";
 import TextSeparator from "@/components/TextSeparator";
 import { useRouter } from "next/navigation";
 import { allowBackgroundScrolling } from "@/lib/modal-controlls";
+import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 
 const FormSchema = z.object({
   email: z
@@ -120,12 +116,12 @@ export function LogInForm(props: Props) {
                   </FormControl>
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
                     {showPassword ? (
-                      <EyeSlashIcon
+                      <EyeOff
                         className="h-6 w-6"
                         onClick={togglePasswordVisibility}
                       />
                     ) : (
-                      <EyeIcon
+                      <Eye
                         className="h-6 w-6"
                         onClick={togglePasswordVisibility}
                       />
@@ -146,7 +142,7 @@ export function LogInForm(props: Props) {
       </Form>
       {!!errorMsg && (
         <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>

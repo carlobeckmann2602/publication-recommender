@@ -1,15 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as FullHeartIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { MarkAsFavoriteDocument } from "@/graphql/mutation/MarkAsFavorite.generated";
 import { UnmarkAsFavoriteDocument } from "@/graphql/mutation/UnmarkAsFavorite.generated";
-import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
+import { Heart } from "lucide-react";
 
 type Props = {
   id: string;
@@ -103,11 +101,7 @@ export default function LikeButton(props: Props) {
 
   return (
     <Button variant="ghost" size="icon" onClick={onLiked}>
-      {liked ? (
-        <FullHeartIcon width={24} color="red" />
-      ) : (
-        <HeartIcon width={24} />
-      )}
+      {liked ? <Heart size={24} color="red" fill="red" /> : <Heart size={24} />}
     </Button>
   );
 }

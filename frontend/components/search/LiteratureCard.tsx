@@ -7,16 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  BookOpenIcon,
-  ChatBubbleBottomCenterTextIcon,
-  DocumentIcon,
-  TagIcon,
-} from "@heroicons/react/24/outline";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import SimilarSearchButton from "./SimilarSearchButton";
 import LikeButton from "./LikeButton";
 import Latex from "@/lib/latex-converter";
+import { Book, File, MessageCircle } from "lucide-react";
 
 type Props = {
   id: string;
@@ -50,18 +45,12 @@ export default function LiteratureCard(props: Props) {
       <CardHeader>
         <div className="flex flex-row gap-2">
           <div className="w-[32px] min-w-[32px]">
-            {props.documentType === DOCUMENT_TYPES.PAPER && (
-              <DocumentIcon className="text-2xl font-semibold leading-none w-full" />
-            )}
-            {props.documentType === DOCUMENT_TYPES.BOOK && (
-              <BookOpenIcon className="text-2xl font-semibold leading-none w-full" />
-            )}
+            {props.documentType === DOCUMENT_TYPES.PAPER && <File size={32} />}
+            {props.documentType === DOCUMENT_TYPES.BOOK && <Book size={32} />}
             {props.documentType === DOCUMENT_TYPES.SPEECH && (
-              <ChatBubbleBottomCenterTextIcon className="text-2xl font-semibold leading-none w-full" />
+              <MessageCircle size={32} />
             )}
-            {!props.documentType && (
-              <DocumentIcon className="text-2xl font-semibold leading-none w-full" />
-            )}
+            {!props.documentType && <File size={32} />}
           </div>
           <CardTitle className="grow">
             <Latex>{props.title}</Latex>

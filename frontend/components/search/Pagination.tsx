@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
   totalResults: number;
@@ -47,7 +47,7 @@ export default function Pagination(props: Props) {
               href={`${props.url}&offset=${props.selectedPage - 1}`}
               className={buttonVariants({ variant: "ghost", size: "icon" })}
             >
-              <ChevronLeftIcon width={24} height={24} />
+              <ChevronLeft size={24} />
             </Link>
           </li>
         )}
@@ -78,7 +78,7 @@ export default function Pagination(props: Props) {
               href={`${props.url}&offset=${+props.selectedPage + 1}`}
               className={buttonVariants({ variant: "ghost", size: "icon" })}
             >
-              <ChevronRightIcon width={24} height={24} />
+              <ChevronRight size={24} />
             </Link>
           </li>
         )}
