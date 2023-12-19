@@ -62,7 +62,14 @@ export default function MainMenu({
             }`}
           >
             {pathname === href ? activeIcon : icon}
-            {!isCollapsed && name}
+            <span
+              className={`transition-all duration-700 ${
+                isCollapsed ? "hidden" : ""
+              }`}
+            >
+              {" "}
+              {name}
+            </span>
           </Link>
         );
       })}

@@ -61,20 +61,22 @@ export default function UserMenu() {
               src={session ? session.user.image : ""}
               alt="profile image"
             />
-            <AvatarFallback>
+            <AvatarFallback className="bg-neutral-500 text-neutral-50 text-lg">
               {session ? initals : <UserPlus size={24} />}
             </AvatarFallback>
           </Avatar>
-          {!isCollapsed && (
-            <div className="flex flex-col items-start space-y-1">
-              <p className="text-sm font-medium leading-none">
-                {session ? session.user.name : "Log in"}
-              </p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {session ? session.user.email : "Account"}
-              </p>
-            </div>
-          )}
+          <div
+            className={`flex flex-col items-start space-y-1 transition-all duration-700 ${
+              isCollapsed && "hidden"
+            }`}
+          >
+            <p className="text-sm font-medium leading-none">
+              {session ? session.user.name : "Log in"}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {session ? session.user.email : "Account"}
+            </p>
+          </div>
         </MenubarTrigger>
         <MenubarContent>
           {session ? (
