@@ -1,6 +1,6 @@
 import pandas as pd
 from celery import Celery
-from celery.signals import worker_ready
+from celery.signals import worker_ready, worker_init
 from app.celery import celeryconfig
 import app.celery.errors as worker_error
 from app.engine import Recommender, Summarizer, device
@@ -9,6 +9,7 @@ from app.graphql_backend import get_all_vectors
 from typing import Dict, List, Literal
 import shutil
 import requests
+import datetime
 import os
 
 celery = Celery(__name__)
@@ -34,23 +35,26 @@ def get_blank_recommender() -> Recommender:
     return Recommender(summarizer)
 
 
-def convert_matching_to_response(mathing: pd.DataFrame, pub_id_key: str) -> Dict[str, List[Dict[str, str | int]]]:
+def convert_matching_to_response(matching: pd.DataFrame,
+                                 pub_id_key: str, sentence_key: str) -> Dict[str, List[Dict[str, str | int]]]:
     result = {"matches": []}
-    for index, row in mathing.iterrows():
+    for index, row in matching.iterrows():
         pub_id = row[pub_id_key]
-        input_token = row["input_token"]
-        matching_token = row["matching_token"]
+        matching_sentence = row[sentence_key]
+        input_info = row["input"]
+        distance = row["distance"]
         result["matches"].append({
             "id": pub_id,
-            "input_token": input_token,
-            "mathing_token": matching_token
+            "input": input_info,
+            "mathing_sentence": matching_sentence,
+            "distance": distance
         })
     return result
 
 
 def download_recommender(zip_path: str = None, unzip_path: str = None):
     print("Starting recommender download")
-    archive = requests.get(f"{celery.api}/model.zip")
+    archive = requests.get(f"{celery.api}/model.zip/")
     delete = False
     print("Received archive")
     if zip_path is None:
@@ -77,8 +81,8 @@ def upload_recommender(path: str = None, zip_mode: Literal["none", "temp", "perm
         shutil.make_archive(path, format="zip", root_dir=path)
         path = path + ".zip"
         print(f"Created archive at {path}")
-#        model_name = path.split("/")[-1].split("0")[0]
-#        model_location = os.path.dirname(path)
+    #        model_name = path.split("/")[-1].split("0")[0]
+    #        model_location = os.path.dirname(path)
     with open(path, "rb") as file:
         requests.post(celery.api + "/update_model/", files={"file": file})
     print("Uploaded recommender")
@@ -96,6 +100,7 @@ class EngineTask(celery.Task):
         if self.recommender is None:
             print(f"Executing task {task_id} without up-to-date engine")
             self.recommender = get_blank_recommender()
+        self.recommender.summarizer.transformer.eval()
         print(self.get_start_string())
 
     def update_engine(self):
@@ -106,20 +111,28 @@ class EngineTask(celery.Task):
                 self.recommender = get_blank_recommender()
             self.recommender.load(path=celery.data_path, model_name=celery.recommender_name)
             self.last_changed = last_changed_on_disk
-    
+
     def get_start_string(self):
-        return f"Starting {self.name} with recommender:" + "\n" + str(self.recommender.__dict__) + "\n" + "summarizer:" + "\n" + str(self.recommender.summarizer.__dict__)
+        return f"Starting {self.name} with recommender ({datetime.datetime.fromtimestamp(self.last_changed)}):" + \
+            "\n" + str(self.recommender.__getstate__()) + "\n" + "summarizer:" + "\n" + \
+            str(self.recommender.summarizer.__getstate__())
 
 
 class StrictEngineTask(EngineTask):
     def before_start(self, task_id, *args, **kwargs):
         self.update_engine()
         if self.recommender is None:
-            raise worker_error.MissingPublication(self.__name__)
+            try:
+                print("No recommendation engine found. Trying to download")
+                download_recommender(celery.zip_path, celery.unzip_path)
+                self.update_engine()
+            except Exception as e:
+                print("Could not download because" + "\n" + str(e))
+                raise worker_error.MissingEngine(self.__name__)
+        self.recommender.summarizer.transformer.eval()
         print(self.get_start_string())
 
 
-@worker_ready.connect
 def on_worker_ready(**_):
     print("Starting Worker")
     try:
@@ -148,37 +161,17 @@ def update_recommender(remote_change_time: float | None = None, forced=False):
         print("No recommender update needed")
 
 
-@celery.task(name="recommend_publication_id",
-             base=StrictEngineTask,
-             bind=True)
-def recommend_by_publication(self: StrictEngineTask, 
-                             publication_id: str, amount: int) -> dict:
-    if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
-        raise worker_error.MissingPublication(publication_id)
-    matches = self.recommender.get_match_by_id(str(publication_id), amount)
-    return convert_matching_to_response(matches, self.recommender.PUBLICATION_ID_KEY)
-
-
-@celery.task(name="recommend_token",
-             base=StrictEngineTask,
-             bind=True)
-def recommend_by_token(self: StrictEngineTask, 
-                       token: str, amount: int) -> dict:
-    matches = self.recommender.get_match_by_token(str(token), amount)
-    return convert_matching_to_response(matches, self.recommender.PUBLICATION_ID_KEY)
-
-
 @celery.task(name="summarize",
              base=EngineTask,
              bind=True)
-def summarize(self: EngineTask, 
+def summarize(self: EngineTask,
               input_text: str, amount: int, tokenize: bool | None):
     amount = int(amount)
     if tokenize is not None:
         original_tokenize = self.recommender.summarizer.tokenize
         self.recommender.summarizer.tokenize = tokenize
     ranked_tokens, ranked_embeddings = self.recommender.summarizer.run(input_data=input_text, amount=amount,
-                                                                  add_embedding=True)
+                                                                       add_embedding=True)
     output_dict = {}
     for index, (token, embedding) in enumerate(zip(ranked_tokens[0], ranked_embeddings[0])):
         output_dict[index] = {"token": token, "embedding": list(embedding)}
@@ -207,20 +200,63 @@ def build_annoy(self: EngineTask):
 
 
 @celery.task(name="random_id",
-            base=StrictEngineTask,
-            bind=True)
+             base=StrictEngineTask,
+             bind=True)
 def get_random_id(self: StrictEngineTask, amount: int):
     sample = self.recommender.mapping.sample(int(amount))
     sample = sample[self.recommender.PUBLICATION_ID_KEY].to_list()
     return sample
 
 
+"""
+Recommend by Tasks
+"""
+
+
 @celery.task(name="recommend_group",
              base=StrictEngineTask,
              bind=True)
 def recommend_by_group(self: StrictEngineTask,
-                       publication_ids: List[str], amount: int) -> dict:
-    # TODO: Check if publications in mapping
-    print("made it here")
-    matches = self.recommender.get_match_by_group(publication_ids, amount)
-    return convert_matching_to_response(matches, self.recommender.PUBLICATION_ID_KEY)
+                       publication_ids: List[str], amount: int, exclude: List[str] = None) -> dict:
+    for publication_id in publication_ids:
+        if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
+            raise worker_error.MissingPublication(publication_id)
+
+    matches = self.recommender.get_match_by_group(publication_ids, int(amount), exclude)
+
+    return convert_matching_to_response(
+        matches,
+        self.recommender.PUBLICATION_ID_KEY,
+        self.recommender.SENTENCE_ID_KEY
+    )
+
+
+@celery.task(name="recommend_publication_id",
+             base=StrictEngineTask,
+             bind=True)
+def recommend_by_publication(self: StrictEngineTask,
+                             publication_id: str, amount: int, exclude: List[str] = None) -> dict:
+    if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
+        raise worker_error.MissingPublication(publication_id)
+
+    matches = self.recommender.get_match_by_id(str(publication_id), amount, exclude)
+
+    return convert_matching_to_response(
+        matches,
+        self.recommender.PUBLICATION_ID_KEY,
+        self.recommender.SENTENCE_ID_KEY
+    )
+
+
+@celery.task(name="recommend_token",
+             base=StrictEngineTask,
+             bind=True)
+def recommend_by_token(self: StrictEngineTask,
+                       token: str, amount: int, exclude: List[str] = None) -> dict:
+    matches = self.recommender.get_match_by_token(str(token), int(amount), exclude)
+
+    return convert_matching_to_response(
+        matches,
+        self.recommender.PUBLICATION_ID_KEY,
+        self.recommender.SENTENCE_ID_KEY
+    )
