@@ -1,6 +1,9 @@
-from fastapi import FastAPI, HTTPException, UploadFile
+import celery
+from celery.result import AsyncResult
+from fastapi import FastAPI, HTTPException, UploadFile, Query
 from fastapi.responses import FileResponse
-from typing import List, Dict
+from fastapi.concurrency import run_in_threadpool
+from typing import List, Dict, Annotated
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
@@ -28,22 +31,29 @@ else:
     rec_api.last_changed = 0
 
 
+async def get_result(task: AsyncResult):
+    result = await run_in_threadpool(lambda: task.get())
+    return result
+
+
 @rec_api.get("/build_annoy/")
-async def build_annoy():
+def build_annoy():
     """
     Forces to build a new annoy index
     """
     tasks.build_annoy.apply_async(args=[])
+    return {"started": True}
 
 
 @rec_api.get("/random/")
-async def get_random_id(amount = 5):
+async def get_random_id(amount=5):
     task = tasks.get_random_id.apply_async(args=[amount])
-    return {"id:": task.get()}
+    result = await get_result(task)
+    return {"id:": result}
 
 
 @rec_api.get("/last_changed/")
-async def get_model_modification_date():
+def get_model_modification_date():
     """
     Returns the float value (UNIX time) of the last time the current recommender engine was changed.
 
@@ -74,7 +84,7 @@ async def update_model(file: UploadFile):
 
 
 @rec_api.get("/model.zip/")
-async def get_model_data():
+def get_model_data():
     """
     Returns the current model as a zip archive.
 
@@ -87,7 +97,8 @@ async def get_model_data():
 
 
 @rec_api.get("/match_id/{publication_id}/")
-async def get_recommendation(publication_id: str, amount: int = 5):
+async def get_recommendation(publication_id: str, amount: int = 5,
+                             excluded_ids: Annotated[list[str], Query()] = []):
     """
     Runs the recommendation engine for a publication ID.
     - **publication_id**: The input publication
@@ -95,25 +106,44 @@ async def get_recommendation(publication_id: str, amount: int = 5):
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = tasks.recommend_by_publication.apply_async(args=[str(publication_id), amount])
+    task = tasks.recommend_by_publication.apply_async(args=[str(publication_id), amount, excluded_ids])
     try:
-        result = task.get()
+        result = await get_result(task)
         return result
-    except tasks.MissingPublication as e:
+    except tasks.errors.MissingPublication as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 
 @rec_api.get("/match_token/{token}/")
-async def get_recommendation(token: str, amount: int = 5):
+async def get_recommendation(token: str, amount: int = 5,
+                             excluded_ids: Annotated[list[str], Query()] = []):
     """
-    Runs the recommendation engine for a publication ID.
+    Runs the recommendation engine for a token.
     - **token**: The input token. For example a sentence
     - **amount**: The amount of matches to be included
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = tasks.recommend_by_token.apply_async(args=[str(token), amount])
-    result = task.get()
+    task = tasks.recommend_by_token.apply_async(args=[str(token), amount, excluded_ids])
+    result = await get_result(task)
+    return result
+
+
+@rec_api.get("/match_group/")
+async def get_recommendation(group: Annotated[list[str], Query()] = [], amount: int = 5,
+                             excluded_ids: Annotated[list[str], Query()] = []):
+    """
+    Runs the recommendation engine for a list of publication IDs as a group.
+    This can be used to recommend based of a user library for example.
+    - **group**: A list of publication IDs
+    - **amount**: The amount of matches to be included
+
+    **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
+    """
+    if group is None:
+        return {}
+    task = tasks.recommend_by_group.apply_async(args=[group, amount, excluded_ids])
+    result = await get_result(task)
     return result
 
 
@@ -150,7 +180,8 @@ async def summarize_text(text: str, amount=5, tokenize: bool | None = None):
     **return**: The summarization with pattern: {*n*: {token: str, embedding: [float]} *for n in amount*}
     """
     task = tasks.summarize.apply_async(args=[text, amount, tokenize])
-    return task.get()
+    result = await get_result(task)
+    return result
 
 
 async def read_file_in_chunks(file: UploadFile, as_file: str,
