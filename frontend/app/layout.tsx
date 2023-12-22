@@ -23,7 +23,10 @@ export default function RootLayout(props: {
         <Providers>
           <div className="min-h-screen flex flex-row">
             <Sidebar className="" />
-            <div className="flex-grow flex px-6 md:px-8 lg:px-12 justify-center">
+            <div
+              id="content"
+              className="flex-grow flex pr-6 md:pr-8 lg:pr-12 pl-[19.5rem] md:pl-80 lg:pl-[21rem] justify-center w-screen"
+            >
               <div className="max-w-7xl flex-grow">{props.children}</div>
               <Toaster />
             </div>

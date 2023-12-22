@@ -10,15 +10,6 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { useSession } from "next-auth/react";
 
@@ -46,7 +37,7 @@ export default function UserMenu() {
   }
 
   return (
-    <Menubar className="h-fit p-0 border-none">
+    <Menubar className="h-fit p-0 border-none bg-transparent">
       <MenubarMenu>
         <MenubarTrigger
           className={`flex flex-row gap-4 items-center justify-start h-16 w-full p-2 cursor-pointer hover:bg-muted hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2 ${

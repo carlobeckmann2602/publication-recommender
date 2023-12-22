@@ -7,7 +7,7 @@ import { buttonVariants } from "../ui/button";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
-import { Heart, TagIcon } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 const menuItems = [
@@ -38,7 +38,7 @@ export default function MainMenu({
   return (
     <nav
       className={cn(
-        "flex flex-col gap-4 items-center justify-center w-full",
+        "flex flex-col gap-2 items-center justify-center w-full",
         className
       )}
       {...props}

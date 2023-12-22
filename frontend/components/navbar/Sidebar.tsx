@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactPropTypes } from "react";
+import React, { ReactPropTypes, useEffect } from "react";
 import UserMenu from "./UserMenu";
 import MainMenu from "./MainMenu";
 import { Button } from "../ui/button";
@@ -15,10 +15,19 @@ type Props = {
 export default function Sidebar({ className, props }: Props) {
   const { isCollapsed, toggleSidebarcollapse } = useContext(SidebarContext);
 
+  useEffect(() => {
+    const content = document.getElementById("content");
+    if (isCollapsed) {
+      content?.classList.add("!pl-[8.5rem]", "md:!pl-36", "lg:!pl-40"); //"pl-[8.5rem]", "md:pl-36", "lg:pl-40"
+    } else {
+      content?.classList.remove("!pl-[8.5rem]", "md:!pl-36", "lg:!pl-40");
+    }
+  }, [isCollapsed]);
+
   return (
     <aside
-      className={`sticky transition-all duration-700 top-0 z-50 backdrop-blur-sm flex flex-col gap-6 py-4 pl-4 pr-8 ${
-        !isCollapsed && "min-w-[300px]"
+      className={`fixed transition-all duration-700 top-0 z-50 backdrop-blur-sm flex flex-col gap-6 py-4 pl-4 pr-8 w-28 ${
+        !isCollapsed && "min-w-[18rem]"
       } h-screen shadow-md border rounded-e-md ${className}`}
     >
       <Button
