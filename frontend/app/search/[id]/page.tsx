@@ -25,7 +25,7 @@ export default function Search({ searchParams, params }: SearchParams) {
           <LiteratureCardById
             className="w-full"
             id={params.id}
-            deactivateSearchSimilar={true}
+            disableSearchSimilar={true}
           />
         </Suspense>
         <TextSeparator>similar paper</TextSeparator>

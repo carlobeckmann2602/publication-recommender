@@ -4,16 +4,17 @@ import React from "react";
 import LiteratureCard from "@/components/search/LiteratureCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import { DOCUMENT_TYPES } from "@/constants/enums";
 
 type Props = {
   id: string;
-  deactivateSearchSimilar?: boolean;
+  disableSearchSimilar?: boolean;
   className?: string;
 };
 
 export default async function LiteratureCardById({
   id,
-  deactivateSearchSimilar,
+  disableSearchSimilar,
   className,
 }: Props) {
   try {
@@ -34,7 +35,8 @@ export default async function LiteratureCardById({
             : undefined
         }
         doi={data.publication.doi}
-        deactivateSearchSimilar={deactivateSearchSimilar}
+        documentType={DOCUMENT_TYPES.PAPER}
+        disableSearchSimilar={disableSearchSimilar}
         className={className}
       />
     );

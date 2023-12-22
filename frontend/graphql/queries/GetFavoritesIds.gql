@@ -1,0 +1,5 @@
+query GetFavoritesIds {
+  favorites {
+    id
+  }
+}

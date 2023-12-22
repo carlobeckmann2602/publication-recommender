@@ -3,7 +3,7 @@ import { getClient } from "@/lib/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import LiteratureCard from "@/components/search/LiteratureCard";
 import { GetSearchResultsByQueryDocument } from "@/graphql/queries/GetSearchResultsByQuery.generated";
-import { SEARCH_TYPES } from "@/constants/enums";
+import { DOCUMENT_TYPES, SEARCH_TYPES } from "@/constants/enums";
 import { GetSearchResultsByIdDocument } from "@/graphql/queries/GetSearchResultsById.generated";
 import { AlertTriangle } from "lucide-react";
 
@@ -40,6 +40,7 @@ export default async function LiteratureSearchResults({
                     : undefined
                 }
                 doi={publication.doi}
+                documentType={DOCUMENT_TYPES.PAPER}
               />
             ))}
           </>
@@ -65,6 +66,7 @@ export default async function LiteratureSearchResults({
                     : undefined
                 }
                 doi={publication.doi}
+                documentType={DOCUMENT_TYPES.PAPER}
               />
             ))}
           </>

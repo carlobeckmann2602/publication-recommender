@@ -23,7 +23,8 @@ type Props = {
   matchedSentence?: string | null;
   doi?: string[] | null;
   documentType?: DOCUMENT_TYPES | null;
-  deactivateSearchSimilar?: boolean;
+  disableSearchSimilar?: boolean;
+  enableLikeWarning?: boolean;
   className?: string;
 };
 
@@ -41,17 +42,20 @@ export default function LiteratureCard(props: Props) {
     authorsString = authorsString + "...";
 
   return (
-    <Card className={`w-full ${props.className}`} id={props.id}>
+    <Card className={`w-full flex flex-col ${props.className}`} id={props.id}>
       <CardHeader>
         <div className="flex flex-row gap-2">
-          <div className="w-[32px] min-w-[32px]">
-            {props.documentType === DOCUMENT_TYPES.PAPER && <File size={32} />}
-            {props.documentType === DOCUMENT_TYPES.BOOK && <Book size={32} />}
-            {props.documentType === DOCUMENT_TYPES.SPEECH && (
-              <MessageCircle size={32} />
-            )}
-            {!props.documentType && <File size={32} />}
-          </div>
+          {props.documentType && (
+            <div className="w-[32px] min-w-[32px]">
+              {props.documentType === DOCUMENT_TYPES.PAPER && (
+                <File size={32} />
+              )}
+              {props.documentType === DOCUMENT_TYPES.BOOK && <Book size={32} />}
+              {props.documentType === DOCUMENT_TYPES.SPEECH && (
+                <MessageCircle size={32} />
+              )}
+            </div>
+          )}
           <CardTitle className="grow">
             <Latex>{props.title}</Latex>
           </CardTitle>
@@ -68,7 +72,7 @@ export default function LiteratureCard(props: Props) {
           </a>
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col flex-grow gap-4">
         {props.abstract && <p>{props.abstract}</p>}
         {props.matchedSentence && (
           <div>
@@ -80,11 +84,15 @@ export default function LiteratureCard(props: Props) {
       <CardFooter>
         <div className="flex flex-row justify-between align-middle items-end grow">
           <div className="flex flex-row">
-            {!props.deactivateSearchSimilar && (
+            {!props.disableSearchSimilar && (
               <SimilarSearchButton id={props.id} />
             )}
             {/* <TagIcon width={24} /> */}
-            <LikeButton id={props.id} />
+            <LikeButton
+              id={props.id}
+              title={props.title}
+              enableWarning={props.enableLikeWarning}
+            />
           </div>
           {props.doi && (
             <span className="h-fit">
