@@ -32,7 +32,7 @@ export default async function LiteratureSearchResults({
                 key={publication.id}
                 id={publication.id}
                 title={publication.title}
-                link={publication.url ? publication.url : ""}
+                link={publication.url}
                 authors={publication.authors}
                 date={
                   publication.publicationDate
@@ -58,7 +58,7 @@ export default async function LiteratureSearchResults({
                 key={publication.id}
                 id={publication.id}
                 title={publication.title}
-                link={publication.url ? publication.url : ""}
+                link={publication.url}
                 authors={publication.authors}
                 date={
                   publication.publicationDate

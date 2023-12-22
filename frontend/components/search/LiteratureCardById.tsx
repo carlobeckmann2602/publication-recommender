@@ -27,7 +27,7 @@ export default async function LiteratureCardById({
         key={data.publication.id}
         id={data.publication.id}
         title={data.publication.title}
-        link={data.publication.url ? data.publication.url : ""}
+        link={data.publication.url}
         authors={data.publication.authors}
         date={
           data.publication.publicationDate

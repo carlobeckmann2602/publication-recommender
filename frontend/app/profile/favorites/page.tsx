@@ -43,7 +43,7 @@ export default function Favorites() {
                 ? new Date(favorite.publicationDate)
                 : undefined
             }
-            link={favorite.url ? favorite.url : ""}
+            link={favorite.url}
             doi={favorite.doi}
             disableSearchSimilar={true}
             enableLikeWarning={true}

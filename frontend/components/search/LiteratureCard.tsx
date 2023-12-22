@@ -18,7 +18,7 @@ type Props = {
   title: string;
   authors?: string[] | null;
   date?: Date;
-  link: string;
+  link?: string | null;
   abstract?: string | null;
   matchedSentence?: string | null;
   doi?: string[] | null;
@@ -29,7 +29,7 @@ type Props = {
 };
 
 export default function LiteratureCard(props: Props) {
-  const domain = props.link.replace(
+  const domain = props.link?.replace(
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"
   );
@@ -63,13 +63,15 @@ export default function LiteratureCard(props: Props) {
         <CardDescription>
           {authorsString} {props.authors && " - "} {props.date?.getFullYear()}
           {props.date && " - "}
-          <a
-            href={props.link}
-            className="text-blue-500 hover:text-gray-800 underline"
-            target="_blank"
-          >
-            {domain}
-          </a>
+          {props.link && (
+            <a
+              href={props.link}
+              className="text-blue-500 hover:text-gray-800 underline"
+              target="_blank"
+            >
+              {domain}
+            </a>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-4">
