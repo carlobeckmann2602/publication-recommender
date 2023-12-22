@@ -1,0 +1,12 @@
+query GetRecommendations {
+  recommendations {
+    publications {
+      id
+      title
+      authors
+      publicationDate
+      doi
+      url
+    }
+  }
+}
