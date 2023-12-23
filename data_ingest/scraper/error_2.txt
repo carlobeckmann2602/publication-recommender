@@ -1,0 +1,15 @@
+NEUSTE ARXIV ID
+
+ArxivApiScraper.run()
+- requesting db api for arxiv publication count ...
+-- found 283 entries.
+- requesting db api for newest arxiv publication ...
+-- found arxiv id 2312.06370, published 2023-12-11T13:27:32.000Z. (ARXIV ID UND DATE KORREKT ABGESEHEN VON VERTAUSCHT)
+
+ÄLTESTE ARXIV ID
+
+ArxivApiScraper.run()
+- requesting db api for arxiv publication count ...
+-- found 283 entries.
+- requesting db api for oldest arxiv publication ...
+-- found arxiv id 2312.09244, published 2023-12-14T18:59:04.000Z. (ARXIV ID UND DATE KORREKT ABGESEHEN VON VERTAUSCHT)

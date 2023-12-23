@@ -46,7 +46,7 @@ class DatabaseApi:
             print(e)
             return False
     
-    def get_newest_arxiv_pub(self):
+    def get_oldest_arxiv_pub(self):
         query = gql("""
         query timing {
             oldest(source: ARXIV) {
@@ -64,7 +64,7 @@ class DatabaseApi:
             print(e)
             return None
     
-    def get_oldest_arxiv_pub(self):
+    def get_newest_arxiv_pub(self):
         query = gql("""
         query timing {
             newest(source: ARXIV) {
@@ -103,7 +103,7 @@ class DatabaseApi:
                 "title": str(pub.title), 
                 "exId": str(pub.arxiv_id),
                 "source":str(pub.src),
-                "doi": str(pub.doi),
+                "doi": pub.doi,
                 "url": str(pub.url),
                 "abstract": str(pub.abstract),
                 "authors": pub.authors,
