@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Search } from "lucide-react";
 
 const FormSchema = z
   .object({
@@ -25,11 +25,11 @@ type Props = {
   value?: string;
 };
 
-export function Searchbar(props: Props) {
+export function Searchbar({ value }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      query: props.value,
+      query: value || "",
     },
   });
 
@@ -63,7 +63,7 @@ export function Searchbar(props: Props) {
           )}
         />
         <Button variant="secondary" className="absolute right-0" type="submit">
-          <MagnifyingGlassIcon className="h-4 w-4" />
+          <Search className="h-4 w-4" />
         </Button>
       </form>
     </Form>

@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 export default function Profile() {
   return (
     <div>
-      <Header title="Profil" />
+      <Header title="Profile" />
     </div>
   );
 }

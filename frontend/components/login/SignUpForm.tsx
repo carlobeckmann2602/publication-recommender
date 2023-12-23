@@ -15,11 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import {
-  ExclamationTriangleIcon,
-  EyeIcon,
-  EyeSlashIcon,
-} from "@heroicons/react/24/outline";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,6 +25,8 @@ import Link from "next/link";
 
 import { useMutation } from "@apollo/client";
 import { RegisterDocument } from "@/graphql/mutation/RegisterUser.generated";
+import { allowBackgroundScrolling } from "@/lib/modal-controlls";
+import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 
 const FormSchema = z
   .object({
@@ -96,7 +93,7 @@ export function SignUpForm(props: Props) {
       });
       if (response.errors) {
         console.error(response.errors);
-        setErrorMsg("Authentication Failed!");
+        setErrorMsg("Authentication failed!");
       } else {
         await signIn("credentials", {
           username: data.email,
@@ -104,10 +101,11 @@ export function SignUpForm(props: Props) {
           redirect: true,
           callbackUrl: props.callbackUrl ?? "/",
         });
+        allowBackgroundScrolling();
       }
     } catch (error: any) {
       console.error(error.message);
-      setErrorMsg("Authentication Failed!");
+      setErrorMsg("Login failed!");
     }
   }
 
@@ -122,7 +120,12 @@ export function SignUpForm(props: Props) {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Name" {...field} />
+                  <Input
+                    placeholder="Name"
+                    type="text"
+                    autoComplete="on"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,7 +138,12 @@ export function SignUpForm(props: Props) {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input
+                    placeholder="Email"
+                    type="email"
+                    autoComplete="on"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -147,29 +155,29 @@ export function SignUpForm(props: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <div className="relative">
+                <div className="relative">
+                  <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       autoComplete="on"
                       {...field}
                     />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                      {showPassword ? (
-                        <EyeSlashIcon
-                          className="h-6 w-6"
-                          onClick={togglePasswordVisibility}
-                        />
-                      ) : (
-                        <EyeIcon
-                          className="h-6 w-6"
-                          onClick={togglePasswordVisibility}
-                        />
-                      )}
-                    </div>
+                  </FormControl>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                    {showPassword ? (
+                      <EyeOff
+                        className="h-6 w-6"
+                        onClick={togglePasswordVisibility}
+                      />
+                    ) : (
+                      <Eye
+                        className="h-6 w-6"
+                        onClick={togglePasswordVisibility}
+                      />
+                    )}
                   </div>
-                </FormControl>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -180,29 +188,29 @@ export function SignUpForm(props: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <div className="relative">
+                <div className="relative">
+                  <FormControl>
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm Password"
                       autoComplete="on"
                       {...field}
                     />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                      {showConfirmPassword ? (
-                        <EyeSlashIcon
-                          className="h-6 w-6"
-                          onClick={toggleConfirmPasswordVisibility}
-                        />
-                      ) : (
-                        <EyeIcon
-                          className="h-6 w-6"
-                          onClick={toggleConfirmPasswordVisibility}
-                        />
-                      )}
-                    </div>
+                  </FormControl>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                    {showConfirmPassword ? (
+                      <EyeOff
+                        className="h-6 w-6"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    ) : (
+                      <Eye
+                        className="h-6 w-6"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    )}
                   </div>
-                </FormControl>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -214,7 +222,7 @@ export function SignUpForm(props: Props) {
       </Form>
       {!!errorMsg && (
         <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
@@ -229,7 +237,12 @@ export function SignUpForm(props: Props) {
       </div>
       <span className="text-center">
         Already have an account?{" "}
-        <Link href={"/signin"} className="underline">
+        <Link
+          href={"/signin"}
+          scroll={false}
+          replace={true}
+          className="underline"
+        >
           Sign In
         </Link>
       </span>

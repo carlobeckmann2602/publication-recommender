@@ -20,3 +20,4 @@ kombu~=5.3.4
 pika~=1.3.2
 eventlet~=0.33.3
 gql[aiohttp]~=3.4.1
+scikit-learn~=1.3.2

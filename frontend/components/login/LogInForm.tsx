@@ -17,11 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/react/24/outline";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
@@ -29,6 +24,8 @@ import Link from "next/link";
 import GoogleButton from "@/components/login/GoogleButton";
 import TextSeparator from "@/components/TextSeparator";
 import { useRouter } from "next/navigation";
+import { allowBackgroundScrolling } from "@/lib/modal-controlls";
+import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 
 const FormSchema = z.object({
   email: z
@@ -71,7 +68,8 @@ export function LogInForm(props: Props) {
       callbackUrl: props.callbackUrl ?? "/",
     });
     if (res?.ok) {
-      router.push("/");
+      allowBackgroundScrolling();
+      router.back();
     } else if (res?.error) {
       setErrorMsg(res?.error);
     } else {
@@ -90,7 +88,12 @@ export function LogInForm(props: Props) {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input
+                    placeholder="Email"
+                    type="email"
+                    autoComplete="on"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,29 +105,29 @@ export function LogInForm(props: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <div className="relative">
+                <div className="relative">
+                  <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       autoComplete="on"
                       {...field}
                     />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                      {showPassword ? (
-                        <EyeSlashIcon
-                          className="h-6 w-6"
-                          onClick={togglePasswordVisibility}
-                        />
-                      ) : (
-                        <EyeIcon
-                          className="h-6 w-6"
-                          onClick={togglePasswordVisibility}
-                        />
-                      )}
-                    </div>
+                  </FormControl>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                    {showPassword ? (
+                      <EyeOff
+                        className="h-6 w-6"
+                        onClick={togglePasswordVisibility}
+                      />
+                    ) : (
+                      <Eye
+                        className="h-6 w-6"
+                        onClick={togglePasswordVisibility}
+                      />
+                    )}
                   </div>
-                </FormControl>
+                </div>
                 <FormDescription className="text-right">
                   <Link href={"/"}>Forgotten Password?</Link>
                 </FormDescription>
@@ -139,7 +142,7 @@ export function LogInForm(props: Props) {
       </Form>
       {!!errorMsg && (
         <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
@@ -154,7 +157,12 @@ export function LogInForm(props: Props) {
       </div>
       <span className="text-center">
         Dont have an account?{" "}
-        <Link href={"/signup"} className="underline">
+        <Link
+          href={"/signup"}
+          scroll={false}
+          replace={true}
+          className="underline"
+        >
           Create Account
         </Link>
       </span>

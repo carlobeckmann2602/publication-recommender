@@ -11,7 +11,7 @@ client = Client(transport=transport, fetch_schema_from_transport=True)
 
 provide_vectors = gql(
     """
-    mutation provideVectors($query: PublicationVectorsRequestDto!) {
+    query provideVectors($query: PublicationVectorsRequestDto!) {
         provideVectors(provideVectors: $query) {
             chunk,data{id, vectors}
         }
@@ -22,9 +22,13 @@ provide_vectors = gql(
 
 def get_vectors(index: int, size=5) -> pd.DataFrame:
     params = {"query": {"chunk": index, "chunkSize": size}}
-    response = client.execute(provide_vectors, variable_values=params)["provideVectors"]
-    data = response["data"]
-    return pd.DataFrame.from_dict(data)
+    try:
+        response = client.execute(provide_vectors, variable_values=params)["provideVectors"]
+        data = response["data"]
+        return pd.DataFrame.from_dict(data)
+    except Exception as e:
+        print("Could not connect to graphql server because:" + "\n" + str(e))
+        return pd.DataFrame()
 
 
 def get_all_vectors() -> pd.DataFrame:

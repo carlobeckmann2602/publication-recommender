@@ -18,7 +18,7 @@ export type CreatePublicationDto = {
   authors?: InputMaybe<Array<Scalars['String']>>;
   date?: InputMaybe<Scalars['DateTime']>;
   descriptor: DescriptorDto;
-  doi?: InputMaybe<Scalars['String']>;
+  doi?: InputMaybe<Array<Scalars['String']>>;
   exId: Scalars['String'];
   publisher?: InputMaybe<Scalars['String']>;
   source: PublicationSource;
@@ -33,6 +33,7 @@ export type DescriptorDto = {
 export type JwtDto = {
   __typename?: 'JwtDto';
   accessToken: Scalars['String'];
+  expiresIn: Scalars['Int'];
   refreshToken: Scalars['String'];
 };
 
@@ -51,7 +52,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   login: LoggedIn;
   markAsFavorite: Scalars['Boolean'];
-  provideVectors: PublicationChunkDto;
   refreshToken: JwtDto;
   register: LoggedIn;
   savePublication: PublicationResponseDto;
@@ -66,11 +66,6 @@ export type MutationLoginArgs = {
 
 export type MutationMarkAsFavoriteArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationProvideVectorsArgs = {
-  provideVectors: PublicationVectorsRequestDto;
 };
 
 
@@ -108,10 +103,12 @@ export type PublicationChunkDto = {
 export type PublicationResponseDto = {
   __typename?: 'PublicationResponseDto';
   authors?: Maybe<Array<Scalars['String']>>;
-  doi?: Maybe<Scalars['String']>;
+  doi: Array<Scalars['String']>;
+  exId: Scalars['String'];
   id: Scalars['String'];
   isFavorite: Scalars['Boolean'];
-  publicationDate?: Maybe<Scalars['String']>;
+  publicationDate?: Maybe<Scalars['DateTime']>;
+  source: PublicationSource;
   title: Scalars['String'];
   url?: Maybe<Scalars['String']>;
 };
@@ -119,6 +116,11 @@ export type PublicationResponseDto = {
 export enum PublicationSource {
   Arxiv = 'ARXIV'
 }
+
+export type PublicationSourceWithSourceIdDto = {
+  exId: Scalars['String'];
+  source: PublicationSource;
+};
 
 export type PublicationVectorsRequestDto = {
   chunk: Scalars['Int'];
@@ -128,10 +130,30 @@ export type PublicationVectorsRequestDto = {
 export type Query = {
   __typename?: 'Query';
   favorites: Array<PublicationResponseDto>;
+  newest: PublicationResponseDto;
+  oldest: PublicationResponseDto;
+  provideVectors: PublicationChunkDto;
   publication: PublicationResponseDto;
   publicationCount: Scalars['Int'];
-  publications: Array<PublicationResponseDto>;
+  publicationsById: Array<PublicationResponseDto>;
+  publicationsByQuery: Array<PublicationResponseDto>;
   recommendations: Array<RecommendationResponseDto>;
+  searchPublicationBySourceAndSourceId?: Maybe<PublicationResponseDto>;
+};
+
+
+export type QueryNewestArgs = {
+  source: PublicationSource;
+};
+
+
+export type QueryOldestArgs = {
+  source: PublicationSource;
+};
+
+
+export type QueryProvideVectorsArgs = {
+  provideVectors: PublicationVectorsRequestDto;
 };
 
 
@@ -145,8 +167,18 @@ export type QueryPublicationCountArgs = {
 };
 
 
-export type QueryPublicationsArgs = {
+export type QueryPublicationsByIdArgs = {
   filter: Scalars['String'];
+};
+
+
+export type QueryPublicationsByQueryArgs = {
+  filter: Scalars['String'];
+};
+
+
+export type QuerySearchPublicationBySourceAndSourceIdArgs = {
+  publicationSourceAndSourceId: PublicationSourceWithSourceIdDto;
 };
 
 export type RecommendationResponseDto = {
