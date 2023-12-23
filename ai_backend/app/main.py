@@ -1,6 +1,7 @@
 import celery
 from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException, UploadFile, Query
+from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
 from typing import List, Dict, Annotated
@@ -9,26 +10,42 @@ from . import celery as tasks
 import os
 import aiofiles
 
+STANDARD_MODEL = "current_model.zip"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Setup file structure
+    create_file_structure(app.model_path, app.upload_path, app.archive_path)
+    # Setup initial model and build if no model is found
+    initial_model = os.environ["INITIAL_MODEL"]
+    if initial_model != "":
+        print(f"Using the API with {initial_model} as the initial model")
+        app.current_model = f"{app.archive_path}/{initial_model}"
+    else:
+        print("Using the API without an initial model")
+        app.current_model = f"{app.archive_path}/{STANDARD_MODEL}"
+
+    if os.path.exists(app.current_model):
+        app.last_changed = os.path.getmtime(app.current_model)
+    else:
+        app.last_changed = 0
+        tasks.build_annoy.apply_async(args=[])
+    yield
+
 rec_api = FastAPI(
     title="HSD Publication Recommendation Engine",
     description="This is a beautiful description",
-    version="0.2.0"
+    version="0.2.0",
+    lifespan=lifespan
 )
-
-# Setup file structure
-rec_api.data_path = "data"  # os.environ["DATA_PATH"]
+# Setup api parameters
+rec_api.data_path = os.environ["DATA_PATH"]
 rec_api.generated_data_path = f"{rec_api.data_path}/generated_data"
 rec_api.model_path = f"{rec_api.generated_data_path}/models"
 rec_api.upload_path = f"{rec_api.generated_data_path}/upload"
 rec_api.archive_path = f"{rec_api.generated_data_path}/archive"
-create_file_structure(rec_api.model_path, rec_api.upload_path, rec_api.archive_path)
-
-# Initiate model
-rec_api.current_model = f"{rec_api.archive_path}/arxiv_6k-v3.zip"
-if os.path.exists(rec_api.current_model):
-    rec_api.last_changed = os.path.getmtime(rec_api.current_model)
-else:
-    rec_api.last_changed = 0
+rec_api.current_model = ""
 
 
 async def get_result(task: AsyncResult):
@@ -72,10 +89,10 @@ async def update_model(file: UploadFile):
     Replaces the current recommendation engine.
     - **file**: The new recommendation engine as a zip archive.
     """
-    await read_file_in_chunks(file, as_file="current_model.zip",
+    await read_file_in_chunks(file, as_file=STANDARD_MODEL,
                               delete_buffer=False, return_raw=True,
                               destination=rec_api.archive_path)
-    rec_api.current_model = f"{rec_api.archive_path}/current_model.zip"
+    rec_api.current_model = f"{rec_api.archive_path}/{STANDARD_MODEL}"
     rec_api.last_changed = os.path.getmtime(rec_api.current_model)
     tasks.update_recommender.apply_async(
         args=[rec_api.last_changed],

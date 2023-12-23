@@ -8,3 +8,9 @@ class MissingEngine(Exception):
     def __init__(self, process: str):
         message = f"Could not find recommendation engine for <{process}>"
         super().__init__(message)
+
+
+class NoBackendData(Exception):
+    def __init__(self, client):
+        message = f"Did not receive data from  <{client}>"
+        super().__init__(message)

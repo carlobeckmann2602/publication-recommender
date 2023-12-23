@@ -5,7 +5,7 @@ from app.celery import celeryconfig
 import app.celery.errors as worker_error
 from app.engine import Recommender, Summarizer, device
 from app.util.misc import create_file_structure
-from app.graphql_backend import get_all_vectors
+from app.graphql_backend import get_all_vectors, client
 from typing import Dict, List, Literal
 import shutil
 import requests
@@ -186,6 +186,8 @@ def summarize(self: EngineTask,
              bind=True)
 def build_annoy(self: EngineTask):
     result = get_all_vectors()
+    if result is None:
+        raise worker_error.NoBackendData(client.transport)
     new_mapping, embeddings = self.recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
     original_annoy_input_length = self.recommender.annoy_input_length
     self.recommender.annoy_input_length = embeddings.shape[1]
@@ -206,11 +208,6 @@ def get_random_id(self: StrictEngineTask, amount: int):
     sample = self.recommender.mapping.sample(int(amount))
     sample = sample[self.recommender.PUBLICATION_ID_KEY].to_list()
     return sample
-
-
-"""
-Recommend by Tasks
-"""
 
 
 @celery.task(name="recommend_group",

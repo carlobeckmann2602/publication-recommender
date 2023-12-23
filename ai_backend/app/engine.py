@@ -30,7 +30,10 @@ class Summarizer:
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        del state["transformer"]
+        excluded_parameters = ["transformer"]
+        for parameter in excluded_parameters:
+            if parameter in state:
+                del state[parameter]
         return state
 
     @staticmethod
@@ -130,8 +133,10 @@ class Recommender:
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        del state["annoy_database"]
-        del state["mapping"]
+        excluded_parameters = ["annoy_database", "mapping"]
+        for parameter in excluded_parameters:
+            if parameter in state:
+                del state[parameter]
         return state
 
     def save(self, path="./data/generated_data", model_name="current"):
