@@ -56,11 +56,10 @@ export class PublicationService {
   }
 
   async oldest(source: SourceVo): Promise<Publication> {
-    const results = await this.publicationRepository.find({
+    const result = await this.publicationRepository.findOne({
       where: { source, date: Not(IsNull()) },
-      order: { date: 'DESC' },
+      order: { date: 'ASC' },
     });
-    const result = results[0];
     if (!result) {
       throw new NoPublicationWithDateForSourceException();
     }
@@ -68,11 +67,10 @@ export class PublicationService {
   }
 
   async newest(source: SourceVo): Promise<Publication> {
-    const results = await this.publicationRepository.find({
+    const result = await this.publicationRepository.findOne({
       where: { source, date: Not(IsNull()) },
-      order: { date: 'ASC' },
+      order: { date: 'DESC' },
     });
-    const result = results[0];
     if (!result) {
       throw new NoPublicationWithDateForSourceException();
     }
