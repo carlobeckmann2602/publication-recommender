@@ -65,35 +65,33 @@ class ArxivApiScraper:
         print("--- pub_count: " + str(pub_count) + ", interval: " + str(ArxivApiScraper.interval))
         self.scrape_publications(start_at=pub_count, max_results=ArxivApiScraper.interval, descending=True)
     
-    def scrape_by_id_list(self, id_list):
+    def scrape_by_id_list(self, id_list, block_size):
         root = ArxivApiScraper.root
         method = "query"
-        search_query = "all"
-        sort_by = "submittedDate"
-        sort_order = "descending" 
-        url = root+method+"?id_list="
+        api_url = root+method+"?id_list="
+        
+        pub_list = list()
+        url = api_url 
         for id in id_list:
             url += id + ","
         url = url[:-1]
-        print("- scraping arxiv api for id list (" + str(len(id_list)) + ") ...")
+        url += "&max_results="+str(block_size)
 
         xml_tag_prefix = "{http://www.w3.org/2005/Atom}"
-        pub_list = None
         try:
             with libreq.urlopen(url) as self.response:
                 if self.response.status == 200:
-                    content = self.response.read()
+                    content = self.response.read().decode('utf-8')
                     xml_root = ET.fromstring(content)
                     entry_list = xml_root.findall(xml_tag_prefix+'entry')
                     print("-- collecting " + str(len(entry_list)) + " api metadata entries ...")
-                    pub_list = list()
                     for entry in entry_list:
                         # find arxiv id
                         arxiv_id = entry.find(xml_tag_prefix+'id').text
                         arxiv_id = arxiv_id.replace("http://arxiv.org/abs/", "")
                         if "v" in arxiv_id:
                             arxiv_id = arxiv_id[:-2]
-                        print("-- collect api metadata of publication id '" + str(arxiv_id) + "' ...")
+                        print("--- collect api metadata of publication id '" + str(arxiv_id) + "' ...")
                         # find published and updated timestamps
                         pub_date_str = entry.find(xml_tag_prefix+'published').text
                         #pub_date = datetime.datetime.strptime(pub_date_str,"%Y-%m-%dT%H:%M:%SZ") #2023-11-29T18:57:18Z
@@ -121,7 +119,7 @@ class ArxivApiScraper:
                                     doi_url = link_tag.get('href')
                                     doi_2 = doi_url.replace("http://dx.doi.org/", "")
                                     dois.append(doi_2)
-                        
+                            
                         pub = ArxivPublication(
                             arxiv_id=arxiv_id, 
                             title=title, 

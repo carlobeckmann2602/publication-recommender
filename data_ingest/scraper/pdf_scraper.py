@@ -1,4 +1,7 @@
 import os, re, io, requests, PyPDF2
+from requests.exceptions import ConnectionError
+from urllib3.exceptions import NameResolutionError, MaxRetryError
+import socket
 
 class PdfScraper:
     def __init__(self, temp_path):
@@ -33,21 +36,38 @@ class PdfScraper:
         self.url = url # "https://arxiv.org/pdf/2310.10764" + ".pdf"
         self.response = requests.get(self.url)
 
-        if self.response.status_code == 200:
-            with open(file_dir, 'w', encoding="utf-8") as txt_file:
-                pdf_content = io.BytesIO(self.response.content) #self.response.content
-                pdf_reader = PyPDF2.PdfReader(pdf_content)
+        try:
+            if self.response.status_code == 200:
+                with open(file_dir, 'w', encoding="utf-8") as txt_file:
+                    pdf_content = io.BytesIO(self.response.content) #self.response.content
+                    pdf_reader = PyPDF2.PdfReader(pdf_content)
 
-                text = ""
-                for page_number in range(len(pdf_reader.pages)):
-                    page = pdf_reader.pages[page_number]
-                    text += page.extract_text()
-                text = self.clean(text)
-                txt_file.write(text)
+                    text = ""
+                    for page_number in range(len(pdf_reader.pages)):
+                        page = pdf_reader.pages[page_number]
+                        text += page.extract_text()
+                    text = self.clean(text)
+                    text = text.encode('utf-8', 'replace').decode('utf-8')
+                    txt_file.write(text)
 
-            print(f"--- pdf content written to temp file '{file_dir}'.")
-        else:
-            print(f"--- failed to read the pdf. status code: {self.response.status_code}")
+                print(f"--- pdf content written to temp file '{file_dir}'.")
+            else:
+                print(f"--- failed to read the pdf. status code: {self.response.status_code}")
+                return False
+        except ConnectionError as e:
+            print(f"--- an error occurred: '{str(e)}'")
+            return False
+        except NameResolutionError as e:
+            print(f"--- an error occurred: '{str(e)}'")
+            return False
+        except MaxRetryError as e:
+            print(f"--- an error occurred: '{str(e)}'")
+            return False
+        except socket.gaierror as e:
+            print(f"--- an error occurred: '{str(e)}'")
+            return False
+        except Exception as e:
+            print(f"--- an error occurred: '{str(e)}'")
             return False
         return True
     

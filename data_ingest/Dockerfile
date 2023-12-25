@@ -8,10 +8,10 @@ COPY . /scraper
 
 RUN pip install -r requirements.txt
 
-#ADD crontab /etc/cron.d/scraper-cron
+ADD crontab /etc/cron.d/daily-scraper
 
-#RUN chmod 0644 /etc/cron.d/scraper-cron
+RUN chmod 0644 /etc/cron.d/daily-scraper
 
-#RUN crontab /etc/cron.d/scraper-cron
+RUN crontab /etc/cron.d/daily-scraper
 
-#CMD ["cron", "-f"]
+CMD ["cron", "-f"]
