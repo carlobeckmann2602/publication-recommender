@@ -8,14 +8,13 @@ services:
     ports:
       - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
     healthcheck:
-      test: wget --spider http://localhost:${BACKEND_PORT}
+      test: 'wget localhost:${BACKEND_PORT}/graphql?query={__typename} --spider  --header "apollo-require-preflight: true"'
       interval: 30s
       retries: 50
       start_period: 10s
       timeout: 10s
     depends_on:
       - postgres
-      - rabbitmq
     stdin_open: true
     command:
       - /bin/sh
@@ -55,8 +54,10 @@ services:
       - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
     stdin_open: true
     depends_on:
-      - nest
-      - ai_backend_worker
+      nest:
+        condition: service_healthy
+      ai_backend_worker:
+        condition: service_started
     tty: true
     networks:
       - pr_network
@@ -109,7 +110,7 @@ services:
       - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
     depends_on:
       - ai_backend_worker
-  
+
   postgres:
     image: postgres:16.0-alpine3.18
     environment:
@@ -151,7 +152,7 @@ services:
       - NEXTAUTH_URL=${FRONTEND_NEXTAUTH_URL}
       - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
-  
+
   arxiv_api_scraper:
     build:
       context: ./data_ingest
