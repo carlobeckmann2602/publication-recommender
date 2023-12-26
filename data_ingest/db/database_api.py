@@ -46,7 +46,7 @@ class DatabaseApi:
             print(e)
             return False
     
-    def get_newest_arxiv_pub(self):
+    def get_oldest_arxiv_pub(self):
         query = gql("""
         query timing {
             oldest(source: ARXIV) {
@@ -56,7 +56,7 @@ class DatabaseApi:
         }
         """)
         try:
-            print("- requesting db api for newest arxiv publication ...")
+            print("- requesting db api for oldest arxiv publication ...")
             result = self.gql_client.execute(query)
             print("-- found arxiv id " + str(result["oldest"]["exId"]) + ", published " + str(result["oldest"]["publicationDate"])+".")
             return result["oldest"]["exId"]
@@ -64,7 +64,7 @@ class DatabaseApi:
             print(e)
             return None
     
-    def get_oldest_arxiv_pub(self):
+    def get_newest_arxiv_pub(self):
         query = gql("""
         query timing {
             newest(source: ARXIV) {
@@ -74,7 +74,7 @@ class DatabaseApi:
         }
         """)
         try:
-            print("- requesting db api for oldest arxiv publication ...")
+            print("- requesting db api for newest arxiv publication ...")
             result = self.gql_client.execute(query)
             print("-- found arxiv id " + str(result["newest"]["exId"]) + ", published " + str(result["newest"]["publicationDate"])+".")
             return result["newest"]["exId"]
