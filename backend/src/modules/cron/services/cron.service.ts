@@ -1,24 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
-import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Repository } from 'typeorm';
-import { Recommendation } from '../../core/publication/entities/recommendation.entity';
-import { AiBackendException } from '../../core/publication/exceptions/ai-backend.exception';
-import { User } from '../../core/user/entities/user.entity';
+import { AiBackendException } from 'src/modules/core/publication/exceptions/ai-backend.exception';
+import { RecommendationService } from 'src/modules/core/publication/services/recommendation.service';
 import { LastChangedInfo } from '../dto/last-changed.dto';
-import { MatchGroup } from '../dto/match-group.dto';
 
 @Injectable()
 export class CronService {
   constructor(
     private configService: ConfigService,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Recommendation)
-    private recommendationRepository: Repository<Recommendation>,
+    private recommendationService: RecommendationService,
   ) {}
 
   private readonly logger = new Logger(CronService.name);
@@ -30,7 +23,7 @@ export class CronService {
       await this.buildAnnoy();
       this.logger.log('done with buildAnnoy');
       this.logger.log('executing generateRecommendations');
-      await this.generateRecommendations();
+      await this.recommendationService.generateRecommendationsForAllUser();
       this.logger.log('done with generateRecommendations');
     } catch (e) {
       this.logger.log('error when executing buildAnnoyAndGenerateRecommendations: ', e);
@@ -38,11 +31,11 @@ export class CronService {
   }
 
   async buildAnnoy() {
-    const buildAnnoyUrl = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/build_annoy`;
-
     const lastChangedBeforeUpdate = await this.getLastChangedTimestampInMilliseconds();
 
+    const buildAnnoyUrl = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/build_annoy`;
     await fetch(buildAnnoyUrl);
+
     await new Promise<void>((resolve, reject) => {
       let retryCounter = 0;
       const maxRetryAttempts = 20;
@@ -76,42 +69,5 @@ export class CronService {
     }
 
     return lastChangedInfo.lastChanged * 1000;
-  }
-
-  async generateRecommendations() {
-    const baseUrl = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/match_group`;
-
-    const users = await this.userRepository.find({
-      relations: { favorites: true, recommendations: { publications: true } },
-    });
-    const usersWithFavorites = users.filter((user) => user.favorites.length !== 0);
-
-    for (const user of usersWithFavorites) {
-      const groupParams = user.favorites.map((favorite) => ['group', favorite.publicationId]);
-      const excludeParams = user.recommendations
-        .flatMap((recommendation) => recommendation.publications)
-        .map((publication) => ['excluded_ids', publication.id]);
-      const params = new URLSearchParams(groupParams.concat(excludeParams));
-      params.set('amount', '10');
-
-      const url = `${baseUrl}?${params.toString()}`;
-      try {
-        const data = await (await fetch(url)).json();
-        const matchGroup = plainToInstance(MatchGroup, data);
-        const errors = await validate(matchGroup);
-
-        if (errors.length !== 0) {
-          throw new AiBackendException();
-        }
-
-        const recommendations = matchGroup.matches.map((match) => ({ id: match.id }));
-        await this.recommendationRepository.save({
-          user,
-          publications: recommendations,
-        });
-      } catch (e) {
-        this.logger.log(`error when fetching ${url}: `, e);
-      }
-    }
   }
 }

@@ -6,18 +6,16 @@ import { PublicationResponseDto } from './publication-response.dto';
 export class RecommendationResponseDto {
   constructor(recommendation: Recommendation) {
     this.id = recommendation.id;
-    this.publications = Array.isArray(recommendation.publications)
-      ? recommendation.publications.map((publication) => new PublicationResponseDto(publication))
-      : [];
-    this.createdAt = recommendation.createdAt ? recommendation.createdAt.toISOString() : null;
+    this.publications = recommendation.publications.map((publication) => new PublicationResponseDto(publication));
+    this.createdAt = recommendation.createdAt;
   }
 
-  @Field()
-  id: string;
+  @Field({ nullable: true })
+  id: string | null;
 
   @Field(() => [PublicationResponseDto])
   publications: PublicationResponseDto[];
 
   @Field()
-  createdAt: string;
+  createdAt: Date;
 }
