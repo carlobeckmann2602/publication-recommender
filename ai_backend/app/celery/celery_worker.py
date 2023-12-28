@@ -248,7 +248,9 @@ def recommend_by_group(self: StrictEngineTask,
         )
     else:
         response = []
-        for current_group, current_exclude in zip(publication_ids, exclude):
+        for index, current_group in enumerate(publication_ids):
+            current_exclude = exclude if exclude is None else exclude[index]
+
             matches = self.recommender.get_match_by_group(current_group, int(amount), current_exclude)
             response.append(
                 convert_matching_to_response(
@@ -284,7 +286,9 @@ def recommend_by_publication(self: StrictEngineTask,
                 raise worker_error.MissingPublication(current_publication_id)
 
         response = []
-        for current_id, current_exclude in zip(publication_id, exclude):
+        for index, current_id in enumerate(publication_id):
+            current_exclude = exclude if exclude is None else exclude[index]
+
             matches = self.recommender.get_match_by_id(current_id, int(amount), current_exclude)
             response.append(
                 convert_matching_to_response(
@@ -312,9 +316,10 @@ def recommend_by_token(self: StrictEngineTask,
             self.recommender.SENTENCE_ID_KEY
         )
     else:
-
         response = []
-        for current_token, current_exclude in zip(token, exclude):
+        for index, current_token in enumerate(token):
+            current_exclude = exclude if exclude is None else exclude[index]
+
             matches = self.recommender.get_match_by_token(current_token, int(amount), current_exclude)
             response.append(
                 convert_matching_to_response(
