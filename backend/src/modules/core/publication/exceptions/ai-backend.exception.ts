@@ -1,5 +1,5 @@
 export class AiBackendException extends Error {
-  constructor() {
-    super('Bad response from ai backend');
+  constructor(message?: string) {
+    super(message ?? 'Bad response from ai backend');
   }
 }
