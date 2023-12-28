@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
 from anyio import Semaphore
-from typing import List, Dict, Annotated
+from typing import List, Dict, Annotated, Union
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
@@ -34,6 +34,7 @@ async def lifespan(app: FastAPI):
         app.last_changed = 0
         tasks.build_annoy.apply_async(args=[])
     yield
+
 
 rec_api = FastAPI(
     title="HSD Publication Recommendation Engine",
@@ -117,8 +118,11 @@ def get_model_data():
 
 
 @rec_api.get("/match_id/{publication_id}/")
-async def get_recommendation(publication_id: str, amount: int = 5,
-                             excluded_ids: Annotated[list[str], Query()] = []):
+async def get_recommendation(publication_id: Union[str, Annotated[List[str], Query()]], amount: int = 5,
+                             excluded_ids: Union[
+                                 Annotated[List[str], Query()],
+                                 Annotated[List[List[str]], Query()]
+                             ] = []):
     """
     Runs the recommendation engine for a publication ID.
     - **publication_id**: The input publication
@@ -135,8 +139,11 @@ async def get_recommendation(publication_id: str, amount: int = 5,
 
 
 @rec_api.get("/match_token/{token}/")
-async def get_recommendation(token: str, amount: int = 5,
-                             excluded_ids: Annotated[list[str], Query()] = []):
+async def get_recommendation(token: Union[str, Annotated[List[str], Query()]], amount: int = 5,
+                             excluded_ids: Union[
+                                 Annotated[List[str], Query()],
+                                 Annotated[List[List[str]], Query()]
+                             ] = []):
     """
     Runs the recommendation engine for a token.
     - **token**: The input token. For example a sentence
@@ -150,8 +157,15 @@ async def get_recommendation(token: str, amount: int = 5,
 
 
 @rec_api.get("/match_group/")
-async def get_recommendation(group: Annotated[list[str], Query()] = [], amount: int = 5,
-                             excluded_ids: Annotated[list[str], Query()] = []):
+async def get_recommendation(group: Union[
+                                 Annotated[List[str], Query()],
+                                 Annotated[List[List[str]], Query()]
+                             ] = [],
+                             amount: int = 5,
+                             excluded_ids: Union[
+                                 Annotated[List[str], Query()],
+                                 Annotated[List[List[str]], Query()]
+                             ] = []):
     """
     Runs the recommendation engine for a list of publication IDs as a group.
     This can be used to recommend based of a user library for example.
