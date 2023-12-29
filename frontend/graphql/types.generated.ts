@@ -129,6 +129,7 @@ export type PublicationVectorsRequestDto = {
 
 export type Query = {
   __typename?: 'Query';
+  createNewRecommendation: RecommendationResponseDto;
   favorites: Array<PublicationResponseDto>;
   newest: PublicationResponseDto;
   oldest: PublicationResponseDto;
@@ -139,6 +140,11 @@ export type Query = {
   publicationsByQuery: Array<PublicationResponseDto>;
   recommendations: Array<RecommendationResponseDto>;
   searchPublicationBySourceAndSourceId?: Maybe<PublicationResponseDto>;
+};
+
+
+export type QueryCreateNewRecommendationArgs = {
+  createNewRecommendationInput: RecommendationCreateDto;
 };
 
 
@@ -181,10 +187,16 @@ export type QuerySearchPublicationBySourceAndSourceIdArgs = {
   publicationSourceAndSourceId: PublicationSourceWithSourceIdDto;
 };
 
+export type RecommendationCreateDto = {
+  amount?: InputMaybe<Scalars['Int']>;
+  exlude?: InputMaybe<Array<Scalars['String']>>;
+  group: Array<Scalars['String']>;
+};
+
 export type RecommendationResponseDto = {
   __typename?: 'RecommendationResponseDto';
-  createdAt: Scalars['String'];
-  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  id?: Maybe<Scalars['String']>;
   publications: Array<PublicationResponseDto>;
 };
 

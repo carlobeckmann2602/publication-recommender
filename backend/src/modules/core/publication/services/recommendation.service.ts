@@ -10,6 +10,7 @@ import { RecommendationCreateDto } from '../dto/recommendation-create.dto';
 import { Publication } from '../entities/publication.entity';
 import { Recommendation } from '../entities/recommendation.entity';
 import { AiBackendException } from '../exceptions/ai-backend.exception';
+import { RecommendationException } from '../exceptions/recommendation.exception';
 
 @Injectable()
 export class RecommendationService {
@@ -27,7 +28,6 @@ export class RecommendationService {
   ) {}
 
   private readonly logger = new Logger(RecommendationService.name);
-  private baseRecommendationUrl = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/match_group`;
 
   async all(user: User): Promise<Recommendation[]> {
     const userWithRecommendations = await this.userRepository.findOne({
@@ -45,43 +45,76 @@ export class RecommendationService {
     const usersWithFavorites = users.filter((user) => user.favorites.length !== 0);
 
     for (const user of usersWithFavorites) {
-      const groupParams = user.favorites.map((favorite) => ['group', favorite.publicationId]);
-      const excludeParams = user.recommendations
-        .flatMap((recommendation) => recommendation.publications)
-        .map((publication) => ['excluded_ids', publication.id]);
-      const params = new URLSearchParams(groupParams.concat(excludeParams));
-      params.set('amount', '10');
-
-      const url = `${this.baseRecommendationUrl}?${params.toString()}`;
-      try {
-        const data = await (await fetch(url)).json();
-        const matchGroup = plainToInstance(MatchGroup, data);
-        const errors = await validate(matchGroup);
-
-        if (errors.length !== 0) {
-          throw new AiBackendException();
-        }
-
-        const recommendations = matchGroup.matches.map((match) => ({ id: match.id }));
-        await this.recommendationRepository.save({
-          user,
-          publications: recommendations,
-        });
-      } catch (e) {
-        this.logger.log(`error when fetching ${url}: `, e);
-      }
+      await this.createRecommendationforUserFromFavorites(user);
     }
   }
 
-  async createNewRecommendation(dto: RecommendationCreateDto, user: User | null): Promise<Recommendation> {
-    const groupParams = dto.group?.map((publicationId) => ['group', publicationId]) ?? [];
-    const excludeParams = dto.exlude?.map((publicationId) => ['excluded_ids', publicationId]) ?? [];
-    const params = new URLSearchParams(groupParams.concat(excludeParams));
-    if (dto.amount) {
-      params.set('amount', dto.amount.toString());
+  async createNewRecommendation(dto: RecommendationCreateDto | null, user: User | null): Promise<Recommendation> {
+    if (!dto && !user) {
+      throw new RecommendationException("can't create recommendation when dto is null and user is null");
+    } else if (!dto && user) {
+      // generate recommendation for user based on favorites
+      return await this.createRecommendationforUserFromFavorites(user);
+    } else if (dto && user) {
+      return this.createRecommendationforUser(dto, user);
+      //generate dto and save in db
+    } else if (dto && !user) {
+      // generate recommendation based on dto but dont save it in db
+      return await this.createRecommendationForGuest(dto);
     }
+  }
 
-    const url = `${this.baseRecommendationUrl}?${params.toString()}`;
+  async createRecommendationforUserFromFavorites(user: User) {
+    const userData = await this.userRepository.findOneBy({
+      //relations: { favorites: true, recommendations: { publications: true } },
+      id: user.id,
+    });
+
+    const group = user.favorites.map((favorite) => favorite.publicationId);
+    const exclude = user.recommendations
+      .flatMap((recommendation) => recommendation.publications)
+      .map((publication) => publication.id);
+    const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(group, exclude);
+    const partialRecommendationPublications = recommendationPublicationIds.map((id) => ({ id }));
+    return await this.recommendationRepository.save({
+      user,
+      publications: partialRecommendationPublications,
+    });
+  }
+
+  async createRecommendationforUser(dto: RecommendationCreateDto, user: User) {
+    const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(dto.group, dto.exlude, dto.amount);
+    const recommendationsAsObjects = recommendationPublicationIds.map((recommendationPublicationId) => ({
+      id: recommendationPublicationId,
+    }));
+    return await this.recommendationRepository.save({
+      user,
+      publications: recommendationsAsObjects,
+    });
+  }
+
+  async createRecommendationForGuest(dto: RecommendationCreateDto) {
+    const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(dto.group, dto.exlude, dto.amount);
+    const publications = await this.publicationRepository.find({ where: { id: In(recommendationPublicationIds) } });
+    const recommendation = new Recommendation();
+    recommendation.publications = publications;
+    recommendation.createdAt = new Date();
+    return recommendation;
+  }
+
+  async getRecommendationsFromAiBackend(
+    group: string[],
+    exclude?: string[] | null,
+    amount?: number | null,
+  ): Promise<string[]> {
+    const groupParams = group.map((publicationId) => ['group', publicationId]) ?? [];
+    const excludeParams = exclude?.map((publicationId) => ['excluded_ids', publicationId]) ?? [];
+    const params = new URLSearchParams(groupParams.concat(excludeParams));
+    let amountOrDefault = amount ?? 10;
+    params.set('amount', amountOrDefault.toString());
+
+    const baseRecommendationUrl = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/match_group`;
+    const url = `${baseRecommendationUrl}?${params.toString()}`;
     try {
       const data = await (await fetch(url)).json();
       const matchGroup = plainToInstance(MatchGroup, data);
@@ -90,24 +123,8 @@ export class RecommendationService {
       if (errors.length !== 0) {
         throw new AiBackendException();
       }
-      const recommendationPublicationIds = matchGroup.matches.map((match) => match.id);
 
-      if (!user) {
-        console.log('recommendationPublicationIds: ', recommendationPublicationIds);
-        const publications = await this.publicationRepository.find({ where: { id: In(recommendationPublicationIds) } });
-        const recommendation = new Recommendation();
-        recommendation.publications = publications;
-        recommendation.createdAt = new Date();
-        return recommendation;
-      }
-
-      const recommendationsAsObjects = recommendationPublicationIds.map((recommendationPublicationId) => ({
-        id: recommendationPublicationId,
-      }));
-      return await this.recommendationRepository.save({
-        user,
-        publications: recommendationsAsObjects,
-      });
+      return matchGroup.matches.map((match) => match.id);
     } catch (e) {
       throw new AiBackendException(`error when fetching ${url}`);
     }
