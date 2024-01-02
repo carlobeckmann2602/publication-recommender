@@ -51,9 +51,9 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type RecommendationResponseDto {
-  id: String!
+  id: String
   publications: [PublicationResponseDto!]!
-  createdAt: String!
+  createdAt: DateTime!
 }
 
 type Query {
@@ -86,6 +86,7 @@ type Mutation {
   savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
   markAsFavorite(id: String!): Boolean!
   unmarkAsFavorite(id: String!): Boolean!
+  createNewRecommendation(createNewRecommendationInput: RecommendationCreateDto): RecommendationResponseDto!
 }
 
 input RegisterDto {
@@ -119,4 +120,10 @@ input DescriptorDto {
 input SentenceDto {
   value: String!
   vector: [Float!]!
+}
+
+input RecommendationCreateDto {
+  group: [String!]!
+  exlude: [String!]
+  amount: Int
 }

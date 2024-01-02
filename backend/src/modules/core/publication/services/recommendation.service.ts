@@ -53,20 +53,16 @@ export class RecommendationService {
     if (!dto && !user) {
       throw new RecommendationException("can't create recommendation when dto is null and user is null");
     } else if (!dto && user) {
-      // generate recommendation for user based on favorites
       return await this.createRecommendationforUserFromFavorites(user);
     } else if (dto && user) {
       return this.createRecommendationforUser(dto, user);
-      //generate dto and save in db
     } else if (dto && !user) {
-      // generate recommendation based on dto but dont save it in db
       return await this.createRecommendationForGuest(dto);
     }
   }
 
   async createRecommendationforUserFromFavorites(user: User) {
     const userData = await this.userRepository.findOneBy({
-      //relations: { favorites: true, recommendations: { publications: true } },
       id: user.id,
     });
 

@@ -50,12 +50,18 @@ export type LoginDto = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createNewRecommendation: RecommendationResponseDto;
   login: LoggedIn;
   markAsFavorite: Scalars['Boolean'];
   refreshToken: JwtDto;
   register: LoggedIn;
   savePublication: PublicationResponseDto;
   unmarkAsFavorite: Scalars['Boolean'];
+};
+
+
+export type MutationCreateNewRecommendationArgs = {
+  createNewRecommendationInput?: InputMaybe<RecommendationCreateDto>;
 };
 
 
@@ -129,7 +135,6 @@ export type PublicationVectorsRequestDto = {
 
 export type Query = {
   __typename?: 'Query';
-  createNewRecommendation: RecommendationResponseDto;
   favorites: Array<PublicationResponseDto>;
   newest: PublicationResponseDto;
   oldest: PublicationResponseDto;
@@ -140,11 +145,6 @@ export type Query = {
   publicationsByQuery: Array<PublicationResponseDto>;
   recommendations: Array<RecommendationResponseDto>;
   searchPublicationBySourceAndSourceId?: Maybe<PublicationResponseDto>;
-};
-
-
-export type QueryCreateNewRecommendationArgs = {
-  createNewRecommendationInput: RecommendationCreateDto;
 };
 
 
