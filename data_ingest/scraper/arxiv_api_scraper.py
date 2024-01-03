@@ -68,7 +68,7 @@ class ArxivApiScraper:
     def scrape_by_id_list(self, id_list, block_size):
         root = ArxivApiScraper.root
         method = "query"
-        api_url = root+method+"?id_list="
+        api_url = root+method+"?id_list=" # https://export.arxiv.org/api/query?id_list=
         
         pub_list = list()
         url = api_url 
