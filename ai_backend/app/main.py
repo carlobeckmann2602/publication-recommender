@@ -1,3 +1,5 @@
+import time
+
 import celery
 from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException, UploadFile, Query
@@ -5,11 +7,12 @@ from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
 from anyio import Semaphore
-from typing import List, Dict, Annotated, Union
+from typing import List, Dict, Annotated, Union, Callable
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
 import aiofiles
+from numpy import random
 
 STANDARD_MODEL = "current_model.zip"
 MAX_THREAD_SEMAPHORE = Semaphore(5)
@@ -51,9 +54,9 @@ rec_api.archive_path = f"{rec_api.generated_data_path}/archive"
 rec_api.current_model = ""
 
 
-async def get_result(task: AsyncResult):
+async def get_result(task: celery.result.AsyncResult):
     async with MAX_THREAD_SEMAPHORE:
-        result = await run_in_threadpool(lambda: task.get())
+        result = await run_in_threadpool(lambda: task.get(timeout=5 * 60 * 60))
     return result
 
 
@@ -151,16 +154,13 @@ async def get_recommendation(token: Union[str, Annotated[List[str], Query()]], a
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = tasks.recommend_by_token.apply_async(args=[str(token), amount, excluded_ids])
+    task = tasks.recommend_by_token.apply_async(args=[token, amount, excluded_ids])
     result = await get_result(task)
     return result
 
 
 @rec_api.get("/match_group/")
-async def get_recommendation(group: Union[
-                                 Annotated[List[str], Query()],
-                                 Annotated[List[List[str]], Query()]
-                             ] = [],
+async def get_recommendation(group: Union[Annotated[List[str], Query()], Annotated[List[List[str]], Query()]] = [],
                              amount: int = 5,
                              excluded_ids: Union[
                                  Annotated[List[str], Query()],

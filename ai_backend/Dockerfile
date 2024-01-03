@@ -4,5 +4,6 @@ RUN mkdir app/
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --root-user-action=ignore --no-cache-dir --upgrade -r /code/requirements.txt
 
-CMD ["/bin/sh","-c",\
-    "pip install --root-user-action=ignore --upgrade -r /code/requirements.txt"]
+RUN useradd -ms /bin/bash -u 1000 non_root
+RUN chown -R non_root:non_root /code
+# USER non_root

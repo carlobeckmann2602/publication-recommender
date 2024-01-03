@@ -119,6 +119,7 @@ class EngineTask(celery.Task):
             print(f"Executing task {task_id} without up-to-date engine")
             self.recommender = get_blank_recommender()
         self.recommender.summarizer.transformer.eval()
+        self.recommender.debug = True
         print(self.get_start_string())
 
     def update_engine(self):
@@ -137,6 +138,8 @@ class EngineTask(celery.Task):
 
 
 class StrictEngineTask(EngineTask):
+    max_retries = 5
+
     def before_start(self, task_id, *args, **kwargs):
         self.update_engine()
         if self.recommender is None:
@@ -146,7 +149,15 @@ class StrictEngineTask(EngineTask):
                 self.update_engine()
             except Exception as e:
                 print("Could not download because" + "\n" + str(e))
-                raise worker_error.MissingEngine(self.__name__)
+                exception = worker_error.MissingEngine(self.__name__)
+                cooldown = 1 + (self.request.retries * 2)
+                print(f"Waiting for {cooldown}s to try again")
+                self.retry(countdown=10,
+                           max_retries=5,
+                           throw=True, exc=exception,
+                           args=tuple(args[0]),
+                           kwargs=kwargs)
+                raise exception
         self.recommender.summarizer.transformer.eval()
         print(self.get_start_string())
 
@@ -207,6 +218,7 @@ def build_annoy(self: EngineTask):
     if result is None:
         raise worker_error.NoBackendData(client.transport)
     new_mapping, embeddings = self.recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
+    self.recommender.token_amount = new_mapping[self.recommender.SENTENCE_ID_KEY].max() + 1
     original_annoy_input_length = self.recommender.annoy_input_length
     self.recommender.annoy_input_length = embeddings.shape[1]
     self.recommender.build_annoy(new_mapping, embeddings, "override")
