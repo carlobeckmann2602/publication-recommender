@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from celery import Celery
 from celery.signals import worker_ready, worker_init
@@ -33,6 +34,23 @@ def get_last_changed_on_disk(path) -> float:
 def get_blank_recommender() -> Recommender:
     summarizer = Summarizer()
     return Recommender(summarizer)
+
+
+def convert_matching_to_response(matching: pd.DataFrame,
+                                 pub_id_key: str, sentence_key: str) -> Dict[str, List[Dict[str, str | int]]]:
+    result = {"matches": []}
+    for index, row in matching.iterrows():
+        pub_id = row[pub_id_key]
+        matching_sentence = row[sentence_key]
+        input_info = row["input"]
+        distance = row["distance"]
+        result["matches"].append({
+            "id": pub_id,
+            "input": input_info,
+            "mathing_sentence": matching_sentence,
+            "distance": distance
+        })
+    return result
 
 
 def convert_matching_to_response(matching: pd.DataFrame,
@@ -101,6 +119,7 @@ class EngineTask(celery.Task):
             print(f"Executing task {task_id} without up-to-date engine")
             self.recommender = get_blank_recommender()
         self.recommender.summarizer.transformer.eval()
+        self.recommender.debug = True
         print(self.get_start_string())
 
     def update_engine(self):
@@ -119,6 +138,8 @@ class EngineTask(celery.Task):
 
 
 class StrictEngineTask(EngineTask):
+    max_retries = 5
+
     def before_start(self, task_id, *args, **kwargs):
         self.update_engine()
         if self.recommender is None:
@@ -128,7 +149,15 @@ class StrictEngineTask(EngineTask):
                 self.update_engine()
             except Exception as e:
                 print("Could not download because" + "\n" + str(e))
-                raise worker_error.MissingEngine(self.__name__)
+                exception = worker_error.MissingEngine(self.__name__)
+                cooldown = 1 + (self.request.retries * 2)
+                print(f"Waiting for {cooldown}s to try again")
+                self.retry(countdown=10,
+                           max_retries=5,
+                           throw=True, exc=exception,
+                           args=tuple(args[0]),
+                           kwargs=kwargs)
+                raise exception
         self.recommender.summarizer.transformer.eval()
         print(self.get_start_string())
 
@@ -189,6 +218,7 @@ def build_annoy(self: EngineTask):
     if result is None:
         raise worker_error.NoBackendData(client.transport)
     new_mapping, embeddings = self.recommender.convert_to_mapping(result, "id", "vectors", "embeddings")
+    self.recommender.token_amount = new_mapping[self.recommender.SENTENCE_ID_KEY].max() + 1
     original_annoy_input_length = self.recommender.annoy_input_length
     self.recommender.annoy_input_length = embeddings.shape[1]
     self.recommender.build_annoy(new_mapping, embeddings, "override")
@@ -214,46 +244,100 @@ def get_random_id(self: StrictEngineTask, amount: int):
              base=StrictEngineTask,
              bind=True)
 def recommend_by_group(self: StrictEngineTask,
-                       publication_ids: List[str], amount: int, exclude: List[str] = None) -> dict:
-    for publication_id in publication_ids:
+                       publication_ids: List[str] | List[List[str]],
+                       amount: int,
+                       exclude: List[str] | List[List[str]] = None) -> Dict | List:
+    for publication_id in np.unique(publication_ids):
         if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
             raise worker_error.MissingPublication(publication_id)
 
-    matches = self.recommender.get_match_by_group(publication_ids, int(amount), exclude)
+    if isinstance(publication_ids[0], str):
+        matches = self.recommender.get_match_by_group(publication_ids, int(amount), exclude)
+        return convert_matching_to_response(
+            matches,
+            self.recommender.PUBLICATION_ID_KEY,
+            self.recommender.SENTENCE_ID_KEY
+        )
+    else:
+        response = []
+        for index, current_group in enumerate(publication_ids):
+            current_exclude = exclude if exclude is None else exclude[index]
 
-    return convert_matching_to_response(
-        matches,
-        self.recommender.PUBLICATION_ID_KEY,
-        self.recommender.SENTENCE_ID_KEY
-    )
+            matches = self.recommender.get_match_by_group(current_group, int(amount), current_exclude)
+            response.append(
+                convert_matching_to_response(
+                    matches,
+                    self.recommender.PUBLICATION_ID_KEY,
+                    self.recommender.SENTENCE_ID_KEY
+                )
+            )
+        return response
 
 
 @celery.task(name="recommend_publication_id",
              base=StrictEngineTask,
              bind=True)
 def recommend_by_publication(self: StrictEngineTask,
-                             publication_id: str, amount: int, exclude: List[str] = None) -> dict:
-    if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
-        raise worker_error.MissingPublication(publication_id)
+                             publication_id: str | List[str],
+                             amount: int,
+                             exclude: List[str] | List[List[str]] = None) -> Dict | List:
+    if isinstance(publication_id, str):
+        if publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
+            raise worker_error.MissingPublication(publication_id)
 
-    matches = self.recommender.get_match_by_id(str(publication_id), amount, exclude)
+        matches = self.recommender.get_match_by_id(str(publication_id), amount, exclude)
 
-    return convert_matching_to_response(
-        matches,
-        self.recommender.PUBLICATION_ID_KEY,
-        self.recommender.SENTENCE_ID_KEY
-    )
+        return convert_matching_to_response(
+            matches,
+            self.recommender.PUBLICATION_ID_KEY,
+            self.recommender.SENTENCE_ID_KEY
+        )
+    else:
+        for current_publication_id in np.unique(publication_id):
+            if current_publication_id not in self.recommender.mapping[Recommender.PUBLICATION_ID_KEY].values:
+                raise worker_error.MissingPublication(current_publication_id)
+
+        response = []
+        for index, current_id in enumerate(publication_id):
+            current_exclude = exclude if exclude is None else exclude[index]
+
+            matches = self.recommender.get_match_by_id(current_id, int(amount), current_exclude)
+            response.append(
+                convert_matching_to_response(
+                    matches,
+                    self.recommender.PUBLICATION_ID_KEY,
+                    self.recommender.SENTENCE_ID_KEY
+                )
+            )
+        return response
 
 
 @celery.task(name="recommend_token",
              base=StrictEngineTask,
              bind=True)
 def recommend_by_token(self: StrictEngineTask,
-                       token: str, amount: int, exclude: List[str] = None) -> dict:
-    matches = self.recommender.get_match_by_token(str(token), int(amount), exclude)
+                       token: str | List[str],
+                       amount: int,
+                       exclude: List[str] | List[List[str]] = None) -> Dict | List:
+    if isinstance(token, str):
+        matches = self.recommender.get_match_by_token(str(token), int(amount), exclude)
 
-    return convert_matching_to_response(
-        matches,
-        self.recommender.PUBLICATION_ID_KEY,
-        self.recommender.SENTENCE_ID_KEY
-    )
+        return convert_matching_to_response(
+            matches,
+            self.recommender.PUBLICATION_ID_KEY,
+            self.recommender.SENTENCE_ID_KEY
+        )
+    else:
+        response = []
+        for index, current_token in enumerate(token):
+            current_exclude = exclude if exclude is None else exclude[index]
+
+            matches = self.recommender.get_match_by_token(current_token, int(amount), current_exclude)
+            response.append(
+                convert_matching_to_response(
+                    matches,
+                    self.recommender.PUBLICATION_ID_KEY,
+                    self.recommender.SENTENCE_ID_KEY
+                )
+            )
+        return response
