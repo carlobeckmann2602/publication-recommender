@@ -2,10 +2,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './modules/core/core.module';
+import { CronModule } from './modules/cron/cron.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { RabbitMQModule } from './modules/mq/rabbitmq.module';
 
@@ -22,6 +24,8 @@ import { RabbitMQModule } from './modules/mq/rabbitmq.module';
     DatabaseModule,
     RabbitMQModule,
     CoreModule,
+    ScheduleModule.forRoot(),
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],

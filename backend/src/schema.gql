@@ -1,0 +1,129 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type JwtDto {
+  accessToken: String!
+  refreshToken: String!
+  expiresIn: Int!
+}
+
+type User {
+  id: String!
+  email: String!
+  name: String!
+}
+
+type LoggedIn {
+  jwt: JwtDto!
+  user: User!
+}
+
+type PublicationChunkDto {
+  chunk: Int!
+  data: [PublicationChunkDataDto!]!
+}
+
+type PublicationChunkDataDto {
+  id: String!
+  vectors: [[Float!]!]!
+}
+
+type PublicationResponseDto {
+  id: String!
+  title: String!
+  doi: [String!]!
+  exId: String!
+  source: PublicationSource!
+  url: String
+  authors: [String!]
+  publicationDate: DateTime
+  isFavorite: Boolean!
+}
+
+enum PublicationSource {
+  ARXIV
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type RecommendationResponseDto {
+  id: String
+  publications: [PublicationResponseDto!]!
+  createdAt: DateTime!
+}
+
+type Query {
+  publicationsByQuery(filter: String!): [PublicationResponseDto!]!
+  publicationsById(filter: String!): [PublicationResponseDto!]!
+  publicationCount(source: PublicationSource): Int!
+  publication(id: String!): PublicationResponseDto!
+  oldest(source: PublicationSource!): PublicationResponseDto!
+  newest(source: PublicationSource!): PublicationResponseDto!
+  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
+  searchPublicationBySourceAndSourceId(publicationSourceAndSourceId: PublicationSourceWithSourceIdDto!): PublicationResponseDto
+  favorites: [PublicationResponseDto!]!
+  recommendations: [RecommendationResponseDto!]!
+}
+
+input PublicationVectorsRequestDto {
+  chunk: Int!
+  chunkSize: Int = 100
+}
+
+input PublicationSourceWithSourceIdDto {
+  exId: String!
+  source: PublicationSource!
+}
+
+type Mutation {
+  register(data: RegisterDto!): LoggedIn!
+  login(data: LoginDto!): LoggedIn!
+  refreshToken(token: String!): JwtDto!
+  savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
+  markAsFavorite(id: String!): Boolean!
+  unmarkAsFavorite(id: String!): Boolean!
+  createNewRecommendation(createNewRecommendationInput: RecommendationCreateDto): RecommendationResponseDto!
+}
+
+input RegisterDto {
+  email: String!
+  password: String!
+  name: String!
+}
+
+input LoginDto {
+  email: String!
+  password: String!
+}
+
+input CreatePublicationDto {
+  title: String!
+  exId: String!
+  source: PublicationSource!
+  doi: [String!]
+  url: String
+  publisher: String
+  abstract: String
+  authors: [String!] = []
+  date: DateTime
+  descriptor: DescriptorDto!
+}
+
+input DescriptorDto {
+  sentences: [SentenceDto!]!
+}
+
+input SentenceDto {
+  value: String!
+  vector: [Float!]!
+}
+
+input RecommendationCreateDto {
+  group: [String!]!
+  exlude: [String!]
+  amount: Int
+}

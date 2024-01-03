@@ -44,6 +44,7 @@ import { UserService } from './user/services/user.service';
     FavoriteResolver,
     RecommendationResolver,
   ],
+  exports: [RecommendationService],
   controllers: [PublicationController],
 })
 export class CoreModule {}

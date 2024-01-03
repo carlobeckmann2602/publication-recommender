@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, Query
 from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
+from anyio import Semaphore
 from typing import List, Dict, Annotated
 from .util.misc import create_file_structure
 from . import celery as tasks
@@ -11,6 +12,7 @@ import os
 import aiofiles
 
 STANDARD_MODEL = "current_model.zip"
+MAX_THREAD_SEMAPHORE = Semaphore(5)
 
 
 @asynccontextmanager
@@ -49,7 +51,8 @@ rec_api.current_model = ""
 
 
 async def get_result(task: AsyncResult):
-    result = await run_in_threadpool(lambda: task.get())
+    async with MAX_THREAD_SEMAPHORE:
+        result = await run_in_threadpool(lambda: task.get())
     return result
 
 
