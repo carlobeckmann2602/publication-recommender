@@ -4,10 +4,10 @@ from publications import ArxivPublication
 from scraper import ArxivApiScraper, ArxivWebScraper, PdfScraper
 from db import DatabaseApi
 
-tmp_id_list = "data/temp/id_list.csv"
-tmp_metadata_list = "data/temp/metadata_list.csv" 
-tmp_pub_list = "data/temp/pub_list.csv"
-tmp_txt_dir = "data/temp/"
+tmp_id_list = "/scraper/data/temp/id_list.csv"
+tmp_metadata_list = "/scraper/data/temp/metadata_list.csv" 
+tmp_pub_list = "/scraper/data/temp/pub_list.csv"
+tmp_txt_dir = "/scraper/data/temp/"
 
 ax_pdf_url = "https://arxiv.org/pdf/"
 
