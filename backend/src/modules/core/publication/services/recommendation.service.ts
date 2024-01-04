@@ -10,6 +10,7 @@ import { RecommendationCreateDto } from '../dto/recommendation-create.dto';
 import { Publication } from '../entities/publication.entity';
 import { Recommendation } from '../entities/recommendation.entity';
 import { AiBackendException } from '../exceptions/ai-backend.exception';
+import { NoFavoritesForRecommendationException } from '../exceptions/no-favorites-for-recommendation.exception';
 import { RecommendationException } from '../exceptions/recommendation.exception';
 
 @Injectable()
@@ -62,18 +63,23 @@ export class RecommendationService {
   }
 
   async createRecommendationforUserFromFavorites(user: User) {
-    const userData = await this.userRepository.findOneBy({
-      id: user.id,
+    const userData = await this.userRepository.findOne({
+      where: { id: user.id },
+      relations: { favorites: true, recommendations: true },
     });
 
-    const group = user.favorites.map((favorite) => favorite.publicationId);
-    const exclude = user.recommendations
+    if (userData.favorites.length === 0) {
+      throw new NoFavoritesForRecommendationException();
+    }
+
+    const group = userData.favorites.map((favorite) => favorite.publicationId);
+    const exclude = userData.recommendations
       .flatMap((recommendation) => recommendation.publications)
       .map((publication) => publication.id);
     const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(group, exclude);
     const partialRecommendationPublications = recommendationPublicationIds.map((id) => ({ id }));
     return await this.recommendationRepository.save({
-      user,
+      userId: user.id,
       publications: partialRecommendationPublications,
     });
   }

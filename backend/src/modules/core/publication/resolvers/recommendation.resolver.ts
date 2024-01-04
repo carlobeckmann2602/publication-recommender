@@ -6,6 +6,7 @@ import { User } from '../../user/entities/user.entity';
 import { RecommendationCreateDto } from '../dto/recommendation-create.dto';
 import { RecommendationResponseDto } from '../dto/recommendation-response.dto';
 import { AiBackendException } from '../exceptions/ai-backend.exception';
+import { NoFavoritesForRecommendationException } from '../exceptions/no-favorites-for-recommendation.exception';
 import { RecommendationException } from '../exceptions/recommendation.exception';
 import { FavoriteService } from '../services/favorites.service';
 import { RecommendationService } from '../services/recommendation.service';
@@ -56,6 +57,8 @@ export class RecommendationResolver {
         throw new BadRequestException(e);
       } else if (e instanceof AiBackendException) {
         throw new InternalServerErrorException(e);
+      } else if (e instanceof NoFavoritesForRecommendationException) {
+        throw new BadRequestException(e);
       }
       throw new InternalServerErrorException();
     }
