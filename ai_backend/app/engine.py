@@ -19,7 +19,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 class Summarizer:
     transformer: SentenceTransformer
 
-    def __init__(self, transformer: str | SentenceTransformer = "all-MiniLM-L6-v2", tokenize: bool = True,
+    def __init__(self, transformer: str | SentenceTransformer = "all-mpnet-base-v2", tokenize: bool = True,
                  debug=False):
         self.debug = debug
         self.tokenize = tokenize
@@ -234,6 +234,9 @@ class Recommender:
 
         # All blocked entries + enough neighbours so that amount unique publications are found
         nns_amount = (len(exclude) * self.token_amount) + (amount * self.token_amount)
+        if self.debug:
+            print(f"Generating {nns_amount} neighbours with {len(exclude)} excludes, "
+                  f"{self.token_amount} tokens per entry and {amount} desired results")
 
         if isinstance(data, int):
             neighbours, distances = self.annoy_database.get_nns_by_item(data, nns_amount, include_distances=True)
@@ -249,6 +252,9 @@ class Recommender:
             nns_data, self.mapping[[self.ANNOY_INDEX_KEY, self.PUBLICATION_ID_KEY, self.SENTENCE_ID_KEY]],
             how="left", on=self.ANNOY_INDEX_KEY
         )
+        if self.debug:
+            print(nns_data.info)
+            print(nns_data)
         return nns_data
 
     def __to_recommender_output(self, nns_data: pd.DataFrame, amount: int, exclude: List[str] = None) -> pd.DataFrame:
@@ -265,6 +271,7 @@ class Recommender:
         original_token = token
         if isinstance(token, str):
             token = self.summarizer.transformer.encode(token, convert_to_numpy=True)
+            print(token.shape)
             printable_token = original_token
         else:
             printable_token = f"Vector with: {np.array(original_token).shape} -> (0:10): {original_token[0:10]}"

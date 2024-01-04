@@ -25,5 +25,8 @@ beat_schedule = {
 timezone = "Europe/Berlin"
 
 broker_connection_retry_on_startup = True
-C_FORCE_ROOT = False  # TODO: Find wy to use different user as standard
+result_serializer = "json"
+task_serializer = "json"
+accept_content = ["json", "yaml"]
+C_FORCE_ROOT = False
 # worker_enable_remote_control = True
