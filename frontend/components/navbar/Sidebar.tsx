@@ -1,11 +1,13 @@
 "use client";
 import React, { ReactPropTypes, useEffect } from "react";
-import UserMenu from "./UserMenu";
-import MainMenu from "./MainMenu";
-import { Button } from "../ui/button";
+import UserMenu from "@/components/navbar/UserMenu";
+import MainMenu from "@/components/navbar/MainMenu";
+import RecommendationMenu from "@/components/navbar/RecommendationMenu";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
+import { useSession } from "next-auth/react";
 
 type Props = {
   className?: string;
@@ -14,6 +16,7 @@ type Props = {
 
 export default function Sidebar({ className, props }: Props) {
   const { isCollapsed, toggleSidebarcollapse } = useContext(SidebarContext);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const content = document.getElementById("content");
@@ -39,6 +42,7 @@ export default function Sidebar({ className, props }: Props) {
       </Button>
       <UserMenu />
       <MainMenu />
+      {session && <RecommendationMenu />}
     </aside>
   );
 }

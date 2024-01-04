@@ -12,6 +12,7 @@ import SimilarSearchButton from "./SimilarSearchButton";
 import LikeButton from "./LikeButton";
 import Latex from "@/lib/latex-converter";
 import { Book, File, MessageCircle } from "lucide-react";
+import AddToRecommendationButton from "./AddToRecommendationButton";
 
 type Props = {
   id: string;
@@ -84,7 +85,7 @@ export default function LiteratureCard(props: Props) {
         )}
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row justify-between align-middle items-end grow">
+        <div className="flex flex-row gap-4 justify-between align-middle items-end grow">
           <div className="flex flex-row">
             {!props.disableSearchSimilar && (
               <SimilarSearchButton id={props.id} />
@@ -95,6 +96,7 @@ export default function LiteratureCard(props: Props) {
               title={props.title}
               enableWarning={props.enableLikeWarning}
             />
+            <AddToRecommendationButton id={props.id} />
           </div>
           {props.doi && (
             <span className="h-fit">

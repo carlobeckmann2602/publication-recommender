@@ -7,7 +7,7 @@ import { buttonVariants } from "../ui/button";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
-import { Heart } from "lucide-react";
+import { Heart, Sparkle } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 const menuItems = [
@@ -25,6 +25,13 @@ const menuItems = [
     activeIcon: <Heart size={24} color="red" fill="red" />,
     onlyLoggedIn: true,
   },
+  {
+    name: "Recommendation",
+    href: "/profile/recommendation",
+    icon: <Sparkle size={24} />,
+    activeIcon: <Sparkle size={24} fill="" />,
+    onlyLoggedIn: true,
+  },
 ];
 
 export default function MainMenu({
@@ -38,7 +45,7 @@ export default function MainMenu({
   return (
     <nav
       className={cn(
-        "flex flex-col gap-2 items-center justify-center w-full",
+        "flex flex-col gap-2 items-center w-full flex-1",
         className
       )}
       {...props}
@@ -67,7 +74,6 @@ export default function MainMenu({
                 isCollapsed ? "hidden" : ""
               }`}
             >
-              {" "}
               {name}
             </span>
           </Link>

@@ -130,10 +130,12 @@ export default function LikeButton(props: Props) {
           <DialogHeader>
             <DialogTitle className="leading-normal">
               Do you really want to remove the literature{" "}
-              <span className="italic">
+              <i>
                 &quot;
-                {props.title}&quot;
-              </span>{" "}
+                {props.title}
+                &quot;
+              </i>
+              {"  "}
               from your favourites?
             </DialogTitle>
           </DialogHeader>
