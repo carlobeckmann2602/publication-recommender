@@ -1,13 +1,15 @@
 import time
 
 import celery
+import numpy as np
+import ast
 from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException, UploadFile, Query
 from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
 from anyio import Semaphore
-from typing import List, Dict, Annotated, Union, Callable
+from typing import List, Dict, Annotated
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
@@ -121,19 +123,19 @@ def get_model_data():
 
 
 @rec_api.get("/match_id/{publication_id}/")
-async def get_recommendation(publication_id: Union[str, Annotated[List[str], Query()]], amount: int = 5,
-                             excluded_ids: Union[
-                                 Annotated[List[str], Query()],
-                                 Annotated[List[List[str]], Query()]
-                             ] = []):
+async def get_recommendation(publication_id: str, amount: int = 5,
+                             excluded_ids: Annotated[List[str], Query()] = []):
     """
     Runs the recommendation engine for a publication ID.
     - **publication_id**: The input publication
     - **amount**: The amount of matches to be included
+    - **excluded_ids**: A list of ids which should not appear as valid recommendations
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
-    task = tasks.recommend_by_publication.apply_async(args=[str(publication_id), amount, excluded_ids])
+
+    print(f"[match_id] {publication_id} - > {type(publication_id)}")
+    task = tasks.recommend_by_publication.apply_async(args=[publication_id, amount, excluded_ids])
     try:
         result = await get_result(task)
         return result
@@ -142,40 +144,40 @@ async def get_recommendation(publication_id: Union[str, Annotated[List[str], Que
 
 
 @rec_api.get("/match_token/{token}/")
-async def get_recommendation(token: Union[str, Annotated[List[str], Query()]], amount: int = 5,
-                             excluded_ids: Union[
-                                 Annotated[List[str], Query()],
-                                 Annotated[List[List[str]], Query()]
-                             ] = []):
+async def get_recommendation(token: str, amount: int = 5,
+                             excluded_ids: Annotated[List[str], Query()] = []):
     """
     Runs the recommendation engine for a token.
     - **token**: The input token. For example a sentence
     - **amount**: The amount of matches to be included
+    - **excluded_ids**: A list of ids which should not appear as valid recommendations
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
+
+    print(f"[match_token] {token} - > {type(token)}")
     task = tasks.recommend_by_token.apply_async(args=[token, amount, excluded_ids])
     result = await get_result(task)
     return result
 
 
 @rec_api.get("/match_group/")
-async def get_recommendation(group: Union[Annotated[List[str], Query()], Annotated[List[List[str]], Query()]] = [],
+async def get_recommendation(group: Annotated[List[str], Query()] = [],
                              amount: int = 5,
-                             excluded_ids: Union[
-                                 Annotated[List[str], Query()],
-                                 Annotated[List[List[str]], Query()]
-                             ] = []):
+                             excluded_ids: Annotated[List[str], Query()] = []):
     """
     Runs the recommendation engine for a list of publication IDs as a group.
     This can be used to recommend based of a user library for example.
     - **group**: A list of publication IDs
     - **amount**: The amount of matches to be included
+    - **excluded_ids**: A list of ids which should not appear as valid recommendations
 
     **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
     """
     if group is None:
         return {}
+
+    print(f"[match_group] {group} - > {type(group)}")
     task = tasks.recommend_by_group.apply_async(args=[group, amount, excluded_ids])
     result = await get_result(task)
     return result
