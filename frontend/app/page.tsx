@@ -6,7 +6,6 @@ export default function Home() {
     <>
       <div className="flex justify-center h-full items-center flex-col py-4">
         <Searchbar />
-        <RecommendationSlider title="Publications for you" />
       </div>
     </>
   );
