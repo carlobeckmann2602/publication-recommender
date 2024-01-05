@@ -58,7 +58,11 @@ export default function RecommendationSlider({ title }: Props) {
               id={publication.id}
               title={publication.title}
               authors={publication.authors}
-              date={publication.publicationDate}
+              date={
+                publication.publicationDate
+                  ? new Date(publication.publicationDate)
+                  : undefined
+              }
               link={publication.url}
               doi={publication.doi}
               disableSearchSimilar={false}
