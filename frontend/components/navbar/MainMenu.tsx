@@ -26,7 +26,7 @@ const menuItems = [
     onlyLoggedIn: true,
   },
   {
-    name: "Recommendation",
+    name: "Recommendation History",
     href: "/profile/recommendation",
     icon: <Sparkle size={24} />,
     activeIcon: <Sparkle size={24} fill="" />,

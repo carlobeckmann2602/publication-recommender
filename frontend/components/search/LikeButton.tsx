@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 
 type Props = {
   id: string;

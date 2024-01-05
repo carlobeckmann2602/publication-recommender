@@ -26,6 +26,7 @@ type Props = {
   documentType?: DOCUMENT_TYPES | null;
   disableSearchSimilar?: boolean;
   enableLikeWarning?: boolean;
+  enableRecommendationWarning?: boolean;
   className?: string;
 };
 
@@ -96,7 +97,11 @@ export default function LiteratureCard(props: Props) {
               title={props.title}
               enableWarning={props.enableLikeWarning}
             />
-            <AddToRecommendationButton id={props.id} />
+            <AddToRecommendationButton
+              id={props.id}
+              title={props.title}
+              enableWarning={props.enableRecommendationWarning}
+            />
           </div>
           {props.doi && (
             <span className="h-fit">

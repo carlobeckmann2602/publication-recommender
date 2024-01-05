@@ -12,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-export default async function LiteratureCardById({
+export default async function LiteratureCardByIdServer({
   id,
   disableSearchSimilar,
   className,

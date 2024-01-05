@@ -31,8 +31,8 @@ export default function RecommendationMenu() {
               <Link
                 className={`${buttonVariants({
                   variant: "default",
-                })} h-12 flex gap-4 w-full justify-center !p-2`}
-                href="/profile/recommendation/create"
+                })} flex gap-4 w-full justify-center !p-2`}
+                href="/recommendation/create"
               >
                 <Sparkles />
                 <span className="transition-all duration-700 hidden">
@@ -57,8 +57,8 @@ export default function RecommendationMenu() {
       <Link
         className={`${buttonVariants({
           variant: "default",
-        })} w-full h-12 flex gap-4 !justify-start`}
-        href="/profile/recommendation/create"
+        })} w-full flex gap-4 !justify-start`}
+        href="/recommendation/create"
       >
         <Sparkles />
         <span className={"transition-all duration-700"}>
