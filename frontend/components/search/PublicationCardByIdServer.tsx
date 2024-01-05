@@ -1,7 +1,7 @@
 import { GetPublicationDocument } from "@/graphql/queries/GetPublication.generated";
 import { getClient } from "@/lib/client";
 import React from "react";
-import LiteratureCard from "@/components/search/LiteratureCard";
+import PublicationCard from "@/components/search/PublicationCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { DOCUMENT_TYPES } from "@/constants/enums";
@@ -12,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-export default async function LiteratureCardByIdServer({
+export default async function PublicationCardByIdServer({
   id,
   disableSearchSimilar,
   className,
@@ -23,7 +23,7 @@ export default async function LiteratureCardByIdServer({
       variables: { id: id },
     });
     return (
-      <LiteratureCard
+      <PublicationCard
         key={data.publication.id}
         id={data.publication.id}
         title={data.publication.title}

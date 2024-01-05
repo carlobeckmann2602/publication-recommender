@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import LiteratureCard from "@/components/search/LiteratureCard";
+import PublicationCard from "@/components/search/PublicationCard";
 import { useSession } from "next-auth/react";
 import { useLazyQuery } from "@apollo/client";
 import { GetRecommendationsDocument } from "@/graphql/queries/GetRecomendations.generated";
@@ -53,7 +53,7 @@ export default function RecommendationSlider({ title }: Props) {
         </div>
         <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {data?.recommendations[0].publications.map((publication) => (
-            <LiteratureCard
+            <PublicationCard
               key={publication.id}
               id={publication.id}
               title={publication.title}
@@ -64,7 +64,7 @@ export default function RecommendationSlider({ title }: Props) {
               disableSearchSimilar={false}
             />
           ))}
-          {/* <LiteratureCard
+          {/* <PublicationCard
             id={dummyData.id}
             title={dummyData.title}
             authors={dummyData.authors}
@@ -73,7 +73,7 @@ export default function RecommendationSlider({ title }: Props) {
             doi={dummyData.doi}
             disableSearchSimilar={dummyData.disableSearchSimilar}
           />
-          <LiteratureCard
+          <PublicationCard
             id={dummyData.id}
             title={dummyData.title}
             authors={dummyData.authors}
@@ -82,7 +82,7 @@ export default function RecommendationSlider({ title }: Props) {
             doi={dummyData.doi}
             disableSearchSimilar={dummyData.disableSearchSimilar}
           />
-          <LiteratureCard
+          <PublicationCard
             id={dummyData.id}
             title={dummyData.title}
             authors={dummyData.authors}
@@ -91,7 +91,7 @@ export default function RecommendationSlider({ title }: Props) {
             doi={dummyData.doi}
             disableSearchSimilar={dummyData.disableSearchSimilar}
           />
-          <LiteratureCard
+          <PublicationCard
             id={dummyData.id}
             title={dummyData.title}
             authors={dummyData.authors}
@@ -100,7 +100,7 @@ export default function RecommendationSlider({ title }: Props) {
             doi={dummyData.doi}
             disableSearchSimilar={dummyData.disableSearchSimilar}
           />
-          <LiteratureCard
+          <PublicationCard
             id={dummyData.id}
             title={dummyData.title}
             authors={dummyData.authors}

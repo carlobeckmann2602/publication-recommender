@@ -1,8 +1,6 @@
 "use client";
 import { Header } from "@/components/Header";
-import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
-import LiteratureCard from "@/components/search/LiteratureCard";
-import LiteratureCardByIdClient from "@/components/search/LiteratureCardByIdClient";
+import PublicationCardByIdClient from "@/components/search/PublicationCardByIdClient";
 import { Button } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
 import { useEffect, useState } from "react";
@@ -38,7 +36,7 @@ export default function RecommendationCreate() {
       <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {publications?.map((item) => {
           return (
-            <LiteratureCardByIdClient
+            <PublicationCardByIdClient
               key={item}
               id={item}
               enableRecommendationWarning

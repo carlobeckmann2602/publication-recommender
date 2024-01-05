@@ -129,7 +129,7 @@ export default function LikeButton(props: Props) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="leading-normal">
-              Do you really want to remove the literature{" "}
+              Do you really want to remove the publication{" "}
               <i>
                 &quot;
                 {props.title}

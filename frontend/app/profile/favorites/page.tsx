@@ -1,7 +1,7 @@
 "use client";
 import { Header } from "@/components/Header";
 import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
-import LiteratureCard from "@/components/search/LiteratureCard";
+import PublicationCard from "@/components/search/PublicationCard";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 import { useLazyQuery } from "@apollo/client";
 import { useSession } from "next-auth/react";
@@ -30,10 +30,10 @@ export default function Favorites() {
 
   return (
     <div>
-      <Header title="Favorites" subtitle="your favourite literature" />
+      <Header title="Favorites" subtitle="your favourite publications" />
       <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {data?.favorites.map((favorite) => (
-          <LiteratureCard
+          <PublicationCard
             key={favorite.id}
             id={favorite.id}
             title={favorite.title}
@@ -50,7 +50,7 @@ export default function Favorites() {
           />
         ))}
       </div>
-      <RecommendationSlider title="Literature you might enjoy" />
+      <RecommendationSlider title="Publications you might enjoy" />
     </div>
   );
 }

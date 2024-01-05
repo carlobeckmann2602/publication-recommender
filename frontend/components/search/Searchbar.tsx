@@ -54,7 +54,7 @@ export function Searchbar({ value }: Props) {
                 <Input
                   className="pr-14"
                   type="text"
-                  placeholder="Search for literature"
+                  placeholder="Search for publications"
                   {...field}
                 />
               </FormControl>

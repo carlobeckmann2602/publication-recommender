@@ -30,7 +30,7 @@ type Props = {
   className?: string;
 };
 
-export default function LiteratureCard(props: Props) {
+export default function PublicationCard(props: Props) {
   const domain = props.link?.replace(
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"

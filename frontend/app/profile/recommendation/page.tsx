@@ -1,7 +1,5 @@
 "use client";
 import { Header } from "@/components/Header";
-import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
-import LiteratureCard from "@/components/search/LiteratureCard";
 import useRecommendationsStore from "@/stores/recommendationsStore";
 import { useEffect, useState } from "react";
 

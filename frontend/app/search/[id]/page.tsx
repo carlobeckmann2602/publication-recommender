@@ -1,6 +1,6 @@
 import TextSeparator from "@/components/TextSeparator";
-import LiteratureCardById from "@/components/search/LiteratureCardById";
-import LiteratureSearchResults from "@/components/search/LiteratureSearchResults";
+import PublicationCardById from "@/components/search/PublicationCardByIdServer";
+import PublicationSearchResults from "@/components/search/PublicationSearchResults";
 import Pagination from "@/components/search/Pagination";
 import { Searchbar } from "@/components/search/Searchbar";
 import { SEARCH_TYPES } from "@/constants/enums";
@@ -22,7 +22,7 @@ export default function Search({ searchParams, params }: SearchParams) {
 
       <div className="flex flex-col gap-4 w-5/6">
         <Suspense fallback={<div>Loading...</div>}>
-          <LiteratureCardById
+          <PublicationCardById
             className="w-full"
             id={params.id}
             disableSearchSimilar={true}
@@ -32,7 +32,7 @@ export default function Search({ searchParams, params }: SearchParams) {
       </div>
 
       <Suspense key={params.id} fallback={<div>Loading...</div>}>
-        <LiteratureSearchResults
+        <PublicationSearchResults
           query={params.id}
           offset={searchParams.offset}
           searchType={SEARCH_TYPES.ID}
