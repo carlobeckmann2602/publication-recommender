@@ -7,8 +7,10 @@ import { buttonVariants } from "../ui/button";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
-import { Heart, Sparkle } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
+import sparkelClockIcon from "@/public/svg/sparkle-clock.svg";
+import sparkelClockIconFill from "@/public/svg/sparkle-clock-fill.svg";
 
 const menuItems = [
   {
@@ -28,8 +30,10 @@ const menuItems = [
   {
     name: "Recommendation History",
     href: "/profile/recommendation",
-    icon: <Sparkle size={24} />,
-    activeIcon: <Sparkle size={24} fill="" />,
+    icon: <Image src={sparkelClockIcon} alt="Recommendation History" />,
+    activeIcon: (
+      <Image src={sparkelClockIconFill} alt="Recommendation History" />
+    ),
     onlyLoggedIn: true,
   },
 ];
