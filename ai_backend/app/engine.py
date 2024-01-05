@@ -180,9 +180,7 @@ class Recommender:
 
         dataframe = dataframe.explode(input_key)
         dataframe[self.SENTENCE_ID_KEY] = dataframe.groupby(id_key).cumcount()
-        print(dataframe.info())
         embeddings = np.array(dataframe[input_key].tolist())
-        print(embeddings.shape)
         dataframe.drop([input_key], axis=1, inplace=True)
         dataframe.rename(columns={id_key: self.PUBLICATION_ID_KEY}, inplace=True)
         dataframe.reset_index(inplace=True, drop=True)
@@ -252,9 +250,6 @@ class Recommender:
             nns_data, self.mapping[[self.ANNOY_INDEX_KEY, self.PUBLICATION_ID_KEY, self.SENTENCE_ID_KEY]],
             how="left", on=self.ANNOY_INDEX_KEY
         )
-        if self.debug:
-            print(nns_data.info)
-            print(nns_data)
         return nns_data
 
     def __to_recommender_output(self, nns_data: pd.DataFrame, amount: int, exclude: List[str] = None) -> pd.DataFrame:
@@ -271,7 +266,6 @@ class Recommender:
         original_token = token
         if isinstance(token, str):
             token = self.summarizer.transformer.encode(token, convert_to_numpy=True)
-            print(token.shape)
             printable_token = original_token
         else:
             printable_token = f"Vector with: {np.array(original_token).shape} -> (0:10): {original_token[0:10]}"
@@ -316,10 +310,8 @@ class Recommender:
 
         publication_df["embedding"] = publication_df[self.ANNOY_INDEX_KEY].apply(self.get_embedding_from_annoy)
         embeddings = np.array(publication_df["embedding"].to_list())
-        print(embeddings.shape)
         pca = PCA(n_components=3)
         pca.fit(embeddings)
-        print(pca.components_.shape)
         pca1 = pca.components_[0]
         pca2 = pca.components_[1]
         pca3 = pca.components_[2]
