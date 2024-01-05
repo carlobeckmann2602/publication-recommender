@@ -63,7 +63,7 @@ export default function PublicationCard(props: Props) {
           </CardTitle>
         </div>
         <CardDescription>
-          {authorsString} {props.authors && " - "} {props.date?.getFullYear()}
+          {authorsString} {authorsString && " - "} {props.date?.getFullYear()}
           {props.date && " - "}
           {props.link && (
             <a
@@ -103,7 +103,7 @@ export default function PublicationCard(props: Props) {
               enableWarning={props.enableRecommendationWarning}
             />
           </div>
-          {props.doi && (
+          {props.doi && props.doi[0] && (
             <span className="h-fit">
               DOI:{" "}
               <a
