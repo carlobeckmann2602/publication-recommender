@@ -2,22 +2,20 @@ import time
 
 import celery
 import numpy as np
-import ast
+import asyncio
+from asgiref.sync import sync_to_async
 from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException, UploadFile, Query
 from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
-from anyio import Semaphore
 from typing import List, Dict, Annotated
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
 import aiofiles
-from numpy import random
 
 STANDARD_MODEL = "current_model.zip"
-MAX_THREAD_SEMAPHORE = Semaphore(5)
 
 
 @asynccontextmanager
@@ -56,10 +54,23 @@ rec_api.archive_path = f"{rec_api.generated_data_path}/archive"
 rec_api.current_model = ""
 
 
-async def get_result(task: celery.result.AsyncResult):
-    async with MAX_THREAD_SEMAPHORE:
-        result = await run_in_threadpool(lambda: task.get(timeout=5 * 60 * 60))
-    return result
+def task_to_async(task, queue: str = tasks.task_default_queue):
+    task_timeout = 5 * 60 * 60
+
+    async def wrapper(*args, **kwargs):
+        delay = 0.1
+        async_result = await sync_to_async(task.apply_async, thread_sensitive=True)(
+            args=args,
+            kwargs=kwargs,
+            queue=queue
+        )
+        while not async_result.ready():
+            if delay >= task_timeout:
+                raise HTTPException(status_code=404, detail=fr"{task.name} timed out in wait.")
+            await asyncio.sleep(delay)
+            delay = min(delay * 1.5, 2)  # exponential backoff, max 2 seconds
+        return async_result.get(timeout=task_timeout)
+    return wrapper
 
 
 @rec_api.get("/build_annoy/")
@@ -73,9 +84,8 @@ def build_annoy():
 
 @rec_api.get("/random/")
 async def get_random_id(amount=5):
-    task = tasks.get_random_id.apply_async(args=[amount])
-    result = await get_result(task)
-    return {"id:": result}
+    result = await task_to_async(tasks.get_random_id)(amount)
+    return {"id": result}
 
 
 @rec_api.get("/last_changed/")
@@ -135,9 +145,8 @@ async def get_recommendation(publication_id: str, amount: int = 5,
     """
 
     print(f"[match_id] {publication_id} - > {type(publication_id)}")
-    task = tasks.recommend_by_publication.apply_async(args=[publication_id, amount, excluded_ids])
     try:
-        result = await get_result(task)
+        result = await task_to_async(tasks.recommend_by_publication)(publication_id, amount, excluded_ids)
         return result
     except tasks.errors.MissingPublication as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -156,8 +165,7 @@ async def get_recommendation(token: str, amount: int = 5,
     """
 
     print(f"[match_token] {token} - > {type(token)}")
-    task = tasks.recommend_by_token.apply_async(args=[token, amount, excluded_ids])
-    result = await get_result(task)
+    result = await task_to_async(tasks.recommend_by_token)(token, amount, excluded_ids)
     return result
 
 
@@ -178,8 +186,7 @@ async def get_recommendation(group: Annotated[List[str], Query()] = [],
         return {}
 
     print(f"[match_group] {group} - > {type(group)}")
-    task = tasks.recommend_by_group.apply_async(args=[group, amount, excluded_ids])
-    result = await get_result(task)
+    result = await task_to_async(tasks.recommend_by_group)(group, amount, excluded_ids)
     return result
 
 
@@ -215,8 +222,7 @@ async def summarize_text(text: str, amount=5, tokenize: bool | None = None):
 
     **return**: The summarization with pattern: {*n*: {token: str, embedding: [float]} *for n in amount*}
     """
-    task = tasks.summarize.apply_async(args=[text, amount, tokenize])
-    result = await get_result(task)
+    result = await task_to_async(tasks.summarize)(text, amount, tokenize)
     return result
 
 
