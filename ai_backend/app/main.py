@@ -8,12 +8,12 @@ from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException, UploadFile, Query
 from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
-from fastapi.concurrency import run_in_threadpool
-from typing import List, Dict, Annotated
+from typing import List, Annotated
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
 import aiofiles
+import random
 
 STANDARD_MODEL = "current_model.zip"
 

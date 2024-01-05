@@ -1,4 +1,7 @@
 FROM python:3.10
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN pip install sentence-transformers~=2.2.2
+RUN pip install annoy~=1.17.3
 WORKDIR /code
 RUN mkdir app/
 COPY ./requirements.txt /code/requirements.txt
