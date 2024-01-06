@@ -1,24 +1,33 @@
+import argparse, sys
 from scraper import ArxivApiScraper, ArxivWebScraper, PdfScraper
 from db import DatabaseApi
 from base_scraper import BaseScraper
 
-year = 2023
 
-# ! files and directories have to exist !
-tmp_state_data = "/scraper/data/temp/"+str(year)+"/state_data.csv"
-tmp_id_list = "/scraper/data/temp/"+str(year)+"/id_list.csv"
-tmp_metadata_list = "/scraper/data/temp/"+str(year)+"/metadata_list.csv" 
-tmp_pub_list = "/scraper/data/temp/"+str(year)+"/pub_list.csv"
-tmp_txt_dir = "/scraper/data/temp/"
-
-ax_api = ArxivApiScraper()
-ax_web = ArxivWebScraper()
-sc_pdf = PdfScraper(tmp_txt_dir)
-db_api = DatabaseApi()
-
-base = BaseScraper(tmp_id_list, tmp_metadata_list, tmp_pub_list, ax_api, db_api, sc_pdf, tmp_state_data)
+def parse_argument():
+    parser = argparse.ArgumentParser(description='Year')
+    parser.add_argument('--year', type=int, help='The year to scrape')
+    args = parser.parse_args()
+    return args.year
 
 if __name__ == '__main__':
+    year = parse_argument()
+    if not year: sys.exit(1)
+    
+    # ! files and directories have to exist !
+    tmp_state_data = "/scraper/data/temp/"+str(year)+"/state_data.csv"
+    tmp_id_list = "/scraper/data/temp/"+str(year)+"/id_list.csv"
+    tmp_metadata_list = "/scraper/data/temp/"+str(year)+"/metadata_list.csv" 
+    tmp_pub_list = "/scraper/data/temp/"+str(year)+"/pub_list.csv"
+    tmp_txt_dir = "/scraper/data/temp/"
+
+    ax_api = ArxivApiScraper()
+    ax_web = ArxivWebScraper()
+    sc_pdf = PdfScraper(tmp_txt_dir)
+    db_api = DatabaseApi()
+
+    base = BaseScraper(tmp_id_list, tmp_metadata_list, tmp_pub_list, ax_api, db_api, sc_pdf, tmp_state_data)
+
     print("\nYear scraper start ...")
     ### SCRAPER 2: ALS CRONJOB alle 2 Std: hole 100 Publikationen von o.g Jahr ###
 

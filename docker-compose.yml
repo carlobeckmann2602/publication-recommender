@@ -153,10 +153,41 @@ services:
       - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
 
-  arxiv_api_scraper:
+  daily_scraper:
+    container_name: daily_scraper
     build:
       context: ./data_ingest
       dockerfile: Dockerfile
+    volumes:
+      - ./data_ingest/:/scraper/
+    networks:
+      - pr_network
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+  
+  2023_scraper:
+    container_name: 2023_scraper
+    build:
+      context: ./data_ingest
+      dockerfile: Dockerfile_2023
+    volumes:
+      - ./data_ingest/:/scraper/
+    networks:
+      - pr_network
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+  
+  2022_scraper:
+    container_name: 2022_scraper
+    build:
+      context: ./data_ingest
+      dockerfile: Dockerfile_2022
     volumes:
       - ./data_ingest/:/scraper/
     networks:
