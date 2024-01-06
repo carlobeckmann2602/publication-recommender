@@ -149,13 +149,14 @@ class BaseScraper:
         if pdf_text is None:
             self.sc_pdf.delete()
             return False, pub
+        print("-- calculating vectors for publication id '" + str(pub.arxiv_id) + "' ...")
         vector_dict = None
         file_param = {"file": open("/scraper/data/temp/"+pub.arxiv_id+".txt", "rb")}
         res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param)
         if res_ai_api.status_code == 200:
             vector_dict = json.loads(res_ai_api.text)
             pub.vector_dict = vector_dict
-            print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' successful.")
+            print("--- vector calculation for publication id '" + str(pub.arxiv_id) + "' successful.")
             self.sc_pdf.delete()
             #print("-- response: "+str(vector_dict["0"]["token"]))
         else:
