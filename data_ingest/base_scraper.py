@@ -198,7 +198,7 @@ class BaseScraper:
         print("-- collected metadata of " + str(len(metadata_list)) + " publications.")
         return metadata_list
     
-    def save_state_data(self, year, month, metadata_list):
+    def save_state_data(self, year, month, metadata_list, final_num=False):
         print("--- writing state data to '" + self.tmp_state_data + "' ...")
         id_list = list()
         for pub in metadata_list:
@@ -207,25 +207,29 @@ class BaseScraper:
         
         max_id = id_list[-1]
         max_num = int(max_id[5:])
+        final_max_num = None
+        if final_num:
+            final_max_num = max_num
 
         with open(self.tmp_state_data, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(["year", "month", "max_num"])
-            writer.writerow([year, month, max_num])
-        return True
+            writer.writerow(["year", "month", "current_max_num", "final_max_num"])
+            writer.writerow([year, month, max_num, final_max_num])
+        return max_num
     
     def read_state_data(self):
         print("-- reading state data from '" + self.tmp_state_data + "' ...")
-        state_data = None
+        state_data = list()
         with open(self.tmp_state_data, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 entry = {
                     "year": literal_eval(row['year']),
                     "month": literal_eval(row['month']),
-                    "max_num": literal_eval(row['max_num'])
+                    "current_max_num": literal_eval(row['current_max_num']),
+                    "final_max_num": literal_eval(row['final_max_num'])
                 }
-                state_data = entry
+                state_data.append(entry)
         if state_data is not None:
             print("--- found state data: "+str(state_data))
         return state_data
