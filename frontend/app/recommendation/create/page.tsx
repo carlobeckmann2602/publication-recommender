@@ -1,9 +1,10 @@
 "use client";
 import { Header } from "@/components/Header";
 import PublicationCardByIdClient from "@/components/search/PublicationCardByIdClient";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
 import { Wand2 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function RecommendationCreate() {
@@ -48,11 +49,16 @@ export default function RecommendationCreate() {
           );
         })}
       </div>
-      <Button className="sticky bottom-4 w-[400px] self-center shadow-md">
+      <Link
+        href="./create/new-recommendation"
+        className={`${buttonVariants({
+          variant: "default",
+        })} sticky bottom-4 w-[400px] self-center shadow-md`}
+      >
         Create Recommendation with this {publications?.length}{" "}
         {publications?.length == 1 ? " publication" : " publications"}
         <Wand2 size={20} className="ml-4" />
-      </Button>
+      </Link>
     </div>
   );
 }

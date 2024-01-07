@@ -1,10 +1,12 @@
 "use client";
 import { Header } from "@/components/Header";
-import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
 import PublicationCard from "@/components/search/PublicationCard";
+import { buttonVariants } from "@/components/ui/button";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 import { useLazyQuery } from "@apollo/client";
+import { Wand2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function Favorites() {
@@ -29,7 +31,7 @@ export default function Favorites() {
   }, [session, getFavorites]);
 
   return (
-    <div>
+    <div className="flex flex-col">
       <Header title="Favorites" subtitle="your favourite publications" />
       <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {data?.favorites.map((favorite) => (
@@ -50,7 +52,15 @@ export default function Favorites() {
           />
         ))}
       </div>
-      <RecommendationSlider title="Publications you might enjoy" />
+      <Link
+        href="/recommendation/create/new-recommendation?onFavorites=true"
+        className={`${buttonVariants({
+          variant: "default",
+        })} sticky bottom-4 w-[370px] self-center shadow-md`}
+      >
+        Create Recommendation from your favorites
+        <Wand2 size={20} className="ml-4" />
+      </Link>
     </div>
   );
 }

@@ -1,0 +1,15 @@
+mutation CreateRecommendationOnFavorites {
+  createNewRecommendation {
+    id
+    publications {
+      id
+      title
+      authors
+      publicationDate
+      url
+      doi
+      exId
+    }
+    createdAt
+  }
+}

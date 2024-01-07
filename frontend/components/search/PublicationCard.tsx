@@ -104,7 +104,7 @@ export default function PublicationCard(props: Props) {
             />
           </div>
           {props.doi && props.doi[0] && (
-            <span className="h-fit">
+            <span className="h-fit text-right">
               DOI:{" "}
               <a
                 href={doiUrl}
