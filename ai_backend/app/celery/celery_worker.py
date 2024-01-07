@@ -155,13 +155,14 @@ class StrictEngineTask(EngineTask):
                 self.retry(countdown=10,
                            max_retries=5,
                            throw=True, exc=exception,
-                           args=tuple(args[0]),
+                           args=tuple(args[0]), # args are not formatted correctly. currently args is ([amount], {})
                            kwargs=kwargs)
                 raise exception
         self.recommender.summarizer.transformer.eval()
         print(self.get_start_string())
 
 
+# @worker_ready.connect
 def on_worker_ready(**_):
     print("Starting Worker")
     try:

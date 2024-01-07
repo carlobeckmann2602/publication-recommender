@@ -85,6 +85,6 @@ def get_random_ids(amount) -> list:
 if __name__ == '__main__':
     random_ids = get_random_ids(50)
     start = perf_counter()
-    asyncio.run(main(amount=10000))
+    asyncio.run(main(amount=100))
     stop = perf_counter()
     print("time taken:", stop - start)
