@@ -1,2 +1,2 @@
-year,month,max_num
-2023,1,999
+year,month,current_max_num,final_max_num
+2023,1,666,0
