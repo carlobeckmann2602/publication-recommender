@@ -72,6 +72,7 @@ services:
 
   ai_backend_worker:
     container_name: ai_backend_worker
+    restart: always
     build:
       context: ./ai_backend
       dockerfile: Dockerfile

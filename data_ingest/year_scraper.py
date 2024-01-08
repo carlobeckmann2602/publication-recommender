@@ -37,7 +37,7 @@ if __name__ == '__main__':
     state_data = base.read_state_data() 
     metadata_list = base.read_metadata_list()
     pub_list = base.read_pub_list()
-    
+
     # zu temp metadaten pdfs scrapen und vektoren berechnen
     if len(metadata_list) > 0:
         print("\n- scraping publication pdf from tmp_metadata_list and calculating vectors ...")
@@ -51,7 +51,7 @@ if __name__ == '__main__':
             else:
                 stored_list.append(pub)
         metadata_list = base.update_metadata_list(metadata_list, stored_list) # erfolgreich gescrapte aus tmp_metadata_list entfernen
-    
+    '''
     # temp publikationen in datenbank ablegen
     if len(pub_list) > 0:
         print("\n- storing publications from tmp_pub_list files to database ...")
@@ -63,13 +63,13 @@ if __name__ == '__main__':
             else:
                 stored_list.append(pub)
         pub_list = base.update_pub_list(pub_list, stored_list) # erfolgreich gescrapte aus temp entfernen
-
+    '''
     ## 2. NOCH NICHT GESCRAPTE PUBLIKATIONEN AUS O.G. JAHR ABRUFEN UND SICHERN ##
-    for month in range(1,2):
+    for month in range(1,13):
         num_idx = 0
-        # wenn aktueller monat schon final_max_id hat springe weiter
+        # wenn aktueller monat schon final_max_num hat springe weiter
         for entry in state_data:
-            if entry["month"] == month and entry["final_max_id"] != 0:
+            if entry["month"] == month and entry["final_max_num"] != 0:
                 continue
             else:
                 max_num = entry["current_max_num"]
@@ -82,11 +82,11 @@ if __name__ == '__main__':
                 print("\n- collecting publication metadata from arxiv ...")
                 metadata_block = base.get_metadata_list(id_block)
                 if len(metadata_block) > 0:
-                    max_num = base.save_state_data(year, month, metadata_block, False)
+                    max_num = base.save_state_data(year, month, metadata_block)
                     metadata_list.extend(metadata_block)
                     base.save_metadata_list(metadata_list)
                 else: # leere arxiv api response bedeutet max_num wurde für diesen monat erreicht
-                    max_num = base.save_state_data(year, month, metadata_block, True)
+                    max_num = base.save_state_data(year, month, metadata_block, max_num)
                     break
             # lese pdfs und generiere vektoren
             if len(metadata_list) > 0:
@@ -99,13 +99,14 @@ if __name__ == '__main__':
                         if ret_val:
                             if db_api.add_arxiv_pub(pub):
                                 stored_list.append(pub)
-                            else:
-                                failed_list.append(pub)
+                        else:
+                            failed_list.append(pub)
                     else:
                         stored_list.append(pub)
                 metadata_list = base.update_metadata_list(metadata_list, stored_list) # erfolgreich gescrapte aus tmp_metadata_list entfernen
-                pub_list.extend(failed_list)
-                base.save_pub_list(pub_list)
+                metadata_list = base.update_metadata_list(metadata_list, failed_list)
+                #base.save_pub_list(pub_list)
+            '''
             # lege publikation in datenbank ab
             if len(pub_list) > 0:
                 print("\n- storing new publications from arvix to database ...")
@@ -117,4 +118,4 @@ if __name__ == '__main__':
                     else:
                         stored_list.append(pub)
                 pub_list = base.update_pub_list(pub_list, stored_list) # erfolgreich gescrapte aus temp entfernen
-    
+            '''

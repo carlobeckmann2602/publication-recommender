@@ -1,5 +1,6 @@
 import csv, json, requests
 from ast import literal_eval
+from requests.exceptions import ReadTimeout
 from publications import ArxivPublication
 
 class BaseScraper:
@@ -152,15 +153,20 @@ class BaseScraper:
         print("-- calculating vectors for publication id '" + str(pub.arxiv_id) + "' ...")
         vector_dict = None
         file_param = {"file": open("/scraper/data/temp/"+pub.arxiv_id+".txt", "rb")}
-        res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param)
-        if res_ai_api.status_code == 200:
-            vector_dict = json.loads(res_ai_api.text)
-            pub.vector_dict = vector_dict
-            print("--- vector calculation for publication id '" + str(pub.arxiv_id) + "' successful.")
-            self.sc_pdf.delete()
-            #print("-- response: "+str(vector_dict["0"]["token"]))
-        else:
-            print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' failed.")
+        try:
+            res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param, timeout=30)
+            if res_ai_api.status_code == 200:
+                vector_dict = json.loads(res_ai_api.text)
+                pub.vector_dict = vector_dict
+                print("--- vector calculation for publication id '" + str(pub.arxiv_id) + "' successful.")
+                self.sc_pdf.delete()
+                #print("-- response: "+str(vector_dict["0"]["token"]))
+            else:
+                print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' failed.")
+                self.sc_pdf.delete()
+                return False, pub
+        except ReadTimeout as e:
+            print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' failed with timeout error.")
             self.sc_pdf.delete()
             return False, pub
         #print("-- collected vector data of " + str(len(pub_list)) + " publications.")
@@ -198,18 +204,21 @@ class BaseScraper:
         print("-- collected metadata of " + str(len(metadata_list)) + " publications.")
         return metadata_list
     
-    def save_state_data(self, year, month, metadata_list, final_num=False):
+    def save_state_data(self, year, month, metadata_list, final_max_num=None):
         print("--- writing state data to '" + self.tmp_state_data + "' ...")
         id_list = list()
         for pub in metadata_list:
             id_list.append(pub.arxiv_id)
         id_list.sort()
         
-        max_id = id_list[-1]
-        max_num = int(max_id[5:])
-        final_max_num = None
-        if final_num:
-            final_max_num = max_num
+        if len(id_list) > 0:
+            max_id = id_list[-1]
+            max_num = int(max_id[5:])
+        
+        if final_max_num is None:
+            final_max_num = 0
+        else:
+            max_num = final_max_num
 
         with open(self.tmp_state_data, 'w', newline='') as file:
             writer = csv.writer(file)
