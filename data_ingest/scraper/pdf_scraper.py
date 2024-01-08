@@ -1,7 +1,7 @@
-import os, re, io, requests, PyPDF2
+import os, re, io, requests, fitz, socket
 from requests.exceptions import ConnectionError
 from urllib3.exceptions import NameResolutionError, MaxRetryError
-import socket
+from unidecode import unidecode
 
 class PdfScraper:
     def __init__(self, temp_path):
@@ -20,6 +20,7 @@ class PdfScraper:
 
     def clean(self, text):
         text = text.strip()
+        ''
         text = text.replace("\n", " ")
         text = text.replace('´´', '"')
         text = text.replace('``', '"')
@@ -34,22 +35,29 @@ class PdfScraper:
     
     def pull(self, url, file_dir):
         self.url = url # "https://arxiv.org/pdf/2310.10764" + ".pdf"
-        self.response = requests.get(self.url)
-
         try:
+            self.response = requests.get(self.url)
             if self.response.status_code == 200:
-                with open(file_dir, 'w', encoding="utf-8") as txt_file:
-                    pdf_content = io.BytesIO(self.response.content) #self.response.content
-                    pdf_reader = PyPDF2.PdfReader(pdf_content)
-
-                    text = ""
-                    for page_number in range(len(pdf_reader.pages)):
-                        page = pdf_reader.pages[page_number]
-                        text += page.extract_text()
-                    text = self.clean(text)
-                    text = text.encode('utf-8', 'replace').decode('utf-8')
-                    txt_file.write(text)
-
+                with open(file_dir, 'w', encoding="ascii") as txt_file:
+                    doc = fitz.open(stream=self.response.content, filetype="pdf")
+                    full_text = ""
+                    for page in doc:
+                        output = page.get_text("blocks")
+                        for block in output:
+                            if block[6] == 0: # [6] is block_type 0 is for text block
+                                if len(block[4].split()) > 5:
+                                    text = unidecode(block[4]) # [4] is text string
+                                    text = text.strip()
+                                    text = text.replace("\n", " ")
+                                    text = text.replace("- ", "")
+                                    ref_pattern = r'^\[\d{1,3}\]'   # referenzen am ende entfernen
+                                    abs_pattern = r'[a-zA-Z]'       # strings ohne buchstaben entfernen
+                                    if not re.match(abs_pattern, text):
+                                        continue
+                                    if not re.match(ref_pattern, text):
+                                        full_text += text + " "
+                    doc.close()
+                    txt_file.write(full_text)
                 print(f"--- pdf content written to temp file '{file_dir}'.")
             else:
                 print(f"--- failed to read the pdf. status code: {self.response.status_code}")

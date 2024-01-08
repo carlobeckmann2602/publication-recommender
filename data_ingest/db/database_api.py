@@ -1,7 +1,7 @@
 import re
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
-from gql.transport.exceptions import TransportQueryError
+from gql.transport.exceptions import TransportQueryError, TransportServerError
 
 class DatabaseApi:
     def __init__(self):
@@ -118,6 +118,9 @@ class DatabaseApi:
             print("--- successfully saved " + str(pub.arxiv_id) + " to database.")
             return True
         except TransportQueryError as e:
+            print(e)
+            return False
+        except TransportServerError as e:
             print(e)
             return False
 
