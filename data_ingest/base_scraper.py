@@ -204,27 +204,32 @@ class BaseScraper:
         print("-- collected metadata of " + str(len(metadata_list)) + " publications.")
         return metadata_list
     
-    def save_state_data(self, year, month, metadata_list, final_max_num=None):
-        print("--- writing state data to '" + self.tmp_state_data + "' ...")
+    def get_max_num(self, metadata_block):
         id_list = list()
-        for pub in metadata_list:
+        for pub in metadata_block:
             id_list.append(pub.arxiv_id)
         id_list.sort()
-        
-        if len(id_list) > 0:
-            max_id = id_list[-1]
-            max_num = int(max_id[5:])
-        
-        if final_max_num is None:
-            final_max_num = 0
-        else:
-            max_num = final_max_num
+        max_id = id_list[-1]
+        max_num = int(max_id[5:])
+        return max_num
+    
+    def save_state_data(self, year, month, max_num, state_data, final_num=False):
+        print("--- writing state data to '" + self.tmp_state_data + "' ...")
+        for entry in state_data:
+            if entry["month"] == month:
+                if final_num:
+                    entry["current_max_num"] = max_num
+                    entry["final_max_num"] = max_num
+                else:
+                    entry["current_max_num"] = max_num
+                    entry["final_max_num"] = 0
 
         with open(self.tmp_state_data, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(["year", "month", "current_max_num", "final_max_num"])
-            writer.writerow([year, month, max_num, final_max_num])
-        return max_num
+            for entry in state_data:
+                writer.writerow([entry["year"], entry["month"], entry["current_max_num"], entry["final_max_num"]])
+        return state_data
     
     def read_state_data(self):
         print("-- reading state data from '" + self.tmp_state_data + "' ...")

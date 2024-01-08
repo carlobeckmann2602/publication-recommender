@@ -82,11 +82,12 @@ if __name__ == '__main__':
                 print("\n- collecting publication metadata from arxiv ...")
                 metadata_block = base.get_metadata_list(id_block)
                 if len(metadata_block) > 0:
-                    max_num = base.save_state_data(year, month, metadata_block)
+                    max_num = base.get_max_num(metadata_block)
+                    state_data = base.save_state_data(year, month, max_num, state_data, False)
                     metadata_list.extend(metadata_block)
                     base.save_metadata_list(metadata_list)
                 else: # leere arxiv api response bedeutet max_num wurde für diesen monat erreicht
-                    max_num = base.save_state_data(year, month, metadata_block, max_num)
+                    state_data = base.save_state_data(year, month, max_num, state_data, True)
                     break
             # lese pdfs und generiere vektoren
             if len(metadata_list) > 0:
