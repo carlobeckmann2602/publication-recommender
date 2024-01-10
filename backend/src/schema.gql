@@ -111,7 +111,7 @@ input CreatePublicationDto {
   url: String
   publisher: String
   abstract: String
-  authors: [String!] = []
+  authors: [String!]
   date: DateTime
   descriptor: DescriptorDto!
 }

@@ -51,13 +51,14 @@ export type LoginDto = {
 export type Mutation = {
   __typename?: 'Mutation';
   createNewRecommendation: RecommendationResponseDto;
+  deleteProfile: Scalars['Boolean'];
   login: LoggedIn;
   markAsFavorite: Scalars['Boolean'];
   refreshToken: JwtDto;
   register: LoggedIn;
   savePublication: PublicationResponseDto;
   unmarkAsFavorite: Scalars['Boolean'];
-  updateUser: User;
+  updateProfile: User;
 };
 
 
@@ -96,7 +97,7 @@ export type MutationUnmarkAsFavoriteArgs = {
 };
 
 
-export type MutationUpdateUserArgs = {
+export type MutationUpdateProfileArgs = {
   data: UpdateUserDto;
 };
 
@@ -141,11 +142,10 @@ export type PublicationVectorsRequestDto = {
 
 export type Query = {
   __typename?: 'Query';
-  deleteUser: User;
   favorites: Array<PublicationResponseDto>;
-  me: User;
   newest: PublicationResponseDto;
   oldest: PublicationResponseDto;
+  profile: User;
   provideVectors: PublicationChunkDto;
   publication: PublicationResponseDto;
   publicationCount: Scalars['Int'];

@@ -89,7 +89,7 @@ export class PublicationService {
     publication.source = SourceVo.ARXIV;
     publication.abstract = dto.abstract;
     publication.descriptor = dto.descriptor;
-    publication.authors = dto.authors;
+    publication.authors = Array.isArray(dto.authors) ? dto.authors : [];
     publication.url = dto.url;
     publication.doi = Array.isArray(dto.doi) ? dto.doi : [];
     publication.date = dto.date;
