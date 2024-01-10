@@ -222,6 +222,7 @@ export type SentenceDto = {
 export type UpdateUserDto = {
   email?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+  oldPassword?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
 };
 

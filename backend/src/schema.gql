@@ -134,5 +134,6 @@ input RecommendationCreateDto {
 input UpdateUserDto {
   email: String
   password: String
+  oldPassword: String
   name: String
 }
