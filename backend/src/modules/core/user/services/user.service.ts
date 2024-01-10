@@ -4,8 +4,11 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
 import { EmailAlreadyExistsException } from '../exceptions/email-already-exists.exception';
+import { EmailAlreadyInUseException } from '../exceptions/email-already-in-use.exception';
+import { PasswordIncorrectException } from '../exceptions/password-incorrect.exception';
 import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 
 @Injectable()
@@ -54,5 +57,41 @@ export class UserService {
     const password = bcrypt.hashSync(dto.password, 10);
 
     return await this.userRepository.save(new User(uuidv4(), dto.email, password, dto.name));
+  }
+
+  /**
+   * @throws {EmailAlreadyInUseException}
+   * @throws {PasswordIncorrectException}
+   */
+  public async updateUser(user: User, dto: UpdateUserDto): Promise<User> {
+    if (dto.email && user.email !== dto.email) {
+      const emailInUse = await this.userRepository.exist({ where: { email: dto.email } });
+
+      if (emailInUse) {
+        throw new EmailAlreadyInUseException(EmailAlreadyInUseException.MESSAGE);
+      }
+
+      user.email = dto.email;
+    }
+
+    if (dto.password && dto.oldPassword) {
+      const match = bcrypt.compareSync(dto.oldPassword, user.password);
+
+      if (match) {
+        user.password = bcrypt.hashSync(dto.password, 10);
+      } else {
+        throw new PasswordIncorrectException(PasswordIncorrectException.MESSAGE);
+      }
+    }
+
+    if (dto.name) {
+      user.name = dto.name;
+    }
+
+    return await this.userRepository.save(user);
+  }
+
+  public async deleteUser(user: User): Promise<void> {
+    await this.userRepository.remove(user);
   }
 }

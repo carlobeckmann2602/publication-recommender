@@ -17,6 +17,7 @@ import { FavoriteService } from './publication/services/favorites.service';
 import { PublicationService } from './publication/services/publication.service';
 import { RecommendationService } from './publication/services/recommendation.service';
 import { User } from './user/entities/user.entity';
+import { UserResolver } from './user/resolvers/user.resolver';
 import { UserService } from './user/services/user.service';
 
 @Module({
@@ -43,6 +44,7 @@ import { UserService } from './user/services/user.service';
     PublicationResolver,
     FavoriteResolver,
     RecommendationResolver,
+    UserResolver,
   ],
   exports: [RecommendationService],
   controllers: [PublicationController],
