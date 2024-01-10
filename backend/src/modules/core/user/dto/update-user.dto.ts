@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength} from 'class-validator';
+import { IsDefined, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, ValidateIf, isString } from 'class-validator';
 
 @InputType()
 export class UpdateUserDto {
@@ -15,6 +15,12 @@ export class UpdateUserDto {
   @IsString()
   @MinLength(8)
   password?: string;
+
+  @Field({ nullable: true })
+  @ValidateIf((o) => isString(o.password))
+  @IsDefined()
+  @IsString()
+  oldPassword?: string;
 
   @Field({ nullable: true })
   @IsOptional()

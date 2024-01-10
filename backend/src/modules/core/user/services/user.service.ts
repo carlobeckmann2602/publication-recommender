@@ -8,6 +8,7 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
 import { EmailAlreadyExistsException } from '../exceptions/email-already-exists.exception';
 import { EmailAlreadyInUseException } from '../exceptions/email-already-in-use.exception';
+import { PasswordIncorrectException } from '../exceptions/password-incorrect.exception';
 import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 
 @Injectable()
@@ -60,6 +61,7 @@ export class UserService {
 
   /**
    * @throws {EmailAlreadyInUseException}
+   * @throws {PasswordIncorrectException}
    */
   public async updateUser(user: User, dto: UpdateUserDto): Promise<User> {
     if (dto.email && user.email !== dto.email) {
@@ -72,8 +74,14 @@ export class UserService {
       user.email = dto.email;
     }
 
-    if (dto.password) {
-      user.password = bcrypt.hashSync(dto.password, 10);
+    if (dto.password && dto.oldPassword) {
+      const match = bcrypt.compareSync(dto.oldPassword, user.password);
+
+      if (match) {
+        user.password = bcrypt.hashSync(dto.password, 10);
+      } else {
+        throw new PasswordIncorrectException(PasswordIncorrectException.MESSAGE);
+      }
     }
 
     if (dto.name) {
