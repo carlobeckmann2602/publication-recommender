@@ -57,6 +57,7 @@ export type Mutation = {
   register: LoggedIn;
   savePublication: PublicationResponseDto;
   unmarkAsFavorite: Scalars['Boolean'];
+  updateUser: User;
 };
 
 
@@ -92,6 +93,11 @@ export type MutationSavePublicationArgs = {
 
 export type MutationUnmarkAsFavoriteArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  data: UpdateUserDto;
 };
 
 export type PublicationChunkDataDto = {
@@ -135,7 +141,9 @@ export type PublicationVectorsRequestDto = {
 
 export type Query = {
   __typename?: 'Query';
+  deleteUser: User;
   favorites: Array<PublicationResponseDto>;
+  me: User;
   newest: PublicationResponseDto;
   oldest: PublicationResponseDto;
   provideVectors: PublicationChunkDto;
@@ -209,6 +217,12 @@ export type RegisterDto = {
 export type SentenceDto = {
   value: Scalars['String'];
   vector: Array<Scalars['Float']>;
+};
+
+export type UpdateUserDto = {
+  email?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {

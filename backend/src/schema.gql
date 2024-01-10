@@ -67,6 +67,7 @@ type Query {
   searchPublicationBySourceAndSourceId(publicationSourceAndSourceId: PublicationSourceWithSourceIdDto!): PublicationResponseDto
   favorites: [PublicationResponseDto!]!
   recommendations: [RecommendationResponseDto!]!
+  profile: User!
 }
 
 input PublicationVectorsRequestDto {
@@ -87,6 +88,8 @@ type Mutation {
   markAsFavorite(id: String!): Boolean!
   unmarkAsFavorite(id: String!): Boolean!
   createNewRecommendation(createNewRecommendationInput: RecommendationCreateDto): RecommendationResponseDto!
+  updateProfile(data: UpdateUserDto!): User!
+  deleteProfile: Boolean!
 }
 
 input RegisterDto {
@@ -126,4 +129,10 @@ input RecommendationCreateDto {
   group: [String!]!
   exlude: [String!]
   amount: Int
+}
+
+input UpdateUserDto {
+  email: String
+  password: String
+  name: String
 }
