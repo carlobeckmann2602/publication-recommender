@@ -9,11 +9,11 @@ import {
 import * as _ from 'lodash';
 
 @ValidatorConstraint()
-export class IsDescriptorDto implements ValidatorConstraintInterface {
+export class DescriptorDtoValidator implements ValidatorConstraintInterface {
   public async validate(descriptor: any) {
     const isValidNumber = (value) => isNumber(value, { allowNaN: false, allowInfinity: false });
 
-    if (!isArray(descriptor.sentences) || descriptor.sentences.length === 0) {
+    if (!isArray(descriptor.sentences) || descriptor.sentences.length !== 5) {
       return false;
     }
 
@@ -21,7 +21,7 @@ export class IsDescriptorDto implements ValidatorConstraintInterface {
       if (!isString(sentence.value) || isEmpty(sentence.value)) {
         return false;
       }
-      if (!isArray(sentence.vector) || sentence.vector.length === 0 || !_.every(sentence.vector, isValidNumber)) {
+      if (!isArray(sentence.vector) || sentence.vector.length !== 768 || !_.every(sentence.vector, isValidNumber)) {
         return false;
       }
     }
