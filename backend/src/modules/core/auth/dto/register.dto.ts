@@ -7,7 +7,7 @@ export class RegisterDto {
   @Field()
   @IsDefined()
   @IsEmail()
-  @Transform((params) => params.value.toLowerCase())
+  @Transform((params) => params.value.toLowerCase().trim())
   email: string;
 
   @Field()
