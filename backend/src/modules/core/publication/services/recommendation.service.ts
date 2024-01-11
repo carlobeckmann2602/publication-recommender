@@ -33,9 +33,10 @@ export class RecommendationService {
   async all(user: User): Promise<Recommendation[]> {
     const userWithRecommendations = await this.userRepository.findOne({
       where: { id: user.id },
-      relations: ['recommendations', 'recommendations.publications'],
+      relations: { recommendations: { publications: true } },
+      order: { recommendations: { createdAt: 'DESC' } },
     });
-
+    console.log('userWithRecommendations (DESC) ', userWithRecommendations);
     return userWithRecommendations.recommendations;
   }
 
