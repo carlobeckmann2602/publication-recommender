@@ -56,7 +56,7 @@ export function LogInForm(props: Props) {
 
   const [showPassword, setPasswordVisibility] = useState(false);
   const togglePasswordVisibility = () => {
-    setPasswordVisibility(!showPassword);
+    setPasswordVisibility((prev) => !prev);
   };
   const router = useRouter();
 

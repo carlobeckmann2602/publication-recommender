@@ -73,11 +73,11 @@ export function SignUpForm(props: Props) {
   const router = useRouter();
   const [showPassword, setPasswordVisibility] = useState(false);
   const togglePasswordVisibility = () => {
-    setPasswordVisibility(!showPassword);
+    setPasswordVisibility((prev) => !prev);
   };
   const [showConfirmPassword, setConfirmPasswordVisibility] = useState(false);
   const toggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisibility(!showConfirmPassword);
+    setConfirmPasswordVisibility((prev) => !prev);
   };
 
   const [registerFunction, { loading, error }] = useMutation(RegisterDocument);

@@ -57,8 +57,9 @@ export default function RecommendationCreate() {
         </h2>
         <DeletButton
           onClick={clearPublications}
-          tooltipText="Delete Selection"
-          dialogTitle="Do you really want to delete the selection of publication?"
+          tooltipText="Delete selection"
+          dialogTitle="Delete selection"
+          dialogText="Do you really want to delete the selection of publication?"
         />
       </div>
       <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">

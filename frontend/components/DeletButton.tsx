@@ -19,6 +19,7 @@ import {
 
 type Props = {
   onClick: () => void;
+  text?: string;
   tooltipText: string;
   dialogText?: string;
   dialogTitle?: string;
@@ -26,6 +27,7 @@ type Props = {
 
 export default function DeletButton({
   onClick,
+  text,
   tooltipText,
   dialogText,
   dialogTitle,
@@ -39,10 +41,10 @@ export default function DeletButton({
               <DialogTrigger asChild>
                 <Button
                   variant="destructive"
-                  size="icon"
-                  className="aspect-square"
+                  size={text ? "default" : "icon"}
+                  className={text ? "" : "aspect-square"}
                 >
-                  <Trash2 />
+                  {text ?? <Trash2 />}
                 </Button>
               </DialogTrigger>
             </TooltipTrigger>
@@ -76,10 +78,10 @@ export default function DeletButton({
           <Button
             onClick={onClick}
             variant="destructive"
-            size="icon"
-            className="aspect-square"
+            size={text ? "default" : "icon"}
+            className={text ? "" : "aspect-square"}
           >
-            <Trash2 />
+            {text ?? <Trash2 />}
           </Button>
         </TooltipTrigger>
         <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
