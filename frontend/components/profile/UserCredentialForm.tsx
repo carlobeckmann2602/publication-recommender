@@ -72,6 +72,13 @@ export default function UserCredentialForm() {
       if (response.errors) {
         throw new Error(response.errors.toString());
       } else {
+        console.log("Form update");
+        session.update({
+          user: {
+            name: data.name,
+            email: data.email,
+          },
+        });
       }
     } catch (error: any) {
       console.error(error.message);

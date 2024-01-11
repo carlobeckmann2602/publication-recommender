@@ -128,7 +128,7 @@ export const authOptions: NextAuthOptions = {
 
       return true; // Do different verification for other providers that don't have `email_verified`
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (account?.provider === "google") {
         token.userToken = {
           jwtToken: account.access_token ? account.access_token : "",
@@ -144,6 +144,13 @@ export const authOptions: NextAuthOptions = {
           };
       }
 
+      console.log("Update");
+      if (trigger === "update" && session?.user.name && session?.user.name) {
+        console.log("Update");
+        token.user.name = session.user.name;
+        token.user.email = session.user.email;
+      }
+
       if (user) {
         return { ...token, ...user };
       }
@@ -153,7 +160,7 @@ export const authOptions: NextAuthOptions = {
       return await refreshToken(token);
     },
 
-    async session({ token, session, user }) {
+    async session({ token, session }) {
       session.user = token.user;
       session.userToken = token.userToken;
       return session;
