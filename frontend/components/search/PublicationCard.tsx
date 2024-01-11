@@ -12,6 +12,7 @@ import SimilarSearchButton from "./SimilarSearchButton";
 import LikeButton from "./LikeButton";
 import Latex from "@/lib/latex-converter";
 import { Book, File, MessageCircle } from "lucide-react";
+import AddToRecommendationButton from "./AddToRecommendationButton";
 
 type Props = {
   id: string;
@@ -25,10 +26,11 @@ type Props = {
   documentType?: DOCUMENT_TYPES | null;
   disableSearchSimilar?: boolean;
   enableLikeWarning?: boolean;
+  enableRecommendationWarning?: boolean;
   className?: string;
 };
 
-export default function LiteratureCard(props: Props) {
+export default function PublicationCard(props: Props) {
   const domain = props.link?.replace(
     /^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/,
     "$1"
@@ -61,7 +63,7 @@ export default function LiteratureCard(props: Props) {
           </CardTitle>
         </div>
         <CardDescription>
-          {authorsString} {props.authors && " - "} {props.date?.getFullYear()}
+          {authorsString} {authorsString && " - "} {props.date?.getFullYear()}
           {props.date && " - "}
           {props.link && (
             <a
@@ -84,7 +86,7 @@ export default function LiteratureCard(props: Props) {
         )}
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row justify-between align-middle items-end grow">
+        <div className="flex flex-row gap-4 justify-between align-middle items-end grow">
           <div className="flex flex-row">
             {!props.disableSearchSimilar && (
               <SimilarSearchButton id={props.id} />
@@ -95,9 +97,14 @@ export default function LiteratureCard(props: Props) {
               title={props.title}
               enableWarning={props.enableLikeWarning}
             />
+            <AddToRecommendationButton
+              id={props.id}
+              title={props.title}
+              enableWarning={props.enableRecommendationWarning}
+            />
           </div>
-          {props.doi && (
-            <span className="h-fit">
+          {props.doi && props.doi[0] && (
+            <span className="h-fit text-right">
               DOI:{" "}
               <a
                 href={doiUrl}

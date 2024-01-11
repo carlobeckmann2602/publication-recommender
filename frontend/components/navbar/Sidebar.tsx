@@ -1,8 +1,9 @@
 "use client";
 import React, { ReactPropTypes, useEffect } from "react";
-import UserMenu from "./UserMenu";
-import MainMenu from "./MainMenu";
-import { Button } from "../ui/button";
+import UserMenu from "@/components/navbar/UserMenu";
+import MainMenu from "@/components/navbar/MainMenu";
+import RecommendationMenu from "@/components/navbar/RecommendationMenu";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
@@ -39,6 +40,7 @@ export default function Sidebar({ className, props }: Props) {
       </Button>
       <UserMenu />
       <MainMenu />
+      <RecommendationMenu />
     </aside>
   );
 }

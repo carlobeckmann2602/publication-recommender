@@ -1,4 +1,4 @@
-import LiteratureSearchResults from "@/components/search/LiteratureSearchResults";
+import PublicationSearchResults from "@/components/search/PublicationSearchResults";
 import Pagination from "@/components/search/Pagination";
 import { Searchbar } from "@/components/search/Searchbar";
 import { Suspense } from "react";
@@ -15,7 +15,7 @@ export default function Search({ searchParams }: SearchParams) {
     <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
       <Searchbar value={searchParams.q} />
       <Suspense key={searchParams.q} fallback={<div>Loading...</div>}>
-        <LiteratureSearchResults
+        <PublicationSearchResults
           query={searchParams.q}
           offset={searchParams.offset}
         />

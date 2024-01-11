@@ -9,6 +9,8 @@ import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
+import sparkelClockIcon from "@/public/svg/sparkle-clock.svg";
+import sparkelClockIconFill from "@/public/svg/sparkle-clock-fill.svg";
 
 const menuItems = [
   {
@@ -25,6 +27,15 @@ const menuItems = [
     activeIcon: <Heart size={24} color="red" fill="red" />,
     onlyLoggedIn: true,
   },
+  {
+    name: "Recommendation History",
+    href: "/profile/recommendation",
+    icon: <Image src={sparkelClockIcon} alt="Recommendation History" />,
+    activeIcon: (
+      <Image src={sparkelClockIconFill} alt="Recommendation History" />
+    ),
+    onlyLoggedIn: true,
+  },
 ];
 
 export default function MainMenu({
@@ -38,7 +49,7 @@ export default function MainMenu({
   return (
     <nav
       className={cn(
-        "flex flex-col gap-2 items-center justify-center w-full",
+        "flex flex-col gap-2 items-center w-full flex-1",
         className
       )}
       {...props}
@@ -67,7 +78,6 @@ export default function MainMenu({
                 isCollapsed ? "hidden" : ""
               }`}
             >
-              {" "}
               {name}
             </span>
           </Link>

@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 
 type Props = {
   id: string;
@@ -129,11 +129,13 @@ export default function LikeButton(props: Props) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="leading-normal">
-              Do you really want to remove the literature{" "}
-              <span className="italic">
+              Do you really want to remove the publication{" "}
+              <i>
                 &quot;
-                {props.title}&quot;
-              </span>{" "}
+                {props.title}
+                &quot;
+              </i>
+              {"  "}
               from your favourites?
             </DialogTitle>
           </DialogHeader>

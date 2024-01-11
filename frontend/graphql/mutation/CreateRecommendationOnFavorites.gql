@@ -1,13 +1,14 @@
-query GetRecommendations {
-  recommendations {
+mutation CreateRecommendationOnFavorites {
+  createNewRecommendation {
     id
     publications {
       id
       title
       authors
       publicationDate
-      doi
       url
+      doi
+      exId
     }
     createdAt
   }

@@ -1,7 +1,7 @@
 import React from "react";
 import { getClient } from "@/lib/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import LiteratureCard from "@/components/search/LiteratureCard";
+import PublicationCard from "@/components/search/PublicationCard";
 import { GetSearchResultsByQueryDocument } from "@/graphql/queries/GetSearchResultsByQuery.generated";
 import { DOCUMENT_TYPES, SEARCH_TYPES } from "@/constants/enums";
 import { GetSearchResultsByIdDocument } from "@/graphql/queries/GetSearchResultsById.generated";
@@ -13,7 +13,7 @@ type Props = {
   searchType?: SEARCH_TYPES;
 };
 
-export default async function LiteratureSearchResults({
+export default async function PublicationSearchResults({
   query,
   offset,
   searchType,
@@ -28,7 +28,7 @@ export default async function LiteratureSearchResults({
         return (
           <>
             {responseId.data.publicationsById.map((publication) => (
-              <LiteratureCard
+              <PublicationCard
                 key={publication.id}
                 id={publication.id}
                 title={publication.title}
@@ -54,7 +54,7 @@ export default async function LiteratureSearchResults({
         return (
           <>
             {data.publicationsByQuery.map((publication) => (
-              <LiteratureCard
+              <PublicationCard
                 key={publication.id}
                 id={publication.id}
                 title={publication.title}

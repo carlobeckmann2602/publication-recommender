@@ -1,0 +1,25 @@
+mutation CreateRecommendation(
+  $group: [String!]!
+  $exclude: [String!]
+  $amount: Int
+) {
+  createNewRecommendation(
+    createNewRecommendationInput: {
+      group: $group
+      exlude: $exclude
+      amount: $amount
+    }
+  ) {
+    id
+    publications {
+      id
+      title
+      authors
+      publicationDate
+      url
+      doi
+      exId
+    }
+    createdAt
+  }
+}
