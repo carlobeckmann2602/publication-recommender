@@ -27,13 +27,14 @@ async def lifespan(app: FastAPI):
     if initial_model != "":
         print(f"Using the API with {initial_model} as the initial model")
         app.current_model = f"{app.archive_path}/{initial_model}"
+        if os.path.exists(app.current_model):
+            app.last_changed = os.path.getmtime(app.current_model)
+        else:
+            app.last_changed = 0
+            tasks.build_annoy.apply_async(args=[])
     else:
         print("Using the API without an initial model")
         app.current_model = f"{app.archive_path}/{STANDARD_MODEL}"
-
-    if os.path.exists(app.current_model):
-        app.last_changed = os.path.getmtime(app.current_model)
-    else:
         app.last_changed = 0
         tasks.build_annoy.apply_async(args=[])
     yield
