@@ -206,6 +206,21 @@ services:
     stdin_open: true
     tty: true
 
+  2020_scraper:
+    container_name: 2020_scraper
+    build:
+      context: ./data_ingest
+      dockerfile: Dockerfile_2020
+    volumes:
+      - ./data_ingest/:/scraper/
+    networks:
+      - pr_network
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+
   adminer:
     image: adminer
     restart: always

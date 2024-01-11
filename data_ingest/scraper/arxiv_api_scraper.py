@@ -81,14 +81,21 @@ class ArxivApiScraper:
         try:
             with libreq.urlopen(url) as self.response:
                 if self.response.status == 200:
-                    content = self.response.read().decode('utf-8')
+                    try:
+                        content = self.response.read().decode('utf-8')
+                    except UnicodeDecodeError as e:
+                        print(e)
+                        content = self.response.read()
                     #print(content)
                     xml_root = ET.fromstring(content)
                     entry_list = xml_root.findall(xml_tag_prefix+'entry')
                     print("-- collecting " + str(len(entry_list)) + " api metadata entries ...")
                     for entry in entry_list:
                         # find arxiv id
-                        arxiv_id = entry.find(xml_tag_prefix+'id').text
+                        id_tag = entry.find(xml_tag_prefix+'id')
+                        if id_tag is None:
+                            continue
+                        arxiv_id = id_tag.text
                         arxiv_id = arxiv_id.replace("http://arxiv.org/abs/", "")
                         if "v" in arxiv_id:
                             arxiv_id = arxiv_id[:-2]

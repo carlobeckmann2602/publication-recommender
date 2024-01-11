@@ -1,0 +1,13 @@
+FROM python:3.10
+RUN apt-get update && apt-get install -y cron
+
+WORKDIR /scraper
+COPY ./requirements.txt /scraper/requirements.txt
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+ADD ./cronjobs/2020_scraper /etc/cron.d/2020_scraper
+RUN chmod 0644 /etc/cron.d/2020_scraper
+RUN crontab /etc/cron.d/2020_scraper
+
+CMD ["cron", "-f"]

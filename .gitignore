@@ -5,3 +5,4 @@
 **/.vscode
 rabbit_data
 .env
+publications.pgsql

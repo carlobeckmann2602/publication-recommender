@@ -154,7 +154,7 @@ class BaseScraper:
         vector_dict = None
         file_param = {"file": open("/scraper/data/temp/"+pub.arxiv_id+".txt", "rb")}
         try:
-            res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param, timeout=30)
+            res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param, timeout=120)
             if res_ai_api.status_code == 200:
                 vector_dict = json.loads(res_ai_api.text)
                 pub.vector_dict = vector_dict
@@ -174,6 +174,7 @@ class BaseScraper:
 
     # year scraper 
     def create_id_block(self, year, month, num_counter, size):
+        in_db_counter = 0
         id_block = list()
         yy_str = str(year)[2:4]
         mm_str = '{:02d}'.format(month)
@@ -192,6 +193,8 @@ class BaseScraper:
 
             if not self.db_api.get_arxiv_pub_by_id(arxiv_id):
                 id_block.append(arxiv_id)
+            else:
+                in_db_counter += 1
 
             num_counter += 1
             mod = (num_counter)%size
@@ -210,6 +213,8 @@ class BaseScraper:
             id_list.append(pub.arxiv_id)
         id_list.sort()
         max_id = id_list[-1]
+        if "v" in max_id:
+            max_id = max_id.replace("v", "")
         max_num = int(max_id[5:])
         return max_num
     
