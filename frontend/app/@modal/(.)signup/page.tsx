@@ -11,7 +11,11 @@ import {
 } from "@/components/ui/card";
 import ModalCloseButton from "@/components/ModalCloseButton";
 
-export default function SignUpModal() {
+type Props = {
+  searchParams?: Record<"callbackUrl" | "error", string>;
+};
+
+export default function SignUpModal(props: Props) {
   return (
     <Modal>
       <Card className="shadow-lg relative overflow-auto max-h-[95vh]">
@@ -24,7 +28,7 @@ export default function SignUpModal() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col w-full gap-6">
-            <SignUpForm callbackUrl={""} />
+            <SignUpForm callbackUrl={props.searchParams?.callbackUrl} />
           </div>
         </CardContent>
         <CardFooter className="flex justify-between"></CardFooter>

@@ -95,13 +95,20 @@ export function SignUpForm(props: Props) {
         console.error(response.errors);
         setErrorMsg("Authentication failed!");
       } else {
-        await signIn("credentials", {
+        const res = await signIn("credentials", {
           username: data.email,
           password: data.password,
-          redirect: true,
+          redirect: false,
           callbackUrl: props.callbackUrl ?? "/",
         });
-        allowBackgroundScrolling();
+        if (res?.ok) {
+          allowBackgroundScrolling();
+          router.back();
+        } else if (res?.error) {
+          setErrorMsg(res?.error);
+        } else {
+          setErrorMsg("Login failed!");
+        }
       }
     } catch (error: any) {
       console.error(error.message);
