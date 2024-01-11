@@ -1,5 +1,6 @@
 query GetRecommendations {
   recommendations {
+    id
     publications {
       id
       title
@@ -8,5 +9,6 @@ query GetRecommendations {
       doi
       url
     }
+    createdAt
   }
 }

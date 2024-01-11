@@ -11,6 +11,7 @@ import { DOCUMENT_TYPES } from "@/constants/enums";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GetRecommendationsDocument } from "@/graphql/queries/GetRecomendations.generated";
 
 type SearchParams = {
   searchParams: {
@@ -34,6 +35,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
     variables: {
       group: publicationGroup,
     },
+    refetchQueries: [GetRecommendationsDocument],
   });
 
   const [
