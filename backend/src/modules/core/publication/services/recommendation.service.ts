@@ -65,22 +65,24 @@ export class RecommendationService {
   async createRecommendationforUserFromFavorites(user: User) {
     const userData = await this.userRepository.findOne({
       where: { id: user.id },
-      relations: { favorites: true, recommendations: true },
+      relations: { favorites: true, recommendations: { publications: true } },
     });
-
     if (userData.favorites.length === 0) {
       throw new NoFavoritesForRecommendationException();
     }
-
     const group = userData.favorites.map((favorite) => favorite.publicationId);
     const exclude = userData.recommendations
       .flatMap((recommendation) => recommendation.publications)
       .map((publication) => publication.id);
     const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(group, exclude);
-    const partialRecommendationPublications = recommendationPublicationIds.map((id) => ({ id }));
+    const publications = await this.publicationRepository.find({
+      where: {
+        id: In(recommendationPublicationIds),
+      },
+    });
     return await this.recommendationRepository.save({
       userId: user.id,
-      publications: partialRecommendationPublications,
+      publications: publications,
     });
   }
 
