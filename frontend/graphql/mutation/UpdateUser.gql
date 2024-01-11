@@ -1,0 +1,19 @@
+mutation UpdateUser(
+  $email: String
+  $password: String
+  $oldPassword: String
+  $name: String
+) {
+  updateProfile(
+    data: {
+      email: $email
+      password: $password
+      oldPassword: $oldPassword
+      name: $name
+    }
+  ) {
+    id
+    email
+    name
+  }
+}
