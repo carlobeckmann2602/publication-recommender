@@ -4,7 +4,7 @@ import { UpdateUserDocument } from "@/graphql/mutation/UpdateUser.generated";
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -45,6 +45,11 @@ export default function UserCredentialForm() {
       email: session.data?.user.email,
     },
   });
+
+  useEffect(() => {
+    form.setValue("name", session.data?.user.name || "");
+    form.setValue("email", session.data?.user.email || "");
+  }, [form, session]);
 
   const [errorMsg, setErrorMsg] = useState<string>();
 

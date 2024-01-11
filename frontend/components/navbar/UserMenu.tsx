@@ -75,9 +75,9 @@ export default function UserMenu() {
               <Link href="/profile">
                 <MenubarItem className="cursor-pointer">Profile</MenubarItem>
               </Link>
-              <Link href="/profile/settings">
+              {/* <Link href="/profile/settings">
                 <MenubarItem className="cursor-pointer">Settings</MenubarItem>
-              </Link>
+              </Link> */}
               <MenubarSeparator />
               <SignOut>
                 <Button
