@@ -86,12 +86,14 @@ export class RecommendationService {
 
   async createRecommendationforUser(dto: RecommendationCreateDto, user: User) {
     const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(dto.group, dto.exlude, dto.amount);
-    const recommendationsAsObjects = recommendationPublicationIds.map((recommendationPublicationId) => ({
-      id: recommendationPublicationId,
-    }));
+    const publications = await this.publicationRepository.find({
+      where: {
+        id: In(recommendationPublicationIds),
+      },
+    });
     return await this.recommendationRepository.save({
       user,
-      publications: recommendationsAsObjects,
+      publications: publications,
     });
   }
 
