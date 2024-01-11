@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 
 type Props = {
   title: string;
+  titleClassName?: string;
   publications: {
     __typename?: "PublicationResponseDto" | undefined;
     id: string;
@@ -23,7 +24,11 @@ type Props = {
   }[];
 };
 
-export default function RecommendationSlider({ title, publications }: Props) {
+export default function RecommendationSlider({
+  title,
+  titleClassName,
+  publications,
+}: Props) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -43,8 +48,12 @@ export default function RecommendationSlider({ title, publications }: Props) {
   }, [api]);
 
   return (
-    <div>
-      <div className="text-2xl font-medium text-left w-full my-4">{title}</div>
+    <>
+      <div
+        className={`text-2xl font-medium text-left w-full my-4 ${titleClassName}`}
+      >
+        {title}
+      </div>
       <Carousel
         className="mx-12"
         setApi={setApi}
@@ -84,6 +93,6 @@ export default function RecommendationSlider({ title, publications }: Props) {
       <div className="py-2 text-center text-sm text-muted-foreground">
         Publication {current} of {count}
       </div>
-    </div>
+    </>
   );
 }
