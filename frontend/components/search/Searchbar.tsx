@@ -23,9 +23,10 @@ const FormSchema = z
 
 type Props = {
   value?: string;
+  className?: string;
 };
 
-export function Searchbar({ value }: Props) {
+export function Searchbar({ value, className }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -43,7 +44,7 @@ export function Searchbar({ value }: Props) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex w-full justify-center items-center max-w-3xl relative"
+        className={`flex w-full justify-center items-center max-w-3xl relative ${className}`}
       >
         <FormField
           control={form.control}

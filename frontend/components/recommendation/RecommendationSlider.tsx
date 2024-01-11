@@ -58,7 +58,7 @@ export default function RecommendationSlider({ title, publications }: Props) {
           {publications.map((publication) => (
             <CarouselItem
               key={publication.id}
-              className="basis-full lg:basis-1/2 2xl:basis-1/3 items-start"
+              className="basis-full xl:basis-1/2 2xl:basis-1/3 items-start"
             >
               <PublicationCard
                 key={publication.id}

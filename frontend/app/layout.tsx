@@ -25,9 +25,9 @@ export default function RootLayout(props: {
             <Sidebar className="" />
             <div
               id="content"
-              className="flex-grow flex pr-6 md:pr-8 lg:pr-12 pl-[19.5rem] md:pl-80 lg:pl-[21rem] justify-center w-screen"
+              className="flex-grow flex pr-5 md:pr-7 lg:pr-11 pl-[19.25rem] md:[19.75rem] lg:pl-[20.75rem] justify-center w-screen"
             >
-              <div className="max-w-7xl flex-grow overflow-auto">
+              <div className="max-w-7xl px-1 flex-grow overflow-auto">
                 {props.children}
               </div>
               <Toaster />

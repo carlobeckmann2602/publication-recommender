@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@apollo/client";
@@ -9,9 +9,8 @@ import useRecommendationsStore from "@/stores/recommendationsStore";
 import PublicationCard from "@/components/search/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GetRecommendationsDocument } from "@/graphql/queries/GetRecomendations.generated";
 
 type SearchParams = {
   searchParams: {
@@ -35,7 +34,6 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
     variables: {
       group: publicationGroup,
     },
-    refetchQueries: [GetRecommendationsDocument],
   });
 
   const [
@@ -57,9 +55,10 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
       console.log(
         `Mutate with onFavorites: ${
           searchParams.onFavorites
-        }, session ${JSON.stringify(session, null, 2)}`
+        }, session ${JSON.stringify(session.status, null, 2)}`
       );
       try {
+        console.log("Send");
         if (searchParams.onFavorites && session.status === "authenticated") {
           await createRecommendationOnFavorites();
         } else {
@@ -70,10 +69,10 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
 
     loadRecommendation();
   }, [
-    searchParams.onFavorites,
-    session,
+    session.status,
     createRecommendation,
     createRecommendationOnFavorites,
+    searchParams.onFavorites,
   ]);
 
   const onClearSelection = () => {
@@ -89,6 +88,12 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
         }`}
       />
       <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
+        {!searchParams.onFavorites && (
+          <Button variant="destructive" onClick={onClearSelection}>
+            <Trash2 size={20} className="mr-4" />
+            Clear your publication selection !
+          </Button>
+        )}
         <Suspense fallback={<div>Loading...</div>}>
           {searchParams.onFavorites
             ? recommendationOnFavoritesData?.createNewRecommendation.publications.map(
@@ -145,7 +150,6 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
               </AlertDescription>
             </Alert>
           )}
-          <Button onClick={onClearSelection}>Clear Selection</Button>
         </Suspense>
       </div>
     </>

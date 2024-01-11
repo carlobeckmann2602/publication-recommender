@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import PublicationCardByIdClient from "@/components/search/PublicationCardByIdClient";
 import { buttonVariants } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
-import { Wand2 } from "lucide-react";
+import { PlusCircle, Wand2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -17,13 +17,27 @@ export default function RecommendationCreate() {
 
   if (publications?.length === 0) {
     return (
-      <div>
+      <div className="flex flex-col w-full h-full">
         <Header
           title="Create Recommendation"
           subtitle="create your recommendation based on your selection"
         />
-        <div className="text-center my-8">
-          You can only use this function once you have selected publications!
+        <div className="grow flex flex-col gap-4 justify-center items-center">
+          <div className="text-2xl font-medium text-center w-full">
+            You can only use this function once you have selected publications!
+          </div>
+          <div className="text-lg font-normal text-center w-full">
+            To add publications simply press the button{" "}
+            <kbd
+              className={`${buttonVariants({
+                variant: "secondary",
+                size: "icon",
+              })}`}
+            >
+              <PlusCircle size={20} />
+            </kbd>{" "}
+            on the publication you want to add.
+          </div>
         </div>
       </div>
     );
