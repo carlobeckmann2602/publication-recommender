@@ -25,3 +25,4 @@ asgiref~=3.7.2
 anyio~=3.7.1
 aiohttp~=3.8.3
 wonderwords~=2.2.0
+pillow~=9.3.0

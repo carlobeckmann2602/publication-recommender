@@ -5,11 +5,12 @@ type RecommendationsState = {
   publicationGroup: string[];
   addPublication: (id: string) => void;
   removePublication: (id: string) => void;
+  clearPublications: () => void;
 };
 
 const useRecommendationsStore = create<RecommendationsState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       publicationGroup: [],
       addPublication: (id) => {
         set((state) => ({ publicationGroup: [...state.publicationGroup, id] }));
@@ -20,6 +21,9 @@ const useRecommendationsStore = create<RecommendationsState>()(
             (publication) => publication != id
           ),
         }));
+      },
+      clearPublications: () => {
+        set({ publicationGroup: [] });
       },
     }),
     {

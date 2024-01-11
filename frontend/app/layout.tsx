@@ -27,7 +27,9 @@ export default function RootLayout(props: {
               id="content"
               className="flex-grow flex pr-6 md:pr-8 lg:pr-12 pl-[19.5rem] md:pl-80 lg:pl-[21rem] justify-center w-screen"
             >
-              <div className="max-w-7xl flex-grow">{props.children}</div>
+              <div className="max-w-7xl flex-grow overflow-auto">
+                {props.children}
+              </div>
               <Toaster />
             </div>
           </div>

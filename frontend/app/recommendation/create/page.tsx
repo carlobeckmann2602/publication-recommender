@@ -36,9 +36,10 @@ export default function RecommendationCreate() {
         subtitle="create your recommendation based on your selection"
       />
       <h2 className="text-lg font-medium mt-4 mb-2">
-        Selection of Publication recommendation would be based on:
+        Your selection of publications your custom recommendation would be based
+        on:
       </h2>
-      <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
         {publications?.map((item) => {
           return (
             <PublicationCardByIdClient
@@ -53,7 +54,7 @@ export default function RecommendationCreate() {
         href="./create/new-recommendation"
         className={`${buttonVariants({
           variant: "default",
-        })} sticky bottom-4 w-[400px] self-center shadow-md`}
+        })} fixed bottom-4 w-[400px] self-center shadow-md`}
       >
         Create Recommendation with this {publications?.length}{" "}
         {publications?.length == 1 ? " publication" : " publications"}

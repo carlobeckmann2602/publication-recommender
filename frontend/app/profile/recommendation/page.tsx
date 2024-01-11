@@ -1,23 +1,48 @@
 "use client";
 import { Header } from "@/components/Header";
-import useRecommendationsStore from "@/stores/recommendationsStore";
-import { useEffect, useState } from "react";
+import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
+import { GetRecommendationsDocument } from "@/graphql/queries/GetRecomendations.generated";
+import { useLazyQuery } from "@apollo/client";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Recommendation() {
-  const { publicationGroup } = useRecommendationsStore();
-  const [publications, setPublications] = useState<string[]>();
+  const session = useSession();
+
+  const [getRecommendation, { data }] = useLazyQuery(
+    GetRecommendationsDocument,
+    {
+      context: {
+        headers: {
+          Authorization: `Bearer ${session.data?.userToken.jwtToken}`,
+        },
+      },
+    }
+  );
 
   useEffect(() => {
-    setPublications(publicationGroup);
-  }, [publicationGroup]);
+    const loadRecommendation = async () => {
+      if (session.status === "authenticated") {
+        await getRecommendation();
+      }
+    };
+
+    loadRecommendation();
+  }, [session, getRecommendation]);
 
   return (
-    <div>
+    <div className="flex flex-col w-full">
       <Header
         title="Recommendation History"
         subtitle="find your recommendations here"
       />
-      <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"></div>
+
+      {data?.recommendations[0]?.publications && (
+        <RecommendationSlider
+          title="Your newest Recommendation"
+          publications={data?.recommendations[0].publications}
+        />
+      )}
     </div>
   );
 }

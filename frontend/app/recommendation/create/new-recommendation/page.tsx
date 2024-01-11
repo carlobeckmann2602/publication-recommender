@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@apollo/client";
@@ -10,6 +10,7 @@ import PublicationCard from "@/components/search/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type SearchParams = {
   searchParams: {
@@ -19,7 +20,7 @@ type SearchParams = {
 
 export default function RecommendationResult({ searchParams }: SearchParams) {
   const session = useSession();
-  const { publicationGroup } = useRecommendationsStore();
+  const { publicationGroup, clearPublications } = useRecommendationsStore();
 
   const [
     createRecommendation,
@@ -73,6 +74,10 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
     createRecommendationOnFavorites,
   ]);
 
+  const onClearSelection = () => {
+    clearPublications();
+  };
+
   return (
     <>
       <Header
@@ -120,25 +125,26 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
                   />
                 )
               )}
+          {createRecommendationError && (
+            <Alert variant="destructive" className="w-1/4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                {createRecommendationError.message}
+              </AlertDescription>
+            </Alert>
+          )}
+          {createRecommendationOnFavoritesError && (
+            <Alert variant="destructive" className="w-1/4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                {createRecommendationOnFavoritesError.message}
+              </AlertDescription>
+            </Alert>
+          )}
+          <Button onClick={onClearSelection}>Clear Selection</Button>
         </Suspense>
-        {createRecommendationError && (
-          <Alert variant="destructive" className="w-1/4">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              {createRecommendationError.message}
-            </AlertDescription>
-          </Alert>
-        )}
-        {createRecommendationOnFavoritesError && (
-          <Alert variant="destructive" className="w-1/4">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              {createRecommendationOnFavoritesError.message}
-            </AlertDescription>
-          </Alert>
-        )}
       </div>
     </>
   );

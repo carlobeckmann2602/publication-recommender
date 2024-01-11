@@ -33,7 +33,7 @@ export default function Favorites() {
   return (
     <div className="flex flex-col">
       <Header title="Favorites" subtitle="your favourite publications" />
-      <div className="grid gap-4 grid-cols-1 py-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
         {data?.favorites.map((favorite) => (
           <PublicationCard
             key={favorite.id}
@@ -56,7 +56,7 @@ export default function Favorites() {
         href="/recommendation/create/new-recommendation?onFavorites=true"
         className={`${buttonVariants({
           variant: "default",
-        })} sticky bottom-4 w-[370px] self-center shadow-md`}
+        })} fixed bottom-4 w-[370px] self-center shadow-md`}
       >
         Create Recommendation from your favorites
         <Wand2 size={20} className="ml-4" />
