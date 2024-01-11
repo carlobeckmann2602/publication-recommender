@@ -28,6 +28,7 @@ export default function Recommendation() {
           Authorization: `Bearer ${session.data?.userToken.jwtToken}`,
         },
       },
+      fetchPolicy: "cache-and-network",
     }
   );
 
