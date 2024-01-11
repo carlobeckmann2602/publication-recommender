@@ -1,10 +1,11 @@
 "use client";
 import { Header } from "@/components/Header";
 import PublicationCard from "@/components/search/PublicationCard";
+import { Searchbar } from "@/components/search/Searchbar";
 import { buttonVariants } from "@/components/ui/button";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 import { useLazyQuery } from "@apollo/client";
-import { Wand2 } from "lucide-react";
+import { Heart, Wand2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -29,6 +30,32 @@ export default function Favorites() {
 
     loadFavorites();
   }, [session, getFavorites]);
+
+  if (data?.favorites.length === 0) {
+    return (
+      <div className="flex flex-col h-full">
+        <Header title="Favorites" subtitle="your favourite publications" />
+        <div className="grow flex flex-col gap-4 justify-center items-center">
+          <div className="text-2xl font-medium text-center w-full">
+            You have no favorite publications!
+          </div>
+          <div className="text-lg font-normal text-center w-full">
+            To favorite publications simply press the button{" "}
+            <kbd
+              className={`${buttonVariants({
+                variant: "secondary",
+                size: "icon",
+              })}`}
+            >
+              <Heart size={20} />
+            </kbd>{" "}
+            on the publication you want to favorite.
+          </div>
+          <Searchbar className="my-6" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">
