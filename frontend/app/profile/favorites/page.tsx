@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Searchbar } from "@/components/search/Searchbar";
 import { buttonVariants } from "@/components/ui/button";
+import { DOCUMENT_TYPES } from "@/constants/enums";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 import { useLazyQuery } from "@apollo/client";
 import { Heart, Wand2 } from "lucide-react";
@@ -74,7 +75,7 @@ export default function Favorites() {
             }
             link={favorite.url}
             doi={favorite.doi}
-            disableSearchSimilar={true}
+            documentType={DOCUMENT_TYPES.PAPER}
             enableLikeWarning={true}
           />
         ))}

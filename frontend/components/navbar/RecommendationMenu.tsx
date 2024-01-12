@@ -41,9 +41,7 @@ export default function RecommendationMenu() {
           <Badge variant="secondary" className="absolute -top-2 -right-2">
             {publicationAmount}
           </Badge>
-          <TooltipContent className="mx-4 my-1">
-            Create Recommendation
-          </TooltipContent>
+          <TooltipContent align="start">Create Recommendation</TooltipContent>
         </Tooltip>
       </div>
     );

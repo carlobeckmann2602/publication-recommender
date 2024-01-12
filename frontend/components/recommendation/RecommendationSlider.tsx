@@ -9,6 +9,7 @@ import {
 } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useState } from "react";
+import { DOCUMENT_TYPES } from "@/constants/enums";
 
 type Props = {
   title: string;
@@ -56,11 +57,11 @@ export default function RecommendationSlider({
       <Carousel
         className="mx-12"
         setApi={setApi}
-        plugins={[
+        /* plugins={[
           Autoplay({
             delay: 10000,
           }),
-        ]}
+        ]} */
       >
         <CarouselContent className="">
           {publications.map((publication) => (
@@ -80,6 +81,7 @@ export default function RecommendationSlider({
                 }
                 link={publication.url}
                 doi={publication.doi}
+                documentType={DOCUMENT_TYPES.PAPER}
                 disableSearchSimilar={false}
                 className="h-full"
               />

@@ -60,7 +60,9 @@ export default function AddToRecommendationButton({
                   <MinusCircle />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Remove publication from selection</TooltipContent>
+              <TooltipContent align="start">
+                Remove publication from selection
+              </TooltipContent>
             </Tooltip>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
@@ -111,7 +113,9 @@ export default function AddToRecommendationButton({
           <PlusCircle />
         </Button>
       </TooltipTrigger>
-      <TooltipContent>Add publication to selection</TooltipContent>
+      <TooltipContent align="start">
+        Add publication to selection
+      </TooltipContent>
     </Tooltip>
   );
 }
