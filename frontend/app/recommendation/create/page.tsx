@@ -51,14 +51,15 @@ export default function RecommendationCreate() {
         subtitle="create your recommendation based on your selection"
       />
       <div className="flex flex-row justify-between items-end gap-8 mt-4 mb-2">
-        <h2 className="text-lg font-medium">
+        <h2 className="text-lg font-medium w-3/4">
           Your selection of publications your custom recommendation would be
           based on:
         </h2>
         <DeletButton
           onClick={clearPublications}
-          tooltipText="Delete Selection"
-          dialogTitle="Do you really want to delete the selection of publication?"
+          tooltipText="Delete selection"
+          dialogTitle="Delete selection"
+          dialogText="Do you really want to delete the selection of publication?"
         />
       </div>
       <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">

@@ -56,16 +56,17 @@ export default function AddToRecommendationButton({
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="leading-normal">
-                Do you really want to remove the publication{" "}
-                <i>
-                  &quot;
-                  {title}
-                  &quot;
-                </i>
-                {"  "}
-                from your recommendation selection?
+                Remove publication from selection
               </DialogTitle>
             </DialogHeader>
+            Do you really want to remove the publication{" "}
+            <i>
+              &quot;
+              {title}
+              &quot;
+            </i>
+            {"  "}
+            from your recommendation selection?
             <DialogFooter className="sm:justify-start">
               <DialogClose className="w-1/2" asChild>
                 <Button type="button" variant="secondary">
