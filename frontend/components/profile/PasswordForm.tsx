@@ -19,6 +19,7 @@ import {
 } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useToast } from "../ui/use-toast";
 
 const FormSchema = z
   .object({
@@ -69,7 +70,10 @@ export default function PasswordForm() {
     },
   });
 
+  const { toast } = useToast();
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setErrorMsg(undefined);
     try {
       const response = await updateUser({
         variables: {
@@ -80,6 +84,11 @@ export default function PasswordForm() {
       if (response.errors) {
         throw new Error(response.errors.toString());
       } else {
+        form.reset();
+        toast({
+          title: "Password updated",
+          description: "Your password was successfully updated",
+        });
       }
     } catch (error: any) {
       console.error(error.message);

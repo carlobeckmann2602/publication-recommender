@@ -8,7 +8,7 @@ export default function Profile() {
     <>
       <Header title="Profile" subtitle="your personal information" />
       <div className="flex justify-center p-8">
-        <div className="flex flex-col w-full sm:w-3/4 lg:w-1/2 gap-8">
+        <div className="flex flex-col w-full md:w-3/4 2xl:w-1/2 gap-8">
           <UserCredentialForm />
           <PasswordForm />
           <DeleteAccountButton />

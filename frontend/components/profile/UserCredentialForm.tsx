@@ -19,6 +19,7 @@ import {
 } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useToast } from "../ui/use-toast";
 
 const FormSchema = z.object({
   name: z
@@ -61,7 +62,10 @@ export default function UserCredentialForm() {
     },
   });
 
+  const { toast } = useToast();
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setErrorMsg(undefined);
     try {
       const response = await updateUser({
         variables: {
@@ -72,17 +76,26 @@ export default function UserCredentialForm() {
       if (response.errors) {
         throw new Error(response.errors.toString());
       } else {
-        console.log("Form update");
         session.update({
           user: {
-            name: data.name,
-            email: data.email,
+            name: response.data?.updateProfile.name,
+            email: response.data?.updateProfile.email,
           },
+        });
+
+        toast({
+          title: "Credentials updated",
+          description: (
+            <>
+              {`Name: ${response.data?.updateProfile.name}`} <br />
+              {`Email: ${response.data?.updateProfile.email}`}
+            </>
+          ),
         });
       }
     } catch (error: any) {
       console.error(error.message);
-      setErrorMsg("Update Credantial failed!");
+      setErrorMsg(error.message);
     }
   }
 

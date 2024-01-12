@@ -144,9 +144,7 @@ export const authOptions: NextAuthOptions = {
           };
       }
 
-      console.log("Update");
       if (trigger === "update" && session?.user.name && session?.user.name) {
-        console.log("Update");
         token.user.name = session.user.name;
         token.user.email = session.user.email;
       }

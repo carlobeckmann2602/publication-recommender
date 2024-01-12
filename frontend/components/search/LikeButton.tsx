@@ -129,7 +129,7 @@ export default function LikeButton(props: Props) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="leading-normal">
-              Unlike Publication
+              Unfavorite Publication
             </DialogTitle>
           </DialogHeader>
           Do you really want to remove the publication{" "}
@@ -151,7 +151,7 @@ export default function LikeButton(props: Props) {
               type="submit"
               onClick={() => changeLike()}
             >
-              Remove
+              Unfavorite
             </Button>
           </DialogFooter>
         </DialogContent>

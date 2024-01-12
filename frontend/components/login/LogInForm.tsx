@@ -61,6 +61,7 @@ export function LogInForm(props: Props) {
   const router = useRouter();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setErrorMsg(undefined);
     const res = await signIn("credentials", {
       username: data.email,
       password: data.password,

@@ -83,6 +83,7 @@ export function SignUpForm(props: Props) {
   const [registerFunction, { loading, error }] = useMutation(RegisterDocument);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setErrorMsg(undefined);
     try {
       const response = await registerFunction({
         variables: {
