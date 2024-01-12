@@ -8,6 +8,7 @@ import { PublicationSourceWithSourceIdDto } from '../dto/PublicationBySource.dto
 import { CreatePublicationDto } from '../dto/create-publication.dto';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
 import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
+import PublicationsSearchDto from '../dto/publications-search.dto';
 import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
 import { NoPublicationWithDateForSourceException } from '../exceptions/no-publication-with-date-for-source.exception';
 import { DescriptorService } from '../services/descriptor.service';
@@ -26,29 +27,18 @@ export class PublicationResolver {
   @Query(() => [PublicationResponseDto])
   @SetMetadata('optional', true)
   @UseGuards(JwtAuthGuard)
-  async publicationsByQuery(
+  async publications(
     @AuthUser() user: User | null,
-    @Args('filter')
-    query: string,
+    @Args('publicationsSearchDto')
+    dto: PublicationsSearchDto,
   ): Promise<PublicationResponseDto[]> {
     try {
-      const publications = await this.publicationService.findAll(query, 'query');
-      return await this.favoriteService.publicationsWithFavorites(publications, user);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
-  }
-
-  @Query(() => [PublicationResponseDto])
-  @SetMetadata('optional', true)
-  @UseGuards(JwtAuthGuard)
-  async publicationsById(
-    @AuthUser() user: User | null,
-    @Args('filter')
-    id: string,
-  ): Promise<PublicationResponseDto[]> {
-    try {
-      const publications = await this.publicationService.findAll(id, 'id');
+      const publications = await this.publicationService.findAll(
+        dto.searchInput,
+        dto.searchStrategy,
+        dto.page || 0,
+        dto.amountPerPage || 5,
+      );
       return await this.favoriteService.publicationsWithFavorites(publications, user);
     } catch (e) {
       throw new InternalServerErrorException(e.message);

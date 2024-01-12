@@ -57,8 +57,7 @@ type RecommendationResponseDto {
 }
 
 type Query {
-  publicationsByQuery(filter: String!): [PublicationResponseDto!]!
-  publicationsById(filter: String!): [PublicationResponseDto!]!
+  publications(publicationsSearchDto: PublicationsSearchDto!): [PublicationResponseDto!]!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
   oldest(source: PublicationSource!): PublicationResponseDto!
@@ -68,6 +67,18 @@ type Query {
   favorites: [PublicationResponseDto!]!
   recommendations: [RecommendationResponseDto!]!
   profile: User!
+}
+
+input PublicationsSearchDto {
+  searchInput: String!
+  searchStrategy: SearchStrategy!
+  page: Int! = 0
+  amountPerPage: Int! = 5
+}
+
+enum SearchStrategy {
+  QUERY
+  ID
 }
 
 input PublicationVectorsRequestDto {
