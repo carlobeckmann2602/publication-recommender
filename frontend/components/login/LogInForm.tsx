@@ -133,9 +133,9 @@ export function LogInForm(props: Props) {
                     )}
                   </div>
                 </div>
-                <FormDescription className="text-right">
+                {/* <FormDescription className="text-right">
                   <Link href={"/"}>Forgotten Password?</Link>
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -152,14 +152,14 @@ export function LogInForm(props: Props) {
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
-      <TextSeparator>or</TextSeparator>
+      {/* <TextSeparator>or</TextSeparator>
       <div className="flex flex-col gap-4">
         <GoogleButton
           onClick={() => {
             signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
           }}
         />
-      </div>
+      </div> */}
       <span className="text-center">
         Dont have an account?{" "}
         <Link

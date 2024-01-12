@@ -240,14 +240,14 @@ export function SignUpForm(props: Props) {
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
-      <TextSeparator>or</TextSeparator>
+      {/* <TextSeparator>or</TextSeparator>
       <div className="flex flex-col gap-4">
         <GoogleButton
           onClick={() => {
             signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
           }}
         />
-      </div>
+      </div> */}
       <span className="text-center">
         Already have an account?{" "}
         <Link
