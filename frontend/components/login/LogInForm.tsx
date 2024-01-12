@@ -30,11 +30,15 @@ import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 const FormSchema = z.object({
   email: z
     .string({
-      required_error: "Name is required",
+      required_error: "Email is required",
     })
+    .min(1, { message: "Email is required" })
     .email({ message: "Invalid email address" }),
   password: z
-    .string()
+    .string({
+      required_error: "Password is required",
+    })
+    .min(1, { message: "Password is required" })
     .min(8, { message: "Password must be 8 or more characters long" }),
 });
 

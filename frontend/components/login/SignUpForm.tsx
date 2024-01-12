@@ -34,18 +34,23 @@ const FormSchema = z
       .string({
         required_error: "Name is required",
       })
+      .min(1, { message: "Name is required" })
       .min(2, {
         message: "Name must be at least 2 characters.",
       }),
     email: z
       .string({
-        required_error: "Name is required",
+        required_error: "Email is required",
       })
+      .min(1, { message: "Email is required" })
       .email({ message: "Invalid email address" }),
     password: z
-      .string()
+      .string({
+        required_error: "Password is required",
+      })
+      .min(1, { message: "Password is required" })
       .min(8, { message: "Password must be 8 or more characters long" }),
-    confirm: z.string(),
+    confirm: z.string().min(1, { message: "Confirm password is required" }),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Passwords don't match",

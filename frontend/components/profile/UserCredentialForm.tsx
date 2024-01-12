@@ -26,17 +26,23 @@ const FormSchema = z.object({
     .string({
       required_error: "Name is required",
     })
+    .min(1, { message: "Name is required" })
     .min(2, {
       message: "Name must be at least 2 characters.",
     }),
   email: z
     .string({
-      required_error: "Name is required",
+      required_error: "Email is required",
     })
+    .min(1, { message: "Email is required" })
     .email({ message: "Invalid email address" }),
 });
 
-export default function UserCredentialForm() {
+type Props = {
+  title?: string;
+};
+
+export default function UserCredentialForm({ title }: Props) {
   const session = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,10 +53,19 @@ export default function UserCredentialForm() {
     },
   });
 
+  const [edit, setEdit] = useState(false);
+
+  const toogleEdit = () => {
+    if (edit) form.clearErrors();
+    setEdit((prev) => !prev);
+  };
+
   useEffect(() => {
-    form.setValue("name", session.data?.user.name || "");
-    form.setValue("email", session.data?.user.email || "");
-  }, [form, session]);
+    if (!edit) {
+      form.setValue("name", session.data?.user.name || "");
+      form.setValue("email", session.data?.user.email || "");
+    }
+  }, [form, session, edit]);
 
   const [errorMsg, setErrorMsg] = useState<string>();
 
@@ -82,6 +97,7 @@ export default function UserCredentialForm() {
             email: response.data?.updateProfile.email,
           },
         });
+        toogleEdit();
 
         toast({
           title: "Credentials updated",
@@ -101,14 +117,27 @@ export default function UserCredentialForm() {
 
   return (
     <>
+      {title && (
+        <div className="text-2xl font-medium text-left w-full">{title}</div>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"
+            disabled={!edit}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <div className="flex flex-row justify-between">
+                  <FormLabel>Name</FormLabel>
+                  <button
+                    className="underline cursor-pointer font-medium text-sm leading-none "
+                    onClick={toogleEdit}
+                    type="button"
+                  >
+                    {edit ? "cancel" : "edit"}
+                  </button>
+                </div>
                 <FormControl>
                   <Input
                     placeholder="Name"
@@ -124,6 +153,7 @@ export default function UserCredentialForm() {
           <FormField
             control={form.control}
             name="email"
+            disabled={!edit}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
@@ -139,9 +169,11 @@ export default function UserCredentialForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Update
-          </Button>
+          {edit && (
+            <Button type="submit" className="w-full">
+              Update
+            </Button>
+          )}
         </form>
       </Form>
       {!!errorMsg && (

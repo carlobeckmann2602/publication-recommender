@@ -61,10 +61,10 @@ export default function UserMenu() {
               isCollapsed && "hidden"
             }`}
           >
-            <p className="text-sm font-medium leading-none">
-              {session ? session.user.name : "Log in"}
+            <p className="text-sm font-medium leading-none text-left">
+              {session ? session.user.name : "Sign in"}
             </p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-xs leading-none text-left text-muted-foreground">
               {session ? session.user.email : "Account"}
             </p>
           </div>
@@ -84,14 +84,14 @@ export default function UserMenu() {
                   variant={"ghost"}
                   className="text-sm justify-start px-2 py-1.5 font-normal h-auto"
                 >
-                  Log out
+                  Sign out
                 </Button>
               </SignOut>
             </>
           ) : (
             <>
               <Link href={"/signin"} scroll={false}>
-                <MenubarItem className="cursor-pointer">Log in</MenubarItem>
+                <MenubarItem className="cursor-pointer">Sign in</MenubarItem>
               </Link>
               <Link href={"/signup"} scroll={false}>
                 <MenubarItem className="cursor-pointer">Sign up</MenubarItem>

@@ -24,19 +24,33 @@ import { useToast } from "../ui/use-toast";
 const FormSchema = z
   .object({
     password: z
-      .string()
+      .string({
+        required_error: "Current password is required",
+      })
+      .min(1, { message: "Current password is required" })
       .min(8, { message: "Password must be 8 or more characters long" }),
     newPassword: z
-      .string()
+      .string({
+        required_error: "New password is required",
+      })
+      .min(1, { message: "New password is required" })
       .min(8, { message: "Password must be 8 or more characters long" }),
-    confirm: z.string(),
+    confirm: z
+      .string({
+        required_error: "Confirm password is required",
+      })
+      .min(1, { message: "Confirm password is required" }),
   })
   .refine((data) => data.newPassword === data.confirm, {
     message: "Passwords don't match",
     path: ["confirm"],
   });
 
-export default function PasswordForm() {
+type Props = {
+  title?: string;
+};
+
+export default function PasswordForm({ title }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -50,7 +64,7 @@ export default function PasswordForm() {
 
   const [showPassword, setPasswordVisibility] = useState(false);
   const togglePasswordVisibility = () => {
-    setPasswordVisibility((prev) => !prev);
+    if (edit) setPasswordVisibility((prev) => !prev);
   };
   const [showNewPassword, setNewPasswordVisibility] = useState(false);
   const toggleNewPasswordVisibility = () => {
@@ -59,6 +73,13 @@ export default function PasswordForm() {
   const [showConfirmPassword, setConfirmPasswordVisibility] = useState(false);
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisibility((prev) => !prev);
+  };
+
+  const [edit, setEdit] = useState(false);
+
+  const toogleEdit = () => {
+    if (edit) form.reset();
+    setEdit((prev) => !prev);
   };
 
   const session = useSession();
@@ -84,7 +105,7 @@ export default function PasswordForm() {
       if (response.errors) {
         throw new Error(response.errors.toString());
       } else {
-        form.reset();
+        toogleEdit();
         toast({
           title: "Password updated",
           description: "Your password was successfully updated",
@@ -98,14 +119,27 @@ export default function PasswordForm() {
 
   return (
     <>
+      {title && (
+        <div className="text-2xl font-medium text-left w-full">{title}</div>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="password"
+            disabled={!edit}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <div className="flex flex-row justify-between">
+                  <FormLabel>Current Password</FormLabel>
+                  <button
+                    className="underline cursor-pointer font-medium text-sm leading-none "
+                    onClick={toogleEdit}
+                    type="button"
+                  >
+                    {edit ? "cancel" : "edit"}
+                  </button>
+                </div>
                 <div className="relative">
                   <FormControl>
                     <Input
@@ -133,75 +167,80 @@ export default function PasswordForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>New Password</FormLabel>
-                <div className="relative">
-                  <FormControl>
-                    <Input
-                      type={showNewPassword ? "text" : "password"}
-                      placeholder="Password"
-                      autoComplete="on"
-                      {...field}
-                    />
-                  </FormControl>
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showNewPassword ? (
-                      <EyeOff
-                        className="h-6 w-6"
-                        onClick={toggleNewPasswordVisibility}
-                      />
-                    ) : (
-                      <Eye
-                        className="h-6 w-6"
-                        onClick={toggleNewPasswordVisibility}
-                      />
-                    )}
-                  </div>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confirm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <div className="relative">
-                  <FormControl>
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm Password"
-                      autoComplete="on"
-                      {...field}
-                    />
-                  </FormControl>
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showConfirmPassword ? (
-                      <EyeOff
-                        className="h-6 w-6"
-                        onClick={toggleConfirmPasswordVisibility}
-                      />
-                    ) : (
-                      <Eye
-                        className="h-6 w-6"
-                        onClick={toggleConfirmPasswordVisibility}
-                      />
-                    )}
-                  </div>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" className="w-full">
-            Update Password
-          </Button>
+          {edit && (
+            <>
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          type={showNewPassword ? "text" : "password"}
+                          placeholder="Password"
+                          autoComplete="on"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                        {showNewPassword ? (
+                          <EyeOff
+                            className="h-6 w-6"
+                            onClick={toggleNewPasswordVisibility}
+                          />
+                        ) : (
+                          <Eye
+                            className="h-6 w-6"
+                            onClick={toggleNewPasswordVisibility}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm Password"
+                          autoComplete="on"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+                        {showConfirmPassword ? (
+                          <EyeOff
+                            className="h-6 w-6"
+                            onClick={toggleConfirmPasswordVisibility}
+                          />
+                        ) : (
+                          <Eye
+                            className="h-6 w-6"
+                            onClick={toggleConfirmPasswordVisibility}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" className="w-full">
+                Update Password
+              </Button>
+            </>
+          )}
         </form>
       </Form>
       {!!errorMsg && (
