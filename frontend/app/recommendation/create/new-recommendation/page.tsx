@@ -52,13 +52,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
 
   useEffect(() => {
     const loadRecommendation = async () => {
-      console.log(
-        `Mutate with onFavorites: ${
-          searchParams.onFavorites
-        }, session ${JSON.stringify(session.status, null, 2)}`
-      );
       try {
-        console.log("Send");
         if (searchParams.onFavorites && session.status === "authenticated") {
           await createRecommendationOnFavorites();
         } else {

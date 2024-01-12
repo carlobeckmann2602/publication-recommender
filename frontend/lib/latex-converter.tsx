@@ -26,6 +26,7 @@ export default function Latex({ children }: Props) {
     } else {
       result.push(
         <span
+          key={seperateLatex[i]}
           style={{ display: "inline-block", verticalAlign: "-5px" }}
           dangerouslySetInnerHTML={{
             __html: adaptor.outerHTML(

@@ -42,7 +42,6 @@ export default function RecommendationSlider({
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
-      console.log("current");
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);

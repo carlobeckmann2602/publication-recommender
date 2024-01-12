@@ -74,7 +74,7 @@ export default async function PublicationSearchResults({
     }
   } catch (error: any) {
     return (
-      <Alert variant="destructive" className="w-1/4">
+      <Alert variant="destructive" className="w-1/2">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error.message}</AlertDescription>
