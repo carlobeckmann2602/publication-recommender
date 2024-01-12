@@ -13,6 +13,7 @@ import { AlertTriangle, Trash2 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
+import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 
 type SearchParams = {
   searchParams: {
@@ -119,7 +120,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
             </Button>
           )}
         </div>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<SearchResultSkeleton publicationAmount={10} />}>
           {searchParams.onFavorites
             ? recommendationOnFavoritesData?.createNewRecommendation.publications.map(
                 (publication) => (
