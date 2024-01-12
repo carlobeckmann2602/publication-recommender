@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { CreateRecommendationDocument } from "@/graphql/mutation/CreateRecommendation.generated";
 import { CreateRecommendationOnFavoritesDocument } from "@/graphql/mutation/CreateRecommendationOnFavorites.generated";
 import useRecommendationsStore from "@/stores/recommendationsStore";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, Trash2 } from "lucide-react";

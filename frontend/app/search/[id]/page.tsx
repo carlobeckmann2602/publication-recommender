@@ -1,6 +1,6 @@
 import TextSeparator from "@/components/TextSeparator";
-import PublicationCardById from "@/components/search/PublicationCardByIdServer";
-import PublicationSearchResults from "@/components/search/PublicationSearchResults";
+import PublicationCardById from "@/components/publicationCard/PublicationCardByIdServer";
+import PublicationSearchResults from "@/components/publicationCard/PublicationSearchResults";
 import Pagination from "@/components/search/Pagination";
 import { Searchbar } from "@/components/search/Searchbar";
 import { SEARCH_TYPES } from "@/constants/enums";

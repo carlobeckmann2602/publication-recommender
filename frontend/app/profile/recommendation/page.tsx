@@ -1,7 +1,7 @@
 "use client";
 import { Header } from "@/components/Header";
 import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Searchbar } from "@/components/search/Searchbar";
 import {
   Accordion,

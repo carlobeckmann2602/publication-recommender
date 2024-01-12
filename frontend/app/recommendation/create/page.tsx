@@ -1,7 +1,7 @@
 "use client";
 import { Header } from "@/components/Header";
 import DeletButton from "@/components/DeletButton";
-import PublicationCardByIdClient from "@/components/search/PublicationCardByIdClient";
+import PublicationCardByIdClient from "@/components/publicationCard/PublicationCardByIdClient";
 import { Button, buttonVariants } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
 import { PlusCircle, Trash2, Wand2 } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 import { Header } from "@/components/Header";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Searchbar } from "@/components/search/Searchbar";
 import { buttonVariants } from "@/components/ui/button";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";

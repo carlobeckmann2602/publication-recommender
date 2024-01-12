@@ -1,7 +1,7 @@
 import { GetPublicationDocument } from "@/graphql/queries/GetPublication.generated";
 import { getClient } from "@/lib/client";
 import React from "react";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { DOCUMENT_TYPES } from "@/constants/enums";

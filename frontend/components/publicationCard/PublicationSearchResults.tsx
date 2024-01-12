@@ -1,7 +1,7 @@
 import React from "react";
 import { getClient } from "@/lib/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { GetSearchResultsByQueryDocument } from "@/graphql/queries/GetSearchResultsByQuery.generated";
 import { DOCUMENT_TYPES, SEARCH_TYPES } from "@/constants/enums";
 import { GetSearchResultsByIdDocument } from "@/graphql/queries/GetSearchResultsById.generated";

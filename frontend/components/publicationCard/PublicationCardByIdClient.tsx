@@ -1,7 +1,7 @@
 "use client";
 import { GetPublicationDocument } from "@/graphql/queries/GetPublication.generated";
 import React from "react";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 

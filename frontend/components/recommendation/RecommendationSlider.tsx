@@ -1,4 +1,4 @@
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import {
   Carousel,
   CarouselApi,

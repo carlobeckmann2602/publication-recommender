@@ -4,7 +4,6 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
@@ -25,29 +24,27 @@ export default function RecommendationMenu() {
   if (isCollapsed) {
     return (
       <div className="flex flex-col gap-4 w-full justify-center text-center relative">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                className={`${buttonVariants({
-                  variant: "default",
-                })} flex gap-4 w-full justify-center !p-2`}
-                href="/recommendation/create"
-              >
-                <Sparkles />
-                <span className="transition-all duration-700 hidden">
-                  Create Recommendation
-                </span>
-              </Link>
-            </TooltipTrigger>
-            <Badge variant="secondary" className="absolute -top-2 -right-2">
-              {publicationAmount}
-            </Badge>
-            <TooltipContent className="mx-4 my-1">
-              Create Recommendation
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              className={`${buttonVariants({
+                variant: "default",
+              })} flex gap-4 w-full justify-center !p-2`}
+              href="/recommendation/create"
+            >
+              <Sparkles />
+              <span className="transition-all duration-700 hidden">
+                Create Recommendation
+              </span>
+            </Link>
+          </TooltipTrigger>
+          <Badge variant="secondary" className="absolute -top-2 -right-2">
+            {publicationAmount}
+          </Badge>
+          <TooltipContent className="mx-4 my-1">
+            Create Recommendation
+          </TooltipContent>
+        </Tooltip>
       </div>
     );
   }
