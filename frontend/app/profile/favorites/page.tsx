@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Searchbar } from "@/components/search/Searchbar";
 import { buttonVariants } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 import { useLazyQuery } from "@apollo/client";
@@ -13,6 +14,8 @@ import { useEffect } from "react";
 
 export default function Favorites() {
   const session = useSession();
+
+  const { toast } = useToast();
 
   const [getFavorites, { data }] = useLazyQuery(GetFavoritesDocument, {
     context: {
@@ -85,6 +88,12 @@ export default function Favorites() {
         className={`${buttonVariants({
           variant: "default",
         })} fixed bottom-4 w-[370px] self-center shadow-md`}
+        onClick={() =>
+          toast({
+            title: "Recommendation created",
+            description: "Recommendation created based on your favorites",
+          })
+        }
       >
         Create Recommendation from your favorites
         <Wand2 size={20} className="ml-4" />

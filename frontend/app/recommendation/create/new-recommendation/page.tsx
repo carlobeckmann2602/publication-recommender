@@ -10,7 +10,9 @@ import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
 
 type SearchParams = {
   searchParams: {
@@ -21,6 +23,8 @@ type SearchParams = {
 export default function RecommendationResult({ searchParams }: SearchParams) {
   const session = useSession();
   const { publicationGroup, clearPublications } = useRecommendationsStore();
+
+  const { toast } = useToast();
 
   const [
     createRecommendation,
@@ -71,6 +75,11 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
 
   const onClearSelection = () => {
     clearPublications();
+    toast({
+      variant: "destructive",
+      title: "Selection cleared",
+      description: "Selection of publications for recommendations was cleared",
+    });
   };
 
   return (
@@ -82,12 +91,34 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
         }`}
       />
       <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
-        {!searchParams.onFavorites && (
-          <Button variant="destructive" onClick={onClearSelection}>
-            <Trash2 size={20} className="mr-4" />
-            Clear your publication selection !
-          </Button>
-        )}
+        <div className="flex flex-row justify-between w-full">
+          <div className="flex flex-row gap-4">
+            <Link
+              href="/"
+              className={buttonVariants({
+                variant: "default",
+              })}
+            >
+              Back to search
+            </Link>
+            {session.status === "authenticated" && (
+              <Link
+                href="/profile/recommendation"
+                className={buttonVariants({
+                  variant: "secondary",
+                })}
+              >
+                See all your recommendations
+              </Link>
+            )}
+          </div>
+          {!searchParams.onFavorites && (
+            <Button variant="destructive" onClick={onClearSelection}>
+              <Trash2 size={20} className="mr-4" />
+              Clear your publication selection !
+            </Button>
+          )}
+        </div>
         <Suspense fallback={<div>Loading...</div>}>
           {searchParams.onFavorites
             ? recommendationOnFavoritesData?.createNewRecommendation.publications.map(

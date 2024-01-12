@@ -19,7 +19,7 @@ export default function DeleteAccountButton() {
     try {
       await deleteUser();
       if (error) throw Error;
-      signOut();
+      signOut({ callbackUrl: "/" });
     } catch (error) {}
   };
 
