@@ -9,8 +9,8 @@ export default async function SearchResultSkeleton({
 }: Props) {
   return (
     <>
-      {[...Array(publicationAmount)].forEach((item, index) => (
-        <PublicationCardSkeleton />
+      {[...Array(publicationAmount)].map((index) => (
+        <PublicationCardSkeleton key={index} />
       ))}
     </>
   );
