@@ -1,7 +1,9 @@
 import TextSeparator from "@/components/TextSeparator";
-import PublicationCardById from "@/components/search/PublicationCardByIdServer";
+import PublicationCardById from "@/components/publicationCard/PublicationCardByIdServer";
+import PublicationCardSkeleton from "@/components/publicationCard/PublicationCardSkeleton";
 import PublicationSearchResults from "@/components/search/PublicationSearchResults";
 import Pagination from "@/components/search/Pagination";
+import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 import { Searchbar } from "@/components/search/Searchbar";
 import { SEARCH_TYPES } from "@/constants/enums";
 import { Suspense } from "react";
@@ -21,7 +23,7 @@ export default function Search({ searchParams, params }: SearchParams) {
       <Searchbar />
 
       <div className="flex flex-col gap-4 w-5/6">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<PublicationCardSkeleton />}>
           <PublicationCardById
             className="w-full"
             id={params.id}
@@ -31,7 +33,10 @@ export default function Search({ searchParams, params }: SearchParams) {
         <TextSeparator>similar paper</TextSeparator>
       </div>
 
-      <Suspense key={params.id} fallback={<div>Loading...</div>}>
+      <Suspense
+        key={params.id}
+        fallback={<SearchResultSkeleton publicationAmount={10} />}
+      >
         <PublicationSearchResults
           query={params.id}
           offset={searchParams.offset}

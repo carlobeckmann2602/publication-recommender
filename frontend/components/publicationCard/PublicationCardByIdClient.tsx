@@ -1,28 +1,29 @@
+"use client";
 import { GetPublicationDocument } from "@/graphql/queries/GetPublication.generated";
-import { getClient } from "@/lib/client";
-import React from "react";
-import PublicationCard from "@/components/search/PublicationCard";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
+import React, { Suspense } from "react";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
+import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+import PublicationCardSkeleton from "./PublicationCardSkeleton";
 
 type Props = {
   id: string;
   disableSearchSimilar?: boolean;
   className?: string;
+  enableRecommendationWarning?: boolean;
 };
 
-export default async function PublicationCardByIdServer({
+export default function PublicationCardByIdClient({
   id,
   disableSearchSimilar,
   className,
+  enableRecommendationWarning,
 }: Props) {
-  try {
-    const { data } = await getClient().query({
-      query: GetPublicationDocument,
-      variables: { id: id },
-    });
-    return (
+  const { data } = useSuspenseQuery(GetPublicationDocument, {
+    variables: { id: id },
+  });
+  return (
+    <Suspense fallback={<PublicationCardSkeleton />}>
       <PublicationCard
         key={data.publication.id}
         id={data.publication.id}
@@ -38,15 +39,8 @@ export default async function PublicationCardByIdServer({
         documentType={DOCUMENT_TYPES.PAPER}
         disableSearchSimilar={disableSearchSimilar}
         className={className}
+        enableRecommendationWarning={enableRecommendationWarning}
       />
-    );
-  } catch (error: any) {
-    return (
-      <Alert variant="destructive" className="w-1/4 self-center">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
-      </Alert>
-    );
-  }
+    </Suspense>
+  );
 }

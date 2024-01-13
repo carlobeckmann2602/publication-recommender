@@ -17,6 +17,11 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Props = {
   id: string;
@@ -118,18 +123,25 @@ export default function LikeButton(props: Props) {
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="icon">
-            {liked ? (
-              <Heart size={24} color="red" fill="red" />
-            ) : (
-              <Heart size={24} />
-            )}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {liked ? (
+                  <Heart size={24} color="red" fill="red" />
+                ) : (
+                  <Heart size={24} />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent align="start">
+              Unfavorite publication
+            </TooltipContent>
+          </Tooltip>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="leading-normal">
-              Unfavorite Publication
+              {liked ? "Unfavorite publication" : "Favorite publication"}
             </DialogTitle>
           </DialogHeader>
           Do you really want to remove the publication{" "}
@@ -160,8 +172,19 @@ export default function LikeButton(props: Props) {
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={onLiked}>
-      {liked ? <Heart size={24} color="red" fill="red" /> : <Heart size={24} />}
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="ghost" size="icon" onClick={onLiked}>
+          {liked ? (
+            <Heart size={24} color="red" fill="red" />
+          ) : (
+            <Heart size={24} />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent align="start">
+        {liked ? "Unfavorite publication" : "Favorite publication"}
+      </TooltipContent>
+    </Tooltip>
   );
 }

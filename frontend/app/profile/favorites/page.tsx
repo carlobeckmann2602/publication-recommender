@@ -1,17 +1,22 @@
 "use client";
 import { Header } from "@/components/Header";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
+import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 import { Searchbar } from "@/components/search/Searchbar";
 import { buttonVariants } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { DOCUMENT_TYPES } from "@/constants/enums";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
 import { useLazyQuery } from "@apollo/client";
 import { Heart, Wand2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 export default function Favorites() {
   const session = useSession();
+
+  const { toast } = useToast();
 
   const [getFavorites, { data }] = useLazyQuery(GetFavoritesDocument, {
     context: {
@@ -61,29 +66,37 @@ export default function Favorites() {
     <div className="flex flex-col">
       <Header title="Favorites" subtitle="your favourite publications" />
       <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
-        {data?.favorites.map((favorite) => (
-          <PublicationCard
-            key={favorite.id}
-            id={favorite.id}
-            title={favorite.title}
-            authors={favorite.authors}
-            date={
-              favorite.publicationDate
-                ? new Date(favorite.publicationDate)
-                : undefined
-            }
-            link={favorite.url}
-            doi={favorite.doi}
-            disableSearchSimilar={true}
-            enableLikeWarning={true}
-          />
-        ))}
+        <Suspense fallback={<SearchResultSkeleton publicationAmount={6} />}>
+          {data?.favorites.map((favorite) => (
+            <PublicationCard
+              key={favorite.id}
+              id={favorite.id}
+              title={favorite.title}
+              authors={favorite.authors}
+              date={
+                favorite.publicationDate
+                  ? new Date(favorite.publicationDate)
+                  : undefined
+              }
+              link={favorite.url}
+              doi={favorite.doi}
+              documentType={DOCUMENT_TYPES.PAPER}
+              enableLikeWarning={true}
+            />
+          ))}
+        </Suspense>
       </div>
       <Link
         href="/recommendation/create/new-recommendation?onFavorites=true"
         className={`${buttonVariants({
           variant: "default",
         })} fixed bottom-4 w-[370px] self-center shadow-md`}
+        onClick={() =>
+          toast({
+            title: "Recommendation created",
+            description: "Recommendation created based on your favorites",
+          })
+        }
       >
         Create Recommendation from your favorites
         <Wand2 size={20} className="ml-4" />

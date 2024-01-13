@@ -10,12 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type Props = {
   onClick: () => void;
@@ -35,22 +30,20 @@ export default function DeletButton({
   if (dialogText || dialogTitle) {
     return (
       <Dialog>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  size={text ? "default" : "icon"}
-                  className={text ? "" : "aspect-square"}
-                >
-                  {text ?? <Trash2 />}
-                </Button>
-              </DialogTrigger>
-            </TooltipTrigger>
-            <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              <Button
+                variant="destructive"
+                size={text ? "default" : "icon"}
+                className={text ? "" : "aspect-square"}
+              >
+                {text ?? <Trash2 />}
+              </Button>
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
+        </Tooltip>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="leading-normal">{dialogTitle}</DialogTitle>
@@ -72,20 +65,18 @@ export default function DeletButton({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={onClick}
-            variant="destructive"
-            size={text ? "default" : "icon"}
-            className={text ? "" : "aspect-square"}
-          >
-            {text ?? <Trash2 />}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          onClick={onClick}
+          variant="destructive"
+          size={text ? "default" : "icon"}
+          className={text ? "" : "aspect-square"}
+        >
+          {text ?? <Trash2 />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
+    </Tooltip>
   );
 }

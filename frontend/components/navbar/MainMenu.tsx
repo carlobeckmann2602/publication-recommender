@@ -11,6 +11,7 @@ import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import sparkelClockIcon from "@/public/svg/sparkle-clock.svg";
 import sparkelClockIconFill from "@/public/svg/sparkle-clock-fill.svg";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const menuItems = [
   {
@@ -46,6 +47,46 @@ export default function MainMenu({
   const pathname = usePathname();
   const session = useSession();
 
+  if (isCollapsed)
+    return (
+      <nav
+        className={cn(
+          "flex flex-col gap-2 items-center w-full flex-1",
+          className
+        )}
+        {...props}
+      >
+        {menuItems.map(({ name, href, icon, activeIcon, onlyLoggedIn }) => {
+          if (onlyLoggedIn && session.status != "authenticated") return;
+          return (
+            <Tooltip key={name}>
+              <TooltipTrigger asChild>
+                <Link
+                  href={href}
+                  className={`${
+                    pathname === href
+                      ? buttonVariants({
+                          variant: "secondary",
+                        })
+                      : buttonVariants({
+                          variant: "ghost",
+                        })
+                  }  h-12 flex gap-4 w-12 justify-center !p-2
+              `}
+                >
+                  {pathname === href ? activeIcon : icon}
+                  <span className="transition-all duration-700 hidden">
+                    {name}
+                  </span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent align="start">{name}</TooltipContent>
+            </Tooltip>
+          );
+        })}
+      </nav>
+    );
+
   return (
     <nav
       className={cn(
@@ -68,18 +109,10 @@ export default function MainMenu({
                 : buttonVariants({
                     variant: "ghost",
                   })
-            } w-full h-12 flex gap-4 ${
-              isCollapsed ? "w-12 justify-center !p-2" : "!justify-start"
-            }`}
+            } w-full h-12 flex gap-4 !justify-start`}
           >
             {pathname === href ? activeIcon : icon}
-            <span
-              className={`transition-all duration-700 ${
-                isCollapsed ? "hidden" : ""
-              }`}
-            >
-              {name}
-            </span>
+            <span className="transition-all duration-700">{name}</span>
           </Link>
         );
       })}

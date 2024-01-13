@@ -87,7 +87,7 @@ export default function PublicationCard(props: Props) {
       </CardContent>
       <CardFooter>
         <div className="flex flex-row gap-4 justify-between align-middle items-end grow">
-          <div className="flex flex-row">
+          <div className="flex flex-row gap-1">
             {!props.disableSearchSimilar && (
               <SimilarSearchButton id={props.id} />
             )}

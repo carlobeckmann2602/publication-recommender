@@ -13,6 +13,11 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Props = {
   id: string;
@@ -49,9 +54,16 @@ export default function AddToRecommendationButton({
       return (
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <MinusCircle />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MinusCircle />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent align="start">
+                Remove publication from selection
+              </TooltipContent>
+            </Tooltip>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -83,15 +95,27 @@ export default function AddToRecommendationButton({
     }
 
     return (
-      <Button variant="ghost" size="icon" onClick={remove}>
-        <MinusCircle />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="icon" onClick={remove}>
+            <MinusCircle />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Remove publication from selection</TooltipContent>
+      </Tooltip>
     );
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={add}>
-      <PlusCircle />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="ghost" size="icon" onClick={add}>
+          <PlusCircle />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent align="start">
+        Add publication to selection
+      </TooltipContent>
+    </Tooltip>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 import { Header } from "@/components/Header";
 import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Searchbar } from "@/components/search/Searchbar";
 import {
   Accordion,
@@ -16,6 +16,7 @@ import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect } from "react";
+import { DOCUMENT_TYPES } from "@/constants/enums";
 
 export default function Recommendation() {
   const session = useSession();
@@ -121,6 +122,7 @@ export default function Recommendation() {
                         }
                         link={publication.url}
                         doi={publication.doi}
+                        documentType={DOCUMENT_TYPES.PAPER}
                         disableSearchSimilar={false}
                         className="h-full"
                       />
