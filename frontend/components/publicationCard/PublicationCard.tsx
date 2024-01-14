@@ -93,6 +93,7 @@ export default function PublicationCard(props: Props) {
             )}
             {/* <TagIcon width={24} /> */}
             <LikeButton
+              key={props.id}
               id={props.id}
               title={props.title}
               enableWarning={props.enableLikeWarning}

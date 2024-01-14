@@ -1,4 +1,3 @@
-import { toast } from "@/components/ui/use-toast";
 import { LoginDocument } from "@/graphql/mutation/LoginUser.generated";
 import { RefreshTokenDocument } from "@/graphql/mutation/RefreshToken.generated";
 import { getClient } from "@/lib/client";
@@ -34,7 +33,7 @@ async function refreshToken(token: JWT): Promise<JWT> {
   };
 }
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")

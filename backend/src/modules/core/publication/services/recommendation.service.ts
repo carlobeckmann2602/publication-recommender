@@ -36,7 +36,6 @@ export class RecommendationService {
       relations: { recommendations: { publications: true } },
       order: { recommendations: { createdAt: 'DESC' } },
     });
-    console.log('userWithRecommendations (DESC) ', userWithRecommendations);
     return userWithRecommendations.recommendations;
   }
 
