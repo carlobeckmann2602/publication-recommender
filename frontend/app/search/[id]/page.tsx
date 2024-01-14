@@ -5,19 +5,20 @@ import PublicationSearchResults from "@/components/search/PublicationSearchResul
 import Pagination from "@/components/search/Pagination";
 import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 import { Searchbar } from "@/components/search/Searchbar";
-import { SEARCH_TYPES } from "@/constants/enums";
 import { Suspense } from "react";
+import { SearchStrategy } from "@/graphql/types.generated";
 
 type SearchParams = {
   params: {
     id: string;
   };
   searchParams: {
-    offset: number | undefined;
+    offset?: string;
   };
 };
 
 export default function Search({ searchParams, params }: SearchParams) {
+  const page = searchParams.offset ? parseInt(searchParams.offset) : 0;
   return (
     <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
       <Searchbar />
@@ -39,13 +40,14 @@ export default function Search({ searchParams, params }: SearchParams) {
       >
         <PublicationSearchResults
           query={params.id}
-          offset={searchParams.offset}
-          searchType={SEARCH_TYPES.ID}
+          page={page}
+          amountPerPage={10}
+          searchType={SearchStrategy.Id}
         />
         <Pagination
           totalResults={100}
           resultsPerPage={10}
-          selectedPage={searchParams.offset ? searchParams.offset : 0}
+          selectedPage={page}
           url={`/search/${params.id}`}
         ></Pagination>
       </Suspense>
