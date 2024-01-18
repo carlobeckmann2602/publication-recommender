@@ -1,6 +1,6 @@
 import csv, json, requests
 from ast import literal_eval
-from requests.exceptions import ReadTimeout
+from requests.exceptions import ReadTimeout, ConnectTimeout
 from publications import ArxivPublication
 
 class BaseScraper:
@@ -154,7 +154,7 @@ class BaseScraper:
         vector_dict = None
         file_param = {"file": open("/scraper/data/temp/"+pub.arxiv_id+".txt", "rb")}
         try:
-            res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param, timeout=120)
+            res_ai_api = requests.post("http://ai_backend:8000/summarize?tokenize=true&amount=5", files=file_param, timeout=300)
             if res_ai_api.status_code == 200:
                 vector_dict = json.loads(res_ai_api.text)
                 pub.vector_dict = vector_dict
@@ -166,7 +166,11 @@ class BaseScraper:
                 self.sc_pdf.delete()
                 return False, pub
         except ReadTimeout as e:
-            print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' failed with timeout error.")
+            print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' failed with read timeout error.")
+            self.sc_pdf.delete()
+            return False, pub
+        except ConnectTimeout as e:
+            print("-- vector calculation for publication id '" + str(pub.arxiv_id) + "' failed with connect timeout error.")
             self.sc_pdf.delete()
             return False, pub
         #print("-- collected vector data of " + str(len(pub_list)) + " publications.")
