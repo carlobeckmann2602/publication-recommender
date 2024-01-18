@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
+import { validate } from 'class-validator';
 import { In, IsNull, Not, Repository } from 'typeorm';
 import { PublicationSourceWithSourceIdDto } from '../dto/PublicationBySource.dto.';
 import { AnnoyResultDto } from '../dto/annoy-result.dto';
@@ -21,21 +21,23 @@ export class PublicationService {
     private configService: ConfigService,
   ) {}
 
-  async findAll(by: string, type: 'query' | 'id') {
-    let parsedResult: AnnoyResultDto;
+  async findAll(by: string, type: 'query' | 'id', page: number, amountPerPage: number) {
     const path = type === 'query' ? 'match_token' : 'match_id';
-
-    try {
-      const url = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/${path}/${by}`;
-      const result = await (await fetch(url)).json();
-      parsedResult = plainToClass(AnnoyResultDto, result);
-      await validateOrReject(parsedResult);
-    } catch (e) {
+    // hard coded max amount of results decided by the team. Could be changed
+    const amount = 100;
+    const url = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/${path}/${by}/?amount=${amount}`;
+    const result = await (await fetch(url)).json();
+    const parsedResult = plainToClass(AnnoyResultDto, result);
+    const errors = await validate(parsedResult);
+    if (errors.length > 0) {
       throw new AiBackendException();
     }
-
     const ids = parsedResult.matches.map((singleResult) => singleResult.id);
-    return await this.publicationRepository.find({ where: { id: In(ids) } });
+    return await this.publicationRepository.find({
+      where: { id: In(ids) },
+      skip: page * amountPerPage,
+      take: amountPerPage,
+    });
   }
 
   /**

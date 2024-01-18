@@ -1,16 +1,19 @@
 "use client";
 import { Header } from "@/components/Header";
 import DeletButton from "@/components/DeletButton";
-import PublicationCardByIdClient from "@/components/search/PublicationCardByIdClient";
+import PublicationCardByIdClient from "@/components/publicationCard/PublicationCardByIdClient";
 import { Button, buttonVariants } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
 import { PlusCircle, Trash2, Wand2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function RecommendationCreate() {
   const { publicationGroup, clearPublications } = useRecommendationsStore();
   const [publications, setPublications] = useState<string[]>();
+
+  const { toast } = useToast();
 
   useEffect(() => {
     setPublications(publicationGroup);
@@ -78,6 +81,16 @@ export default function RecommendationCreate() {
         className={`${buttonVariants({
           variant: "default",
         })} fixed bottom-4 w-[400px] self-center shadow-md`}
+        onClick={() =>
+          toast({
+            title: "Recommendation created",
+            description: `Recommendation created based on your ${
+              publications?.length
+            } selected ${
+              publications?.length == 1 ? " publication" : " publications"
+            }`,
+          })
+        }
       >
         Create Recommendation with this {publications?.length}{" "}
         {publications?.length == 1 ? " publication" : " publications"}

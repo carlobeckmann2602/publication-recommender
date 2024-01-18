@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js Frontend
 
-## Getting Started
+## Technologies
 
-First, run the development server:
+- [Next.js](https://nextjs.org/docs)
+    - [Typescript](https://www.typescriptlang.org/docs/)
+    - [Tailwind](https://tailwindcss.com/docs/installation)
+    - [shadcn/ui](https://tailwindcss.com/docs/installation)
+    - [Lucide Icons](https://lucide.dev)
+    - [NextAuth.js](https://next-auth.js.org)
+    - [Zustand](https://github.com/pmndrs/zustand)
+    - [Apollo Client](https://www.apollographql.com/docs/react/) ([with Next.js](https://github.com/apollographql/apollo-client-nextjs))
+        - [GraphQL](https://graphql.org)
+
+## Getting started without Docker
+
+Install all dependencies:
+
+```bash
+npm install
+```
+
+Run development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build Frontend without Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+npm run build
+```
 
-## Learn More
+## Using Apollo Client
 
-To learn more about Next.js, take a look at the following resources:
+Generate Queries/Mutation:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- create .gql file with query/mutation in /graphql folder
+- run
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+npm run codegen
+```
 
-## Deploy on Vercel
+Use Apollo Client on Server-side:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```typescript
+import { getClient } from "@/lib/client";
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+export default async function Example() {
+	//GraphQL Query
+	const response = await getClient().query({
+      query: QueryDocument,
+      variables: {
+        key: value
+      },
+    });
+
+	//GraphQL Mutation
+	const response = await getClient().mutation({
+      query: MutationDocument,
+      variables: {
+        key: value
+      },
+    });
+}
+```
+
+Use Apollo Client on Client-side:
+
+```typescript
+import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+import { useMutation } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
+
+
+export default async function Example() {
+	//GraphQL Query
+	const { data } = useSuspenseQuery(QueryDocument, {
+    variables: { key: value },
+  });
+
+	//GraphQL Query
+	const [lazyQuery, { data }] = useLazyQuery(QueryDocument, 
+		{
+	    context: {
+	      headers: {
+	        Authorization: `Bearer ${token}`,
+	      },
+	    },
+	  });
+
+	//GraphQL Mutation
+	const [mutation, { error: mutationError }] = useMutation(
+    MutationDocument,
+    {
+      context: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    }
+  );
+}
+```

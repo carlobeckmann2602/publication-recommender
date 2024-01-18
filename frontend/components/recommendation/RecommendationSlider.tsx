@@ -1,4 +1,4 @@
-import PublicationCard from "@/components/search/PublicationCard";
+import PublicationCard from "@/components/publicationCard/PublicationCard";
 import {
   Carousel,
   CarouselApi,
@@ -8,7 +8,9 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { DOCUMENT_TYPES } from "@/constants/enums";
+import PublicationCardSkeleton from "../publicationCard/PublicationCardSkeleton";
 
 type Props = {
   title: string;
@@ -42,7 +44,6 @@ export default function RecommendationSlider({
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
-      console.log("current");
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
@@ -64,28 +65,37 @@ export default function RecommendationSlider({
         ]}
       >
         <CarouselContent className="">
-          {publications.map((publication) => (
-            <CarouselItem
-              key={publication.id}
-              className="basis-full xl:basis-1/2 2xl:basis-1/3 items-start"
-            >
-              <PublicationCard
+          <Suspense
+            fallback={
+              <CarouselItem className="basis-full xl:basis-1/2 2xl:basis-1/3 items-start">
+                <PublicationCardSkeleton />
+              </CarouselItem>
+            }
+          >
+            {publications.map((publication) => (
+              <CarouselItem
                 key={publication.id}
-                id={publication.id}
-                title={publication.title}
-                authors={publication.authors}
-                date={
-                  publication.publicationDate
-                    ? new Date(publication.publicationDate)
-                    : undefined
-                }
-                link={publication.url}
-                doi={publication.doi}
-                disableSearchSimilar={false}
-                className="h-full"
-              />
-            </CarouselItem>
-          ))}
+                className="basis-full xl:basis-1/2 2xl:basis-1/3 items-start"
+              >
+                <PublicationCard
+                  key={publication.id}
+                  id={publication.id}
+                  title={publication.title}
+                  authors={publication.authors}
+                  date={
+                    publication.publicationDate
+                      ? new Date(publication.publicationDate)
+                      : undefined
+                  }
+                  link={publication.url}
+                  doi={publication.doi}
+                  documentType={DOCUMENT_TYPES.PAPER}
+                  disableSearchSimilar={false}
+                  className="h-full"
+                />
+              </CarouselItem>
+            ))}
+          </Suspense>
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />

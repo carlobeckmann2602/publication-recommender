@@ -140,6 +140,13 @@ export type PublicationVectorsRequestDto = {
   chunkSize?: InputMaybe<Scalars['Int']>;
 };
 
+export type PublicationsSearchDto = {
+  amountPerPage?: Scalars['Int'];
+  page?: Scalars['Int'];
+  searchInput: Scalars['String'];
+  searchStrategy: SearchStrategy;
+};
+
 export type Query = {
   __typename?: 'Query';
   favorites: Array<PublicationResponseDto>;
@@ -149,8 +156,7 @@ export type Query = {
   provideVectors: PublicationChunkDto;
   publication: PublicationResponseDto;
   publicationCount: Scalars['Int'];
-  publicationsById: Array<PublicationResponseDto>;
-  publicationsByQuery: Array<PublicationResponseDto>;
+  publications: Array<PublicationResponseDto>;
   recommendations: Array<RecommendationResponseDto>;
   searchPublicationBySourceAndSourceId?: Maybe<PublicationResponseDto>;
 };
@@ -181,13 +187,8 @@ export type QueryPublicationCountArgs = {
 };
 
 
-export type QueryPublicationsByIdArgs = {
-  filter: Scalars['String'];
-};
-
-
-export type QueryPublicationsByQueryArgs = {
-  filter: Scalars['String'];
+export type QueryPublicationsArgs = {
+  publicationsSearchDto: PublicationsSearchDto;
 };
 
 
@@ -213,6 +214,11 @@ export type RegisterDto = {
   name: Scalars['String'];
   password: Scalars['String'];
 };
+
+export enum SearchStrategy {
+  Id = 'ID',
+  Query = 'QUERY'
+}
 
 export type SentenceDto = {
   value: Scalars['String'];

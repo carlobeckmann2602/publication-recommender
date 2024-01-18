@@ -1,0 +1,23 @@
+query GetSearchResults(
+  $query: String!
+  $strategy: SearchStrategy!
+  $page: Int!
+  $amountPerPage: Int!
+) {
+  publications(
+    publicationsSearchDto: {
+      searchInput: $query
+      searchStrategy: $strategy
+      page: $page
+      amountPerPage: $amountPerPage
+    }
+  ) {
+    id
+    title
+    source
+    doi
+    url
+    authors
+    publicationDate
+  }
+}
