@@ -77,13 +77,6 @@ services:
       context: ./ai_backend
       dockerfile: Dockerfile
     command: celery -A app.celery.celery_worker.celery worker -P eventlet --loglevel=warning
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     networks:
       - pr_network
     volumes:

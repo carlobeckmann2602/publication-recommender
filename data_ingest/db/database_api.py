@@ -1,4 +1,5 @@
-import re
+import re, json
+from sys import getsizeof
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportQueryError, TransportServerError
@@ -83,6 +84,7 @@ class DatabaseApi:
             return None
     
     def add_arxiv_pub(self, pub):
+        fail_counter = 0
         #print("ArxivApiScraper.update_db_entries(update_list)")
         print("-- saving "+str(pub.arxiv_id)+" to database ...")
         mutation = gql("""
@@ -119,9 +121,15 @@ class DatabaseApi:
             return True
         except TransportQueryError as e:
             print(e)
+            print(getsizeof(params))
             return False
         except TransportServerError as e:
+            #fail_counter += 1
             print(e)
+            print(getsizeof(params))
+            #file_path = '/scraper/data/failed-'+str(fail_counter)+'.json'
+            #with open(file_path, 'wx') as json_file:
+            #    json.dump(params, json_file)
             return False
 
     def add_arxiv_pub_list(self, pub_list):
@@ -167,6 +175,7 @@ class DatabaseApi:
                 print("-- successfully saved " + str(result) + " to database.")
             except TransportQueryError as e:
                 print(e)
+                print(getsizeof(params))
     
     def clean(self, text):
         text = text.strip()
