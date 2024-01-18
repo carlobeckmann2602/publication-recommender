@@ -34,18 +34,23 @@ const FormSchema = z
       .string({
         required_error: "Name is required",
       })
+      .min(1, { message: "Name is required" })
       .min(2, {
         message: "Name must be at least 2 characters.",
       }),
     email: z
       .string({
-        required_error: "Name is required",
+        required_error: "Email is required",
       })
+      .min(1, { message: "Email is required" })
       .email({ message: "Invalid email address" }),
     password: z
-      .string()
+      .string({
+        required_error: "Password is required",
+      })
+      .min(1, { message: "Password is required" })
       .min(8, { message: "Password must be 8 or more characters long" }),
-    confirm: z.string(),
+    confirm: z.string().min(1, { message: "Confirm password is required" }),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Passwords don't match",
@@ -73,16 +78,17 @@ export function SignUpForm(props: Props) {
   const router = useRouter();
   const [showPassword, setPasswordVisibility] = useState(false);
   const togglePasswordVisibility = () => {
-    setPasswordVisibility(!showPassword);
+    setPasswordVisibility((prev) => !prev);
   };
   const [showConfirmPassword, setConfirmPasswordVisibility] = useState(false);
   const toggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisibility(!showConfirmPassword);
+    setConfirmPasswordVisibility((prev) => !prev);
   };
 
   const [registerFunction, { loading, error }] = useMutation(RegisterDocument);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setErrorMsg(undefined);
     try {
       const response = await registerFunction({
         variables: {
@@ -95,13 +101,20 @@ export function SignUpForm(props: Props) {
         console.error(response.errors);
         setErrorMsg("Authentication failed!");
       } else {
-        await signIn("credentials", {
+        const res = await signIn("credentials", {
           username: data.email,
           password: data.password,
-          redirect: true,
+          redirect: false,
           callbackUrl: props.callbackUrl ?? "/",
         });
-        allowBackgroundScrolling();
+        if (res?.ok) {
+          allowBackgroundScrolling();
+          router.back();
+        } else if (res?.error) {
+          setErrorMsg(res?.error);
+        } else {
+          setErrorMsg("Login failed!");
+        }
       }
     } catch (error: any) {
       console.error(error.message);
@@ -227,14 +240,14 @@ export function SignUpForm(props: Props) {
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
       )}
-      <TextSeparator>or</TextSeparator>
+      {/* <TextSeparator>or</TextSeparator>
       <div className="flex flex-col gap-4">
         <GoogleButton
           onClick={() => {
             signIn("google", { callbackUrl: props.callbackUrl ?? "/" });
           }}
         />
-      </div>
+      </div> */}
       <span className="text-center">
         Already have an account?{" "}
         <Link

@@ -4,4 +4,7 @@
 **/venv
 **/.vscode
 rabbit_data
+.env*
+!.env.example
 .env
+publications.pgsql

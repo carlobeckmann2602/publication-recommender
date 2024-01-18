@@ -1,28 +1,31 @@
 import TextSeparator from "@/components/TextSeparator";
-import LiteratureCardById from "@/components/search/LiteratureCardById";
-import LiteratureSearchResults from "@/components/search/LiteratureSearchResults";
+import PublicationCardById from "@/components/publicationCard/PublicationCardByIdServer";
+import PublicationCardSkeleton from "@/components/publicationCard/PublicationCardSkeleton";
+import PublicationSearchResults from "@/components/search/PublicationSearchResults";
 import Pagination from "@/components/search/Pagination";
+import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 import { Searchbar } from "@/components/search/Searchbar";
-import { SEARCH_TYPES } from "@/constants/enums";
 import { Suspense } from "react";
+import { SearchStrategy } from "@/graphql/types.generated";
 
 type SearchParams = {
   params: {
     id: string;
   };
   searchParams: {
-    offset: number | undefined;
+    offset?: string;
   };
 };
 
 export default function Search({ searchParams, params }: SearchParams) {
+  const page = searchParams.offset ? parseInt(searchParams.offset) : 0;
   return (
     <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
       <Searchbar />
 
       <div className="flex flex-col gap-4 w-5/6">
-        <Suspense fallback={<div>Loading...</div>}>
-          <LiteratureCardById
+        <Suspense fallback={<PublicationCardSkeleton />}>
+          <PublicationCardById
             className="w-full"
             id={params.id}
             disableSearchSimilar={true}
@@ -31,16 +34,20 @@ export default function Search({ searchParams, params }: SearchParams) {
         <TextSeparator>similar paper</TextSeparator>
       </div>
 
-      <Suspense key={params.id} fallback={<div>Loading...</div>}>
-        <LiteratureSearchResults
+      <Suspense
+        key={params.id}
+        fallback={<SearchResultSkeleton publicationAmount={10} />}
+      >
+        <PublicationSearchResults
           query={params.id}
-          offset={searchParams.offset}
-          searchType={SEARCH_TYPES.ID}
+          page={page}
+          amountPerPage={10}
+          searchType={SearchStrategy.Id}
         />
         <Pagination
           totalResults={100}
           resultsPerPage={10}
-          selectedPage={searchParams.offset ? searchParams.offset : 0}
+          selectedPage={page}
           url={`/search/${params.id}`}
         ></Pagination>
       </Suspense>

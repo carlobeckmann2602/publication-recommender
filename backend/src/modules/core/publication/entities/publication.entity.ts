@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
   Unique,
@@ -70,11 +69,6 @@ export class Publication {
   descriptor: DescriptorDto;
 
   @ManyToMany(() => Recommendation, (recommendation) => recommendation.publications)
-  @JoinTable({
-    name: 'recommendation_publications',
-    joinColumn: { name: 'publication_id' },
-    inverseJoinColumn: { name: 'recommendation_id' },
-  })
   recommendations: Recommendation[];
 
   @Exclude()

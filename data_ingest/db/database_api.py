@@ -1,7 +1,8 @@
-import re
+import re, json
+from sys import getsizeof
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
-from gql.transport.exceptions import TransportQueryError
+from gql.transport.exceptions import TransportQueryError, TransportServerError
 
 class DatabaseApi:
     def __init__(self):
@@ -46,7 +47,7 @@ class DatabaseApi:
             print(e)
             return False
     
-    def get_newest_arxiv_pub(self):
+    def get_oldest_arxiv_pub(self):
         query = gql("""
         query timing {
             oldest(source: ARXIV) {
@@ -56,7 +57,7 @@ class DatabaseApi:
         }
         """)
         try:
-            print("- requesting db api for newest arxiv publication ...")
+            print("- requesting db api for oldest arxiv publication ...")
             result = self.gql_client.execute(query)
             print("-- found arxiv id " + str(result["oldest"]["exId"]) + ", published " + str(result["oldest"]["publicationDate"])+".")
             return result["oldest"]["exId"]
@@ -64,7 +65,7 @@ class DatabaseApi:
             print(e)
             return None
     
-    def get_oldest_arxiv_pub(self):
+    def get_newest_arxiv_pub(self):
         query = gql("""
         query timing {
             newest(source: ARXIV) {
@@ -74,7 +75,7 @@ class DatabaseApi:
         }
         """)
         try:
-            print("- requesting db api for oldest arxiv publication ...")
+            print("- requesting db api for newest arxiv publication ...")
             result = self.gql_client.execute(query)
             print("-- found arxiv id " + str(result["newest"]["exId"]) + ", published " + str(result["newest"]["publicationDate"])+".")
             return result["newest"]["exId"]
@@ -83,6 +84,7 @@ class DatabaseApi:
             return None
     
     def add_arxiv_pub(self, pub):
+        fail_counter = 0
         #print("ArxivApiScraper.update_db_entries(update_list)")
         print("-- saving "+str(pub.arxiv_id)+" to database ...")
         mutation = gql("""
@@ -119,6 +121,15 @@ class DatabaseApi:
             return True
         except TransportQueryError as e:
             print(e)
+            print(getsizeof(params))
+            return False
+        except TransportServerError as e:
+            #fail_counter += 1
+            print(e)
+            print(getsizeof(params))
+            #file_path = '/scraper/data/failed-'+str(fail_counter)+'.json'
+            #with open(file_path, 'wx') as json_file:
+            #    json.dump(params, json_file)
             return False
 
     def add_arxiv_pub_list(self, pub_list):
@@ -164,6 +175,7 @@ class DatabaseApi:
                 print("-- successfully saved " + str(result) + " to database.")
             except TransportQueryError as e:
                 print(e)
+                print(getsizeof(params))
     
     def clean(self, text):
         text = text.strip()

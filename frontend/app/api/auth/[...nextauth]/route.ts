@@ -33,7 +33,7 @@ async function refreshToken(token: JWT): Promise<JWT> {
   };
 }
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
@@ -128,7 +128,7 @@ export const authOptions: NextAuthOptions = {
 
       return true; // Do different verification for other providers that don't have `email_verified`
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (account?.provider === "google") {
         token.userToken = {
           jwtToken: account.access_token ? account.access_token : "",
@@ -144,6 +144,11 @@ export const authOptions: NextAuthOptions = {
           };
       }
 
+      if (trigger === "update" && session?.user.name && session?.user.name) {
+        token.user.name = session.user.name;
+        token.user.email = session.user.email;
+      }
+
       if (user) {
         return { ...token, ...user };
       }
@@ -153,7 +158,7 @@ export const authOptions: NextAuthOptions = {
       return await refreshToken(token);
     },
 
-    async session({ token, session, user }) {
+    async session({ token, session }) {
       session.user = token.user;
       session.userToken = token.userToken;
       return session;

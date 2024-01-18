@@ -1,8 +1,12 @@
 FROM python:3.10
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN pip install sentence-transformers~=2.2.2
+RUN pip install annoy~=1.17.3
 WORKDIR /code
 RUN mkdir app/
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --root-user-action=ignore --no-cache-dir --upgrade -r /code/requirements.txt
 
-CMD ["/bin/sh","-c",\
-    "pip install --root-user-action=ignore --upgrade -r /code/requirements.txt"]
+RUN useradd -ms /bin/bash -u 1000 non_root
+RUN chown -R non_root:non_root /code
+# USER non_root

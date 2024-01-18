@@ -3,7 +3,7 @@ from publications import ArxivPublication
 from db import DatabaseApi
 from ast import literal_eval
 
-tmp_metadata_list = "data/temp/metadata_list.csv" 
+tmp_metadata_list = "/scraper/data/temp/metadata_list.csv" 
 db_api = DatabaseApi()
 
 def read_metadata_list():

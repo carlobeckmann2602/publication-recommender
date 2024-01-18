@@ -18,6 +18,10 @@ export default function Pagination(props: Props) {
   let dotsAfter = false;
   const pagesCount = Math.ceil(props.totalResults / props.resultsPerPage);
 
+  const url = props.url.includes("?")
+    ? `${props.url}&offset=`
+    : `${props.url}?offset=`;
+
   if (pagesCount > 5) {
     if (selectedPageNumber <= 3) {
       dotsAfter = true;
@@ -44,7 +48,7 @@ export default function Pagination(props: Props) {
         {props.selectedPage > 0 && (
           <li>
             <Link
-              href={`${props.url}&offset=${props.selectedPage - 1}`}
+              href={`${url}${props.selectedPage - 1}`}
               className={buttonVariants({ variant: "ghost", size: "icon" })}
             >
               <ChevronLeft size={24} />
@@ -61,7 +65,7 @@ export default function Pagination(props: Props) {
             )}
             {number != selectedPageNumber && (
               <Link
-                href={`${props.url}&offset=${number - 1}`}
+                href={`${url}${number - 1}`}
                 className={buttonVariants({ variant: "ghost" })}
               >
                 {number}
@@ -75,7 +79,7 @@ export default function Pagination(props: Props) {
         {props.selectedPage < pagesCount - 1 && (
           <li>
             <Link
-              href={`${props.url}&offset=${+props.selectedPage + 1}`}
+              href={`${url}${+props.selectedPage + 1}`}
               className={buttonVariants({ variant: "ghost", size: "icon" })}
             >
               <ChevronRight size={24} />

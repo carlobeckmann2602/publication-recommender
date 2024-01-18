@@ -50,12 +50,20 @@ export type LoginDto = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createNewRecommendation: RecommendationResponseDto;
+  deleteProfile: Scalars['Boolean'];
   login: LoggedIn;
   markAsFavorite: Scalars['Boolean'];
   refreshToken: JwtDto;
   register: LoggedIn;
   savePublication: PublicationResponseDto;
   unmarkAsFavorite: Scalars['Boolean'];
+  updateProfile: User;
+};
+
+
+export type MutationCreateNewRecommendationArgs = {
+  createNewRecommendationInput?: InputMaybe<RecommendationCreateDto>;
 };
 
 
@@ -86,6 +94,11 @@ export type MutationSavePublicationArgs = {
 
 export type MutationUnmarkAsFavoriteArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationUpdateProfileArgs = {
+  data: UpdateUserDto;
 };
 
 export type PublicationChunkDataDto = {
@@ -127,16 +140,23 @@ export type PublicationVectorsRequestDto = {
   chunkSize?: InputMaybe<Scalars['Int']>;
 };
 
+export type PublicationsSearchDto = {
+  amountPerPage?: Scalars['Int'];
+  page?: Scalars['Int'];
+  searchInput: Scalars['String'];
+  searchStrategy: SearchStrategy;
+};
+
 export type Query = {
   __typename?: 'Query';
   favorites: Array<PublicationResponseDto>;
   newest: PublicationResponseDto;
   oldest: PublicationResponseDto;
+  profile: User;
   provideVectors: PublicationChunkDto;
   publication: PublicationResponseDto;
   publicationCount: Scalars['Int'];
-  publicationsById: Array<PublicationResponseDto>;
-  publicationsByQuery: Array<PublicationResponseDto>;
+  publications: Array<PublicationResponseDto>;
   recommendations: Array<RecommendationResponseDto>;
   searchPublicationBySourceAndSourceId?: Maybe<PublicationResponseDto>;
 };
@@ -167,13 +187,8 @@ export type QueryPublicationCountArgs = {
 };
 
 
-export type QueryPublicationsByIdArgs = {
-  filter: Scalars['String'];
-};
-
-
-export type QueryPublicationsByQueryArgs = {
-  filter: Scalars['String'];
+export type QueryPublicationsArgs = {
+  publicationsSearchDto: PublicationsSearchDto;
 };
 
 
@@ -181,10 +196,16 @@ export type QuerySearchPublicationBySourceAndSourceIdArgs = {
   publicationSourceAndSourceId: PublicationSourceWithSourceIdDto;
 };
 
+export type RecommendationCreateDto = {
+  amount?: InputMaybe<Scalars['Int']>;
+  exlude?: InputMaybe<Array<Scalars['String']>>;
+  group: Array<Scalars['String']>;
+};
+
 export type RecommendationResponseDto = {
   __typename?: 'RecommendationResponseDto';
-  createdAt: Scalars['String'];
-  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  id?: Maybe<Scalars['String']>;
   publications: Array<PublicationResponseDto>;
 };
 
@@ -194,9 +215,21 @@ export type RegisterDto = {
   password: Scalars['String'];
 };
 
+export enum SearchStrategy {
+  Id = 'ID',
+  Query = 'QUERY'
+}
+
 export type SentenceDto = {
   value: Scalars['String'];
   vector: Array<Scalars['Float']>;
+};
+
+export type UpdateUserDto = {
+  email?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  oldPassword?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {

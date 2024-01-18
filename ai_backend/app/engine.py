@@ -19,7 +19,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 class Summarizer:
     transformer: SentenceTransformer
 
-    def __init__(self, transformer: str | SentenceTransformer = "all-MiniLM-L6-v2", tokenize: bool = True,
+    def __init__(self, transformer: str | SentenceTransformer = "all-mpnet-base-v2", tokenize: bool = True,
                  debug=False):
         self.debug = debug
         self.tokenize = tokenize
@@ -180,9 +180,7 @@ class Recommender:
 
         dataframe = dataframe.explode(input_key)
         dataframe[self.SENTENCE_ID_KEY] = dataframe.groupby(id_key).cumcount()
-        print(dataframe.info())
         embeddings = np.array(dataframe[input_key].tolist())
-        print(embeddings.shape)
         dataframe.drop([input_key], axis=1, inplace=True)
         dataframe.rename(columns={id_key: self.PUBLICATION_ID_KEY}, inplace=True)
         dataframe.reset_index(inplace=True, drop=True)
@@ -234,6 +232,9 @@ class Recommender:
 
         # All blocked entries + enough neighbours so that amount unique publications are found
         nns_amount = (len(exclude) * self.token_amount) + (amount * self.token_amount)
+        if self.debug:
+            print(f"Generating {nns_amount} neighbours with {len(exclude)} excludes, "
+                  f"{self.token_amount} tokens per entry and {amount} desired results")
 
         if isinstance(data, int):
             neighbours, distances = self.annoy_database.get_nns_by_item(data, nns_amount, include_distances=True)
@@ -309,10 +310,8 @@ class Recommender:
 
         publication_df["embedding"] = publication_df[self.ANNOY_INDEX_KEY].apply(self.get_embedding_from_annoy)
         embeddings = np.array(publication_df["embedding"].to_list())
-        print(embeddings.shape)
         pca = PCA(n_components=3)
         pca.fit(embeddings)
-        print(pca.components_.shape)
         pca1 = pca.components_[0]
         pca2 = pca.components_[1]
         pca3 = pca.components_[2]

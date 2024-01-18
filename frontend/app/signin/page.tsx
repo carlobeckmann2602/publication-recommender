@@ -10,7 +10,7 @@ export default function SignIn(props: Props) {
     <>
       <Header title="Sign In" subtitle="Please enter your details." />
       <div className="flex justify-center p-8">
-        <div className="flex flex-col w-full sm:w-3/4 lg:w-1/2 gap-8">
+        <div className="flex flex-col w-full md:w-3/4 xl:w-1/2 gap-8">
           <LogInForm
             error={props.searchParams?.error}
             callbackUrl={props.searchParams?.callbackUrl}
