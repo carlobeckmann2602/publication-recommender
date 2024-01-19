@@ -193,15 +193,20 @@ def update_recommender(remote_change_time: float | None = None, forced=False):
 
 @celery.task(name="summarize",
              base=EngineTask,
-             bind=True)
+             bind=True,
+             soft_time_limit=2*60)
 def summarize(self: EngineTask,
               input_text: str, amount: int, tokenize: bool | None):
     amount = int(amount)
-    if tokenize is not None:
-        original_tokenize = self.recommender.summarizer.tokenize
-        self.recommender.summarizer.tokenize = tokenize
-    ranked_tokens, ranked_embeddings = self.recommender.summarizer.run(input_data=input_text, amount=amount,
-                                                                       add_embedding=True)
+    try:
+        if tokenize is not None:
+            original_tokenize = self.recommender.summarizer.tokenize
+            self.recommender.summarizer.tokenize = tokenize
+        ranked_tokens, ranked_embeddings = self.recommender.summarizer.run(input_data=input_text, amount=amount,
+                                                                           add_embedding=True)
+    except celery.Task.SoftTimeLimitExceeded as e:
+        raise worker_error.EngineTaskTimedOut(task=self.name, error=e)
+
     output_dict = {}
     for index, (token, embedding) in enumerate(zip(ranked_tokens[0], ranked_embeddings[0])):
         output_dict[index] = {"token": token, "embedding": list(embedding)}
@@ -342,3 +347,10 @@ def recommend_by_token(self: StrictEngineTask,
                 )
             )
         return response
+
+
+@celery.task(name="encode_sentence",
+             base=EngineTask,
+             bind=True)
+def encode_sentence(self: EngineTask, sentence: str) -> List:
+    return self.recommender.summarizer.transformer.encode(sentence, convert_to_numpy=True).tolist()

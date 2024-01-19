@@ -14,3 +14,9 @@ class NoBackendData(Exception):
     def __init__(self, client):
         message = f"Did not receive data from  <{client}>"
         super().__init__(message)
+
+
+class EngineTaskTimedOut(Exception):
+    def __init__(self, task, error: Exception):
+        message = f"The task<{task}> timed out with : <{error}>"
+        super().__init__(message)
