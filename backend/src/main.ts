@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { json } from 'body-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -19,6 +20,9 @@ async function bootstrap() {
     credentials: true,
   });
   await app.startAllMicroservices();
+  // default of 100kb max body size was to small for some new publications
+  // solution from https://github.com/nestjs/nest/issues/529#issuecomment-376576929
+  app.use(json({ limit: '1mb' }));
   await app.listen(configService.get('BACKEND_PORT'));
 }
 bootstrap().then();
