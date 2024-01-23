@@ -141,7 +141,7 @@ export function LogInForm(props: Props) {
             )}
           />
           <Button type="submit" className="w-full">
-            Sign In
+            Log In
           </Button>
         </form>
       </Form>

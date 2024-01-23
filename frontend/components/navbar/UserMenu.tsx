@@ -62,7 +62,7 @@ export default function UserMenu() {
             }`}
           >
             <p className="text-sm font-medium leading-none text-left">
-              {session ? session.user.name : "Sign in"}
+              {session ? session.user.name : "Sign up"}
             </p>
             <p className="text-xs leading-none text-left text-muted-foreground">
               {session ? session.user.email : "Account"}
@@ -90,8 +90,8 @@ export default function UserMenu() {
             </>
           ) : (
             <>
-              <Link href={"/signin"} scroll={false}>
-                <MenubarItem className="cursor-pointer">Sign in</MenubarItem>
+              <Link href={"/login"} scroll={false}>
+                <MenubarItem className="cursor-pointer">Log in</MenubarItem>
               </Link>
               <Link href={"/signup"} scroll={false}>
                 <MenubarItem className="cursor-pointer">Sign up</MenubarItem>

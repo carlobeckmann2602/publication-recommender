@@ -27,7 +27,7 @@ export default function Latex({ children }: Props) {
       result.push(
         <span
           key={seperateLatex[i]}
-          style={{ display: "inline-block", verticalAlign: "-5px" }}
+          style={{ display: "inline-block", verticalAlign: "-3px" }}
           dangerouslySetInnerHTML={{
             __html: adaptor.outerHTML(
               mathConverter.convert(seperateLatex[i], { display: false })
