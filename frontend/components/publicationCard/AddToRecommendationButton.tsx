@@ -53,18 +53,18 @@ export default function AddToRecommendationButton({
     if (enableWarning) {
       return (
         <Dialog>
-          <DialogTrigger asChild>
-            <Tooltip>
-              <TooltipTrigger asChild>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DialogTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <MinusCircle />
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent align="start">
-                Remove publication from selection
-              </TooltipContent>
-            </Tooltip>
-          </DialogTrigger>
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent align="start">
+              Remove publication from selection
+            </TooltipContent>
+          </Tooltip>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="leading-normal">

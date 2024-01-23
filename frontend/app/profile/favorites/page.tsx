@@ -63,7 +63,7 @@ export default function Favorites() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-14">
       <Header title="Favorites" subtitle="your favourite publications" />
       <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
         <Suspense fallback={<SearchResultSkeleton publicationAmount={6} />}>
