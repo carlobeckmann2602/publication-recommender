@@ -48,7 +48,7 @@ export default function RecommendationCreate() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-14">
       <Header
         title="Create Recommendation"
         subtitle="create your recommendation based on your selection"

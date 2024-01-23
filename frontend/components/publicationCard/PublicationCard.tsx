@@ -13,6 +13,7 @@ import LikeButton from "./LikeButton";
 import Latex from "@/lib/latex-converter";
 import { Book, File, MessageCircle } from "lucide-react";
 import AddToRecommendationButton from "./AddToRecommendationButton";
+import Link from "next/link";
 
 type Props = {
   id: string;
@@ -59,7 +60,13 @@ export default function PublicationCard(props: Props) {
             </div>
           )}
           <CardTitle className="grow">
-            <Latex>{props.title}</Latex>
+            <Link
+              href={props.link ?? ""}
+              target="_blank"
+              className="hover:underline"
+            >
+              <Latex>{props.title}</Latex>
+            </Link>
           </CardTitle>
         </div>
         <CardDescription>
