@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, Validate } from 'class-validator';
-import { DescriptorDtoValidator } from '../validators/descriptor-dto.validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { SourceVo } from '../vo/source.vo';
 import { DescriptorDto } from './descriptor.dto';
 
@@ -53,8 +53,7 @@ export class CreatePublicationDto {
   date?: Date;
 
   @Field(() => DescriptorDto)
-  @Validate(DescriptorDtoValidator, {
-    message: 'Publication descriptor is invalid',
-  })
+  @ValidateNested()
+  @Type(() => DescriptorDto)
   descriptor: DescriptorDto;
 }

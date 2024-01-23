@@ -1,13 +1,13 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
-import { Expose } from 'class-transformer';
+import { ArrayMaxSize, ArrayMinSize } from 'class-validator';
 
 @InputType()
 export class SentenceDto {
   @Field()
-  @Expose()
   value: string;
 
   @Field(() => [Float])
-  @Expose()
+  @ArrayMinSize(768)
+  @ArrayMaxSize(768)
   vector: number[];
 }
