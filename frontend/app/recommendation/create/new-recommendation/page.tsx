@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@apollo/client";
@@ -9,11 +9,13 @@ import useRecommendationsStore from "@/stores/recommendationsStore";
 import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, Trash2 } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
+import DeleteButton from "@/components/DeleteButton";
+import { useRouter } from "next/navigation";
 
 type SearchParams = {
   searchParams: {
@@ -26,6 +28,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
   const { publicationGroup, clearPublications } = useRecommendationsStore();
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const [
     createRecommendation,
@@ -83,6 +86,12 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
     });
   };
 
+  useEffect(() => {
+    if (createRecommendationError?.message && publicationGroup.length <= 0) {
+      router.replace("/");
+    }
+  }, [router, createRecommendationError, publicationGroup]);
+
   return (
     <>
       <Header
@@ -114,10 +123,10 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
             )}
           </div>
           {!searchParams.onFavorites && (
-            <Button variant="destructive" onClick={onClearSelection}>
-              <Trash2 size={20} className="mr-4" />
-              Clear your publication selection !
-            </Button>
+            <DeleteButton
+              onClick={onClearSelection}
+              text="Clear your publication selection !"
+            />
           )}
         </div>
         <Suspense fallback={<SearchResultSkeleton publicationAmount={10} />}>

@@ -22,6 +22,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useToast } from "@/components/ui/use-toast";
+import Latex from "@/lib/latex-converter";
 
 type Props = {
   id: string;
@@ -33,6 +35,8 @@ export default function LikeButton(props: Props) {
   const [liked, setLiked] = useState(false);
   const router = useRouter();
   const session = useSession();
+
+  const { toast } = useToast();
 
   const [getFavorites, { data }] = useLazyQuery(GetFavoritesIdsDocument, {
     context: {
@@ -94,6 +98,13 @@ export default function LikeButton(props: Props) {
           console.error(response.errors);
         } else if (!response.data?.markAsFavorite) {
           console.error("Like failed");
+        } else {
+          toast({
+            title: "Publication added to favorites",
+            description: (
+              <Latex>{`Publication \"${props.title}\" added to favorites`}</Latex>
+            ),
+          });
         }
       } else {
         const response = await unmarkFavoriteFunction({
@@ -103,6 +114,14 @@ export default function LikeButton(props: Props) {
           console.error(response.errors);
         } else if (!response.data?.unmarkAsFavorite) {
           console.error("Unlike failed");
+        } else {
+          toast({
+            title: "Publication removed from favorites",
+            description: (
+              <Latex>{`Publication \"${props.title}\" removed from favorites`}</Latex>
+            ),
+            variant: "destructive",
+          });
         }
       }
       setLiked((prev) => !prev);
