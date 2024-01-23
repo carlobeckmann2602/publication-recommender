@@ -33,7 +33,7 @@ function GoogleButton({
           <path fill="none" d="M0 0h48v48H0z"></path>
         </svg>
       </div>
-      Sign in with Google
+      Log in with Google
     </Button>
   );
 }

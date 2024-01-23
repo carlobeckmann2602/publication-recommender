@@ -18,6 +18,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useToast } from "@/components/ui/use-toast";
+import Latex from "@/lib/latex-converter";
 
 type Props = {
   id: string;
@@ -25,7 +27,7 @@ type Props = {
   enableWarning?: boolean;
 };
 
-export default function AddToRecommendationButton({
+export default function AddRemovetoSelectionButton({
   id,
   title,
   enableWarning,
@@ -34,15 +36,27 @@ export default function AddToRecommendationButton({
     useRecommendationsStore();
   const [included, setIncluded] = useState(false);
 
+  const { toast } = useToast();
+
   const add = () => {
-    if (included) {
-      removePublication(id);
-    }
     addPublication(id);
+    toast({
+      title: "Publication added to selection",
+      description: (
+        <Latex>{`Publication \"${title}\" added to selection`}</Latex>
+      ),
+    });
   };
 
   const remove = () => {
     removePublication(id);
+    toast({
+      title: "Publication removed from selection",
+      description: (
+        <Latex>{`Publication \"${title}\" removed from selection`}</Latex>
+      ),
+      variant: "destructive",
+    });
   };
 
   useEffect(() => {
@@ -53,18 +67,18 @@ export default function AddToRecommendationButton({
     if (enableWarning) {
       return (
         <Dialog>
-          <DialogTrigger asChild>
-            <Tooltip>
-              <TooltipTrigger asChild>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DialogTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <MinusCircle />
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent align="start">
-                Remove publication from selection
-              </TooltipContent>
-            </Tooltip>
-          </DialogTrigger>
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent align="start">
+              Remove publication from selection
+            </TooltipContent>
+          </Tooltip>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="leading-normal">

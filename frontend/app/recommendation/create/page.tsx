@@ -1,6 +1,6 @@
 "use client";
 import { Header } from "@/components/Header";
-import DeletButton from "@/components/DeletButton";
+import DeleteButton from "@/components/DeleteButton";
 import PublicationCardByIdClient from "@/components/publicationCard/PublicationCardByIdClient";
 import { Button, buttonVariants } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
@@ -8,12 +8,22 @@ import { PlusCircle, Trash2, Wand2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Searchbar } from "@/components/search/Searchbar";
 
 export default function RecommendationCreate() {
   const { publicationGroup, clearPublications } = useRecommendationsStore();
   const [publications, setPublications] = useState<string[]>();
 
   const { toast } = useToast();
+
+  const onClearSelection = () => {
+    clearPublications();
+    toast({
+      variant: "destructive",
+      title: "Selection cleared",
+      description: "Selection of publications for recommendations was cleared",
+    });
+  };
 
   useEffect(() => {
     setPublications(publicationGroup);
@@ -42,13 +52,14 @@ export default function RecommendationCreate() {
             </kbd>{" "}
             on the publication you want to add.
           </div>
+          <Searchbar className="my-6" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-14">
       <Header
         title="Create Recommendation"
         subtitle="create your recommendation based on your selection"
@@ -58,8 +69,8 @@ export default function RecommendationCreate() {
           Your selection of publications your custom recommendation would be
           based on:
         </h2>
-        <DeletButton
-          onClick={clearPublications}
+        <DeleteButton
+          onClick={onClearSelection}
           tooltipText="Delete selection"
           dialogTitle="Delete selection"
           dialogText="Do you really want to delete the selection of publication?"

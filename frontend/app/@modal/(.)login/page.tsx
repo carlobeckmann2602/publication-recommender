@@ -15,13 +15,13 @@ type Props = {
   searchParams?: Record<"callbackUrl" | "error", string>;
 };
 
-export default function SignInModal(props: Props) {
+export default function LogInModal(props: Props) {
   return (
     <Modal>
       <Card className="shadow-lg relative overflow-auto max-h-[95vh]">
         <CardHeader>
           <ModalCloseButton />
-          <CardTitle className="text-center">Sign In</CardTitle>
+          <CardTitle className="text-center">Log In</CardTitle>
           <CardDescription className="text-center">
             Please enter your details.
           </CardDescription>

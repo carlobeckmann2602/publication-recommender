@@ -8,11 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DOCUMENT_TYPES } from "@/constants/enums";
-import SimilarSearchButton from "./SimilarSearchButton";
-import LikeButton from "./LikeButton";
+import SimilarSearchButton from "@/components/publicationCard/SimilarSearchButton";
+import LikeButton from "@/components/publicationCard/LikeButton";
 import Latex from "@/lib/latex-converter";
 import { Book, File, MessageCircle } from "lucide-react";
-import AddToRecommendationButton from "./AddToRecommendationButton";
+import AddToRecommendationButton from "@/components/publicationCard/AddRemovetoSelectionButton";
+import Link from "next/link";
 
 type Props = {
   id: string;
@@ -59,7 +60,13 @@ export default function PublicationCard(props: Props) {
             </div>
           )}
           <CardTitle className="grow">
-            <Latex>{props.title}</Latex>
+            <Link
+              href={props.link ?? ""}
+              target="_blank"
+              className="hover:underline"
+            >
+              <Latex>{props.title}</Latex>
+            </Link>
           </CardTitle>
         </div>
         <CardDescription>

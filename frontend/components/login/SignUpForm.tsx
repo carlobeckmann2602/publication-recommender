@@ -251,12 +251,12 @@ export function SignUpForm(props: Props) {
       <span className="text-center">
         Already have an account?{" "}
         <Link
-          href={"/signin"}
+          href={"/login"}
           scroll={false}
           replace={true}
           className="underline"
         >
-          Sign In
+          Log In
         </Link>
       </span>
     </>

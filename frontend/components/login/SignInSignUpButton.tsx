@@ -12,7 +12,7 @@ function SignInSignUpButton() {
         className={buttonVariants({ variant: "default" })}
         scroll={false}
       >
-        Sign In
+        Log In
       </Link>
       <Link
         href={"/signup"}
