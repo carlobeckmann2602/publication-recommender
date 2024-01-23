@@ -1,1 +1,3 @@
-data/temp/*
+data/**/*
+**/*.csv
+**/*.txt
