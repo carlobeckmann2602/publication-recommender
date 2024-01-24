@@ -1,4 +1,10 @@
-import { InternalServerErrorException, SetMetadata, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  SetMetadata,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from '../../auth/decorators/user.decorator';
@@ -116,7 +122,11 @@ export class PublicationResolver {
     @Args('createPublication', { type: () => CreatePublicationDto }, new ValidationPipe({ transform: true }))
     dto: CreatePublicationDto,
   ): Promise<PublicationResponseDto> {
-    const publication = await this.publicationService.createPublication(dto);
-    return new PublicationResponseDto(publication);
+    try {
+      const publication = await this.publicationService.createPublication(dto);
+      return new PublicationResponseDto(publication);
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
   }
 }
