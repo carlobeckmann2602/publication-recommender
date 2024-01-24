@@ -19,16 +19,6 @@ type LoggedIn {
   user: User!
 }
 
-type PublicationChunkDto {
-  chunk: Int!
-  data: [PublicationChunkDataDto!]!
-}
-
-type PublicationChunkDataDto {
-  id: String!
-  vectors: [[Float!]!]!
-}
-
 type PublicationResponseDto {
   id: String!
   title: String!
@@ -49,6 +39,16 @@ enum PublicationSource {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type PublicationChunkDto {
+  chunk: Int!
+  data: [PublicationChunkDataDto!]!
+}
+
+type PublicationChunkDataDto {
+  id: String!
+  vectors: [[Float!]!]!
+}
 
 type RecommendationResponseDto {
   id: String
