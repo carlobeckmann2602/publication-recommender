@@ -8,6 +8,7 @@ class DatabaseApi:
     def __init__(self):
         self.gql_transport = AIOHTTPTransport(url="http://nest:3000/graphql")
         self.gql_client = Client(transport=self.gql_transport, fetch_schema_from_transport=True)
+        self.fail_counter = 0
     
     def get_arxiv_pub_count(self):
         query = gql("""
@@ -84,7 +85,6 @@ class DatabaseApi:
             return None
     
     def add_arxiv_pub(self, pub):
-        fail_counter = 0
         #print("ArxivApiScraper.update_db_entries(update_list)")
         print("-- saving "+str(pub.arxiv_id)+" to database ...")
         mutation = gql("""
@@ -97,8 +97,9 @@ class DatabaseApi:
         """)
         sentences = list()
         for key in pub.vector_dict:
-            #text = self.clean(pub.vector_dict[key]["token"])
-            sentences.append({"value": pub.vector_dict[key]["token"], "vector": pub.vector_dict[key]["embedding"]})
+            text = pub.vector_dict[key]["token"]
+            text = self.clean(text)
+            sentences.append({"value": text, "vector": pub.vector_dict[key]["embedding"]})
         
         params = {
             "query": {
@@ -120,63 +121,22 @@ class DatabaseApi:
             print("--- successfully saved " + str(pub.arxiv_id) + " to database.")
             return True
         except TransportQueryError as e:
+            self.fail_counter += 1
             print(e)
             print(getsizeof(params))
+            file_path = '/scraper/data/failed-'+str(self.fail_counter)+'.json'
+            with open(file_path, 'x') as json_file:
+                json.dump(params, json_file)
             return False
         except TransportServerError as e:
-            #fail_counter += 1
+            #self.fail_counter += 1
             print(e)
             print(getsizeof(params))
-            #file_path = '/scraper/data/failed-'+str(fail_counter)+'.json'
-            #with open(file_path, 'wx') as json_file:
+            #file_path = '/scraper/data/failed-'+str(self.fail_counter)+'.json'
+            #with open(file_path, 'x') as json_file:
             #    json.dump(params, json_file)
             return False
-
-    def add_arxiv_pub_list(self, pub_list):
-        #print("ArxivApiScraper.update_db_entries(update_list)")
-        print("- saving publications to database ...")
-        mutation = gql("""
-        mutation savePublication($query: CreatePublicationDto!) {
-            savePublication(createPublication: $query) {
-                id
-                title
-            }
-        }
-        """)
-        for pub in pub_list:
-            sentences = list()
-            for key in pub.vector_dict:
-                text = self.clean(pub.vector_dict[key]["token"])
-                sentences.append({"value": text, "vector": pub.vector_dict[key]["embedding"]})
-            params = {
-                "query": {
-                    "title": str(pub.title), 
-                    "exId": str(pub.arxiv_id),
-                    "source":str(pub.src),
-                    "doi": str(pub.doi),
-                    "url": str(pub.url),
-                    "abstract": str(pub.abstract),
-                    "authors": pub.authors,
-                    "date": pub.pub_date,
-                    "descriptor": {
-                        "sentences": sentences
-                     }
-            }}
-            """  
-            {
-                '0': {
-                    'token': 'blabla', 
-                    'embedding': [-0.07583089172840118, -0.07275690138339996, ...]
-                }
-            }
-            """
-            try:
-                result = self.gql_client.execute(mutation, variable_values=params)
-                print("-- successfully saved " + str(result) + " to database.")
-            except TransportQueryError as e:
-                print(e)
-                print(getsizeof(params))
-    
+            
     def clean(self, text):
         text = text.strip()
         text = text.replace("\n", " ")
@@ -185,5 +145,6 @@ class DatabaseApi:
         text = text.replace("\'\'", '"')
         text = text.replace("- ", '')
         text = re.sub(r" +", " ", text)
-        text = re.sub(r"\\x[0-9a-fA-F]{2}", " ", text)
+        text = text.replace("\u0000", "")
+        text = text.encode('ascii', 'ignore').decode('utf-8')
         return text
