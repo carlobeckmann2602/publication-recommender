@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthResolver } from './auth/resolvers/auth.resolver';
 import { AuthService } from './auth/services/auth.service';
 import { TokenService } from './auth/services/token.service';
-import { PublicationController } from './publication/controllers/publication.controller';
 import { Favorite } from './publication/entities/favorite.entity';
 import { Publication } from './publication/entities/publication.entity';
 import { Recommendation } from './publication/entities/recommendation.entity';
@@ -47,6 +46,5 @@ import { UserService } from './user/services/user.service';
     UserResolver,
   ],
   exports: [RecommendationService],
-  controllers: [PublicationController],
 })
 export class CoreModule {}

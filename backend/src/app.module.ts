@@ -9,7 +9,6 @@ import { AppService } from './app.service';
 import { CoreModule } from './modules/core/core.module';
 import { CronModule } from './modules/cron/cron.module';
 import { DatabaseModule } from './modules/database/database.module';
-import { RabbitMQModule } from './modules/mq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { RabbitMQModule } from './modules/mq/rabbitmq.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     DatabaseModule,
-    RabbitMQModule,
     CoreModule,
     ScheduleModule.forRoot(),
     CronModule,
