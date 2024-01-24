@@ -19,13 +19,14 @@ class PdfScraper:
         return full_text
 
     def clean(self, text):
+        text = text.encode("ascii")
         text = text.strip()
-        ''
         text = text.replace("\n", " ")
         text = text.replace('´´', '"')
         text = text.replace('``', '"')
         text = text.replace("\'\'", '"')
         text = text.replace("- ", '')
+        text = text.replace("  ", ' ')
         text = re.sub(r" +", " ", text)
         text = text.replace("\x00", ' ')
         text = text.replace("\x01", ' ')
@@ -49,6 +50,7 @@ class PdfScraper:
                                     text = unidecode(block[4]) # [4] is text string
                                     text = text.strip()
                                     text = text.replace("\n", " ")
+                                    text = text.replace("  ", " ")
                                     text = text.replace("- ", "")
                                     ref_pattern = r'^\[\d{1,3}\]'   # referenzen am ende entfernen
                                     abs_pattern = r'[a-zA-Z]'       # strings ohne buchstaben entfernen
