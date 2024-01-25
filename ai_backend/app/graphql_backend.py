@@ -36,7 +36,7 @@ def get_all_vectors() -> pd.DataFrame:
     continue_requests = True
     index = 0
     while continue_requests:
-        temp_dataframe = get_vectors(index, 100)
+        temp_dataframe = get_vectors(index, 200)
         print(f"{index} -> Received {len(temp_dataframe)} IDs from backend")
         if temp_dataframe.empty:
             continue_requests = False
