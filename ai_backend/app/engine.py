@@ -7,8 +7,8 @@ import torch
 from numpy import random
 from sklearn.decomposition import PCA
 from .util.misc import add_array_column
-from sentence_transformers import SentenceTransformer, util
-from .util.LexRank import degree_centrality_scores
+from sentence_transformers import SentenceTransformer
+from .util.LexRank import FastLexRankSummarizer
 from annoy import AnnoyIndex
 from typing import Literal, List, Union
 from tqdm.auto import tqdm
@@ -18,6 +18,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class Summarizer:
     transformer: SentenceTransformer
+    lexrank: FastLexRankSummarizer
+    lexrank_threshold = .1
 
     def __init__(self, transformer: str | SentenceTransformer = "all-mpnet-base-v2", tokenize: bool = True,
                  debug=False):
@@ -27,10 +29,14 @@ class Summarizer:
         if isinstance(transformer, str):
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
+        self.create_lexrank()
+
+    def create_lexrank(self):
+        self.lexrank = FastLexRankSummarizer(model=self.transformer, threshold=self.lexrank_threshold)
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        excluded_parameters = ["transformer"]
+        excluded_parameters = ["transformer", "lexrank"]
         for parameter in excluded_parameters:
             if parameter in state:
                 del state[parameter]
@@ -62,42 +68,17 @@ class Summarizer:
         if dataframe["token_amount"].min() < amount:
             raise Exception("Not enough tokens" + "\n" + str(dataframe["token_amount"].idxmin()))
 
-        def encode(token: list):
-            embedding = self.transformer.encode(token, convert_to_numpy=True)
-            return embedding
-
-        tqdm.pandas(desc="(Summarizing) Creating Embeds")
-        dataframe["embedding"] = dataframe["token"].progress_apply(encode)
-        dataframe["embedding_amount"] = dataframe["embedding"].apply(len)
-
-        def cos_sim(vectors: list):
-            tensor = torch.tensor(vectors, dtype=torch.float)
-            c = util.cos_sim(tensor, tensor).cpu().numpy()
-            return c
-
-        tqdm.pandas(desc="(Summarizing) Calculating Cosine")
-        dataframe["cosine"] = dataframe["embedding"].progress_apply(cos_sim)
-
         def rank_tokens(row: pd.Series):
-            cosine_vector = row["cosine"]
             token_list = row["token"]
-            embedding_list = row["embedding"]
-            score_mask = degree_centrality_scores(cosine_vector, threshold=None)
-            significance_mask = np.argsort(-score_mask)
-            significance_mask = significance_mask[0:amount]
-            significance_mask = np.array(significance_mask, dtype=int)
 
-            token_vector = np.array(token_list)
-            token_vector = np.vectorize(lambda x: x.strip())(token_vector)
-            token_ranking = token_vector[significance_mask]
-            embedding_ranking = np.array(embedding_list)[significance_mask]
+            token_ranking, embedding_ranking = self.lexrank.summarize(token_list, amount)
 
-            row["ranked_tokens"] = list(token_ranking)
-            row["ranked_embeddings"] = list(embedding_ranking)
+            row["ranked_tokens"] = token_ranking
+            row["ranked_embeddings"] = embedding_ranking
             return row
 
-        tqdm.pandas(desc="(Summarizing) Ranking Tokens")
-        dataframe = dataframe.progress_apply(rank_tokens, axis=1)
+#        tqdm.pandas(desc="(Summarizing) Apply LexRank")
+        dataframe = dataframe.apply(rank_tokens, axis=1)
 
         tokens = np.array(dataframe["ranked_tokens"].tolist(), dtype=str)
         if add_embedding:
@@ -158,6 +139,7 @@ class Recommender:
             state_file.close()
             self.__dict__.update(state_dict)
             self.summarizer.transformer = SentenceTransformer(path + "summy_transformer")
+            self.summarizer.create_lexrank()
             self.instantiate_annoy()
         self.annoy_database.load(path + "annoy.ann")
         self.mapping = pd.read_pickle(path + "mapping.pkl")

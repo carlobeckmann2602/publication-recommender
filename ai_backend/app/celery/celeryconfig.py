@@ -25,10 +25,14 @@ beat_schedule = {
 timezone = "Europe/Berlin"
 
 broker_connection_retry_on_startup = True
+broker_connection_retry = True
+broker_connection_max_retries = 100
+worker_cancel_long_running_tasks_on_connection_loss = True
+
 result_serializer = "json"
 task_serializer = "json"
 accept_content = ["json", "yaml"]
 C_FORCE_ROOT = False
 # worker_enable_remote_control = True
-worker_prefetch_multiplier = 2
-worker_concurrency = 1
+#worker_prefetch_multiplier = 2
+#worker_concurrency = 1

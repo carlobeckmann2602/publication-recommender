@@ -122,6 +122,9 @@ class EngineTask(celery.Task):
         self.recommender.debug = True
         print(self.get_start_string())
 
+    def on_success(self, retval, task_id, *args, **kwargs):
+        print(f"[{task_id}, {self.name}]: Successfully executed")
+
     def update_engine(self):
         last_changed_on_disk = get_last_changed_on_disk(celery.unzip_path)
 
@@ -193,19 +196,16 @@ def update_recommender(remote_change_time: float | None = None, forced=False):
 
 @celery.task(name="summarize",
              base=EngineTask,
-             bind=True,
-             soft_time_limit=2*60)
+             bind=True)
 def summarize(self: EngineTask,
               input_text: str, amount: int, tokenize: bool | None):
     amount = int(amount)
-    try:
-        if tokenize is not None:
-            original_tokenize = self.recommender.summarizer.tokenize
-            self.recommender.summarizer.tokenize = tokenize
-        ranked_tokens, ranked_embeddings = self.recommender.summarizer.run(input_data=input_text, amount=amount,
-                                                                           add_embedding=True)
-    except celery.Task.SoftTimeLimitExceeded as e:
-        raise worker_error.EngineTaskTimedOut(task=self.name, error=e)
+
+    if tokenize is not None:
+        original_tokenize = self.recommender.summarizer.tokenize
+        self.recommender.summarizer.tokenize = tokenize
+    ranked_tokens, ranked_embeddings = self.recommender.summarizer.run(input_data=input_text, amount=amount,
+                                                                       add_embedding=True)
 
     output_dict = {}
     for index, (token, embedding) in enumerate(zip(ranked_tokens[0], ranked_embeddings[0])):
@@ -234,7 +234,15 @@ def build_annoy(self: EngineTask):
     upload_recommender(celery.data_path + "/temp", zip_mode="temp")
     shutil.rmtree(celery.data_path + "/temp")
     self.recommender.annoy_input_length = original_annoy_input_length
-    return {"length": len(new_mapping)}
+
+    added_entries = len(new_mapping)
+    added_publications = len(np.unique(new_mapping[self.recommender.PUBLICATION_ID_KEY]))
+    overall_entries = len(self.recommender.mapping)
+    overall_publications = len(np.unique(self.recommender.mapping[self.recommender.PUBLICATION_ID_KEY]))
+    return {"added_sentences": added_entries,
+            "added_publications": added_publications,
+            "sentence_amount": overall_entries,
+            "publication_amount": overall_publications}
 
 
 @celery.task(name="random_id",
