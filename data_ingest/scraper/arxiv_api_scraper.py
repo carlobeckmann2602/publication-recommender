@@ -1,6 +1,7 @@
 import re, csv, requests, json, datetime
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import ParseError
 import urllib.request as libreq
 import urllib, urllib.request
 from gql import gql, Client
@@ -81,14 +82,11 @@ class ArxivApiScraper:
         try:
             with libreq.urlopen(url) as self.response:
                 if self.response.status == 200:
-                    try:
-                        content = self.response.read().decode('utf-8')
-                    except UnicodeDecodeError as e:
-                        print(e)
-                        content = self.response.read()
-                    #print(content)
+                    content = self.response.read().decode('utf-8', 'ignore')
+                    
                     xml_root = ET.fromstring(content)
                     entry_list = xml_root.findall(xml_tag_prefix+'entry')
+                    
                     print("-- collecting " + str(len(entry_list)) + " api metadata entries ...")
                     for entry in entry_list:
                         # find arxiv id
