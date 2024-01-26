@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from celery import Celery
 from celery.signals import worker_ready, worker_init
 from app.celery import celeryconfig
@@ -72,15 +73,23 @@ def convert_matching_to_response(matching: pd.DataFrame,
 
 def download_recommender(zip_path: str = None, unzip_path: str = None):
     print("Starting recommender download")
-    archive = requests.get(f"{celery.api}/model.zip/")
+    archive = requests.get(f"{celery.api}/model.zip/",stream=True)
+    # Sizes in bytes.
+    total_size = int(archive.headers.get("content-length", 0))
+    block_size = 1024
+
     delete = False
     print("Received archive")
     if zip_path is None:
         delete = True
         zip_path = f"{celery.data_path}/temp_download.zip"
     with open(zip_path, "wb") as zip_file:
-        zip_file.write(archive.content)
-        print(f"Archive written to {zip_path}")
+        with tqdm(total=total_size, unit="B", unit_scale=True) as progress_bar:
+#            zip_file.write(archive.content)
+            for data in archive.iter_content(block_size):
+                progress_bar.update(len(data))
+                zip_file.write(data)
+            print(f"Archive written to {zip_path}")
         if unzip_path is not None:
             if os.path.exists(unzip_path):
                 print("Deleting exsisting recommender")
