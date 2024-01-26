@@ -1,6 +1,6 @@
 "use client";
 import { useMutation } from "@apollo/client";
-import DeletButton from "../DeletButton";
+import DeletButton from "@/components/DeleteButton";
 import { DeleteUserDocument } from "@/graphql/mutation/DeleteUser.generated";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
