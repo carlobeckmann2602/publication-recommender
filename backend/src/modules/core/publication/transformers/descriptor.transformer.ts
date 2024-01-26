@@ -5,9 +5,7 @@ import { DescriptorDto } from '../dto/descriptor.dto';
 export class DescriptorTransformer implements ValueTransformer {
   from(value: any): DescriptorDto {
     if (value) {
-      return plainToInstance<DescriptorDto, any>(DescriptorDto, value, {
-        excludeExtraneousValues: true,
-      });
+      return plainToInstance<DescriptorDto, any>(DescriptorDto, value);
     }
   }
 
