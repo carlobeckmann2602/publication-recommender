@@ -13,6 +13,7 @@ export class PublicationResponseDto {
     this.url = publication.url;
     this.authors = publication.authors;
     this.publicationDate = publication.date;
+    this.abstract = publication.abstract;
   }
 
   @Field()
@@ -41,4 +42,7 @@ export class PublicationResponseDto {
 
   @Field()
   isFavorite: boolean = false;
+
+  @Field({nullable:true})
+  abstract: string | null;
 }

@@ -42,9 +42,10 @@ export class PublicationResolver {
       const publications = await this.publicationService.findAll(
         dto.searchInput,
         dto.searchStrategy,
-        dto.page || 0,
-        dto.amountPerPage || 5,
+        dto.page,
+        dto.amountPerPage,
       );
+      
       return await this.favoriteService.publicationsWithFavorites(publications, user);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
