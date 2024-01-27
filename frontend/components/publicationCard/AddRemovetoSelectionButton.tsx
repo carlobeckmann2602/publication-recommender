@@ -75,7 +75,7 @@ export default function AddRemovetoSelectionButton({
                 </Button>
               </DialogTrigger>
             </TooltipTrigger>
-            <TooltipContent align="start">
+            <TooltipContent align="start" sideOffset={10}>
               Remove publication from selection
             </TooltipContent>
           </Tooltip>
@@ -115,7 +115,9 @@ export default function AddRemovetoSelectionButton({
             <MinusCircle />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Remove publication from selection</TooltipContent>
+        <TooltipContent align="start" sideOffset={10}>
+          Remove publication from selection
+        </TooltipContent>
       </Tooltip>
     );
   }
@@ -127,7 +129,7 @@ export default function AddRemovetoSelectionButton({
           <PlusCircle />
         </Button>
       </TooltipTrigger>
-      <TooltipContent align="start">
+      <TooltipContent align="start" sideOffset={10}>
         Add publication to selection
       </TooltipContent>
     </Tooltip>

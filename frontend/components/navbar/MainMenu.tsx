@@ -80,7 +80,9 @@ export default function MainMenu({
                   </span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent align="start">{name}</TooltipContent>
+              <TooltipContent side="right" sideOffset={10}>
+                {name}
+              </TooltipContent>
             </Tooltip>
           );
         })}

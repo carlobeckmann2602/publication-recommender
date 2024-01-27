@@ -153,7 +153,9 @@ export default function LikeButton(props: Props) {
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
-          <TooltipContent align="start">Unfavorite publication</TooltipContent>
+          <TooltipContent align="start" sideOffset={10}>
+            Unfavorite publication
+          </TooltipContent>
         </Tooltip>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -199,7 +201,7 @@ export default function LikeButton(props: Props) {
           )}
         </Button>
       </TooltipTrigger>
-      <TooltipContent align="start">
+      <TooltipContent align="start" sideOffset={10}>
         {liked ? "Unfavorite publication" : "Favorite publication"}
       </TooltipContent>
     </Tooltip>

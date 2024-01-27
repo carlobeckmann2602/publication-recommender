@@ -23,7 +23,7 @@ export default function SimilarSearchButton({ id }: Props) {
           <FileSearch2 width={24} />
         </Link>
       </TooltipTrigger>
-      <TooltipContent align="start">
+      <TooltipContent align="start" sideOffset={10}>
         Search for similar publications
       </TooltipContent>
     </Tooltip>

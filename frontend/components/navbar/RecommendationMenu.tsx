@@ -41,7 +41,9 @@ export default function RecommendationMenu() {
           <Badge variant="secondary" className="absolute -top-2 -right-2">
             {publicationAmount}
           </Badge>
-          <TooltipContent align="start">Create Recommendation</TooltipContent>
+          <TooltipContent side="right" sideOffset={10}>
+            Create Recommendation
+          </TooltipContent>
         </Tooltip>
       </div>
     );

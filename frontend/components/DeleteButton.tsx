@@ -43,7 +43,9 @@ export default function DeleteButton({
                 </Button>
               </DialogTrigger>
             </TooltipTrigger>
-            <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
+            <TooltipContent sideOffset={10} align="start">
+              {tooltipText}
+            </TooltipContent>
           </Tooltip>
         ) : (
           <DialogTrigger asChild>
@@ -89,7 +91,9 @@ export default function DeleteButton({
             {text ?? <Trash2 />}
           </Button>
         </TooltipTrigger>
-        <TooltipContent className="mx-2">{tooltipText}</TooltipContent>
+        <TooltipContent sideOffset={10} align="start">
+          {tooltipText}
+        </TooltipContent>
       </Tooltip>
     );
   }
