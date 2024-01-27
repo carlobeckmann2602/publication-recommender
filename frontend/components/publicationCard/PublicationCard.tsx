@@ -89,8 +89,13 @@ export default function PublicationCard(props: Props) {
       <CardContent className="flex flex-col flex-grow gap-4">
         {props.abstract && (
           <p>
-            {props.abstract.split(" ").splice(0, abstractWordAmount).join(" ") +
-              (props.abstract.length > abstractWordAmount ? "..." : "")}
+            <Latex>
+              {props.abstract
+                .split(" ")
+                .splice(0, abstractWordAmount)
+                .join(" ") +
+                (props.abstract.length > abstractWordAmount ? "..." : "")}
+            </Latex>
           </p>
         )}
         {props.matchedSentence && (
