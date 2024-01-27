@@ -145,6 +145,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
                         : undefined
                     }
                     doi={publication.doi}
+                    abstract={publication.abstract}
                     documentType={DOCUMENT_TYPES.PAPER}
                   />
                 )
@@ -163,6 +164,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
                         : undefined
                     }
                     doi={publication.doi}
+                    abstract={publication.abstract}
                     documentType={DOCUMENT_TYPES.PAPER}
                   />
                 )

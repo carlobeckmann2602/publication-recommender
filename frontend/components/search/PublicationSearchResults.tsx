@@ -45,6 +45,7 @@ export default async function PublicationSearchResults({
                 : undefined
             }
             doi={publication.doi}
+            abstract={publication.abstract}
             documentType={DOCUMENT_TYPES.PAPER}
           />
         ))}

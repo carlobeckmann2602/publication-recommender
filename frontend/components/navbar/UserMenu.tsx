@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 
 import Link from "next/link";
 import SignOut from "@/components/login/SignOut";
-import { UserPlus } from "lucide-react";
+import { User } from "lucide-react";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
@@ -53,7 +53,7 @@ export default function UserMenu() {
               alt="profile image"
             />
             <AvatarFallback className="bg-neutral-500 text-neutral-50 text-lg">
-              {session ? initals : <UserPlus size={24} />}
+              {session ? initals : <User size={24} />}
             </AvatarFallback>
           </Avatar>
           <div
@@ -62,7 +62,7 @@ export default function UserMenu() {
             }`}
           >
             <p className="text-sm font-medium leading-none text-left">
-              {session ? session.user.name : "Sign up"}
+              {session ? session.user.name : "Sign up/Log in"}
             </p>
             <p className="text-xs leading-none text-left text-muted-foreground">
               {session ? session.user.email : "Account"}

@@ -115,6 +115,7 @@ export type PublicationChunkDto = {
 
 export type PublicationResponseDto = {
   __typename?: 'PublicationResponseDto';
+  abstract?: Maybe<Scalars['String']>;
   authors?: Maybe<Array<Scalars['String']>>;
   doi: Array<Scalars['String']>;
   exId: Scalars['String'];

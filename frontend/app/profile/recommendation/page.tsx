@@ -122,6 +122,7 @@ export default function Recommendation() {
                         }
                         link={publication.url}
                         doi={publication.doi}
+                        abstract={publication.abstract}
                         documentType={DOCUMENT_TYPES.PAPER}
                         disableSearchSimilar={false}
                         className="h-full"

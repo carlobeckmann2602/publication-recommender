@@ -19,5 +19,6 @@ query GetSearchResults(
     url
     authors
     publicationDate
+    abstract
   }
 }

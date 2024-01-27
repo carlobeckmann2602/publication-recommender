@@ -27,8 +27,8 @@ export default function PublicationCardSkeleton(props: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-4">
-        {/* <Skeleton className="h-32 w-full" />
-        <div className="flex flex-col gap-2">
+        <Skeleton className="h-32 w-full" />
+        {/*<div className="flex flex-col gap-2">
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-4 w-full" />
         </div> */}

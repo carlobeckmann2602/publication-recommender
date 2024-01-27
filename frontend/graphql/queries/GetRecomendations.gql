@@ -8,6 +8,7 @@ query GetRecommendations {
       publicationDate
       doi
       url
+      abstract
     }
     createdAt
   }

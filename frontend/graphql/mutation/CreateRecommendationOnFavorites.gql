@@ -9,6 +9,7 @@ mutation CreateRecommendationOnFavorites {
       url
       doi
       exId
+      abstract
     }
     createdAt
   }

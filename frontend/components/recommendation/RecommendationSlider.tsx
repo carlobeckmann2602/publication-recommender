@@ -22,6 +22,7 @@ type Props = {
     authors?: string[] | null | undefined;
     publicationDate?: any;
     doi: string[];
+    abstract?: string | null | undefined;
     url?: string | null | undefined;
   }[];
 };
@@ -89,6 +90,7 @@ export default function RecommendationSlider({
                   }
                   link={publication.url}
                   doi={publication.doi}
+                  abstract={publication.abstract}
                   documentType={DOCUMENT_TYPES.PAPER}
                   disableSearchSimilar={false}
                   className="h-full"

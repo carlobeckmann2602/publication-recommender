@@ -36,6 +36,7 @@ export default function PublicationCardByIdClient({
             : undefined
         }
         doi={data.publication.doi}
+        abstract={data.publication.abstract}
         documentType={DOCUMENT_TYPES.PAPER}
         disableSearchSimilar={disableSearchSimilar}
         className={className}

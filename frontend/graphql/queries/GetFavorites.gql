@@ -7,5 +7,6 @@ query GetFavorites {
     url
     authors
     publicationDate
+    abstract
   }
 }

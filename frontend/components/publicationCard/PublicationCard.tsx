@@ -40,7 +40,10 @@ export default function PublicationCard(props: Props) {
   //const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
   const doiUrl = `https://www.doi.org/${props.doi?.slice(0, 1)}`;
 
-  let authorsString = props.authors?.slice(0, 4).join(", ");
+  const abstractWordAmount = 50;
+  const authorAmount = 3;
+
+  let authorsString = props.authors?.slice(0, authorAmount).join(", ");
   if (props.authors && props.authors?.length >= 5)
     authorsString = authorsString + "...";
 
@@ -84,7 +87,12 @@ export default function PublicationCard(props: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-4">
-        {props.abstract && <p>{props.abstract}</p>}
+        {props.abstract && (
+          <p>
+            {props.abstract.split(" ").splice(0, abstractWordAmount).join(" ") +
+              (props.abstract.length > abstractWordAmount ? "..." : "")}
+          </p>
+        )}
         {props.matchedSentence && (
           <div>
             <p className="font-semibold">Matched Sentence:</p>

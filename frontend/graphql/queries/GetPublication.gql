@@ -7,5 +7,6 @@ query GetPublication($id: String!) {
     url
     authors
     publicationDate
+    abstract
   }
 }

@@ -29,6 +29,7 @@ type PublicationResponseDto {
   authors: [String!]
   publicationDate: DateTime
   isFavorite: Boolean!
+  abstract: String
 }
 
 enum PublicationSource {

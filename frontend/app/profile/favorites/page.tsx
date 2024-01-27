@@ -82,6 +82,7 @@ export default function Favorites() {
               doi={favorite.doi}
               documentType={DOCUMENT_TYPES.PAPER}
               enableLikeWarning={true}
+              abstract={favorite.abstract}
             />
           ))}
         </Suspense>

@@ -37,6 +37,7 @@ export default async function PublicationCardByIdServer({
               : undefined
           }
           doi={data.publication.doi}
+          abstract={data.publication.abstract}
           documentType={DOCUMENT_TYPES.PAPER}
           disableSearchSimilar={disableSearchSimilar}
           className={className}
