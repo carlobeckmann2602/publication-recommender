@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
+import { useSticky } from "@/hook/UseSticky";
 import { useLazyQuery } from "@apollo/client";
 import { Heart, Wand2 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -17,6 +18,8 @@ export default function Favorites() {
   const session = useSession();
 
   const { toast } = useToast();
+
+  const { ref, isSticky } = useSticky();
 
   const [getFavorites, { data }] = useLazyQuery(GetFavoritesDocument, {
     context: {
@@ -63,8 +66,31 @@ export default function Favorites() {
   }
 
   return (
-    <div className="flex flex-col pb-14">
+    <div className="flex flex-col">
       <Header title="Favorites" subtitle="your favourite publications" />
+      <div
+        className={`flex flex-row justify-center w-full sticky top-0 ${
+          isSticky &&
+          "-mx-4 p-4 rounded-b-md bg-white border z-[51] !w-auto shadow-md"
+        }`}
+        ref={ref}
+      >
+        <Link
+          href="/recommendation/create/new-recommendation?onFavorites=true"
+          className={buttonVariants({
+            variant: "default",
+          })}
+          onClick={() =>
+            toast({
+              title: "Recommendation created",
+              description: "Recommendation created based on your favorites",
+            })
+          }
+        >
+          Create Recommendation from your favorites
+          <Wand2 size={20} className="ml-4" />
+        </Link>
+      </div>
       <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
         <Suspense fallback={<SearchResultSkeleton publicationAmount={6} />}>
           {data?.favorites.map((favorite) => (
@@ -87,21 +113,6 @@ export default function Favorites() {
           ))}
         </Suspense>
       </div>
-      <Link
-        href="/recommendation/create/new-recommendation?onFavorites=true"
-        className={`${buttonVariants({
-          variant: "default",
-        })} fixed bottom-4 w-[370px] self-center shadow-md`}
-        onClick={() =>
-          toast({
-            title: "Recommendation created",
-            description: "Recommendation created based on your favorites",
-          })
-        }
-      >
-        Create Recommendation from your favorites
-        <Wand2 size={20} className="ml-4" />
-      </Link>
     </div>
   );
 }

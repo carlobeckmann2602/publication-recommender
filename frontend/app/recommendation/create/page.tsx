@@ -6,9 +6,10 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import useRecommendationsStore from "@/stores/recommendationsStore";
 import { PlusCircle, Trash2, Wand2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Searchbar } from "@/components/search/Searchbar";
+import { useSticky } from "@/hook/UseSticky";
 
 export default function RecommendationCreate() {
   const { publicationGroup, clearPublications } = useRecommendationsStore();
@@ -28,6 +29,8 @@ export default function RecommendationCreate() {
   useEffect(() => {
     setPublications(publicationGroup);
   }, [publicationGroup]);
+
+  const { ref, isSticky } = useSticky();
 
   if (publications?.length === 0) {
     return (
@@ -59,22 +62,50 @@ export default function RecommendationCreate() {
   }
 
   return (
-    <div className="flex flex-col pb-14">
+    <div className="flex flex-col">
       <Header
         title="Create Recommendation"
         subtitle="create your recommendation based on your selection"
       />
-      <div className="flex flex-row justify-between items-end gap-8 mt-4 mb-2">
-        <h2 className="text-lg font-medium w-3/4">
-          Your selection of publications your custom recommendation would be
-          based on:
-        </h2>
+      <div
+        className={`flex flex-row justify-between w-full sticky top-0 ${
+          isSticky &&
+          "-mx-4 p-4 rounded-b-md bg-white border z-[51] !w-auto shadow-md"
+        }`}
+        ref={ref}
+      >
         <DeleteButton
           onClick={onClearSelection}
           tooltipText="Delete selection"
           dialogTitle="Delete selection"
           dialogText="Do you really want to delete the selection of publication?"
         />
+        <Link
+          href="./create/new-recommendation"
+          className={buttonVariants({
+            variant: "default",
+          })}
+          onClick={() =>
+            toast({
+              title: "Recommendation created",
+              description: `Recommendation created based on your ${
+                publications?.length
+              } selected ${
+                publications?.length == 1 ? " publication" : " publications"
+              }`,
+            })
+          }
+        >
+          Create Recommendation with this {publications?.length}{" "}
+          {publications?.length == 1 ? " publication" : " publications"}
+          <Wand2 size={20} className="ml-4" />
+        </Link>
+      </div>
+      <div className="flex flex-row justify-between items-end gap-8 mt-4 mb-2">
+        <h2 className="text-lg font-medium">
+          Your selection of publications your custom recommendation would be
+          based on:
+        </h2>
       </div>
       <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
         {publications?.map((item) => {
@@ -87,26 +118,6 @@ export default function RecommendationCreate() {
           );
         })}
       </div>
-      <Link
-        href="./create/new-recommendation"
-        className={`${buttonVariants({
-          variant: "default",
-        })} fixed bottom-4 w-[400px] self-center shadow-md`}
-        onClick={() =>
-          toast({
-            title: "Recommendation created",
-            description: `Recommendation created based on your ${
-              publications?.length
-            } selected ${
-              publications?.length == 1 ? " publication" : " publications"
-            }`,
-          })
-        }
-      >
-        Create Recommendation with this {publications?.length}{" "}
-        {publications?.length == 1 ? " publication" : " publications"}
-        <Wand2 size={20} className="ml-4" />
-      </Link>
     </div>
   );
 }

@@ -16,6 +16,7 @@ import Link from "next/link";
 import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 import DeleteButton from "@/components/DeleteButton";
 import { useRouter } from "next/navigation";
+import { useSticky } from "@/hook/UseSticky";
 
 type SearchParams = {
   searchParams: {
@@ -29,6 +30,8 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
 
   const { toast } = useToast();
   const router = useRouter();
+
+  const { ref, isSticky } = useSticky();
 
   const [
     createRecommendation,
@@ -100,8 +103,14 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
           searchParams.onFavorites ? "favorites" : "publication selection"
         }`}
       />
-      <div className="flex justify-center grow items-center gap-4 flex-col w-full py-4">
-        <div className="flex flex-row justify-between w-full">
+      <div className="items-center gap-4 flex-col w-full">
+        <div
+          className={`flex flex-row justify-between w-full sticky top-0 ${
+            isSticky &&
+            "-mx-4 p-4 rounded-b-md bg-white border z-[51] !w-auto shadow-md"
+          }`}
+          ref={ref}
+        >
           <div className="flex flex-row gap-4">
             <Link
               href="/"
@@ -129,65 +138,67 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
             />
           )}
         </div>
-        <Suspense fallback={<SearchResultSkeleton publicationAmount={10} />}>
-          {searchParams.onFavorites
-            ? recommendationOnFavoritesData?.createNewRecommendation.publications.map(
-                (publication) => (
-                  <PublicationCard
-                    key={publication.id}
-                    id={publication.id}
-                    title={publication.title}
-                    link={publication.url}
-                    authors={publication.authors}
-                    date={
-                      publication.publicationDate
-                        ? new Date(publication.publicationDate)
-                        : undefined
-                    }
-                    doi={publication.doi}
-                    abstract={publication.abstract}
-                    documentType={DOCUMENT_TYPES.PAPER}
-                  />
+        <div className="py-4 gap-4 flex flex-col">
+          <Suspense fallback={<SearchResultSkeleton publicationAmount={10} />}>
+            {searchParams.onFavorites
+              ? recommendationOnFavoritesData?.createNewRecommendation.publications.map(
+                  (publication) => (
+                    <PublicationCard
+                      key={publication.id}
+                      id={publication.id}
+                      title={publication.title}
+                      link={publication.url}
+                      authors={publication.authors}
+                      date={
+                        publication.publicationDate
+                          ? new Date(publication.publicationDate)
+                          : undefined
+                      }
+                      doi={publication.doi}
+                      abstract={publication.abstract}
+                      documentType={DOCUMENT_TYPES.PAPER}
+                    />
+                  )
                 )
-              )
-            : recommendationData?.createNewRecommendation.publications.map(
-                (publication) => (
-                  <PublicationCard
-                    key={publication.id}
-                    id={publication.id}
-                    title={publication.title}
-                    link={publication.url}
-                    authors={publication.authors}
-                    date={
-                      publication.publicationDate
-                        ? new Date(publication.publicationDate)
-                        : undefined
-                    }
-                    doi={publication.doi}
-                    abstract={publication.abstract}
-                    documentType={DOCUMENT_TYPES.PAPER}
-                  />
-                )
-              )}
-          {createRecommendationError && (
-            <Alert variant="destructive" className="w-1/4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                {createRecommendationError.message}
-              </AlertDescription>
-            </Alert>
-          )}
-          {createRecommendationOnFavoritesError && (
-            <Alert variant="destructive" className="w-1/4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                {createRecommendationOnFavoritesError.message}
-              </AlertDescription>
-            </Alert>
-          )}
-        </Suspense>
+              : recommendationData?.createNewRecommendation.publications.map(
+                  (publication) => (
+                    <PublicationCard
+                      key={publication.id}
+                      id={publication.id}
+                      title={publication.title}
+                      link={publication.url}
+                      authors={publication.authors}
+                      date={
+                        publication.publicationDate
+                          ? new Date(publication.publicationDate)
+                          : undefined
+                      }
+                      doi={publication.doi}
+                      abstract={publication.abstract}
+                      documentType={DOCUMENT_TYPES.PAPER}
+                    />
+                  )
+                )}
+            {createRecommendationError && (
+              <Alert variant="destructive" className="w-1/4">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  {createRecommendationError.message}
+                </AlertDescription>
+              </Alert>
+            )}
+            {createRecommendationOnFavoritesError && (
+              <Alert variant="destructive" className="w-1/4">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  {createRecommendationOnFavoritesError.message}
+                </AlertDescription>
+              </Alert>
+            )}
+          </Suspense>
+        </div>
       </div>
     </>
   );

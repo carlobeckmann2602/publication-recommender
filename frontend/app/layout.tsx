@@ -21,13 +21,13 @@ export default function RootLayout(props: {
       <head></head>
       <body className={inter.className}>
         <Providers>
-          <div className="min-h-screen flex flex-row">
+          <div className="min-h-screen">
             <Sidebar className="" />
             <div
               id="content"
               className="flex-grow flex pr-5 md:pr-7 lg:pr-11 pl-[19.25rem] md:[19.75rem] lg:pl-[20.75rem] justify-center w-screen"
             >
-              <div className="max-w-7xl px-1 flex-grow overflow-auto">
+              <div className="w-full max-w-7xl px-1 min-h-screen">
                 {props.children}
               </div>
               <Toaster />
