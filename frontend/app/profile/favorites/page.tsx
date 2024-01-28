@@ -69,7 +69,7 @@ export default function Favorites() {
     <div className="flex flex-col">
       <Header title="Favorites" subtitle="your favourite publications" />
       <div
-        className={`flex flex-row justify-center w-full sticky top-0 ${
+        className={`flex flex-row justify-end w-full sticky top-0 ${
           isSticky &&
           "-mx-4 p-4 rounded-b-md bg-white border z-[51] !w-auto shadow-md"
         }`}

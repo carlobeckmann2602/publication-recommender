@@ -134,7 +134,7 @@ export default function LikeButton(props: Props) {
     if (session.status == "authenticated") {
       changeLike();
     } else {
-      router.push("/signup", { scroll: false });
+      router.push("/signup?origin=like", { scroll: false });
     }
   };
 

@@ -105,12 +105,20 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
       />
       <div className="items-center gap-4 flex-col w-full">
         <div
-          className={`flex flex-row justify-between w-full sticky top-0 ${
+          className={`flex flex-row ${
+            searchParams.onFavorites ? "justify-end" : "justify-between"
+          } w-full sticky top-0 ${
             isSticky &&
             "-mx-4 p-4 rounded-b-md bg-white border z-[51] !w-auto shadow-md"
           }`}
           ref={ref}
         >
+          {!searchParams.onFavorites && (
+            <DeleteButton
+              onClick={onClearSelection}
+              text="Clear your publication selection !"
+            />
+          )}
           <div className="flex flex-row gap-4">
             <Link
               href="/"
@@ -131,12 +139,6 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
               </Link>
             )}
           </div>
-          {!searchParams.onFavorites && (
-            <DeleteButton
-              onClick={onClearSelection}
-              text="Clear your publication selection !"
-            />
-          )}
         </div>
         <div className="py-4 gap-4 flex flex-col">
           <Suspense fallback={<SearchResultSkeleton publicationAmount={10} />}>

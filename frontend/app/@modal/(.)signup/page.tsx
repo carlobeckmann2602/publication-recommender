@@ -12,7 +12,7 @@ import {
 import ModalCloseButton from "@/components/ModalCloseButton";
 
 type Props = {
-  searchParams?: Record<"callbackUrl" | "error", string>;
+  searchParams?: Record<"callbackUrl" | "error" | "origin", string>;
 };
 
 export default function SignUpModal(props: Props) {
@@ -21,9 +21,15 @@ export default function SignUpModal(props: Props) {
       <Card className="shadow-lg relative overflow-auto max-h-[95vh]">
         <CardHeader>
           <ModalCloseButton />
-          <CardTitle className="text-center">Create Account</CardTitle>
+          <CardTitle className="text-center">
+            {props.searchParams?.origin === "like"
+              ? "Create acoount to save your likes"
+              : "Create Account"}
+          </CardTitle>
           <CardDescription className="text-center">
-            Please provide your details.
+            {props.searchParams?.origin === "like"
+              ? "You need an account to save your likes. Please provide your details."
+              : "Please provide your details."}
           </CardDescription>
         </CardHeader>
         <CardContent>

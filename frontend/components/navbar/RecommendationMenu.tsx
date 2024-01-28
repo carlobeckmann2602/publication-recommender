@@ -36,11 +36,11 @@ export default function RecommendationMenu() {
               <span className="transition-all duration-700 hidden">
                 Create Recommendation
               </span>
+              <Badge variant="secondary" className="absolute -top-2 -right-2">
+                {publicationAmount}
+              </Badge>
             </Link>
           </TooltipTrigger>
-          <Badge variant="secondary" className="absolute -top-2 -right-2">
-            {publicationAmount}
-          </Badge>
           <TooltipContent side="right" sideOffset={10}>
             Create Recommendation
           </TooltipContent>
