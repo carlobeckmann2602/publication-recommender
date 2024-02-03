@@ -70,7 +70,7 @@ export default function RecommendationCreate() {
       <div
         className={`flex flex-row justify-between w-full sticky top-0 ${
           isSticky &&
-          "-mx-4 p-4 rounded-b-md bg-white dark:bg-neutral-800 border z-[51] !w-auto shadow-md"
+          "-mx-4 p-4 rounded-b-md bg-white dark:bg-neutral-900 border z-[51] !w-auto shadow-md"
         }`}
         ref={ref}
       >

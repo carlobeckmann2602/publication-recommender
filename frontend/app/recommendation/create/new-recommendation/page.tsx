@@ -109,7 +109,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
             searchParams.onFavorites ? "justify-end" : "justify-between"
           } w-full sticky top-0 ${
             isSticky &&
-            "-mx-4 p-4 rounded-b-md bg-white dark:bg-neutral-800 border z-[51] !w-auto shadow-md"
+            "-mx-4 p-4 rounded-b-md bg-white dark:bg-neutral-900 border z-[51] !w-auto shadow-md"
           }`}
           ref={ref}
         >
@@ -184,7 +184,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
                   )
                 )}
             {createRecommendationError && (
-              <Alert variant="destructive" className="w-1/4">
+              <Alert variant="destructive" className="w-3/4 self-center">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
@@ -193,7 +193,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
               </Alert>
             )}
             {createRecommendationOnFavoritesError && (
-              <Alert variant="destructive" className="w-1/4">
+              <Alert variant="destructive" className="w-3/4 self-center">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
