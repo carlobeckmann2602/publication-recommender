@@ -27,7 +27,7 @@ export default function Sidebar({ className, props }: Props) {
 
   return (
     <aside
-      className={`fixed transition-all duration-700 top-0 z-50 backdrop-blur-sm flex flex-col gap-6 py-4 pl-4 pr-8 w-28 ${
+      className={`fixed transition-all duration-700 top-0 z-50 backdrop-blur-sm flex flex-col gap-6 py-4 px-6 w-28 ${
         !isCollapsed && "min-w-[18rem]"
       } h-screen shadow-md border rounded-e-md ${className}`}
     >

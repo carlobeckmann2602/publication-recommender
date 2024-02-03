@@ -8,6 +8,9 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarSeparator,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 
@@ -19,6 +22,7 @@ import { User } from "lucide-react";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export default function UserMenu() {
   const { isCollapsed } = useContext(SidebarContext);
@@ -36,8 +40,10 @@ export default function UserMenu() {
       .toUpperCase();
   }
 
+  const { setTheme } = useTheme();
+
   return (
-    <Menubar className="h-fit p-0 border-none bg-transparent">
+    <Menubar className="h-fit p-0 border-none bg-transparent justify-center">
       <MenubarMenu>
         <MenubarTrigger
           className={`flex flex-row gap-4 items-center justify-start h-16 w-full p-2 cursor-pointer hover:bg-muted hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2 ${
@@ -47,7 +53,7 @@ export default function UserMenu() {
             "bg-muted"
           }`}
         >
-          <Avatar className="h-14 w-14 aspect-square">
+          <Avatar className="h-12 w-12 aspect-square">
             <AvatarImage
               src={session ? session.user.image : ""}
               alt="profile image"
@@ -78,6 +84,20 @@ export default function UserMenu() {
               {/* <Link href="/profile/settings">
                 <MenubarItem className="cursor-pointer">Settings</MenubarItem>
               </Link> */}
+              <MenubarSub>
+                <MenubarSubTrigger>Theme</MenubarSubTrigger>
+                <MenubarSubContent>
+                  <MenubarItem onClick={() => setTheme("light")}>
+                    Light
+                  </MenubarItem>
+                  <MenubarItem onClick={() => setTheme("dark")}>
+                    Dark
+                  </MenubarItem>
+                  <MenubarItem onClick={() => setTheme("system")}>
+                    System
+                  </MenubarItem>
+                </MenubarSubContent>
+              </MenubarSub>
               <MenubarSeparator />
               <SignOut>
                 <Button
@@ -96,6 +116,21 @@ export default function UserMenu() {
               <Link href={"/signup"} scroll={false}>
                 <MenubarItem className="cursor-pointer">Sign up</MenubarItem>
               </Link>
+              <MenubarSeparator />
+              <MenubarSub>
+                <MenubarSubTrigger>Theme</MenubarSubTrigger>
+                <MenubarSubContent>
+                  <MenubarItem onClick={() => setTheme("light")}>
+                    Light
+                  </MenubarItem>
+                  <MenubarItem onClick={() => setTheme("dark")}>
+                    Dark
+                  </MenubarItem>
+                  <MenubarItem onClick={() => setTheme("system")}>
+                    System
+                  </MenubarItem>
+                </MenubarSubContent>
+              </MenubarSub>
             </>
           )}
         </MenubarContent>

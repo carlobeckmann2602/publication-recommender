@@ -69,9 +69,11 @@ export default function DeleteButton({
                 Cancel
               </Button>
             </DialogClose>
-            <Button className="w-1/2" type="submit" onClick={onClick}>
-              Delete
-            </Button>
+            <DialogClose className="w-1/2" asChild>
+              <Button type="submit" onClick={onClick}>
+                Delete
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

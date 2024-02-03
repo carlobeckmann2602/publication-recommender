@@ -9,9 +9,9 @@ import { SidebarContext } from "@/context/SidebarContext";
 import { usePathname } from "next/navigation";
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
-import sparkelClockIcon from "@/public/svg/sparkle-clock.svg";
-import sparkelClockIconFill from "@/public/svg/sparkle-clock-fill.svg";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import SvgSparkleHistory from "@/assets/svg/SvgSparkleHistory";
+import SvgSparkleHistoryFill from "@/assets/svg/SvgSparkleHistoryFill";
 
 const menuItems = [
   {
@@ -31,10 +31,8 @@ const menuItems = [
   {
     name: "Recommendation History",
     href: "/profile/recommendation",
-    icon: <Image src={sparkelClockIcon} alt="Recommendation History" />,
-    activeIcon: (
-      <Image src={sparkelClockIconFill} alt="Recommendation History" />
-    ),
+    icon: <SvgSparkleHistory />,
+    activeIcon: <SvgSparkleHistoryFill />,
     onlyLoggedIn: true,
   },
 ];

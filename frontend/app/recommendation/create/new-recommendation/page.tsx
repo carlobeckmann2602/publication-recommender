@@ -109,7 +109,7 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
             searchParams.onFavorites ? "justify-end" : "justify-between"
           } w-full sticky top-0 ${
             isSticky &&
-            "-mx-4 p-4 rounded-b-md bg-white border z-[51] !w-auto shadow-md"
+            "-mx-4 p-4 rounded-b-md bg-white dark:bg-neutral-800 border z-[51] !w-auto shadow-md"
           }`}
           ref={ref}
         >
@@ -117,6 +117,8 @@ export default function RecommendationResult({ searchParams }: SearchParams) {
             <DeleteButton
               onClick={onClearSelection}
               text="Clear your publication selection !"
+              dialogTitle="Clear selection"
+              dialogText="Do you really want to delete your selection of publication?"
             />
           )}
           <div className="flex flex-row gap-4">
