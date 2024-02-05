@@ -169,7 +169,7 @@ export function SignUpForm(props: Props) {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <div className="relative">
-                  <FormControl>
+                  <FormControl className="pr-12">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
@@ -202,7 +202,7 @@ export function SignUpForm(props: Props) {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <div className="relative">
-                  <FormControl>
+                  <FormControl className="pr-12">
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm Password"

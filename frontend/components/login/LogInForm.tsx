@@ -111,7 +111,7 @@ export function LogInForm(props: Props) {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <div className="relative">
-                  <FormControl>
+                  <FormControl className="pr-12">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
@@ -160,7 +160,7 @@ export function LogInForm(props: Props) {
           }}
         />
       </div> */}
-      <span className="text-center">
+      <span className="text-center pr-[3rem]">
         Dont have an account?{" "}
         <Link
           href={"/signup"}

@@ -141,7 +141,7 @@ export default function PasswordForm({ title }: Props) {
                   </button>
                 </div>
                 <div className="relative">
-                  <FormControl>
+                  <FormControl className="pr-12">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
@@ -180,7 +180,7 @@ export default function PasswordForm({ title }: Props) {
                   <FormItem>
                     <FormLabel>New Password</FormLabel>
                     <div className="relative">
-                      <FormControl>
+                      <FormControl className="pr-12">
                         <Input
                           type={showNewPassword ? "text" : "password"}
                           placeholder="Password"
@@ -213,7 +213,7 @@ export default function PasswordForm({ title }: Props) {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <div className="relative">
-                      <FormControl>
+                      <FormControl className="pr-12">
                         <Input
                           type={showConfirmPassword ? "text" : "password"}
                           placeholder="Confirm Password"
