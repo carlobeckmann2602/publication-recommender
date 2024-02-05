@@ -58,7 +58,7 @@ export default function UserMenu() {
               src={session ? session.user.image : ""}
               alt="profile image"
             />
-            <AvatarFallback className="bg-neutral-500 text-foreground text-lg">
+            <AvatarFallback className="bg-neutral-500 text-neutral-50 text-lg">
               {session ? initals : <User size={24} />}
             </AvatarFallback>
           </Avatar>
