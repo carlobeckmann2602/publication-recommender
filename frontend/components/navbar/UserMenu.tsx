@@ -20,7 +20,7 @@ import Link from "next/link";
 import SignOut from "@/components/login/SignOut";
 import { User } from "lucide-react";
 import { useContext } from "react";
-import { SidebarContext } from "@/context/SidebarContext";
+import { SidebarContext } from "@/contexts/SidebarContext";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 

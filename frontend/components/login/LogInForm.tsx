@@ -26,6 +26,7 @@ import TextSeparator from "@/components/TextSeparator";
 import { useRouter } from "next/navigation";
 import { allowBackgroundScrolling } from "@/lib/modal-controlls";
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import PasswordFormControl from "@/components/PasswordFormControl";
 
 const FormSchema = z.object({
   email: z
@@ -58,10 +59,6 @@ export function LogInForm(props: Props) {
     },
   });
 
-  const [showPassword, setPasswordVisibility] = useState(false);
-  const togglePasswordVisibility = () => {
-    setPasswordVisibility((prev) => !prev);
-  };
   const router = useRouter();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -110,29 +107,7 @@ export function LogInForm(props: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <div className="relative">
-                  <FormControl className="pr-12">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      autoComplete="on"
-                      {...field}
-                    />
-                  </FormControl>
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showPassword ? (
-                      <EyeOff
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    ) : (
-                      <Eye
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    )}
-                  </div>
-                </div>
+                <PasswordFormControl field={field} />
                 {/* <FormDescription className="text-right">
                   <Link href={"/"}>Forgotten Password?</Link>
                 </FormDescription> */}

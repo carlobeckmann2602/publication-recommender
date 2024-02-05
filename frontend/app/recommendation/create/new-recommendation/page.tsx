@@ -16,7 +16,7 @@ import Link from "next/link";
 import SearchResultSkeleton from "@/components/search/SearchResultSkeleton";
 import DeleteButton from "@/components/DeleteButton";
 import { useRouter } from "next/navigation";
-import { useSticky } from "@/hook/UseSticky";
+import { useSticky } from "@/hooks/UseSticky";
 
 type SearchParams = {
   searchParams: {

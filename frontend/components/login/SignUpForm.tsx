@@ -27,6 +27,7 @@ import { useMutation } from "@apollo/client";
 import { RegisterDocument } from "@/graphql/mutation/RegisterUser.generated";
 import { allowBackgroundScrolling } from "@/lib/modal-controlls";
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import PasswordFormControl from "@/components/PasswordFormControl";
 
 const FormSchema = z
   .object({
@@ -76,14 +77,6 @@ export function SignUpForm(props: Props) {
   });
 
   const router = useRouter();
-  const [showPassword, setPasswordVisibility] = useState(false);
-  const togglePasswordVisibility = () => {
-    setPasswordVisibility((prev) => !prev);
-  };
-  const [showConfirmPassword, setConfirmPasswordVisibility] = useState(false);
-  const toggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisibility((prev) => !prev);
-  };
 
   const [registerFunction, { loading, error }] = useMutation(RegisterDocument);
 
@@ -168,29 +161,7 @@ export function SignUpForm(props: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <div className="relative">
-                  <FormControl className="pr-12">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      autoComplete="on"
-                      {...field}
-                    />
-                  </FormControl>
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showPassword ? (
-                      <EyeOff
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    ) : (
-                      <Eye
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    )}
-                  </div>
-                </div>
+                <PasswordFormControl field={field} />
                 <FormMessage />
               </FormItem>
             )}
@@ -201,29 +172,7 @@ export function SignUpForm(props: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
-                <div className="relative">
-                  <FormControl className="pr-12">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm Password"
-                      autoComplete="on"
-                      {...field}
-                    />
-                  </FormControl>
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                    {showConfirmPassword ? (
-                      <EyeOff
-                        className="h-6 w-6"
-                        onClick={toggleConfirmPasswordVisibility}
-                      />
-                    ) : (
-                      <Eye
-                        className="h-6 w-6"
-                        onClick={toggleConfirmPasswordVisibility}
-                      />
-                    )}
-                  </div>
-                </div>
+                <PasswordFormControl field={field} />
                 <FormMessage />
               </FormItem>
             )}

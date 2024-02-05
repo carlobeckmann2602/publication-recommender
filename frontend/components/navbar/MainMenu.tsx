@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { buttonVariants } from "../ui/button";
 import { useContext } from "react";
-import { SidebarContext } from "@/context/SidebarContext";
+import { SidebarContext } from "@/contexts/SidebarContext";
 import { usePathname } from "next/navigation";
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";

@@ -6,7 +6,7 @@ import RecommendationMenu from "@/components/navbar/RecommendationMenu";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useContext } from "react";
-import { SidebarContext } from "@/context/SidebarContext";
+import { SidebarContext } from "@/contexts/SidebarContext";
 
 type Props = {
   className?: string;

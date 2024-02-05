@@ -9,7 +9,7 @@ import Link from "next/link";
 import { createRef, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Searchbar } from "@/components/search/Searchbar";
-import { useSticky } from "@/hook/UseSticky";
+import { useSticky } from "@/hooks/UseSticky";
 
 export default function RecommendationCreate() {
   const { publicationGroup, clearPublications } = useRecommendationsStore();

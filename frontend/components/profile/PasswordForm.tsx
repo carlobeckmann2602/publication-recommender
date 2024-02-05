@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 import {
   Form,
@@ -16,10 +16,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { useToast } from "../ui/use-toast";
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import PasswordFormControl from "@/components/PasswordFormControl";
 
 const FormSchema = z
   .object({
@@ -61,19 +61,6 @@ export default function PasswordForm({ title }: Props) {
   });
 
   const [errorMsg, setErrorMsg] = useState<string>();
-
-  const [showPassword, setPasswordVisibility] = useState(false);
-  const togglePasswordVisibility = () => {
-    if (edit) setPasswordVisibility((prev) => !prev);
-  };
-  const [showNewPassword, setNewPasswordVisibility] = useState(false);
-  const toggleNewPasswordVisibility = () => {
-    setNewPasswordVisibility((prev) => !prev);
-  };
-  const [showConfirmPassword, setConfirmPasswordVisibility] = useState(false);
-  const toggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisibility((prev) => !prev);
-  };
 
   const [edit, setEdit] = useState(false);
 
@@ -140,33 +127,7 @@ export default function PasswordForm({ title }: Props) {
                     {edit ? "cancel" : "edit"}
                   </button>
                 </div>
-                <div className="relative">
-                  <FormControl className="pr-12">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      autoComplete="on"
-                      {...field}
-                    />
-                  </FormControl>
-                  <div
-                    className={`absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 ${
-                      edit ? "cursor-pointer" : "cursor-not-allowed"
-                    }`}
-                  >
-                    {showPassword ? (
-                      <EyeOff
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    ) : (
-                      <Eye
-                        className="h-6 w-6"
-                        onClick={togglePasswordVisibility}
-                      />
-                    )}
-                  </div>
-                </div>
+                <PasswordFormControl field={field} enableVisibleToggle={edit} />
                 <FormMessage />
               </FormItem>
             )}
@@ -179,29 +140,7 @@ export default function PasswordForm({ title }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>New Password</FormLabel>
-                    <div className="relative">
-                      <FormControl className="pr-12">
-                        <Input
-                          type={showNewPassword ? "text" : "password"}
-                          placeholder="Password"
-                          autoComplete="on"
-                          {...field}
-                        />
-                      </FormControl>
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                        {showNewPassword ? (
-                          <EyeOff
-                            className="h-6 w-6"
-                            onClick={toggleNewPasswordVisibility}
-                          />
-                        ) : (
-                          <Eye
-                            className="h-6 w-6"
-                            onClick={toggleNewPasswordVisibility}
-                          />
-                        )}
-                      </div>
-                    </div>
+                    <PasswordFormControl field={field} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -212,29 +151,7 @@ export default function PasswordForm({ title }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
-                    <div className="relative">
-                      <FormControl className="pr-12">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirm Password"
-                          autoComplete="on"
-                          {...field}
-                        />
-                      </FormControl>
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
-                        {showConfirmPassword ? (
-                          <EyeOff
-                            className="h-6 w-6"
-                            onClick={toggleConfirmPasswordVisibility}
-                          />
-                        ) : (
-                          <Eye
-                            className="h-6 w-6"
-                            onClick={toggleConfirmPasswordVisibility}
-                          />
-                        )}
-                      </div>
-                    </div>
+                    <PasswordFormControl field={field} />
                     <FormMessage />
                   </FormItem>
                 )}

@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { DOCUMENT_TYPES } from "@/constants/enums";
 import { GetFavoritesDocument } from "@/graphql/queries/GetFavorites.generated";
-import { useSticky } from "@/hook/UseSticky";
+import { useSticky } from "@/hooks/UseSticky";
 import { useLazyQuery } from "@apollo/client";
 import { Heart, Wand2 } from "lucide-react";
 import { useSession } from "next-auth/react";

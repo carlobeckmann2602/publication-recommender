@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { SidebarContext } from "@/context/SidebarContext";
+import { SidebarContext } from "@/contexts/SidebarContext";
 
 export default function RecommendationMenu() {
   const { isCollapsed } = useContext(SidebarContext);

@@ -1,18 +1,26 @@
 # Next.js Frontend
 
+## Overview
+
+This backend is a [Next.js application](https://nextjs.org/docs). It is the users interface of the project.
+
 ## Technologies
+
+This is a concise list of technologies and concepts that are used. They are roughly sorted by their importance:
 
 - [Next.js](https://nextjs.org/docs)
     - [Typescript](https://www.typescriptlang.org/docs/)
-    - [Tailwind](https://tailwindcss.com/docs/installation)
-    - [shadcn/ui](https://tailwindcss.com/docs/installation)
-    - [Lucide Icons](https://lucide.dev)
+    - [Apollo Client](https://www.apollographql.com/docs/react/) ([with Next.js](https://github.com/apollographql/apollo-client-nextjs))
+      - [GraphQL](https://graphql.org)
     - [NextAuth.js](https://next-auth.js.org)
     - [Zustand](https://github.com/pmndrs/zustand)
-    - [Apollo Client](https://www.apollographql.com/docs/react/) ([with Next.js](https://github.com/apollographql/apollo-client-nextjs))
-        - [GraphQL](https://graphql.org)
+    - [Tailwind](https://tailwindcss.com/docs/installation)
+    - [Shadcn/ui](https://tailwindcss.com/docs/installation)
+    - [Lucide Icons](https://lucide.dev)
 
-## Getting started without Docker
+## Development Guide (as of 2024.02.05)
+
+### Getting started without Docker (Front-end only)
 
 Install all dependencies:
 
@@ -28,13 +36,77 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Build Frontend without Docker
+### Development Frontend with Docker
+
+Information on development building of the entire project is available in the top level README.md
+
+## Build Guide (as of 2024.02.05)
+
+### Build Frontend without Docker (Frontend only)
 
 ```bash
 npm run build
 ```
 
-## Using Apollo Client
+### Build Frontend with Docker
+
+Information on building of the entire project is available in the top level README.md
+
+## Project Structure
+
+An understanding of the basic Next.js concepts is required to fully understand the project structure.
+
+The entry point/home page is page.tsx in the app folder.
+
+The folders in the forntend are organized as follows:
+
+### Pages Folder
+
+All pages of the website are located in the "app" folder. The structure of the folders also corresponds to the website structure and the URL paths.
+
+### Components Folder
+
+Individual components which are used on different pages are located in the "components" folder.
+
+### GraphQL Folder
+
+All GraphQL queries and mutations are located in the "graphql" folder.
+
+### Stores Folder
+
+All state stores that are used in the frontend to hold data for the user are located in the "stores" folder.
+
+### Context Folder
+
+All React contexts that are used in the frontend are located in the "contexts" folder.
+
+### Hook Folder
+
+All React hooks that are used in the frontend are located in the "hooks" folder.
+
+### Assets Folder
+
+The "assets" folder contains all SVGs or other images used in the website.
+
+### Lib Folder
+
+The "lib" folder contains general functions that are used in several places and cannot be assigned to the other folders.
+
+### Constants Folder
+
+All constants used in the frontend are defined in files in the "constants" folder.
+
+### Public Folder
+
+Data and images that are to be embedded on the website must be in the public folder in order to be displayed on the website.
+
+### Middleware.ts
+
+The Middleware.ts file contains all paths that should only be accessible via [NextAuth.js](https://next-auth.js.org) as soon as the user is logged in.
+
+## GraphQL Information
+
+### Using Apollo Client
 
 Generate Queries/Mutation:
 
