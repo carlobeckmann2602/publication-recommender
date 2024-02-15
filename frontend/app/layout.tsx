@@ -25,7 +25,7 @@ export default function RootLayout(props: {
             <Sidebar className="" />
             <div
               id="content"
-              className="flex-grow flex pr-5 md:pr-7 lg:pr-11 pl-[19.25rem] md:[19.75rem] lg:pl-[20.75rem] justify-center w-screen"
+              className="flex-grow flex pr-5 md:pr-7 lg:pr-11 pl-[19.25rem] md:[19.75rem] lg:pl-[20.75rem] justify-center"
             >
               <div className="w-full max-w-7xl px-1 min-h-screen">
                 {props.children}
