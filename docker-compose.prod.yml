@@ -138,6 +138,8 @@ services:
     depends_on:
       - ai_backend
       - nest
+    profiles:
+      - with_scraping
     stdin_open: true
     tty: true
 
