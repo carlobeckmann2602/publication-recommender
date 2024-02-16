@@ -68,7 +68,7 @@ export default function RecommendationSlider({
         <CarouselContent className="">
           <Suspense
             fallback={
-              <CarouselItem className="basis-full xl:basis-1/2 2xl:basis-1/3 items-start">
+              <CarouselItem className="basis-full xl:basis-1/2 items-start">
                 <PublicationCardSkeleton />
               </CarouselItem>
             }
@@ -76,7 +76,7 @@ export default function RecommendationSlider({
             {publications.map((publication) => (
               <CarouselItem
                 key={publication.id}
-                className="basis-full xl:basis-1/2 2xl:basis-1/3 items-start"
+                className="basis-full xl:basis-1/2 items-start"
               >
                 <PublicationCard
                   key={publication.id}
