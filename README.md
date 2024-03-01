@@ -9,7 +9,7 @@ The Publications Recommender is a web application that enables the user to searc
 This is a concise list of technologies and concepts that are used. They are roughly sorted by their importance:
 
 - [Next.js](https://nextjs.org/docs)
-- [NestJS](ttps://docs.nestjs.com/)
+- [NestJS](https://docs.nestjs.com/)
 - [Celery](https://docs.celeryq.dev/en/stable/#)
 - [PyTorch](https://pytorch.org/)
 - [Scikit-Learn](https://scikit-learn.org/stable/)
