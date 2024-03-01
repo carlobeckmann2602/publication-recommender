@@ -47,13 +47,13 @@ docker compose -f docker-compose.prod.yml up
 #### Start with Scraper
 
 ```bash
-docker compose --profile with_scraping up
+docker compose -f docker-compose.prod.yml --profile with_scraping up
 ```
 
 #### Start with Monotoring (Adminer, Flower)
 
 ```bash
-docker compose --profile monitoring up
+docker compose -f docker-compose.prod.yml --profile monitoring up
 ```
 
 ## Further Information
