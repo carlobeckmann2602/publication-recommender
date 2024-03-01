@@ -20,6 +20,8 @@ This is a concise list of technologies and concepts that are used. They are roug
 
 ## Development Guide (as of 2024.02.05)
 
+Create .env file in the root of the project and frontend folder based on .env.example
+
 ### Getting started without Docker (Front-end only)
 
 Install all dependencies:
