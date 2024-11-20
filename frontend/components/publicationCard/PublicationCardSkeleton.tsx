@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   className?: string;
@@ -22,9 +22,7 @@ export default function PublicationCardSkeleton(props: Props) {
             <Skeleton className="h-12 w-full" />
           </CardTitle>
         </div>
-        <CardDescription>
-          <Skeleton className="h-4 w-4/5" />
-        </CardDescription>
+        <Skeleton className="h-4 w-4/5" />
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-4">
         <Skeleton className="h-32 w-full" />

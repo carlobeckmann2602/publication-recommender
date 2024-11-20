@@ -1,0 +1,39 @@
+query GetSearchResultsCoordinates(
+  $query: String!
+  $page: Int!
+  $amountPerPage: Int!
+) {
+  publications(
+    publicationsSearchDto: {
+      searchInput: $query
+      page: $page
+      amountPerPage: $amountPerPage
+    }
+  ) {
+     searchCoordinate,
+     matchingPublications {
+       id
+       title
+       source
+       doi
+       url
+       authors
+       publicationDate
+       abstract
+       isFavorite
+       coordinate
+     },
+     similarPublications {
+       id
+       title
+       source
+       doi
+       url
+       authors
+       publicationDate
+       abstract
+       isFavorite
+       coordinate
+     }
+  }
+}

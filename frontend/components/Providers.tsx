@@ -1,7 +1,6 @@
 "use client";
 import { SessionProvider } from "next-auth/react";
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
-import { SidebarProvider } from "@/contexts/SidebarContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -19,9 +18,7 @@ const Providers = ({ children }: Props) => {
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-          </SidebarProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
       </ApolloWrapper>
     </SessionProvider>

@@ -8,5 +8,6 @@ query GetFavorites {
     authors
     publicationDate
     abstract
+    coordinate
   }
 }

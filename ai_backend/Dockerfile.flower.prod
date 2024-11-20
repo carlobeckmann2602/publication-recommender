@@ -1,7 +1,7 @@
-FROM python:3.10
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+FROM python:3.10-slim
+RUN pip install torch --index-url https://download.pytorch.org/whl/cu118
 RUN pip install sentence-transformers~=2.2.2
-RUN pip install annoy~=1.17.3
+#RUN pip install annoy~=1.17.3
 WORKDIR /code
 RUN mkdir app/
 COPY ./app ./app
@@ -10,5 +10,5 @@ RUN pip install --root-user-action=ignore --no-cache-dir --upgrade -r /code/requ
 
 RUN useradd -ms /bin/bash -u 1000 non_root
 RUN chown -R non_root:non_root /code
-USER non_root
-CMD ["/bin/sh", "-c", "celery -A app.celery.celery_worker.celery flower --port=$AI_BACKEND_FLOWER_PORT --conf=app/celery/flowerconfig.py"]
+#USER non_root
+CMD ["/bin/sh", "-c", "celery -A app.celery.celery_worker.celery flower --port=$AI_BACKEND_FLOWER_PORT --conf=app/celery/flowerconfig.py --basic-auth=${FLOWER_AUTH_USER}:${FLOWER_AUTH_PASSWORD}"]

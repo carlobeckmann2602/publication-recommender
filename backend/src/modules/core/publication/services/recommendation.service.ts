@@ -1,22 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
-import { MatchGroup } from 'src/modules/cron/dto/match-group.dto';
 import { In, Repository } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { RecommendationCreateDto } from '../dto/recommendation-create.dto';
+import { Embedding } from '../entities/embedding.entity';
 import { Publication } from '../entities/publication.entity';
 import { Recommendation } from '../entities/recommendation.entity';
-import { AiBackendException } from '../exceptions/ai-backend.exception';
 import { NoFavoritesForRecommendationException } from '../exceptions/no-favorites-for-recommendation.exception';
 import { RecommendationException } from '../exceptions/recommendation.exception';
+import { PublicationService } from './publication.service';
 
 @Injectable()
 export class RecommendationService {
   constructor(
     private configService: ConfigService,
+    private publicationService: PublicationService,
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -26,6 +25,9 @@ export class RecommendationService {
 
     @InjectRepository(Publication)
     private publicationRepository: Repository<Publication>,
+
+    @InjectRepository(Embedding)
+    private embeddingRepository: Repository<Embedding>,
   ) {}
 
   private readonly logger = new Logger(RecommendationService.name);
@@ -33,7 +35,7 @@ export class RecommendationService {
   async all(user: User): Promise<Recommendation[]> {
     const userWithRecommendations = await this.userRepository.findOne({
       where: { id: user.id },
-      relations: { recommendations: { publications: true } },
+      relations: { recommendations: { publications: { embeddings: true } } },
       order: { recommendations: { createdAt: 'DESC' } },
     });
     return userWithRecommendations.recommendations;
@@ -63,76 +65,76 @@ export class RecommendationService {
   }
 
   async createRecommendationforUserFromFavorites(user: User) {
-    const userData = await this.userRepository.findOne({
+    const userWithFavorites = await this.userRepository.findOne({
       where: { id: user.id },
-      relations: { favorites: true, recommendations: { publications: true } },
-    });
-    if (userData.favorites.length === 0) {
-      throw new NoFavoritesForRecommendationException();
-    }
-    const group = userData.favorites.map((favorite) => favorite.publicationId);
-    const exclude = userData.recommendations
-      .flatMap((recommendation) => recommendation.publications)
-      .map((publication) => publication.id);
-    const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(group, exclude);
-    const publications = await this.publicationRepository.find({
-      where: {
-        id: In(recommendationPublicationIds),
+      relations: {
+        favorites: { publication: { embeddings: true } },
       },
     });
+    if (userWithFavorites.favorites.length === 0) {
+      throw new NoFavoritesForRecommendationException();
+    }
+
+    const vectorsFromFavorites = userWithFavorites.favorites
+      .map((favorite) => favorite.publication)
+      .map((publication) => publication.embeddings)
+      .flat()
+      .map((embedding) => JSON.parse(embedding.vector));
+    const vector = await this.getVectorAfterPCAFromAiBackend(vectorsFromFavorites);
+
+    const idsOfFavorites = userWithFavorites.favorites.map((favorite) => favorite.publicationId);
+
+    const nearestNeighbors = await this.publicationService.getPublicationsForVectors([vector], 10, idsOfFavorites);
+    const publications = nearestNeighbors.map((nearestNeighbor) => nearestNeighbor.publication);
+
     return await this.recommendationRepository.save({
       userId: user.id,
-      publications: publications,
+      publications,
     });
   }
 
   async createRecommendationforUser(dto: RecommendationCreateDto, user: User) {
-    const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(dto.group, dto.exlude, dto.amount);
-    const publications = await this.publicationRepository.find({
-      where: {
-        id: In(recommendationPublicationIds),
-      },
+    const embeddings = await this.embeddingRepository.find({
+      where: { publicationId: In(dto.group) },
     });
+    const vectorsFromFavorites = embeddings.map((embedding) => JSON.parse(embedding.vector));
+
+    const vector = await this.getVectorAfterPCAFromAiBackend(vectorsFromFavorites);
+
+    const recommendation = await this.publicationService.getPublicationsForVectors([vector], dto.amount, dto.exlude);
+
+    const publications = recommendation.map((recommendation) => recommendation.publication);
     return await this.recommendationRepository.save({
       user,
-      publications: publications,
+      publications,
     });
   }
 
   async createRecommendationForGuest(dto: RecommendationCreateDto) {
-    const recommendationPublicationIds = await this.getRecommendationsFromAiBackend(dto.group, dto.exlude, dto.amount);
-    const publications = await this.publicationRepository.find({ where: { id: In(recommendationPublicationIds) } });
+    const publications = await this.publicationRepository.find({
+      where: { id: In(dto.group) },
+      relations: { embeddings: true },
+    });
+    const vectors = publications
+      .map((publication) => publication.embeddings)
+      .flat()
+      .map((embedding) => JSON.parse(embedding.vector));
+
+    const vector = await this.getVectorAfterPCAFromAiBackend(vectors);
+    const nearestNeighbors = await this.publicationService.getPublicationsForVectors([vector], dto.amount, dto.exlude);
+    const recommendedPublications = nearestNeighbors.map((nearestNeighbor) => nearestNeighbor.publication);
     const recommendation = new Recommendation();
-    recommendation.publications = publications;
+    recommendation.publications = recommendedPublications;
     recommendation.createdAt = new Date();
+
     return recommendation;
   }
 
-  async getRecommendationsFromAiBackend(
-    group: string[],
-    exclude?: string[] | null,
-    amount?: number | null,
-  ): Promise<string[]> {
-    const groupParams = group.map((publicationId) => ['group', publicationId]) ?? [];
-    const excludeParams = exclude?.map((publicationId) => ['excluded_ids', publicationId]) ?? [];
-    const params = new URLSearchParams(groupParams.concat(excludeParams));
-    let amountOrDefault = amount ?? 10;
-    params.set('amount', amountOrDefault.toString());
-
-    const baseRecommendationUrl = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/match_group`;
-    const url = `${baseRecommendationUrl}?${params.toString()}`;
-    try {
-      const data = await (await fetch(url)).json();
-      const matchGroup = plainToInstance(MatchGroup, data);
-      const errors = await validate(matchGroup);
-
-      if (errors.length !== 0) {
-        throw new AiBackendException();
-      }
-
-      return matchGroup.matches.map((match) => match.id);
-    } catch (e) {
-      throw new AiBackendException(`error when fetching ${url}`);
-    }
+  async getVectorAfterPCAFromAiBackend(vectors: number[][]): Promise<number[]> {
+    const url = `${this.configService.get('PROJECT_AI_BACKEND_URL')}/pca/`;
+    const body = JSON.stringify(vectors);
+    const headers = { 'Content-Type': 'application/json' };
+    const result = await (await fetch(url, { method: 'POST', body, headers })).json();
+    return result;
   }
 }

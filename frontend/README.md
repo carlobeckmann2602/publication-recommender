@@ -2,25 +2,25 @@
 
 ## Overview
 
-This backend is a [Next.js application](https://nextjs.org/docs). It is the users interface of the project.
+This frontend is a [Next.js application](https://nextjs.org/docs). It is the users interface of the project.
 
 ## Technologies
 
 This is a concise list of technologies and concepts that are used. They are roughly sorted by their importance:
 
-- [Next.js](https://nextjs.org/docs)
-    - [Typescript](https://www.typescriptlang.org/docs/)
-    - [Apollo Client](https://www.apollographql.com/docs/react/) ([with Next.js](https://github.com/apollographql/apollo-client-nextjs))
-      - [GraphQL](https://graphql.org)
-    - [NextAuth.js](https://next-auth.js.org)
-    - [Zustand](https://github.com/pmndrs/zustand)
-    - [Tailwind](https://tailwindcss.com/docs/installation)
-    - [Shadcn/ui](https://tailwindcss.com/docs/installation)
-    - [Lucide Icons](https://lucide.dev)
+- [Next.js](https://nextjs.org/docs): React-based web framework that provides the underlying architecture for the frontend.
+- [NextAuth.js](https://next-auth.js.org): An extension for [Next.js](https://nextjs.org/docs), used for user management, authentication and authorisation.
+- [TypeScript](https://www.typescriptlang.org/docs/): Typed programming language (superset of JavaScript) used to implement the frontend
+- [Apollo Client](https://www.apollographql.com/docs/react/) ([with Next.js](https://github.com/apollographql/apollo-client-nextjs)): State management library which is used to communicate with the backend-API via [GraphQL](https://graphql.org).
+  - [GraphQL](https://graphql.org): Query Language used with [Apollo Client](https://www.apollographql.com/docs/react/) to fetch data from the backend and execute CRUD-operations via queries & mutations.
+- [Zustand](https://github.com/pmndrs/zustand): Lightweight state management for caching data in the frontend (as opposed to e.g. [Redux](https://redux.js.org/))
+- [Tailwind](https://tailwindcss.com/docs/installation): CSS framework used to style HMTL & react elements throughout the frontend
+- [Shadcn/ui](https://ui.shadcn.com/): Component library for react. The library is based on [radix UI](https://www.radix-ui.com/), which therefore can be used aswell.
+- [Lucide Icons](https://lucide.dev): Icon library for embedding symbols and icons.
 
-## Development Guide (as of 2024.02.05)
+## Development Guide (as of 01.09.2024)
 
-Create .env file in the root of the project and frontend folder based on .env.example
+Create an .env file in the root of the project and frontend folder based on .env.example.
 
 ### Getting started without Docker (Front-end only)
 
@@ -36,13 +36,13 @@ Run development server:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Note that Next.js supports hot-reload. This means that any changes made to the code will automatically trigger a re-render and be displayed immediately. Note that both the browser and Next.js use caching mechanisms: Therefore, some changes may require an explicit reload of the page or clearing the cache (based on the `/.next` folder).
 
 ### Development Frontend with Docker
 
-Information on development building of the entire project is available in the top level README.md
+Information on development building of the entire project is available in the top level README.md.
 
-## Build Guide (as of 2024.02.05)
+## Build Guide (as of 01.09.2024)
 
 ### Build Frontend without Docker (Frontend only)
 
@@ -52,23 +52,21 @@ npm run build
 
 ### Build Frontend with Docker
 
-Information on building of the entire project is available in the top level README.md
+Information on building of the entire project is available in the top level README.md.
 
 ## Project Structure
 
 An understanding of the basic Next.js concepts is required to fully understand the project structure.
 
-The entry point/home page is page.tsx in the app folder.
-
-The folders in the forntend are organized as follows:
+The entry point (homepage) is represented by the page.tsx in the app folder. The folders in the frontend are organized as follows:
 
 ### Pages Folder
 
-All pages of the website are located in the "app" folder. The structure of the folders also corresponds to the website structure and the URL paths.
+All pages of the website are located in the "app" folder. The structure of the folders also corresponds to the website structure and the URL paths (file-based routing).
 
 ### Components Folder
 
-Individual components which are used on different pages are located in the "components" folder.
+Individual components used on different pages are located in the "components" folder. The sub-folder "components/ui" contains all the installed [Shadcn/ui](https://ui.shadcn.com/) components in auto-generated files. Therefore, these files should be modified with care. Newly installed [Shadcn/ui](https://ui.shadcn.com/) components (see the installation instructions in the documentation for each [Shadcn/ui](https://ui.shadcn.com/) component) are automatically added to this subdirectory.
 
 ### GraphQL Folder
 
@@ -124,23 +122,22 @@ Use Apollo Client on Server-side:
 ```typescript
 import { getClient } from "@/lib/client";
 
-
 export default async function Example() {
-	//GraphQL Query
-	const response = await getClient().query({
-      query: QueryDocument,
-      variables: {
-        key: value
-      },
-    });
+  //GraphQL Query
+  const response = await getClient().query({
+    query: QueryDocument,
+    variables: {
+      key: value,
+    },
+  });
 
-	//GraphQL Mutation
-	const response = await getClient().mutation({
-      query: MutationDocument,
-      variables: {
-        key: value
-      },
-    });
+  //GraphQL Mutation
+  const response = await getClient().mutation({
+    query: MutationDocument,
+    variables: {
+      key: value,
+    },
+  });
 }
 ```
 
@@ -151,33 +148,28 @@ import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 import { useMutation } from "@apollo/client";
 import { useLazyQuery } from "@apollo/client";
 
-
 export default async function Example() {
-	//GraphQL Query
-	const { data } = useSuspenseQuery(QueryDocument, {
+  //GraphQL Query
+  const { data } = useSuspenseQuery(QueryDocument, {
     variables: { key: value },
   });
 
-	//GraphQL Query
-	const [lazyQuery, { data }] = useLazyQuery(QueryDocument, 
-		{
-	    context: {
-	      headers: {
-	        Authorization: `Bearer ${token}`,
-	      },
-	    },
-	  });
+  //GraphQL Query
+  const [lazyQuery, { data }] = useLazyQuery(QueryDocument, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
 
-	//GraphQL Mutation
-	const [mutation, { error: mutationError }] = useMutation(
-    MutationDocument,
-    {
-      context: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    }
-  );
+  //GraphQL Mutation
+  const [mutation, { error: mutationError }] = useMutation(MutationDocument, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
 }
 ```

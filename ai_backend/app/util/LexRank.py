@@ -35,7 +35,7 @@ class FastLexRankSummarizer:
         embeddings = self.model.encode(corpus, show_progress_bar=True)
         return embeddings
 
-    def get_lexrank_scores(self, corpus: list[str]) -> (np.ndarray, np.ndarray):
+    def get_lexrank_scores(self, corpus: list[str]) -> tuple[np.ndarray, np.ndarray]:
         """
         Calculate the LexRank score for each sentence
         :return: LexRank scores
@@ -61,7 +61,7 @@ class FastLexRankSummarizer:
         top_sentences = np.argsort(lexrank_scores)[::-1][:n]
         return top_sentences
 
-    def summarize(self, corpus: list[str], n: int = 3) -> (list[str], list[float]):
+    def summarize(self, corpus: list[str], n: int = 3) -> tuple[list[str], list[float]]:
         """
         Calculate the LexRank score for each sentence in the corpus and return the top sentences
         :param n: number of sentences to return

@@ -1,42 +1,18 @@
-import time
-
-import celery
-import numpy as np
 import asyncio
 from asgiref.sync import sync_to_async
-from celery.result import AsyncResult
-from fastapi import FastAPI, HTTPException, UploadFile, Query
+from fastapi import FastAPI, HTTPException, UploadFile
 from contextlib import asynccontextmanager
-from fastapi.responses import FileResponse
-from typing import List, Annotated
+from typing import List, Dict
 from .util.misc import create_file_structure
 from . import celery as tasks
 import os
 import aiofiles
-import random
-
-STANDARD_MODEL = "current_model.zip"
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Setup file structure
-    create_file_structure(app.model_path, app.upload_path, app.archive_path)
-    # Setup initial model and build if no model is found
-    initial_model = os.environ["INITIAL_MODEL"]
-    if initial_model != "":
-        print(f"Using the API with {initial_model} as the initial model")
-        app.current_model = f"{app.archive_path}/{initial_model}"
-        if os.path.exists(app.current_model):
-            app.last_changed = os.path.getmtime(app.current_model)
-        else:
-            app.last_changed = 0
-            tasks.build_annoy.apply_async(args=[])
-    else:
-        print("Using the API without an initial model")
-        app.current_model = f"{app.archive_path}/{STANDARD_MODEL}"
-        app.last_changed = 0
-        tasks.build_annoy.apply_async(args=[])
+    create_file_structure(app.upload_path)
     yield
 
 
@@ -44,15 +20,12 @@ rec_api = FastAPI(
     title="HSD Publication Recommendation Engine",
     description="This is a beautiful description",
     version="0.2.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 # Setup api parameters
 rec_api.data_path = os.environ["DATA_PATH"]
 rec_api.generated_data_path = f"{rec_api.data_path}/generated_data"
-rec_api.model_path = f"{rec_api.generated_data_path}/models"
 rec_api.upload_path = f"{rec_api.generated_data_path}/upload"
-rec_api.archive_path = f"{rec_api.generated_data_path}/archive"
-rec_api.current_model = ""
 
 
 def task_to_async(task, queue: str = tasks.task_default_queue):
@@ -61,134 +34,18 @@ def task_to_async(task, queue: str = tasks.task_default_queue):
     async def wrapper(*args, **kwargs):
         delay = 0.1
         async_result = await sync_to_async(task.apply_async, thread_sensitive=True)(
-            args=args,
-            kwargs=kwargs,
-            queue=queue
+            args=args, kwargs=kwargs, queue=queue
         )
         while not async_result.ready():
             if delay >= task_timeout:
-                raise HTTPException(status_code=404, detail=fr"{task.name} timed out in wait.")
+                raise HTTPException(
+                    status_code=404, detail=rf"{task.name} timed out in wait."
+                )
             await asyncio.sleep(delay)
             delay = min(delay * 1.5, 2)  # exponential backoff, max 2 seconds
         return async_result.get(timeout=task_timeout)
+
     return wrapper
-
-
-@rec_api.get("/build_annoy/")
-def build_annoy():
-    """
-    Forces to build a new annoy index
-    """
-    tasks.build_annoy.apply_async(args=[])
-    return {"started": True}
-
-
-@rec_api.get("/random/")
-async def get_random_id(amount=5):
-    result = await task_to_async(tasks.get_random_id)(amount)
-    return {"id": result}
-
-
-@rec_api.get("/last_changed/")
-def get_model_modification_date():
-    """
-    Returns the float value (UNIX time) of the last time the current recommender engine was changed.
-
-    **return**: The UNIX time value with pattern: {last_changed: float}
-    """
-    if os.path.exists(rec_api.current_model):
-        # TODO: Decide if read should stay or rec_api.last_changed
-        return {"last_changed": os.path.getmtime(rec_api.current_model)}
-    else:
-        raise HTTPException(status_code=404, detail=fr"No models archive found for {rec_api.current_model}")
-
-
-@rec_api.post("/update_model/")
-async def update_model(file: UploadFile):
-    """
-    Replaces the current recommendation engine.
-    - **file**: The new recommendation engine as a zip archive.
-    """
-    await read_file_in_chunks(file, as_file=STANDARD_MODEL,
-                              delete_buffer=False, return_raw=True,
-                              destination=rec_api.archive_path)
-    rec_api.current_model = f"{rec_api.archive_path}/{STANDARD_MODEL}"
-    rec_api.last_changed = os.path.getmtime(rec_api.current_model)
-    tasks.update_recommender.apply_async(
-        args=[rec_api.last_changed],
-        queue='ml_broadcast'
-    )
-
-
-@rec_api.get("/model.zip/")
-def get_model_data():
-    """
-    Returns the current model as a zip archive.
-
-    **return**: The recommendation engine as a zip archive.
-    """
-    if os.path.exists(rec_api.current_model):
-        return FileResponse(rec_api.current_model)
-    else:
-        raise HTTPException(status_code=404, detail=fr"No models archive found for {rec_api.current_model}")
-
-
-@rec_api.get("/match_id/{publication_id}/")
-async def get_recommendation(publication_id: str, amount: int = 5,
-                             excluded_ids: Annotated[List[str], Query()] = []):
-    """
-    Runs the recommendation engine for a publication ID.
-    - **publication_id**: The input publication
-    - **amount**: The amount of matches to be included
-    - **excluded_ids**: A list of ids which should not appear as valid recommendations
-
-    **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
-    """
-
-    print(f"[match_id] {publication_id} - > {type(publication_id)}")
-    try:
-        result = await task_to_async(tasks.recommend_by_publication)(publication_id, amount, excluded_ids)
-        return result
-    except tasks.errors.MissingPublication as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
-
-@rec_api.get("/match_token/{token}/")
-async def get_recommendation(token: str, amount: int = 5,
-                             excluded_ids: Annotated[List[str], Query()] = []):
-    """
-    Runs the recommendation engine for a token.
-    - **token**: The input token. For example a sentence
-    - **amount**: The amount of matches to be included
-    - **excluded_ids**: A list of ids which should not appear as valid recommendations
-
-    **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
-    """
-
-    print(f"[match_token] {token} - > {type(token)}")
-    result = await task_to_async(tasks.recommend_by_token)(token, amount, excluded_ids)
-    return result
-
-
-@rec_api.get("/match_group/")
-async def get_recommendation(group: Annotated[List[str], Query()] = [],
-                             amount: int = 5,
-                             excluded_ids: Annotated[List[str], Query()] = []):
-    """
-    Runs the recommendation engine for a list of publication IDs as a group.
-    This can be used to recommend based of a user library for example.
-    - **group**: A list of publication IDs
-    - **amount**: The amount of matches to be included
-    - **excluded_ids**: A list of ids which should not appear as valid recommendations
-
-    **return**: The found matches plus additional information like the used tokens, the distances and anny indexes
-    """
-    if group is None:
-        return {}
-
-    print(f"[match_group] {group} - > {type(group)}")
-    result = await task_to_async(tasks.recommend_by_group)(group, amount, excluded_ids)
-    return result
 
 
 @rec_api.post("/summarize/")
@@ -204,7 +61,9 @@ async def summarize(file: UploadFile, amount=5, tokenize: bool | None = None):
     **return**: The summarization with pattern: {*n*: {token: str, embedding: [float]} *for n in amount*}
     """
     try:
-        file_content = await read_file_in_chunks(file=file, as_file=file.filename, delete_buffer=True)
+        file_content = await read_file_in_chunks(
+            file=file, as_file=file.filename, delete_buffer=True
+        )
         return await summarize_text(file_content, amount, tokenize)
     except Exception as e:
         print(e)
@@ -232,21 +91,109 @@ async def encode_sentence(sentence: str):
     """
     Converts a given string into an embedding/vector generated by the sentence transformer
     - **sentence**: The given sentence to be vectorized
-    
+
     **return**: The generated vector
     """
     result = await task_to_async(tasks.encode_sentence)(sentence)
     return result
 
 
-async def read_file_in_chunks(file: UploadFile, as_file: str,
-                              delete_buffer=True, return_raw=False,
-                              destination=rec_api.upload_path) -> str | bytes:
+@rec_api.post("/pca/")
+async def encode_sentence(
+    embeddings: List[List[float]] = [],
+    component_amount: int = 3,
+):
+    """
+    Runs principal component analysis for all given embeddings.
+    It returns an embedding created from all used components times a random gaussian
+    - **embeddings**: The embeddings/vectors for PCA
+    - **component_amount**: The amount of PCs used for the vector generation
+
+    **return**: The generated vector
+    """
+    if embeddings is None:
+        return {}
+
+    result = await task_to_async(tasks.run_pca)(embeddings, component_amount)
+    return result
+
+
+@rec_api.get("/build_tsne/")
+async def build_tsne(
+    amount: int = None, create_model: bool = False, latent_weight: float = 1
+):
+    """
+    Forces to build new three dimensional coordinates
+    - **amount**: Amount of publication from the backend used as basis for t-SNE
+    - **create_model**: If set True also an VAE model will be trained based on the data
+    - **latent_weight**: The weight the Latent Loss in the VAE model is wieghted
+    """
+    tasks.build_tsne.apply_async(args=[amount, create_model, latent_weight])
+    return {"started": True}
+
+
+@rec_api.post("/generate_coordinate/")
+async def generate_coordinate(embedding: List[float] = []):
+    """
+    Runs variational autoencoder encode function for given embedding.
+    It returns an 3D coordinate created from embedding
+    - **embedding**: The embedding/vector of one publication (perform pca before on sentence embeddings)
+
+    **return**: The generated coordinate
+    """
+    if embedding is None:
+        return {}
+
+    result = await task_to_async(tasks.generate_coordinate)(embedding)
+    return result
+
+
+@rec_api.post("/svm/")
+async def run_svm(
+    positive_embeddings: List[Dict[str, List[float] | str]],
+    negative_embeddings: List[Dict[str, List[float] | str]],
+    test_embeddings: List[Dict[str, List[float] | str]],
+    amount: int = 5,
+):
+    """
+    Trains and runs a support vector machine. The negative and positive embeddings are used for training.
+    Then the test embeddings are used to run the SVM and <amount> embeddings are returned.
+    - **positive_embeddings**: The embeddings/vectors used as a positive entry for the SVM
+    - **negative_embeddings**: The embeddings/vectors used as a negative entry for the SVM
+    - **test_embeddings**: The embeddings/vectors used as an input for the trained SVM
+    - **amount**: The amount of embeddings/vectors returned.
+
+    **return**: The top <amount> embeddings are returned ins desc order
+    """
+    if (
+        positive_embeddings is None
+        or negative_embeddings is None
+        or test_embeddings is None
+    ):
+        return {}
+
+    print(len(positive_embeddings))
+    print(len(negative_embeddings))
+    print(len(test_embeddings))
+
+    result = await task_to_async(tasks.run_svm)(
+        positive_embeddings, negative_embeddings, test_embeddings, amount
+    )
+    return result
+
+
+async def read_file_in_chunks(
+    file: UploadFile,
+    as_file: str,
+    delete_buffer=True,
+    return_raw=False,
+    destination=rec_api.upload_path,
+) -> str | bytes:
     if not os.path.exists(destination):
         os.makedirs(destination)
     try:
-        async with aiofiles.open(destination + "/" + as_file, 'wb') as f:
-            all_content = b''
+        async with aiofiles.open(destination + "/" + as_file, "wb") as f:
+            all_content = b""
             while contents := await file.read(1024 * 1024):
                 await f.write(contents)
                 all_content += contents

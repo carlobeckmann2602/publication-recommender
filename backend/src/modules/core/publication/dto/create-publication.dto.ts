@@ -2,7 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsArray, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { SourceVo } from '../vo/source.vo';
-import { DescriptorDto } from './descriptor.dto';
+import { AuthorCreateDto } from './author-create.dto';
+import { EmbeddingCreateDto } from './embedding-create.dto';
 
 @InputType()
 export class CreatePublicationDto {
@@ -41,19 +42,17 @@ export class CreatePublicationDto {
   @IsString()
   abstract?: string;
 
-  @Field(() => [String], { nullable: true })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  authors?: string[];
+  @Field(() => [AuthorCreateDto], { nullable: true })
+  @ValidateNested()
+  authorsCreateDtos?: AuthorCreateDto[];
 
   @Field({ nullable: true })
   @IsOptional()
   @IsDate()
   date?: Date;
 
-  @Field(() => DescriptorDto)
+  @Field(() => [EmbeddingCreateDto])
   @ValidateNested()
-  @Type(() => DescriptorDto)
-  descriptor: DescriptorDto;
+  @Type(() => EmbeddingCreateDto)
+  embeddingsCreateDtos: EmbeddingCreateDto[];
 }

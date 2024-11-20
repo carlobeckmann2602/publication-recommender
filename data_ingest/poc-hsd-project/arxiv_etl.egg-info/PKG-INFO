@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: arxiv-etl
+Version: 0.0.0
+Requires-Dist: dagster
+Requires-Dist: dagster-cloud
+Requires-Dist: dagster-azure
+Requires-Dist: dagster-gcp
+Requires-Dist: dagster-dask
+Requires-Dist: dask[complete]
+Requires-Dist: boto3
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: pyarrow
+Requires-Dist: pypdf
+Provides-Extra: dev
+Requires-Dist: dagster-webserver; extra == "dev"
+Requires-Dist: pytest; extra == "dev"

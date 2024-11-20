@@ -1,0 +1,5 @@
+mutation UpdatePublicationGroup($id: String!, $name: String, $color: String) {
+  updatePublicationGroup(data: { id: $id, name: $name, color: $color }) {
+    success
+  }
+}

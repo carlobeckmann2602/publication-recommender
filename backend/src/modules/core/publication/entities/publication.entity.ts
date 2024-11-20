@@ -1,18 +1,20 @@
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
   Entity,
   Index,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { DescriptorDto } from '../dto/descriptor.dto';
-import { DescriptorTransformer } from '../transformers/descriptor.transformer';
 import { SourceVo } from '../vo/source.vo';
+import { Embedding } from './embedding.entity';
+import { PublicationGroup } from './publicationgroup.entity';
 import { Recommendation } from './recommendation.entity';
+import { Author } from './author.entity';
 
 @Entity('publications')
 @Unique('ex_id_source', ['exId', 'source'])
@@ -34,10 +36,12 @@ export class Publication {
 
   @Column()
   @Index('idx_title')
+  @Index('idx_gin_title', { synchronize: false })
   @Expose()
   title: string;
 
   @Column('varchar', { array: true, default: [] })
+  @Index('idx_doi')
   @Expose()
   doi: string[] = [];
 
@@ -54,22 +58,25 @@ export class Publication {
   @Expose()
   abstract: string | null;
 
-  @Column('varchar', { array: true, default: [] })
-  @Index('idx_gin_authors', { synchronize: false })
-  @Expose()
-  authors: string[] = [];
+  @OneToMany(() => Author, (author) => author.publication, { cascade: true })
+  authors: Author[];
 
   @Column({ nullable: true, type: Date })
   @Expose()
   date: Date;
 
-  @Column({ type: 'jsonb', transformer: new DescriptorTransformer() })
+  @Column('float', { nullable: true, array: true, default: [] })
   @Expose()
-  @Type(() => DescriptorDto)
-  descriptor: DescriptorDto;
+  coordinate: number[] | null;
 
   @ManyToMany(() => Recommendation, (recommendation) => recommendation.publications)
   recommendations: Recommendation[];
+
+  @ManyToMany(() => PublicationGroup, (publicationgroup) => publicationgroup.publications)
+  publicationgroups: PublicationGroup[];
+
+  @OneToMany(() => Embedding, (embedding) => embedding.publication, { cascade: true })
+  embeddings: Embedding[];
 
   @Exclude()
   @CreateDateColumn({ name: 'created_at' })

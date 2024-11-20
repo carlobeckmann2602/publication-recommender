@@ -1,15 +1,15 @@
 "use client";
 
 import { ApolloLink, HttpLink } from "@apollo/client";
-import {
-  NextSSRApolloClient,
-  ApolloNextAppProvider,
-  NextSSRInMemoryCache,
-  SSRMultipartLink,
-} from "@apollo/experimental-nextjs-app-support/ssr";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { setVerbosity } from "ts-invariant";
 import { GRAPHQL_URL } from "@/constants/urls";
+import {
+  ApolloClient,
+  ApolloNextAppProvider,
+  InMemoryCache,
+  SSRMultipartLink,
+} from "@apollo/experimental-nextjs-app-support";
 
 if (process.env.NODE_ENV === "development") {
   setVerbosity("debug");
@@ -22,8 +22,8 @@ function makeClient() {
     uri: `${GRAPHQL_URL}`,
   });
 
-  return new NextSSRApolloClient({
-    cache: new NextSSRInMemoryCache(),
+  return new ApolloClient({
+    cache: new InMemoryCache(),
     link:
       typeof window === "undefined"
         ? ApolloLink.from([

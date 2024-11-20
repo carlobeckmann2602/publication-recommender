@@ -6,11 +6,11 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "../ui/carousel";
+} from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Suspense, useEffect, useState } from "react";
 import { DOCUMENT_TYPES } from "@/constants/enums";
-import PublicationCardSkeleton from "../publicationCard/PublicationCardSkeleton";
+import PublicationCardSkeleton from "@/components/publicationCard/PublicationCardSkeleton";
 
 type Props = {
   title: string;

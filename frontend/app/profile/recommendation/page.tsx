@@ -15,11 +15,15 @@ import { useLazyQuery } from "@apollo/client";
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DOCUMENT_TYPES } from "@/constants/enums";
+import CreateGroupModal from "@/components/groups/CreateGroupModal";
 
 export default function Recommendation() {
   const session = useSession();
+  const [createModalPublications, setCreateModalPublications] = useState<
+    string[]
+  >([]);
 
   const [getRecommendation, { data }] = useLazyQuery(
     GetRecommendationsDocument,
@@ -42,6 +46,16 @@ export default function Recommendation() {
 
     loadRecommendation();
   }, [session, getRecommendation]);
+
+  const renderCreateGroupModal = () => {
+    return (
+      <CreateGroupModal
+        initialPapers={createModalPublications}
+        withNavigation={false}
+        onClose={() => setCreateModalPublications([])}
+      />
+    );
+  };
 
   if (data?.recommendations.length === 0)
     return (
@@ -75,6 +89,9 @@ export default function Recommendation() {
 
   return (
     <div className="flex flex-col w-full">
+      {createModalPublications.length > 0 && (
+        <div className="absolute">{renderCreateGroupModal()}</div>
+      )}
       <Header
         title="Recommendation History"
         subtitle="find your recommendations here"
@@ -90,7 +107,7 @@ export default function Recommendation() {
       </div>
       {data?.recommendations.length != undefined &&
       data?.recommendations.length >= 2 ? (
-        <Accordion type="single" collapsible>
+        <Accordion type="single" collapsible className="pb-4 lg:pb-8">
           {data?.recommendations.slice(1).map((recommendation, index) => {
             return (
               <AccordionItem
@@ -108,6 +125,20 @@ export default function Recommendation() {
                   ).toLocaleDateString()}`}
                 </AccordionTrigger>
                 <AccordionContent>
+                  <div className={"flex flex-row justify-end items-center"}>
+                    <Button
+                      type="submit"
+                      onClick={() => {
+                        setCreateModalPublications(
+                          recommendation.publications.map(
+                            (publication) => publication.id
+                          )
+                        );
+                      }}
+                    >
+                      Create group from recommendation
+                    </Button>
+                  </div>
                   <div className="grid gap-4 grid-cols-1 py-4 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
                     {recommendation.publications.map((publication) => (
                       <PublicationCard

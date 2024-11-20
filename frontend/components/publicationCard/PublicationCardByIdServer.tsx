@@ -5,7 +5,7 @@ import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { DOCUMENT_TYPES } from "@/constants/enums";
-import PublicationCardSkeleton from "./PublicationCardSkeleton";
+import PublicationCardSkeleton from "@/components/publicationCard/PublicationCardSkeleton";
 
 type Props = {
   id: string;

@@ -1,0 +1,5 @@
+mutation DeletePublicationGroup($id: String!) {
+  deletePublicationGroup(id: $id) {
+    success
+  }
+}

@@ -1,0 +1,15 @@
+pyproject.toml
+setup.cfg
+setup.py
+arxiv-etl/__init__.py
+arxiv-etl/definitions.py
+arxiv-etl/assets/__init__.py
+arxiv-etl/assets/extract/__init__.py
+arxiv-etl/assets/extract/gcs_blobs.py
+arxiv-etl/assets/transform/__init__.py
+arxiv-etl/assets/transform/transform_bytes.py
+arxiv_etl.egg-info/PKG-INFO
+arxiv_etl.egg-info/SOURCES.txt
+arxiv_etl.egg-info/dependency_links.txt
+arxiv_etl.egg-info/requires.txt
+arxiv_etl.egg-info/top_level.txt

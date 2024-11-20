@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { GetRecommendationsDocument } from "@/graphql/queries/GetRecomendations.generated";
 import { useLazyQuery } from "@apollo/client";
-import RecommendationSlider from "./RecommendationSlider";
+import RecommendationSlider from "@/components/recommendation/RecommendationSlider";
 
 type Props = {
   title: string;

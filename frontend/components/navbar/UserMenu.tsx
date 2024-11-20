@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
@@ -19,13 +20,16 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import SignOut from "@/components/login/SignOut";
 import { User } from "lucide-react";
-import { useContext } from "react";
-import { SidebarContext } from "@/contexts/SidebarContext";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 
-export default function UserMenu() {
-  const { isCollapsed } = useContext(SidebarContext);
+export default function UserMenu({
+  clickCallback,
+  isCollapsed,
+}: {
+  clickCallback: () => void;
+  isCollapsed: boolean;
+}) {
   const { data: session } = useSession();
   const pathname = usePathname();
   let initals: string | undefined = "";
@@ -40,10 +44,10 @@ export default function UserMenu() {
       .toUpperCase();
   }
 
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
-    <Menubar className="h-fit p-0 border-none bg-transparent justify-center">
+    <Menubar className="h-fit p-0 border-none bg-transparent justify-center pt-4 px-6">
       <MenubarMenu>
         <MenubarTrigger
           className={`flex flex-row gap-4 items-center justify-start h-16 w-full p-2 cursor-pointer hover:bg-muted hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2 ${
@@ -78,24 +82,30 @@ export default function UserMenu() {
         <MenubarContent>
           {session ? (
             <>
-              <Link href="/profile">
+              <Link href="/profile" onClick={clickCallback}>
                 <MenubarItem className="cursor-pointer">Profile</MenubarItem>
               </Link>
-              {/* <Link href="/profile/settings">
-                <MenubarItem className="cursor-pointer">Settings</MenubarItem>
-              </Link> */}
               <MenubarSub>
                 <MenubarSubTrigger>Theme</MenubarSubTrigger>
                 <MenubarSubContent>
-                  <MenubarItem onClick={() => setTheme("light")}>
+                  <MenubarCheckboxItem
+                    checked={theme === "light"}
+                    onClick={() => setTheme("light")}
+                  >
                     Light
-                  </MenubarItem>
-                  <MenubarItem onClick={() => setTheme("dark")}>
+                  </MenubarCheckboxItem>
+                  <MenubarCheckboxItem
+                    checked={theme === "dark"}
+                    onClick={() => setTheme("dark")}
+                  >
                     Dark
-                  </MenubarItem>
-                  <MenubarItem onClick={() => setTheme("system")}>
+                  </MenubarCheckboxItem>
+                  <MenubarCheckboxItem
+                    checked={theme === "system"}
+                    onClick={() => setTheme("system")}
+                  >
                     System
-                  </MenubarItem>
+                  </MenubarCheckboxItem>
                 </MenubarSubContent>
               </MenubarSub>
               <MenubarSeparator />
@@ -110,25 +120,34 @@ export default function UserMenu() {
             </>
           ) : (
             <>
-              <Link href={"/login"} scroll={false}>
+              <Link href={"/login"} scroll={false} onClick={clickCallback}>
                 <MenubarItem className="cursor-pointer">Log in</MenubarItem>
               </Link>
-              <Link href={"/signup"} scroll={false}>
+              <Link href={"/signup"} scroll={false} onClick={clickCallback}>
                 <MenubarItem className="cursor-pointer">Sign up</MenubarItem>
               </Link>
               <MenubarSeparator />
               <MenubarSub>
                 <MenubarSubTrigger>Theme</MenubarSubTrigger>
                 <MenubarSubContent>
-                  <MenubarItem onClick={() => setTheme("light")}>
+                  <MenubarCheckboxItem
+                    checked={theme === "light"}
+                    onClick={() => setTheme("light")}
+                  >
                     Light
-                  </MenubarItem>
-                  <MenubarItem onClick={() => setTheme("dark")}>
+                  </MenubarCheckboxItem>
+                  <MenubarCheckboxItem
+                    checked={theme === "dark"}
+                    onClick={() => setTheme("dark")}
+                  >
                     Dark
-                  </MenubarItem>
-                  <MenubarItem onClick={() => setTheme("system")}>
+                  </MenubarCheckboxItem>
+                  <MenubarCheckboxItem
+                    checked={theme === "system"}
+                    onClick={() => setTheme("system")}
+                  >
                     System
-                  </MenubarItem>
+                  </MenubarCheckboxItem>
                 </MenubarSubContent>
               </MenubarSub>
             </>

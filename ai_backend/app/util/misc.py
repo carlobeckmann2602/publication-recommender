@@ -1,10 +1,39 @@
 import json
+import logging
+
+import aiohttp
+import tqdm
 import shutil
 import numpy as np
 import pandas as pd
-from typing import Dict
+import aiohttp
+from typing import Dict, Literal
 import re
 import os
+
+
+class DisableLogger(logging.Filter):
+
+    def __init__(self, key: Literal["name", "module", "filename", "message"] = None, value: str = None):
+        super().__init__()
+        self.filter_key = key
+        self.filter_value = value
+
+    def filter(self, record):
+        if self.filter_value is None or self.filter_key is None:
+            return False
+        else:
+            record_value = None
+            match self.filter_key:
+                case "name":
+                    record_value = record.name
+                case "module":
+                    record_value = record.module
+                case "filename":
+                    record_value = record.filename
+                case "message":
+                    record_value = record.getMessage()
+            return self.filter_value not in record_value
 
 
 def add_array_column(dataframe: pd.DataFrame, column_name: str, value_array: np.ndarray) -> pd.DataFrame:

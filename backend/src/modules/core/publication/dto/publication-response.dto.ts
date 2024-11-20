@@ -1,6 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { Publication } from '../entities/publication.entity';
 import { SourceVo } from '../vo/source.vo';
+import { EmbeddingResponseDto } from './embedding-response.dto';
 
 @ObjectType()
 export class PublicationResponseDto {
@@ -11,9 +12,11 @@ export class PublicationResponseDto {
     this.source = publication.source;
     this.doi = publication.doi;
     this.url = publication.url;
-    this.authors = publication.authors;
+    this.authors = publication.authors ? publication.authors.map((author) => author.name) : null;
     this.publicationDate = publication.date;
     this.abstract = publication.abstract;
+    this.coordinate = publication.coordinate;
+    this.embeddings = publication.embeddings.map((embedding) => new EmbeddingResponseDto(embedding));
   }
 
   @Field()
@@ -43,6 +46,12 @@ export class PublicationResponseDto {
   @Field()
   isFavorite: boolean = false;
 
-  @Field({nullable:true})
+  @Field({ nullable: true })
   abstract: string | null;
+
+  @Field(() => [Float], { nullable: true })
+  coordinate: number[] | null;
+
+  @Field(() => [EmbeddingResponseDto])
+  embeddings: EmbeddingResponseDto[];
 }

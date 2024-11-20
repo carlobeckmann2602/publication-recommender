@@ -1,0 +1,18 @@
+query GetPublicationGroup($id: String!) {
+  publicationGroup(id: $id) {
+    id
+    color
+    name
+    publications {
+      id
+      title
+      source
+      doi
+      url
+      authors
+      publicationDate
+      abstract
+      coordinate
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import {
   allowBackgroundScrolling,
   preventBackgroundScrolling,
-} from "@/lib/modal-controlls";
+} from "@/lib/modal-controls";
 
 export default function Modal({ children }: { children: React.ReactNode }) {
   const overlay = useRef(null);
