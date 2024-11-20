@@ -17,10 +17,6 @@ This is a concise list of technologies and concepts that are used. They are roug
 - [Redis](https://redis.io/)
 - [Docker](https://www.docker.com/)
 
-## Production Environment
-
-Papermatcher is hosted at [papermatcher.com](http://papermatcher.com). It is currently password-protected until it is release-ready (for more information see [corresponding issue](https://projectbase.medien.hs-duesseldorf.de/ki/publikationsempfehlung/frontend/-/issues/18)).
-
 ## Starting the Project
 
 ### Developement
