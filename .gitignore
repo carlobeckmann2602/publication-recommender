@@ -1,9 +1,0 @@
-# General
-**/__pycache__
-**/.idea
-**/venv
-**/.vscode
-rabbit_data
-.env*
-!.env.example
-.env
