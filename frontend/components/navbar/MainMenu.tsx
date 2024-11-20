@@ -1,17 +1,18 @@
 "use client";
 import Link from "next/link";
-
-import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { buttonVariants } from "../ui/button";
-import { useContext } from "react";
-import { SidebarContext } from "@/contexts/SidebarContext";
+import { buttonVariants } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import SvgSparkleHistory from "@/assets/svg/SvgSparkleHistory";
 import SvgSparkleHistoryFill from "@/assets/svg/SvgSparkleHistoryFill";
+import PublicationGroupMenu from "@/components/navbar/PublicationGroupMenu";
 
 const menuItems = [
   {
@@ -31,28 +32,28 @@ const menuItems = [
   {
     name: "Recommendation History",
     href: "/profile/recommendation",
-    icon: <SvgSparkleHistory />,
-    activeIcon: <SvgSparkleHistoryFill />,
+    icon: <SvgSparkleHistory size={24} />,
+    activeIcon: <SvgSparkleHistoryFill size={24} />,
     onlyLoggedIn: true,
   },
 ];
 
 export default function MainMenu({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
-  const { isCollapsed } = useContext(SidebarContext);
+  clickCallback,
+  isCollapsed,
+}: {
+  clickCallback: () => void;
+  isCollapsed: boolean;
+}) {
   const pathname = usePathname();
   const session = useSession();
 
   if (isCollapsed)
     return (
       <nav
-        className={cn(
-          "flex flex-col gap-2 items-center w-full flex-1",
-          className
-        )}
-        {...props}
+        className={
+          "flex flex-col gap-2 items-center w-full grow px-6 pb-1 overflow-y-auto"
+        }
       >
         {menuItems.map(({ name, href, icon, activeIcon, onlyLoggedIn }) => {
           if (onlyLoggedIn && session.status != "authenticated") return;
@@ -71,6 +72,7 @@ export default function MainMenu({
                         })
                   }  h-12 flex gap-4 w-12 justify-center !p-2
               `}
+                  onClick={clickCallback}
                 >
                   {pathname === href ? activeIcon : icon}
                   <span className="transition-all duration-700 hidden">
@@ -84,16 +86,18 @@ export default function MainMenu({
             </Tooltip>
           );
         })}
+        <PublicationGroupMenu
+          clickCallback={clickCallback}
+          isCollapsed={isCollapsed}
+        />
       </nav>
     );
 
   return (
     <nav
-      className={cn(
-        "flex flex-col gap-2 items-center w-full flex-1",
-        className
-      )}
-      {...props}
+      className={
+        "flex flex-col gap-2 items-center w-full grow px-6 overflow-y-auto"
+      }
     >
       {menuItems.map(({ name, href, icon, activeIcon, onlyLoggedIn }) => {
         if (onlyLoggedIn && session.status != "authenticated") return;
@@ -110,12 +114,17 @@ export default function MainMenu({
                     variant: "ghost",
                   })
             } w-full h-12 flex gap-4 !justify-start`}
+            onClick={clickCallback}
           >
             {pathname === href ? activeIcon : icon}
             <span className="transition-all duration-700">{name}</span>
           </Link>
         );
       })}
+      <PublicationGroupMenu
+        clickCallback={clickCallback}
+        isCollapsed={isCollapsed}
+      />
     </nav>
   );
 }

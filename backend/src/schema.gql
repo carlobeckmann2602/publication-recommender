@@ -2,21 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type JwtDto {
-  accessToken: String!
-  refreshToken: String!
-  expiresIn: Int!
-}
-
 type User {
   id: String!
   email: String!
   name: String!
 }
 
+type JwtDto {
+  accessToken: String!
+  refreshToken: String!
+  expiresIn: Int!
+}
+
 type LoggedIn {
   jwt: JwtDto!
   user: User!
+}
+
+type EmbeddingResponseDto {
+  id: String!
+  text: String!
+  vector: [Float!]!
 }
 
 type PublicationResponseDto {
@@ -30,6 +36,8 @@ type PublicationResponseDto {
   publicationDate: DateTime
   isFavorite: Boolean!
   abstract: String
+  coordinate: [Float!]
+  embeddings: [EmbeddingResponseDto!]!
 }
 
 enum PublicationSource {
@@ -41,14 +49,37 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type PublicationChunkDto {
-  chunk: Int!
-  data: [PublicationChunkDataDto!]!
+type MaximumAmountOfSentencesForPublicationResponseDto {
+  amount: Int!
 }
 
-type PublicationChunkDataDto {
+type NearestNeighborsResponseDto {
+  publication: PublicationResponseDto!
+  distance: Float!
+  embeddingId: String!
+}
+
+type PublicationsSearchResponseDto {
+  searchTerm: String!
+  searchCoordinate: [Float!]
+  matchingPublications: [PublicationResponseDto!]!
+  similarPublications: [PublicationResponseDto!]!
+}
+
+type PublicationsSearchByIdResponseDto {
+  searchCoordinate: [Float!]
+  similarPublications: [PublicationResponseDto!]!
+}
+
+type PublicationGroupResponseDto {
   id: String!
-  vectors: [[Float!]!]!
+  name: String!
+  color: String!
+  publications: [PublicationResponseDto!]!
+}
+
+type SuccessResponseDto {
+  success: Boolean!
 }
 
 type RecommendationResponseDto {
@@ -58,31 +89,55 @@ type RecommendationResponseDto {
 }
 
 type Query {
-  publications(publicationsSearchDto: PublicationsSearchDto!): [PublicationResponseDto!]!
+  publications(publicationsSearchDto: PublicationsSearchDto!): PublicationsSearchResponseDto!
+  similarPublicationsForPublicationWithId(similarPublicationsForPublicationWithIdDto: SimilarPublicationsForPublicationWithIdDto!): PublicationsSearchByIdResponseDto!
   publicationCount(source: PublicationSource): Int!
   publication(id: String!): PublicationResponseDto!
   oldest(source: PublicationSource!): PublicationResponseDto!
   newest(source: PublicationSource!): PublicationResponseDto!
-  provideVectors(provideVectors: PublicationVectorsRequestDto!): PublicationChunkDto!
+  providePublicationChunk(providePublicationChunk: PublicationChunkRequestDto!): [PublicationResponseDto!]!
   searchPublicationBySourceAndSourceId(publicationSourceAndSourceId: PublicationSourceWithSourceIdDto!): PublicationResponseDto
+  getNearestNeighbors(nearestNeighborRequestDto: NearestNeighborRequestDto!): [NearestNeighborsResponseDto!]!
+  maximumAmountOfSentencesForPublication: MaximumAmountOfSentencesForPublicationResponseDto!
   favorites: [PublicationResponseDto!]!
   recommendations: [RecommendationResponseDto!]!
+  publicationGroups: [PublicationGroupResponseDto!]!
+  publicationGroup(id: String!): PublicationGroupResponseDto!
   profile: User!
 }
 
 input PublicationsSearchDto {
   searchInput: String!
-  searchStrategy: SearchStrategy!
+  sortStrategy: SortStrategy! = RELEVANCE
   page: Int! = 0
   amountPerPage: Int! = 5
+  filters: SearchFilters
 }
 
-enum SearchStrategy {
-  QUERY
-  ID
+enum SortStrategy {
+  RELEVANCE
+  NEWEST
+  OLDEST
+  A_TO_Z
+  Z_TO_A
 }
 
-input PublicationVectorsRequestDto {
+input SearchFilters {
+  title: String
+  author: String
+  years: [String!]
+  doi: String
+}
+
+input SimilarPublicationsForPublicationWithIdDto {
+  id: String!
+  sortStrategy: SortStrategy! = RELEVANCE
+  page: Int! = 0
+  amountPerPage: Int! = 5
+  filters: SearchFilters
+}
+
+input PublicationChunkRequestDto {
   chunk: Int!
   chunkSize: Int = 100
 }
@@ -92,14 +147,25 @@ input PublicationSourceWithSourceIdDto {
   source: PublicationSource!
 }
 
+input NearestNeighborRequestDto {
+  vector: [Float!]!
+  amount: Int!
+}
+
 type Mutation {
   register(data: RegisterDto!): LoggedIn!
   login(data: LoginDto!): LoggedIn!
   refreshToken(token: String!): JwtDto!
   savePublication(createPublication: CreatePublicationDto!): PublicationResponseDto!
+  savePublicationsCoordinates(savePublicationsCoordinatesDto: SavePublicationsCoordiantesDto!): [PublicationResponseDto!]!
   markAsFavorite(id: String!): Boolean!
   unmarkAsFavorite(id: String!): Boolean!
   createNewRecommendation(createNewRecommendationInput: RecommendationCreateDto): RecommendationResponseDto!
+  createPublicationGroup(data: PublicationGroupCreateDto!): PublicationGroupResponseDto!
+  updatePublicationGroup(data: PublicationGroupDto!): SuccessResponseDto!
+  deletePublicationGroup(id: String!): SuccessResponseDto!
+  addToPublicationGroup(publicationgroup_id: String!, publication_ids: [String!]!): SuccessResponseDto!
+  removeFromPublicationGroup(publicationgroup_id: String!, publication_id: String!): SuccessResponseDto!
   updateProfile(data: UpdateUserDto!): User!
   deleteProfile: Boolean!
 }
@@ -123,24 +189,44 @@ input CreatePublicationDto {
   url: String
   publisher: String
   abstract: String
-  authors: [String!]
+  authorsCreateDtos: [AuthorCreateDto!]
   date: DateTime
-  descriptor: DescriptorDto!
+  embeddingsCreateDtos: [EmbeddingCreateDto!]!
 }
 
-input DescriptorDto {
-  sentences: [SentenceDto!]!
+input AuthorCreateDto {
+  name: String!
 }
 
-input SentenceDto {
-  value: String!
+input EmbeddingCreateDto {
+  text: String!
   vector: [Float!]!
+}
+
+input SavePublicationsCoordiantesDto {
+  coordinates: [CoordinatesDto!]!
+}
+
+input CoordinatesDto {
+  id: String!
+  coordinate: [Float!]!
 }
 
 input RecommendationCreateDto {
   group: [String!]!
-  exlude: [String!]
-  amount: Int
+  exlude: [String!]! = []
+  amount: Int! = 10
+}
+
+input PublicationGroupCreateDto {
+  name: String!
+  color: String!
+}
+
+input PublicationGroupDto {
+  id: String!
+  name: String
+  color: String
 }
 
 input UpdateUserDto {

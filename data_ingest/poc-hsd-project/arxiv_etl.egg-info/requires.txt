@@ -1,0 +1,15 @@
+dagster
+dagster-cloud
+dagster-azure
+dagster-gcp
+dagster-dask
+dask[complete]
+boto3
+pandas
+matplotlib
+pyarrow
+pypdf
+
+[dev]
+dagster-webserver
+pytest

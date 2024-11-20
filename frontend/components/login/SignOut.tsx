@@ -1,12 +1,13 @@
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
@@ -16,26 +17,28 @@ type Props = {
 
 export default function SignOut({ children }: Props) {
   return (
-    <Dialog>
-      <DialogTrigger asChild className="w-full">
+    <AlertDialog>
+      <AlertDialogTrigger asChild className="w-full">
         {children}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Logout</DialogTitle>
-        </DialogHeader>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="sm:max-w-md">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Logout</AlertDialogTitle>
+        </AlertDialogHeader>
         Are you sure you want to sign out?
-        <DialogFooter className="sm:justify-start">
-          <DialogClose className="w-1/2" asChild>
+        <AlertDialogFooter className="sm:justify-start">
+          <AlertDialogCancel className="w-1/2" asChild>
             <Button type="button" variant="secondary">
               Cancel
             </Button>
-          </DialogClose>
-          <Button className="w-1/2" type="submit" onClick={() => signOut()}>
-            Sign out
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogCancel>
+          <AlertDialogAction className="w-1/2" asChild>
+            <Button className="w-1/2" type="submit" onClick={() => signOut()}>
+              Sign out
+            </Button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

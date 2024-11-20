@@ -1,0 +1,26 @@
+query GetSimilarPublicationsForPublicationWithId(
+    $id: String!,
+    $sortStrategy: SortStrategy!,
+    $page: Int!,
+    $amountPerPage: Int!,
+) {
+    similarPublicationsForPublicationWithId(
+        similarPublicationsForPublicationWithIdDto: {
+            id: $id,
+            sortStrategy: $sortStrategy,
+            page: $page,
+            amountPerPage: $amountPerPage,
+        }
+    ) {
+        similarPublications {
+            id
+            title
+            source
+            doi
+            url
+            authors
+            publicationDate
+            abstract
+        }
+    }
+}

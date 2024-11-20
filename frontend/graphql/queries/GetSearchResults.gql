@@ -1,24 +1,38 @@
 query GetSearchResults(
   $query: String!
-  $strategy: SearchStrategy!
+  $sortStrategy: SortStrategy!
   $page: Int!
   $amountPerPage: Int!
+  $filters: SearchFilters
 ) {
   publications(
     publicationsSearchDto: {
       searchInput: $query
-      searchStrategy: $strategy
+      sortStrategy: $sortStrategy
       page: $page
       amountPerPage: $amountPerPage
+      filters: $filters
     }
   ) {
-    id
-    title
-    source
-    doi
-    url
-    authors
-    publicationDate
-    abstract
+    matchingPublications {
+      id
+      title
+      source
+      doi
+      url
+      authors
+      publicationDate
+      abstract
+    },
+    similarPublications {
+      id
+      title
+      source
+      doi
+      url
+      authors
+      publicationDate
+      abstract
+    }
   }
 }

@@ -1,0 +1,24 @@
+query GetPublicationGroups {
+  publicationGroups {
+    id
+    color
+    name
+    publications {
+      id
+      title
+      source
+      doi
+      url
+      authors
+      publicationDate
+      abstract
+      exId
+      isFavorite
+      coordinate
+      embeddings {
+        text
+        vector
+      }
+    }
+  }
+}

@@ -1,38 +1,57 @@
+import logging
+from pathlib import Path
 import nltk
-import os
-import pickle
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler, PowerTransformer
+from scipy.ndimage import gaussian_filter
 import torch
 from numpy import random
 from sklearn.decomposition import PCA
-from .util.misc import add_array_column
+from sklearn import svm
+from sklearn.calibration import CalibratedClassifierCV
+
 from sentence_transformers import SentenceTransformer
+from sklearn.manifold import TSNE
+
+from .vae_model import VAE, get_dataloader, load_model, save_model, train_vae
+
 from .util.LexRank import FastLexRankSummarizer
-from annoy import AnnoyIndex
-from typing import Literal, List, Union
+from typing import List, Union
 from tqdm.auto import tqdm
+from .nns_request import VectorDatabase
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+engine_logger = logging.getLogger(__name__)
 
 
 class Summarizer:
     transformer: SentenceTransformer
     lexrank: FastLexRankSummarizer
-    lexrank_threshold = .1
+    lexrank_threshold = 0.1
+    transformer_name: str = None
 
-    def __init__(self, transformer: str | SentenceTransformer = "all-mpnet-base-v2", tokenize: bool = True,
-                 debug=False):
+    def __init__(
+        self,
+        transformer: str | SentenceTransformer = "all-mpnet-base-v2",
+        tokenize: bool = True,
+        debug=False,
+    ):
         self.debug = debug
         self.tokenize = tokenize
 
         if isinstance(transformer, str):
+            self.transformer_name = transformer
             transformer = SentenceTransformer(transformer, device=device)
         self.transformer = transformer
         self.create_lexrank()
 
     def create_lexrank(self):
-        self.lexrank = FastLexRankSummarizer(model=self.transformer, threshold=self.lexrank_threshold)
+        self.lexrank = FastLexRankSummarizer(
+            model=self.transformer, threshold=self.lexrank_threshold
+        )
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -46,13 +65,14 @@ class Summarizer:
     def tokenize_input(input_text: str, check_download=True) -> List[str]:
         if check_download:
             try:
-                nltk.data.find('tokenizers/punkt')
+                nltk.data.find("tokenizers/punkt")
             except LookupError:
-                nltk.download('punkt')
+                nltk.download("punkt")
         return list(nltk.sent_tokenize(input_text))
 
-    def run(self, input_data: str | pd.Series,
-            amount=1, add_embedding=False) -> np.ndarray[str] | Union[np.ndarray[str], np.ndarray[float]]:
+    def run(
+        self, input_data: str | pd.Series, amount=1, add_embedding=False
+    ) -> np.ndarray[str] | Union[np.ndarray[str], np.ndarray[float]]:
         if amount < 1:
             raise Exception("The desired sentence amount must be greater than 1")
         if isinstance(input_data, str):
@@ -60,24 +80,30 @@ class Summarizer:
         dataframe = pd.DataFrame(data={"input": input_data})
         if self.tokenize:
             tqdm.pandas(desc="(Summarizing) Tokenizing")
-            dataframe["token"] = dataframe["input"].progress_apply(Summarizer.tokenize_input)
+            dataframe["token"] = dataframe["input"].progress_apply(
+                Summarizer.tokenize_input
+            )
         else:
             dataframe["token"] = input_data
 
         dataframe["token_amount"] = dataframe["token"].apply(len)
         if dataframe["token_amount"].min() < amount:
-            raise Exception("Not enough tokens" + "\n" + str(dataframe["token_amount"].idxmin()))
+            raise Exception(
+                "Not enough tokens" + "\n" + str(dataframe["token_amount"].idxmin())
+            )
 
         def rank_tokens(row: pd.Series):
             token_list = row["token"]
 
-            token_ranking, embedding_ranking = self.lexrank.summarize(token_list, amount)
+            token_ranking, embedding_ranking = self.lexrank.summarize(
+                token_list, amount
+            )
 
             row["ranked_tokens"] = token_ranking
             row["ranked_embeddings"] = embedding_ranking
             return row
 
-#        tqdm.pandas(desc="(Summarizing) Apply LexRank")
+        #        tqdm.pandas(desc="(Summarizing) Apply LexRank")
         dataframe = dataframe.apply(rank_tokens, axis=1)
 
         tokens = np.array(dataframe["ranked_tokens"].tolist(), dtype=str)
@@ -88,215 +114,148 @@ class Summarizer:
             return tokens
 
 
-class Recommender:
-    ANNOY_INDEX_KEY = "annoy_index"
-    PUBLICATION_ID_KEY = "publication_id"
-    SENTENCE_ID_KEY = "sentence_id"
+def perform_pca(embeddings: List[List[float]], component_amount) -> List:
+    embeddings = np.array(embeddings, dtype=float)
+    pca = PCA(n_components=component_amount)
+    pca.fit(embeddings)
 
-    mapping: pd.DataFrame = None
-    annoy_database: AnnoyIndex
+    anchor_point = None
+    for index in range(component_amount):
+        new_anchor_point = random.normal(0, 1) * pca.components_[index]
+        if anchor_point is None:
+            anchor_point = new_anchor_point
+        else:
+            anchor_point = anchor_point + new_anchor_point
 
-    def __init__(self,
-                 summarization: Summarizer,
-                 annoy_input_length: int = 384,
-                 annoy_mode: Literal["angular", "euclidean", "manhattan", "hamming", "dot"] = "angular",
-                 token_amount: int = 1,
-                 annoy_n_trees: int = 10,
-                 debug=False):
-        self.debug = debug
-        self.annoy_input_length = annoy_input_length
-        self.annoy_mode = annoy_mode
-        self.token_amount = token_amount
-        self.annoy_n_trees = annoy_n_trees
+    return anchor_point.tolist()
 
-        self.summarizer = summarization
-        self.instantiate_annoy()
+
+def build_tsne_for_publication(
+    vector_database: VectorDatabase,
+    amount: int = None,
+    create_model: bool = False,
+    latent_weight: float = 1,
+) -> pd.DataFrame:
+    publication_df = vector_database.get_embeddings(amount, perform_pca)
+
+    embeddings = np.array(publication_df[vector_database.EMBEDDING_KEY].tolist())
+    engine_logger.info("Start t-SNE dimensionality reduction")
+    coordinates = TSNE(n_components=3, perplexity=50, random_state=42).fit_transform(
+        embeddings
+    )
+    engine_logger.info("t-SNE dimensionality reduction completed")
+
+    coordinates[:, 1] = gaussianScaleCoordinateAxis(coordinates[:, 1], 0, 30)
+
+    publication_df[vector_database.COORDINATE_KEY] = coordinates.tolist()
+
+    if create_model:
+        generateVAE(
+            np.array(publication_df[vector_database.EMBEDDING_KEY].tolist()),
+            np.array(publication_df[vector_database.COORDINATE_KEY].tolist()),
+            latent_weight,
+        )
+
+    return publication_df
+
+
+def train_svm(
+    positive_embeddings: List[List[float]] | np.ndarray,
+    negative_embeddings: List[List[float]] | np.ndarray,
+) -> CalibratedClassifierCV:
+    positive_labels = np.full(len(positive_embeddings), 1)
+    negative_labels = np.full(len(negative_embeddings), 0)
+
+    embeddings = np.concatenate((positive_embeddings, negative_embeddings), axis=0)
+    labels = np.concatenate((positive_labels, negative_labels), axis=0)
+
+    classifier = svm.LinearSVC(class_weight="balanced", verbose=False, max_iter=10000, tol=1e-6, C=0.1)
+    classifier = CalibratedClassifierCV(classifier)
+    classifier.fit(embeddings, labels)
+
+    return classifier
+
+
+def svm_predict(classifier: CalibratedClassifierCV, embedding_df: pd.DataFrame, amount: int):
+    embedding_df = embedding_df.copy()
+    embeddings = np.array(embedding_df["embedding"].tolist(), dtype=np.float64)
+    predictions = classifier.predict_proba(embeddings)
+    embedding_df["prediction"] = predictions[:, 1]
+    engine_logger.info(embedding_df["prediction"].max())
+    embedding_df.sort_values("prediction", ascending=False, inplace=True)
+    embedding_df.reset_index(inplace=True, drop=True)
+
+    return embedding_df[:amount]
+
+
+def gaussianScaleCoordinateAxis(
+    axis_coordinates: np.ndarray[float], min: int, max: int
+) -> np.ndarray[float]:
+    engine_logger.info("Gaussian distribute and scale coordinates of one axis")
+
+    coords_gaussian = gaussian_filter(axis_coordinates, sigma=4)
+
+    scaler_gauss = MinMaxScaler(feature_range=(min, max))
+    coords_gauss_scaled = scaler_gauss.fit_transform(coords_gaussian.reshape(-1, 1))
+
+    return coords_gauss_scaled.reshape(1, -1).flatten()
+
+
+def generateVAE(
+    X_data: np.ndarray[np.float32],
+    y_data: np.ndarray[np.float32],
+    latent_weight: float = 1,
+    do_train_test_split: bool = False,
+) -> None:
+    X_train = X_data
+    y_train = y_data
+
+    if do_train_test_split:
+        X_train, X_test, y_train, y_test = train_test_split(
+            X_data, y_data, test_size=0.1, random_state=42
+        )
+        Path("./data/test_data").mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(X_test).to_csv("./data/test_data/test_embeddings.csv")
+        pd.DataFrame(y_test).to_csv("./data/test_data/test_coordinates.csv")
+
+    # Normalisierung der Daten mit MinMaxScaler
+    normalizer = MinMaxScaler()
+    X_train = normalizer.fit_transform(X_train)
+
+    train_loader = get_dataloader(torch.from_numpy(X_train), torch.from_numpy(y_train))
+
+    # Parameter für das Netzwerk
+    input_dim = X_train.shape[1]
+    hidden_dim = 256
+    latent_dim = y_train.shape[1]
+
+    # Modell und Training
+    model = VAE(input_dim, hidden_dim, latent_dim)
+    train_vae(model, train_loader, latent_weight=latent_weight)
+
+    # Modell speichern
+    save_model(model, "vae.pth")
+
+
+class CoordinateModel:
+    vae: VAE
+
+    def __init__(self, model: VAE):
+        self.vae = load_model(model)
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        excluded_parameters = ["annoy_database", "mapping"]
+        excluded_parameters = ["vae"]
         for parameter in excluded_parameters:
             if parameter in state:
                 del state[parameter]
         return state
 
-    def save(self, path="./data/generated_data", model_name="current"):
-        path = path + "/" + model_name + "/"
-        if not os.path.exists(path):
-            os.makedirs(path)
-        self.annoy_database.save(path + "annoy.ann")
-        self.mapping.to_pickle(path + "mapping.pkl")
-        state_file = open(path + "state.pkl", "wb")
-        self.summarizer.transformer.save(path + "summy_transformer")
-        pickle.dump(self.__getstate__(), state_file)
-        state_file.close()
-
-    def load(self, path="./data/generated_data", model_name="current"):
-        path = path + "/" + model_name + "/"
-        if os.path.exists(path + "state.pkl"):
-            state_file = open(path + "state.pkl", "rb")
-            state_dict = pickle.load(state_file)
-            state_file.close()
-            self.__dict__.update(state_dict)
-            self.summarizer.transformer = SentenceTransformer(path + "summy_transformer")
-            self.summarizer.create_lexrank()
-            self.instantiate_annoy()
-        self.annoy_database.load(path + "annoy.ann")
-        self.mapping = pd.read_pickle(path + "mapping.pkl")
-
-    def instantiate_annoy(self):
-        self.annoy_database = AnnoyIndex(self.annoy_input_length, self.annoy_mode)
-
-    def get_embedding_from_annoy(self, annoy_id: int) -> list:
-        return self.annoy_database.get_item_vector(annoy_id)
-
-    def convert_to_mapping(self, dataframe: pd.DataFrame,
-                           id_key: str, input_key: str,
-                           input_mode: Literal["text", "embeddings"]) -> (pd.DataFrame, np.ndarray[float]):
-        dataframe = dataframe[[id_key, input_key]].copy()
-        match input_mode:
-            case "text":
-                tokens, embeddings = self.summarizer.run(dataframe[input_key],
-                                                         amount=self.token_amount, add_embedding=True)
-                dataframe = add_array_column(dataframe, input_key, embeddings)
-
-        dataframe = dataframe.explode(input_key)
-        dataframe[self.SENTENCE_ID_KEY] = dataframe.groupby(id_key).cumcount()
-        embeddings = np.array(dataframe[input_key].tolist())
-        dataframe.drop([input_key], axis=1, inplace=True)
-        dataframe.rename(columns={id_key: self.PUBLICATION_ID_KEY}, inplace=True)
-        dataframe.reset_index(inplace=True, drop=True)
-
-        return dataframe, embeddings
-
-    def build_annoy(self, new_mapping: pd.DataFrame,
-                    new_embeddings: np.ndarray[float],
-                    build_mode: Literal["override", "add"]):
-        embeddings: np.ndarray = np.array([])
-        match build_mode:
-            case "override":
-                embeddings = new_embeddings
-            case "add":
-                if self.mapping is None:
-                    raise Exception("No mapping data found. Do not use build mode add")
-                if self.mapping.empty:
-                    raise Exception("No mapping data found (Mapping is empty). Do not use build mode add")
-                old_mapping = self.mapping.copy()
-
-                tqdm.pandas(desc="(Building Annoy) Reconstructing old Embeddings")
-                old_mapping["embedding"] = old_mapping[self.ANNOY_INDEX_KEY].progress_apply(
-                    self.get_embedding_from_annoy
-                )
-                embeddings = np.concatenate((np.ndarray(old_mapping["embedding"].tolist()), new_embeddings), axis=0)
-                old_mapping.drop(columns=[self.ANNOY_INDEX_KEY], inplace=True)
-                new_mapping = pd.concat([old_mapping, new_mapping], ignore_index=True)
-
-        new_mapping = add_array_column(new_mapping, "embedding", embeddings)
-
-        def add_to_annoy(index: int, vector: list):
-            embed = np.array(vector).flatten()
-            self.annoy_database.add_item(index, embed)
-
-        self.instantiate_annoy()
-        tqdm.pandas(desc="(Building Annoy) Adding to Annoy")
-        new_mapping.reset_index(inplace=True, names=self.ANNOY_INDEX_KEY)
-        new_mapping[[self.ANNOY_INDEX_KEY, "embedding"]].progress_apply(
-            lambda row: add_to_annoy(index=row[self.ANNOY_INDEX_KEY], vector=row["embedding"]),
-            axis=1)
-        self.annoy_database.build(n_trees=self.annoy_n_trees)
-        new_mapping.drop(columns=["embedding"], inplace=True)
-        self.mapping = new_mapping
-
-    def __run_recommender__(self, data: np.ndarray | int, input_info: str, amount: int,
-                            exclude: List[str] = None) -> pd.DataFrame:
-        if exclude is None:
-            exclude = []
-
-        # All blocked entries + enough neighbours so that amount unique publications are found
-        nns_amount = (len(exclude) * self.token_amount) + (amount * self.token_amount)
-        if self.debug:
-            print(f"Generating {nns_amount} neighbours with {len(exclude)} excludes, "
-                  f"{self.token_amount} tokens per entry and {amount} desired results")
-
-        if isinstance(data, int):
-            neighbours, distances = self.annoy_database.get_nns_by_item(data, nns_amount, include_distances=True)
-        else:
-            neighbours, distances = self.annoy_database.get_nns_by_vector(data, nns_amount, include_distances=True)
-
-        nns_data = pd.DataFrame(data={
-            self.ANNOY_INDEX_KEY: neighbours,
-            "distance": distances,
-            "input": np.full(len(neighbours), input_info)
-        })
-        nns_data = pd.merge(
-            nns_data, self.mapping[[self.ANNOY_INDEX_KEY, self.PUBLICATION_ID_KEY, self.SENTENCE_ID_KEY]],
-            how="left", on=self.ANNOY_INDEX_KEY
+    def run(self, embedding: List[float]) -> List:
+        embedding = np.array(embedding).astype(np.float32)
+        normalizer = MinMaxScaler()
+        embedding_normalized = torch.from_numpy(
+            normalizer.fit_transform(embedding.reshape(-1, 1)).reshape(1, -1).flatten()
         )
-        return nns_data
-
-    def __to_recommender_output(self, nns_data: pd.DataFrame, amount: int, exclude: List[str] = None) -> pd.DataFrame:
-        if exclude is None:
-            exclude = []
-        nns_data = nns_data[~nns_data[self.PUBLICATION_ID_KEY].isin(exclude)].copy()
-        nns_data.sort_values(by="distance", ascending=True, inplace=True)
-        nns_data.drop_duplicates(subset=self.PUBLICATION_ID_KEY, keep="first", inplace=True)
-        return nns_data.iloc[0:amount].reset_index(drop=True)
-
-    def get_match_by_token(self, token: str | List[float], amount: int = 1, exclude: List[str] = None) -> pd.DataFrame:
-        if exclude is None:
-            exclude = []
-        original_token = token
-        if isinstance(token, str):
-            token = self.summarizer.transformer.encode(token, convert_to_numpy=True)
-            printable_token = original_token
-        else:
-            printable_token = f"Vector with: {np.array(original_token).shape} -> (0:10): {original_token[0:10]}"
-
-        nns_output = self.__run_recommender__(token, printable_token, amount, exclude)
-        nns_output = self.__to_recommender_output(nns_output, amount, exclude)
-
-        return nns_output
-
-    def get_match_by_id(self, publication_id: str, amount: int = 1, exclude: List[str] = None) -> pd.DataFrame:
-        if exclude is None:
-            exclude = [publication_id]
-        else:
-            exclude.append(publication_id)
-
-        publication_df = self.mapping[self.mapping[self.PUBLICATION_ID_KEY] == publication_id].copy()
-
-        nns_output = None
-        for index, row in publication_df.iterrows():
-            annoy_index = row[self.ANNOY_INDEX_KEY]
-            input_token_id = row[self.SENTENCE_ID_KEY]
-            if nns_output is None:
-                nns_output = self.__run_recommender__(annoy_index, input_token_id, amount, exclude)
-            else:
-                nns_output = pd.concat([
-                    nns_output,
-                    self.__run_recommender__(annoy_index, input_token_id, amount, exclude)
-                ], ignore_index=True)
-
-        nns_output = self.__to_recommender_output(nns_output, amount, exclude)
-
-        return nns_output
-
-    def get_match_by_group(self, publications_ids: List[str], amount: int = 1,
-                           exclude: List[str] = None) -> pd.DataFrame:
-        if exclude is None:
-            exclude = publications_ids
-        else:
-            exclude.extend(publications_ids)
-
-        publication_df = self.mapping[self.mapping[self.PUBLICATION_ID_KEY].isin(publications_ids)].copy()
-
-        publication_df["embedding"] = publication_df[self.ANNOY_INDEX_KEY].apply(self.get_embedding_from_annoy)
-        embeddings = np.array(publication_df["embedding"].to_list())
-        pca = PCA(n_components=3)
-        pca.fit(embeddings)
-        pca1 = pca.components_[0]
-        pca2 = pca.components_[1]
-        pca3 = pca.components_[2]
-        anchor_point = (random.normal(0, 1) * pca1) + (random.normal(0, 1) * pca2) + (random.normal(0, 1) * pca3)
-
-        return self.get_match_by_token(anchor_point, amount, exclude)
+        reconstructed_data, mu, logvar = self.vae(embedding_normalized)
+        return mu.detach().numpy().tolist()

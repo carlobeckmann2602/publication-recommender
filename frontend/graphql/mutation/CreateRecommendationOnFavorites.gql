@@ -10,6 +10,7 @@ mutation CreateRecommendationOnFavorites {
       doi
       exId
       abstract
+      coordinate
     }
     createdAt
   }

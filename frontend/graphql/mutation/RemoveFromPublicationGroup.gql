@@ -1,0 +1,11 @@
+mutation RemoveFromPublicationGroup(
+  $publicationgroup_id: String!
+  $publication_id: String!
+) {
+  removeFromPublicationGroup(
+    publicationgroup_id: $publicationgroup_id
+    publication_id: $publication_id
+  ) {
+    success
+  }
+}

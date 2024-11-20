@@ -8,5 +8,6 @@ query GetPublication($id: String!) {
     authors
     publicationDate
     abstract
+    coordinate
   }
 }

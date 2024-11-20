@@ -12,12 +12,17 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { User } from '../../user/entities/user.entity';
 import { PublicationSourceWithSourceIdDto } from '../dto/PublicationBySource.dto.';
 import { CreatePublicationDto } from '../dto/create-publication.dto';
+import { MaximumAmountOfSentencesForPublicationResponseDto } from '../dto/maximumAmountOfSentencesForPublication-response.dto';
+import { NearestNeighborRequestDto } from '../dto/nearestneighbor-request.dto';
+import { NearestNeighborsResponseDto } from '../dto/nearestneighbors-response.dto';
 import { PublicationResponseDto } from '../dto/publication-response.dto';
-import { PublicationVectorsRequestDto } from '../dto/publication-vectors-request.dto';
+import { PublicationChunkRequestDto } from '../dto/publication-vectors-request.dto';
+import { PublicationsSearchByIdResponseDto } from '../dto/publications-search-by-id-response-dto';
+import { PublicationsSearchResponseDto } from '../dto/publications-search-response-dto';
 import PublicationsSearchDto from '../dto/publications-search.dto';
-import { PublicationChunkDto } from '../dto/publikation-chunk.dto';
+import { SavePublicationsCoordiantesDto } from '../dto/save-publications-coordinates.dto';
+import SimilarPublicationsForPublicationWithIdDto from '../dto/similar-publications-for-publication-with-id.dto';
 import { NoPublicationWithDateForSourceException } from '../exceptions/no-publication-with-date-for-source.exception';
-import { DescriptorService } from '../services/descriptor.service';
 import { FavoriteService } from '../services/favorites.service';
 import { PublicationService } from '../services/publication.service';
 import { SourceVo } from '../vo/source.vo';
@@ -26,27 +31,71 @@ import { SourceVo } from '../vo/source.vo';
 export class PublicationResolver {
   constructor(
     private readonly publicationService: PublicationService,
-    private readonly descriptorService: DescriptorService,
     private readonly favoriteService: FavoriteService,
   ) {}
 
-  @Query(() => [PublicationResponseDto])
+  @Query(() => PublicationsSearchResponseDto)
   @SetMetadata('optional', true)
   @UseGuards(JwtAuthGuard)
   async publications(
     @AuthUser() user: User | null,
     @Args('publicationsSearchDto')
     dto: PublicationsSearchDto,
-  ): Promise<PublicationResponseDto[]> {
+  ): Promise<PublicationsSearchResponseDto> {
     try {
-      const publications = await this.publicationService.findAll(
+      const publications = await this.publicationService.findAllForSearchQuery(
         dto.searchInput,
-        dto.searchStrategy,
         dto.page,
         dto.amountPerPage,
+        dto.filters,
+        dto.sortStrategy,
       );
-      
-      return await this.favoriteService.publicationsWithFavorites(publications, user);
+
+      const matchingPublicationsPromise = this.favoriteService.publicationsWithFavorites(
+        publications.matchingPublicationsBySearchQuery,
+        user,
+      );
+      const similarPublicationsPromise = this.favoriteService.publicationsWithFavorites(
+        publications.matchingPublicationsBySimilarity,
+        user,
+      );
+
+      return await Promise.all([matchingPublicationsPromise, similarPublicationsPromise]).then(
+        ([matchingPublications, similarPublications]) => {
+          return new PublicationsSearchResponseDto(
+            dto.searchInput,
+            publications.queryCoordinates,
+            matchingPublications,
+            similarPublications,
+          );
+        },
+      );
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  @Query(() => PublicationsSearchByIdResponseDto)
+  @SetMetadata('optional', true)
+  @UseGuards(JwtAuthGuard)
+  async similarPublicationsForPublicationWithId(
+    @AuthUser() user: User | null,
+    @Args('similarPublicationsForPublicationWithIdDto')
+    dto: SimilarPublicationsForPublicationWithIdDto,
+  ): Promise<PublicationsSearchByIdResponseDto> {
+    try {
+      const { similarPublicationsForPublicationWithId, queryCoordinates } =
+        await this.publicationService.findAllSimilarForPublicationWithId(
+          dto.id,
+          dto.page,
+          dto.amountPerPage,
+          dto.sortStrategy,
+        );
+
+      return new PublicationsSearchByIdResponseDto(
+        queryCoordinates,
+        await this.favoriteService.publicationsWithFavorites(similarPublicationsForPublicationWithId, user),
+      );
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -97,12 +146,13 @@ export class PublicationResolver {
     }
   }
 
-  @Query(() => PublicationChunkDto)
-  async provideVectors(
-    @Args('provideVectors', { type: () => PublicationVectorsRequestDto })
-    dto: PublicationVectorsRequestDto,
-  ): Promise<PublicationChunkDto> {
-    return await this.descriptorService.getVectorsChunk(dto);
+  @Query(() => [PublicationResponseDto])
+  async providePublicationChunk(
+    @Args('providePublicationChunk', { type: () => PublicationChunkRequestDto })
+    dto: PublicationChunkRequestDto,
+  ): Promise<PublicationResponseDto[]> {
+    const publications = await this.publicationService.providePublicationChunk(dto);
+    return publications.map((publication) => new PublicationResponseDto(publication));
   }
 
   @Query(() => PublicationResponseDto, { nullable: true })
@@ -111,7 +161,7 @@ export class PublicationResolver {
     dto: PublicationSourceWithSourceIdDto,
   ): Promise<PublicationResponseDto | null> {
     try {
-      const publication = await this.publicationService.getPublikationBySourceWithId(dto);
+      const publication = await this.publicationService.getPublicationBySourceWithId(dto);
       return new PublicationResponseDto(publication);
     } catch (e) {
       return null;
@@ -128,6 +178,40 @@ export class PublicationResolver {
       return new PublicationResponseDto(publication);
     } catch (e) {
       throw new BadRequestException(e);
+    }
+  }
+
+  @Query(() => [NearestNeighborsResponseDto])
+  async getNearestNeighbors(
+    @Args('nearestNeighborRequestDto', new ValidationPipe()) dto: NearestNeighborRequestDto,
+  ): Promise<NearestNeighborsResponseDto[]> {
+    const nearestNeighbors = await this.publicationService.getNearestNeighbors(dto.vector, dto.amount);
+    return nearestNeighbors.map((nearestNeighbor) => new NearestNeighborsResponseDto(nearestNeighbor));
+  }
+
+  @Mutation(() => [PublicationResponseDto])
+  async savePublicationsCoordinates(
+    @Args(
+      'savePublicationsCoordinatesDto',
+      { type: () => SavePublicationsCoordiantesDto },
+      new ValidationPipe({ transform: true }),
+    )
+    dto: SavePublicationsCoordiantesDto,
+  ): Promise<PublicationResponseDto[]> {
+    try {
+      const publicationDtos = await this.publicationService.savePublicationsCoordinates(dto);
+      return publicationDtos;
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
+  }
+
+  @Query(() => MaximumAmountOfSentencesForPublicationResponseDto)
+  async maximumAmountOfSentencesForPublication(): Promise<MaximumAmountOfSentencesForPublicationResponseDto> {
+    try {
+      return await this.publicationService.getMaximumAmountOfSentencesForPublication();
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 }

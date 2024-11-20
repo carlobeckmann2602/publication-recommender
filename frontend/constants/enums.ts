@@ -3,3 +3,9 @@ export enum DOCUMENT_TYPES {
   "BOOK" = 2,
   "SPEECH" = 3,
 }
+
+export enum SearchStrategy {
+  Query,
+  Id,
+  Group,
+}

@@ -9,12 +9,12 @@ export default function Profile() {
     <>
       <Header title="Profile" subtitle="your personal information" />
       <ThemeToggle className="fixed bottom-4 right-4" />
-      <div className="flex justify-center p-8">
+      <div className="flex justify-center py-4 sm:p-8">
         <div className="flex flex-col w-full md:w-3/4 xl:w-1/2 gap-8">
           <UserCredentialForm title="Account information" />
           <PasswordForm title="Log in and security" />
           <div className="text-2xl font-medium text-left w-full">
-            Delete Publicationrecmd account
+            Delete Papermatcher account
           </div>
           <DeleteAccountButton />
         </div>

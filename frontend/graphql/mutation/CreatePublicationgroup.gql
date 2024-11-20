@@ -1,0 +1,7 @@
+mutation CreatePublicationGroup($name: String!, $color: String!) {
+  createPublicationGroup(data: { name: $name, color: $color }) {
+    id
+    name
+    color
+  }
+}

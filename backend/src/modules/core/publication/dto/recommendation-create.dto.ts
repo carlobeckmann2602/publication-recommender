@@ -5,9 +5,9 @@ export class RecommendationCreateDto {
   @Field(() => [String])
   group: string[];
 
-  @Field(() => [String], { nullable: true })
-  exlude?: string[] | null;
+  @Field(() => [String], { defaultValue: [] })
+  exlude: string[];
 
-  @Field(() => Int, { nullable: true })
-  amount?: number | null;
+  @Field(() => Int, { defaultValue: 10 })
+  amount: number;
 }

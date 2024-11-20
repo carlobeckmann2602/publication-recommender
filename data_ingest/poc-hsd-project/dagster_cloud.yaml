@@ -1,0 +1,5 @@
+locations:
+  - location_name: arxiv-etl
+  - location_name: stream-etl
+    code_source:
+      package_name: arxiv-etl

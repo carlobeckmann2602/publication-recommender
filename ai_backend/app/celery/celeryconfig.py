@@ -33,6 +33,7 @@ result_serializer = "json"
 task_serializer = "json"
 accept_content = ["json", "yaml"]
 C_FORCE_ROOT = False
+worker_pool_restarts = True
 # worker_enable_remote_control = True
 #worker_prefetch_multiplier = 2
 #worker_concurrency = 1

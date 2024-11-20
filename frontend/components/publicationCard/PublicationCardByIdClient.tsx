@@ -3,21 +3,19 @@ import { GetPublicationDocument } from "@/graphql/queries/GetPublication.generat
 import React, { Suspense } from "react";
 import PublicationCard from "@/components/publicationCard/PublicationCard";
 import { DOCUMENT_TYPES } from "@/constants/enums";
-import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
-import PublicationCardSkeleton from "./PublicationCardSkeleton";
+import { useSuspenseQuery } from "@apollo/client";
+import PublicationCardSkeleton from "@/components/publicationCard/PublicationCardSkeleton";
 
 type Props = {
   id: string;
   disableSearchSimilar?: boolean;
   className?: string;
-  enableRecommendationWarning?: boolean;
 };
 
 export default function PublicationCardByIdClient({
   id,
   disableSearchSimilar,
   className,
-  enableRecommendationWarning,
 }: Props) {
   const { data } = useSuspenseQuery(GetPublicationDocument, {
     variables: { id: id },
@@ -40,7 +38,6 @@ export default function PublicationCardByIdClient({
         documentType={DOCUMENT_TYPES.PAPER}
         disableSearchSimilar={disableSearchSimilar}
         className={className}
-        enableRecommendationWarning={enableRecommendationWarning}
       />
     </Suspense>
   );

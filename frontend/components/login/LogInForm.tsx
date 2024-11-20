@@ -24,9 +24,10 @@ import Link from "next/link";
 import GoogleButton from "@/components/login/GoogleButton";
 import TextSeparator from "@/components/TextSeparator";
 import { useRouter } from "next/navigation";
-import { allowBackgroundScrolling } from "@/lib/modal-controlls";
+import { allowBackgroundScrolling } from "@/lib/modal-controls";
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 import PasswordFormControl from "@/components/PasswordFormControl";
+import { useFetchPublicationGroups } from "@/hooks/UseFetchPublicationGroups";
 
 const FormSchema = z.object({
   email: z

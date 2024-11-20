@@ -31,7 +31,7 @@ export class FavoriteService {
       where: {
         userId: user.id,
       },
-      relations: ['publication'],
+      relations: { publication: { embeddings: true } },
       order: { createdAt: 'DESC' },
     });
 

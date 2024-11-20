@@ -1,20 +1,26 @@
 import React from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Props = {
   onClick: () => void;
   text?: string;
+  icon?: boolean;
   tooltipText?: string;
   dialogText?: string;
   dialogTitle?: string;
@@ -23,32 +29,33 @@ type Props = {
 export default function DeleteButton({
   onClick,
   text,
+  icon,
   tooltipText,
   dialogText,
   dialogTitle,
 }: Props) {
   if (dialogText || dialogTitle) {
     return (
-      <Dialog>
+      <AlertDialog>
         {tooltipText ? (
           <Tooltip>
             <TooltipTrigger asChild>
-              <DialogTrigger asChild>
+              <AlertDialogTrigger asChild>
                 <Button
                   variant="destructive"
                   size={text ? "default" : "icon"}
                   className={text ? "" : "aspect-square"}
                 >
-                  {text ?? <Trash2 />}
+                  {text} {icon && <Trash2 className={text && "ml-4"} />}
                 </Button>
-              </DialogTrigger>
+              </AlertDialogTrigger>
             </TooltipTrigger>
             <TooltipContent sideOffset={10} align="start">
               {tooltipText}
             </TooltipContent>
           </Tooltip>
         ) : (
-          <DialogTrigger asChild>
+          <AlertDialogTrigger asChild>
             <Button
               variant="destructive"
               size={text ? "default" : "icon"}
@@ -56,27 +63,29 @@ export default function DeleteButton({
             >
               {text ?? <Trash2 />}
             </Button>
-          </DialogTrigger>
+          </AlertDialogTrigger>
         )}
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="leading-normal">{dialogTitle}</DialogTitle>
-          </DialogHeader>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="leading-normal">
+              {dialogTitle}
+            </AlertDialogTitle>
+          </AlertDialogHeader>
           {dialogText}
-          <DialogFooter className="sm:justify-start">
-            <DialogClose className="w-1/2" asChild>
+          <AlertDialogFooter className="sm:justify-start">
+            <AlertDialogCancel className="w-1/2" asChild>
               <Button type="button" variant="secondary">
                 Cancel
               </Button>
-            </DialogClose>
-            <DialogClose className="w-1/2" asChild>
+            </AlertDialogCancel>
+            <AlertDialogAction className="w-1/2" asChild>
               <Button type="submit" onClick={onClick}>
                 Delete
               </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
 

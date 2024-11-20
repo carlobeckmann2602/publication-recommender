@@ -36,6 +36,20 @@ To start seed the database, run the following command
 docker compose --profile seeders up
 ```
 
+**IMPORTANT:** To make the seeder work, you have to change 1 line of code:
+
+```
+> ./src/modules/core/publication/entities/embedding.entity.ts
+
+17   @Column('vector')
+```
+into
+```
+17   @Column()
+```
+
+After running the seeder make sure to change the line back. Otherwise the next migration will break things. More about this [here](https://projectbase.medien.hs-duesseldorf.de/ki/publikationsempfehlung/backend/-/issues/13).
+
 ### Reset Project
 
 run the following command to delete everything docker related. This includes volumes!

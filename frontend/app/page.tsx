@@ -4,7 +4,7 @@ import { Searchbar } from "@/components/search/Searchbar";
 export default function Home() {
   return (
     <>
-      <div className="flex justify-center h-full items-center flex-col py-4 gap-8">
+      <div className="flex flex-col h-full overflow-y-visible justify-center items-center py-4 gap-8">
         <Searchbar />
         <div className="w-full">
           <NewestRecommendationSlider

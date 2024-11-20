@@ -1,1 +1,6 @@
-data/temp/**/*
+.idea
+tmp*
+venv
+.env
+service-account.json
+.DS_Store

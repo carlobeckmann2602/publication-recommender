@@ -1,7 +1,6 @@
 import asyncio
-from time import perf_counter
-
 import aiohttp
+import numpy as np
 import requests
 import random
 from wonderwords import RandomSentence
@@ -22,7 +21,8 @@ async def fetch(s, endpoint: str, path_parameter: str = None, params={}):
 
 
 async def fetch_all(s, configs):
-    tasks = [build_annoy_task(s)]
+    # tasks = [build_annoy_task(s)]
+    tasks = []
     for current_config in configs:
         task = asyncio.create_task(fetch(s,
                                          current_config["endpoint"],
@@ -83,8 +83,18 @@ def get_random_ids(amount) -> list:
 
 
 if __name__ == '__main__':
-    random_ids = get_random_ids(50)
-    start = perf_counter()
-    asyncio.run(main(amount=100))
-    stop = perf_counter()
-    print("time taken:", stop - start)
+    print(str(np.random.random(size=[4, 10])))
+    random_ids = [
+        "3595e714-0d45-4689-b87c-8783c7b98056",
+        "64604b42-d303-45a2-bce7-d127dbc96cc2",
+        "5de44a87-0617-4afb-b2ce-c5ebf01f7d04",
+        "6c670e42-bbd5-40ea-b7dc-625403e795eb",
+        "82176bfd-254b-4e62-8f65-72a5b92c5fdc",
+        "b221c7e8-37bf-4617-9f2e-c45b51ed2e59",
+        "d6d73a57-08bd-4148-be36-e45ae16645ed",
+        "6ae88dfb-8918-42b3-b8dc-9a53b730cd73",
+        "d3f8bd7e-98b3-4c20-a6af-9c3e07a7cfdb"]
+#    start = perf_counter()
+#    asyncio.run(main(amount=5))
+#    stop = perf_counter()
+#    print("time taken:", stop - start)

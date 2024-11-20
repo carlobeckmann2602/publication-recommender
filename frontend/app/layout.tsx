@@ -4,11 +4,18 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 import { Toaster } from "@/components/ui/toaster";
 import Sidebar from "@/components/navbar/Sidebar";
+import type { Viewport } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "Publicationrecmd",
+  title: "Papermatcher",
   description: "Find your academic publication",
 };
 
@@ -17,17 +24,17 @@ export default function RootLayout(props: {
   modal: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head></head>
       <body className={inter.className}>
         <Providers>
-          <div className="min-h-screen">
-            <Sidebar className="" />
+          <div className="max-w-full flex flex-row">
+            <Sidebar className="basis-0" />
             <div
               id="content"
-              className="flex-grow flex pr-5 md:pr-7 lg:pr-11 pl-[19.25rem] md:[19.75rem] lg:pl-[20.75rem] justify-center"
+              className="w-full flex justify-center grow basis-0"
             >
-              <div className="w-full max-w-7xl px-1 min-h-screen">
+              <div className="w-full px-4 lg:px-8 min-h-[100dvh]">
                 {props.children}
               </div>
               <Toaster />

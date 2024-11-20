@@ -2,3 +2,13 @@
 **/data/*
 **/data/datasets/*
 **/data/generated_data/*
+
+# General
+**/__pycache__
+**/.idea
+**/venv
+**/.vscode
+rabbit_data
+.env*
+!.env.example
+.env

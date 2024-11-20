@@ -12,8 +12,10 @@ import SimilarSearchButton from "@/components/publicationCard/SimilarSearchButto
 import LikeButton from "@/components/publicationCard/LikeButton";
 import Latex from "@/lib/latex-converter";
 import { Book, File, MessageCircle } from "lucide-react";
-import AddToRecommendationButton from "@/components/publicationCard/AddRemovetoSelectionButton";
 import Link from "next/link";
+import CitationButton from "@/components/publicationCard/CitationButton";
+import PublicationGroupButton from "@/components/publicationCard/PublicationGroupButton";
+import PublicationGroupBadges from "@/components/publicationCard/PublicationCardBadges";
 
 type Props = {
   id: string;
@@ -27,7 +29,6 @@ type Props = {
   documentType?: DOCUMENT_TYPES | null;
   disableSearchSimilar?: boolean;
   enableLikeWarning?: boolean;
-  enableRecommendationWarning?: boolean;
   className?: string;
 };
 
@@ -40,19 +41,21 @@ export default function PublicationCard(props: Props) {
   //const doiCode = props.doi?.replace(/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/, "$3");
   const doiUrl = `https://www.doi.org/${props.doi?.slice(0, 1)}`;
 
-  const abstractWordAmount = 50;
   const authorAmount = 3;
 
   let authorsString = props.authors?.slice(0, authorAmount).join(", ");
-  if (props.authors && props.authors?.length >= 5)
+  if (props.authors && props.authors?.length >= authorAmount)
     authorsString = authorsString + "...";
 
   return (
-    <Card className={`w-full flex flex-col ${props.className}`} id={props.id}>
+    <Card
+      className={`@container/card contain-layout relative w-full flex flex-col z-10 ${props.className}`}
+      id={props.id}
+    >
       <CardHeader>
         <div className="flex flex-row gap-2">
           {props.documentType && (
-            <div className="w-[32px] min-w-[32px]">
+            <div className="hidden @3xl/card:block w-[32px] min-w-[32px]">
               {props.documentType === DOCUMENT_TYPES.PAPER && (
                 <File size={32} />
               )}
@@ -62,7 +65,7 @@ export default function PublicationCard(props: Props) {
               )}
             </div>
           )}
-          <CardTitle className="grow">
+          <CardTitle className="grow text-lg @3xl/card:text-2xl">
             <Link
               href={props.link ?? ""}
               target="_blank"
@@ -72,7 +75,7 @@ export default function PublicationCard(props: Props) {
             </Link>
           </CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs @3xl/cardtext-sm">
           {authorsString} {authorsString && " - "} {props.date?.getFullYear()}
           {props.date && " - "}
           {props.link && (
@@ -88,14 +91,8 @@ export default function PublicationCard(props: Props) {
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-4">
         {props.abstract && (
-          <p>
-            <Latex>
-              {props.abstract
-                .split(" ")
-                .splice(0, abstractWordAmount)
-                .join(" ") +
-                (props.abstract.length > abstractWordAmount ? "..." : "")}
-            </Latex>
+          <p className="line-clamp-3 text-ellipsis">
+            <Latex>{props.abstract}</Latex>
           </p>
         )}
         {props.matchedSentence && (
@@ -106,26 +103,29 @@ export default function PublicationCard(props: Props) {
         )}
       </CardContent>
       <CardFooter>
-        <div className="flex flex-row gap-4 justify-between align-middle items-end grow">
+        <div className="flex flex-col-reverse @3xl/card:flex-row gap-4 justify-between @3xl/card:items-center grow">
           <div className="flex flex-row gap-1">
             {!props.disableSearchSimilar && (
               <SimilarSearchButton id={props.id} />
             )}
-            {/* <TagIcon width={24} /> */}
             <LikeButton
-              key={props.id}
               id={props.id}
               title={props.title}
               enableWarning={props.enableLikeWarning}
             />
-            <AddToRecommendationButton
+            <CitationButton
               id={props.id}
               title={props.title}
-              enableWarning={props.enableRecommendationWarning}
+              doi={props.doi}
+              authors={props.authors}
+              date={props.date}
+              link={props.link}
             />
+            <PublicationGroupButton id={props.id} title={props.title} />
           </div>
+          <PublicationGroupBadges id={props.id} />
           {props.doi && props.doi[0] && (
-            <span className="h-fit text-right">
+            <p className="h-fit text-sm @3xl/cardtext-body min-w-56">
               DOI:{" "}
               <a
                 href={doiUrl}
@@ -134,7 +134,7 @@ export default function PublicationCard(props: Props) {
               >
                 {props.doi.slice(0, 1)}
               </a>
-            </span>
+            </p>
           )}
         </div>
       </CardFooter>

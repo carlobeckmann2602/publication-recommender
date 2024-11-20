@@ -1,0 +1,26 @@
+query GetSimilarPublicationsForPublicationWithIdCoordinates(
+    $id: String!,
+    $page: Int!,
+    $amountPerPage: Int!,
+) {
+    similarPublicationsForPublicationWithId(
+        similarPublicationsForPublicationWithIdDto: {
+            id: $id,
+            page: $page,
+            amountPerPage: $amountPerPage,
+        }
+    ) {
+        searchCoordinate
+        similarPublications {
+            id
+            title
+            source
+            doi
+            url
+            authors
+            publicationDate
+            abstract
+            coordinate
+        }
+    }
+}

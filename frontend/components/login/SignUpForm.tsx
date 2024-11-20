@@ -25,7 +25,7 @@ import Link from "next/link";
 
 import { useMutation } from "@apollo/client";
 import { RegisterDocument } from "@/graphql/mutation/RegisterUser.generated";
-import { allowBackgroundScrolling } from "@/lib/modal-controlls";
+import { allowBackgroundScrolling } from "@/lib/modal-controls";
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 import PasswordFormControl from "@/components/PasswordFormControl";
 

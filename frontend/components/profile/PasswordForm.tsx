@@ -8,10 +8,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,

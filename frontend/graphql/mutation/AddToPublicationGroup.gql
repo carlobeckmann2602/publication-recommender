@@ -1,0 +1,11 @@
+mutation AddToPublicationGroup(
+  $publicationgroup_id: String!
+  $publication_ids: [String!]!
+) {
+  addToPublicationGroup(
+    publicationgroup_id: $publicationgroup_id
+    publication_ids: $publication_ids
+  ) {
+    success
+  }
+}

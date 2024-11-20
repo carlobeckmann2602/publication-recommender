@@ -1,31 +1,29 @@
 import { faker } from '@faker-js/faker';
-import { createHash } from 'node:crypto';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
 import { v4 as uuidv4 } from 'uuid';
-import { DescriptorDto } from '../../modules/core/publication/dto/descriptor.dto';
-import { SentenceDto } from '../../modules/core/publication/dto/sentence.dto';
+import { Author } from '../../modules/core/publication/entities/author.entity';
+import { Embedding } from '../../modules/core/publication/entities/embedding.entity';
 import { Publication } from '../../modules/core/publication/entities/publication.entity';
 import { SourceVo } from '../../modules/core/publication/vo/source.vo';
 
 export class Publications1698190282922 implements Seeder {
-  track = false;
-
   public async run(dataSource: DataSource): Promise<any> {
     const repository = dataSource.getRepository(Publication);
-    const publications: Publication[] = [];
+
+    let publications: Publication[] = [];
 
     for (let i = 0; i < 100; i++) {
-      const descriptor = new DescriptorDto();
-      descriptor.sentences = new Array(5).fill('').map(() => {
-        const sentence = new SentenceDto();
-        sentence.value = faker.lorem.sentence();
-        sentence.vector = new Array(768).fill('').map(() => faker.number.float({ min: 0, max: 1 }));
+      const embeddings = Array.from({ length: 5 }, () => {
+        const text = faker.lorem.sentence();
+        const vectorAsString = JSON.stringify(
+          Array.from({ length: 768 }, () => faker.number.float({ min: 0, max: 1 })),
+        );
 
-        return sentence;
+        return new Embedding(text, vectorAsString);
       });
       const publication = new Publication();
-      publication.exId = createHash('md5').update(uuidv4()).digest('hex');
+      publication.exId = uuidv4();
       publication.source = SourceVo.ARXIV;
       publication.title = faker.lorem.sentence();
       publication.abstract = faker.lorem.sentences(3);
@@ -34,18 +32,26 @@ export class Publications1698190282922 implements Seeder {
       publication.date = Math.floor(Math.random() * 2) === 1 ? faker.date.past() : null;
 
       if (Math.random() > 0.5) {
-        publication.doi = new Array(Math.floor(Math.random() * 3)).fill(faker.commerce.isbn());
+        const length = Math.floor(Math.random() * 3);
+        publication.doi = Array.from({ length: length }, () => faker.commerce.isbn());
       }
 
       publication.url = faker.internet.url();
-      publication.descriptor = descriptor;
+      publication.embeddings = embeddings;
       publications.push(publication);
-    }
 
-    await repository.insert(publications);
+      if (publications.length === 50) {
+        console.time(`added 50 publications in`);
+        await repository.save(publications);
+        console.timeEnd(`added 50 publications in`);
+        console.log(`total amount added: ${i + 1}`);
+        publications = [];
+      }
+    }
   }
 
-  private generateAuthors(): string[] {
-    return new Array(Math.floor(Math.random() * 5)).fill('').map(() => faker.person.fullName());
+  private generateAuthors(): Author[] {
+    const length = Math.floor(Math.random() * 5);
+    return Array.from({ length: length }, () => faker.person.fullName()).map((name) => new Author(name));
   }
 }

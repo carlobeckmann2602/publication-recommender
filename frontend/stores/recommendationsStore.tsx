@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 type RecommendationsState = {
-  publicationGroup: string[];
+  recommendationGroup: string[];
   addPublication: (id: string) => void;
   removePublication: (id: string) => void;
   clearPublications: () => void;
@@ -11,19 +11,21 @@ type RecommendationsState = {
 const useRecommendationsStore = create<RecommendationsState>()(
   persist(
     (set) => ({
-      publicationGroup: [],
+      recommendationGroup: [],
       addPublication: (id) => {
-        set((state) => ({ publicationGroup: [...state.publicationGroup, id] }));
+        set((state) => ({
+          recommendationGroup: [...state.recommendationGroup, id],
+        }));
       },
       removePublication: (id) => {
         set((state) => ({
-          publicationGroup: state.publicationGroup.filter(
+          recommendationGroup: state.recommendationGroup.filter(
             (publication) => publication != id
           ),
         }));
       },
       clearPublications: () => {
-        set({ publicationGroup: [] });
+        set({ recommendationGroup: [] });
       },
     }),
     {
