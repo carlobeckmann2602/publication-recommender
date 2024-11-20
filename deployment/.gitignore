@@ -7,3 +7,5 @@ rabbit_data
 .env*
 !.env.example
 .env
+
+**/secret[s].yaml*
