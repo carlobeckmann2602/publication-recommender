@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-backend-service
+  namespace: publikationsempfehlung
+spec:
+  selector:
+    app: ai-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-backend-worker-service
+  namespace: publikationsempfehlung
+spec:
+  selector:
+    app: ai-backend-worker
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-backend-flower-service
+  namespace: publikationsempfehlung
+spec:
+  selector:
+    app: ai-backend-flower
+  ports:
+    - protocol: TCP
+      port: 5555
+      targetPort: 5555
+  type: ClusterIP
+
+
+
+

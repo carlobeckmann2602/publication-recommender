@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arxiv-api-scraper-deployment
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arxiv-api-scraper
+  template:
+    metadata:
+      labels:
+        app: arxiv-api-scraper
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: arxiv-api-scraper
+          image: hrabar.azurecr.io/ki-publikationsempfehlung-data-ingest:1.0.1 # {"$imagepolicy": "flux-system:data-ingest-policy"}
+          volumeMounts:
+            - mountPath: /scraper
+              name: scraper-volume
+          stdin: true
+          tty: true
+      volumes:
+        - name: scraper-volume
+          persistentVolumeClaim:
+            claimName: scraper-pvc
+      initContainers:
+        - name: wait-for-backend
+          image: busybox
+          command: ['sh', '-c', 'until nslookup ai-backend-service.publikationsempfehlung.svc.cluster.local && nslookup nest-service.publikationsempfehlung.svc.cluster.local; do echo waiting for services; sleep 2; done;']

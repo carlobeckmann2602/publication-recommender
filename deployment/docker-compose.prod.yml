@@ -1,0 +1,178 @@
+services:
+  nest:
+    build:
+      context: ../backend
+    ports:
+      - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
+    healthcheck:
+      test: 'wget localhost:${BACKEND_PORT}/graphql?query={__typename} --spider  --header "apollo-require-preflight: true"'
+      interval: 30s
+      retries: 50
+      start_period: 10s
+      timeout: 10s
+    depends_on:
+      - postgres
+    stdin_open: true
+    tty: true
+    networks:
+      - pr_network
+    environment:
+      - APP_ENV=${APP_ENV}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+      - JWT_SECRET=${BACKEND_JWT_SECRET}
+      - JWT_ACCESS_TOKEN_TTL=${BACKEND_JWT_ACCESS_TOKEN_TTL}
+      - JWT_REFRESH_TOKEN_TTL=${BACKEND_JWT_REFRESH_TOKEN_TTL}
+      - PROJECT_AI_BACKEND_URL=${PROJECT_AI_BACKEND_URL}
+      - PROJECT_FRONTEND_URL=${PROJECT_FRONTEND_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_QUEUE1=${RABBITMQ_QUEUE1}
+      - RABBITMQ_QUEUE2=${RABBITMQ_QUEUE2}
+
+  ai_backend:
+    build:
+      context: ../ai_backend
+      dockerfile: Dockerfile.api.prod
+    ports:
+      - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
+    stdin_open: true
+    depends_on:
+      ai_backend_worker:
+        condition: service_started
+    tty: true
+    networks:
+      - pr_network
+    environment:
+      - PORT=${AI_BACKEND_PORT}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+      - AI_BACKEND_API_HOSTNAME=${AI_BACKEND_API_HOSTNAME}
+
+  ai_backend_worker:
+    container_name: ai_backend_worker
+    build:
+      context: ../ai_backend
+      dockerfile: Dockerfile.celery.prod
+    networks:
+      - pr_network
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+      - WRITE_LOGS=${AI_BACKEND_WORKER_WRITE_LOGS}´
+      - AI_BACKEND_API_HOSTNAME=${AI_BACKEND_API_HOSTNAME}
+    depends_on:
+      - rabbitmq
+      - redis
+
+  ai_backend_flower:
+    container_name: ai_backend_flower
+    build:
+      context: ../ai_backend
+      dockerfile: Dockerfile.flower.prod
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+      - AI_BACKEND_FLOWER_PORT=${AI_BACKEND_FLOWER_PORT}
+      - AI_BACKEND_API_HOSTNAME=${AI_BACKEND_API_HOSTNAME}
+    networks:
+      - pr_network
+    ports:
+      - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
+    depends_on:
+      - ai_backend_worker
+    profiles:
+      - monitoring
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      - POSTGRES_USER=${BACKEND_DB_USERNAME}
+      - POSTGRES_PASSWORD=${BACKEND_DB_PASSWORD}
+      - POSTGRES_DB=${BACKEND_DB_DATABASE}
+    volumes:
+      - backend_database:/var/lib/postgresql/data
+    networks:
+      - pr_network
+    ports:
+      - "${BACKEND_DB_HOST_PORT}:${BACKEND_DB_PORT}"
+
+  next:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_HOST_PORT}:${FRONTEND_PORT}"
+    stdin_open: true
+    tty: true
+    networks:
+      - pr_network
+    environment:
+      - SERVER_BACKEND_GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXTAUTH_SECRET=${FRONTEND_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${PROJECT_FRONTEND_URL}
+      - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
+      - USER_PROTECT=${FRONTEND_USER_PROTECT}
+      - PASSWORD_PROTECT=${FRONTEND_PASSWORD_PROTECT}
+
+  arxiv_api_scraper:
+    build:
+      context: ../data_ingest
+      dockerfile: Dockerfile
+    volumes:
+      - ../data_ingest/:/scraper/
+    networks:
+      - pr_network
+    depends_on:
+      - ai_backend
+      - nest
+    profiles:
+      - with_scraping
+    stdin_open: true
+    tty: true
+
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - pr_network
+    ports:
+      - "${ADMINER_HOST_PORT}:${ADMINER_PORT}"
+    profiles:
+      - monitoring
+
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    networks:
+      - pr_network
+
+  rabbitmq:
+    image: rabbitmq:3.12.9-management-alpine
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    networks:
+      - pr_network
+    ports:
+      - "${RABBITMQ_HOST_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+
+volumes:
+  backend_database:
+  rabbit_data:
+
+networks:
+  pr_network:

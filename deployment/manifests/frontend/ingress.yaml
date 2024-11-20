@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: next-app-ingress
+  namespace: publikationsempfehlung
+spec:
+  rules:
+  - host: papermatcher.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: next-app-service
+            port:
+              number: 80

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: publikationsempfehlung
+data:
+  BACKEND_DB_PORT: "5432"
+  POSTGRES_USER: root
+  POSTGRES_PASSWORD: secret
+  POSTGRES_DB: pr  

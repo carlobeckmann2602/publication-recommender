@@ -1,0 +1,10 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: backend
+  namespace: flux-system
+spec:
+  image: hrabar.azurecr.io/ki-publikationsempfehlung-backend
+  interval: 1m
+  secretRef:
+    name: regcred

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nest
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nest
+  template:
+    metadata:
+      labels:
+        app: nest
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: nest
+        image: hrabar.azurecr.io/ki-publikationsempfehlung-backend:1.0.5 # {"$imagepolicy": "flux-system:backend-policy"}
+        command: ["/bin/sh", "-c", "npm run migration:run && npm run start:dev"]
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: nest-config
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: nest-secrets
+              key: DB_USERNAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nest-secrets
+              key: DB_PASSWORD
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: nest-secrets
+              key: JWT_SECRET
+        # readinessProbe:
+        #   exec:
+        #     command: ["sh", "-c", "wget nest-service:3000/graphql?query={__typename} --spider --header 'apollo-require-preflight: true'"]
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 30
+        #   timeoutSeconds: 10
+        #   failureThreshold: 50
+        # livenessProbe:
+        #   exec:
+        #     command: ["sh", "-c", "wget nest-service:3000/graphql?query={__typename} --spider --header 'apollo-require-preflight: true'"]
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 30
+        #   timeoutSeconds: 10
+        #   failureThreshold: 50
+        volumeMounts:
+        - mountPath: /usr/src/app
+          name: backend-source
+      volumes:
+      - name: backend-source
+        persistentVolumeClaim:
+          claimName: backend-source-pvc

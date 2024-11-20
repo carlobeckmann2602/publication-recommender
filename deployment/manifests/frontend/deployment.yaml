@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: next-app-deployment
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: next-app
+  template:
+    metadata:
+      labels:
+        app: next-app
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: next-app
+          image: hrabar.azurecr.io/ki-publikationsempfehlung-frontend:1.0.15 # {"$imagepolicy": "flux-system:frontend-policy"}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - mountPath: /usr/src/app
+              name: app-volume
+          envFrom:
+            - configMapRef:
+                name: next-config
+          env:
+            - name: USER_PROTECT
+              valueFrom:
+                secretKeyRef:
+                  name: next-secrets
+                  key: USER_PROTECT
+            - name: PASSWORD_PROTECT
+              valueFrom:
+                secretKeyRef:
+                  name: next-secrets
+                  key: PASSWORD_PROTECT
+      volumes:
+        - name: app-volume
+          persistentVolumeClaim:
+            claimName: next-app-pvc

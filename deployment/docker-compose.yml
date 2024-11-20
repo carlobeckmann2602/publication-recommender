@@ -1,0 +1,277 @@
+services:
+  nest:
+    image: node:18-alpine3.17
+    volumes:
+      - ../backend:/usr/src/app
+    working_dir: /usr/src/app
+    ports:
+      - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
+    healthcheck:
+      test: 'wget localhost:${BACKEND_PORT}/graphql?query={__typename} --spider  --header "apollo-require-preflight: true"'
+      interval: 30s
+      retries: 50
+      start_period: 10s
+      timeout: 10s
+    depends_on:
+      - postgres
+    stdin_open: true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run migration:run
+        npm run start:dev
+    tty: true
+    networks:
+      - pr_network
+    environment:
+      - APP_ENV=${APP_ENV}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+      - JWT_SECRET=${BACKEND_JWT_SECRET}
+      - JWT_ACCESS_TOKEN_TTL=${BACKEND_JWT_ACCESS_TOKEN_TTL}
+      - JWT_REFRESH_TOKEN_TTL=${BACKEND_JWT_REFRESH_TOKEN_TTL}
+      - PROJECT_AI_BACKEND_URL=${PROJECT_AI_BACKEND_URL}
+      - PROJECT_FRONTEND_URL=${PROJECT_FRONTEND_URL}
+
+  ai_backend:
+    build:
+      context: ../ai_backend
+      dockerfile: Dockerfile
+    command: uvicorn app.main:rec_api --host 0.0.0.0 --reload --reload-dir ./app --port ${AI_BACKEND_PORT}
+    volumes:
+      - ../ai_backend/:/code/
+    ports:
+      - "${AI_BACKEND_HOST_PORT}:${AI_BACKEND_PORT}"
+    stdin_open: true
+    depends_on:
+      ai_backend_worker:
+        condition: service_started
+    tty: true
+    networks:
+      - pr_network
+    environment:
+      - PORT=${AI_BACKEND_PORT}
+      - DATA_PATH=${AI_BACKEND_DATA_PATH}
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+
+  ai_backend_worker:
+    container_name: ai_backend_worker
+    restart: always
+    build:
+      context: ../ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_worker.celery worker -P eventlet --loglevel=info --without-gossip --without-mingle -E
+    networks:
+      - pr_network
+    volumes:
+      - ../ai_backend/app/:/code/app/
+      - ../ai_backend/data/:/code/data/
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+      - WRITE_LOGS=${AI_BACKEND_WORKER_WRITE_LOGS}
+    depends_on:
+      - rabbitmq
+      - redis
+
+  ai_backend_flower:
+    container_name: ai_backend_flower
+    build:
+      context: ../ai_backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_worker.celery flower --port=${AI_BACKEND_FLOWER_PORT} --conf=app/celery/flowerconfig.py --basic-auth=${FLOWER_AUTH_USER}:${FLOWER_AUTH_PASSWORD}
+    environment:
+      - BROKER=${AI_BACKEND_BROKER}
+      - RESULT_BACKEND=${AI_BACKEND_RESULT_QUEUE}
+      - API_PORT=${AI_BACKEND_PORT}
+      - GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+    volumes:
+      - ../ai_backend/app/:/code/app/
+    networks:
+      - pr_network
+    ports:
+      - "${AI_BACKEND_FLOWER_PORT}:${AI_BACKEND_FLOWER_HOST_PORT}"
+    depends_on:
+      - ai_backend_worker
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      - POSTGRES_USER=${BACKEND_DB_USERNAME}
+      - POSTGRES_PASSWORD=${BACKEND_DB_PASSWORD}
+      - POSTGRES_DB=${BACKEND_DB_DATABASE}
+    volumes:
+      - backend_database:/var/lib/postgresql/data
+    networks:
+      - pr_network
+    ports:
+      - "${BACKEND_DB_HOST_PORT}:${BACKEND_DB_PORT}"
+    command: >-
+      postgres
+      -c maintenance_work_mem=8GB
+
+  next:
+    image: node:18-alpine3.17
+    volumes:
+      - ../frontend:/usr/src/app
+    working_dir: /usr/src/app
+    ports:
+      - "${FRONTEND_HOST_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      nest:
+        condition: service_healthy
+    stdin_open: true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run codegen
+        npm run dev
+    tty: true
+    networks:
+      - pr_network
+    environment:
+      - SERVER_BACKEND_GRAPHQL_ENDPOINT=${PROJECT_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT=${FRONTEND_NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT}
+      - NEXTAUTH_SECRET=${FRONTEND_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${PROJECT_FRONTEND_URL}
+      - GOOGLE_CLIENT_ID=${FRONTEND_GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${FRONTEND_GOOGLE_CLIENT_SECRET}
+      - USER_PROTECT=${FRONTEND_USER_PROTECT}
+      - PASSWORD_PROTECT=${FRONTEND_PASSWORD_PROTECT}
+
+  daily_scraper:
+    container_name: daily_scraper
+    build:
+      context: ../data_ingest
+      dockerfile: Dockerfile
+    volumes:
+      - ../data_ingest/:/scraper/
+    networks:
+      - pr_network
+    profiles:
+      - scraper
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+
+  2023_scraper:
+    container_name: 2023_scraper
+    build:
+      context: ../data_ingest
+      dockerfile: Dockerfile_2023
+    volumes:
+      - ../data_ingest/:/scraper/
+    networks:
+      - pr_network
+    profiles:
+      - scraper
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+
+  2022_scraper:
+    container_name: 2022_scraper
+    build:
+      context: ../data_ingest
+      dockerfile: Dockerfile_2022
+    volumes:
+      - ../data_ingest/:/scraper/
+    networks:
+      - pr_network
+    profiles:
+      - scraper
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+
+  2020_scraper:
+    container_name: 2020_scraper
+    build:
+      context: ../data_ingest
+      dockerfile: Dockerfile_2020
+    volumes:
+      - ../data_ingest/:/scraper/
+    networks:
+      - pr_network
+    profiles:
+      - scraper
+    depends_on:
+      - ai_backend
+      - nest
+    stdin_open: true
+    tty: true
+
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - pr_network
+    ports:
+      - "${ADMINER_HOST_PORT}:${ADMINER_PORT}"
+
+  seeders:
+    image: node:18-alpine3.17
+    working_dir: /usr/src/app
+    profiles:
+      - seeders
+    volumes:
+      - ../backend:/usr/src/app
+    depends_on:
+      nest:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm run seed:run
+    networks:
+      - pr_network
+    environment:
+      - APP_ENV=${APP_ENV}
+      - DB_HOST=${BACKEND_DB_HOST}
+      - DB_USERNAME=${BACKEND_DB_USERNAME}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - DB_DATABASE=${BACKEND_DB_DATABASE}
+      - DB_PORT=${BACKEND_DB_PORT}
+
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    networks:
+      - pr_network
+
+  rabbitmq:
+    image: rabbitmq:3.12.9-management-alpine
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    networks:
+      - pr_network
+    ports:
+      - "${RABBITMQ_HOST_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+
+volumes:
+  backend_database:
+  rabbit_data:
+
+networks:
+  pr_network:

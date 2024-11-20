@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: next-config
+  namespace: publikationsempfehlung
+data:
+  # NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT: "http://next-app-service/graphql"
+  NEXT_PUBLIC_CLIENT_BACKEND_GRAPHQL_ENDPOINT: "http://nest-service:3000/graphql"
+  NEXTAUTH_SECRET: "bA6H5eqKG0uj1jypdVOHB9LU/3YJPKTnjS1qXt4ymAM="
+  NEXTAUTH_URL: "http://papermatcher.com"
+  SERVER_BACKEND_GRAPHQL_ENDPOINT: "http://nest-service:3000/graphql"
+  GOOGLE_CLIENT_ID: ""
+  GOOGLE_CLIENT_SECRET: ""

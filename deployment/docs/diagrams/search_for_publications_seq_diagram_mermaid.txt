@@ -1,0 +1,14 @@
+sequenceDiagram
+    actor User
+    User->>+Frontend: Search for publications by searchQuery
+    Frontend->>+Backend: query publications(searchQuery, searchFilters, sortBy)<br/>(GraphQl)
+    Backend->>+Database: findAllInDB(searchQuery, searchFilters, sortBy)
+    note over Backend,Database: 50% of returned publications,<br/>100% if SearchFilters are applied
+    Database-->>-Backend: Matching publications by title, author, doi, etc.
+    Backend->>+AI Backend: GET /encode/${searchQuery}
+    AI Backend-->>-Backend: vector<br/>(Vector representation of searchQuery)
+    Backend->>+Database: getNearestNeighbors(vector)
+    note over Backend,Database: 50% of returned publications,<br/>0% if SearchFilters are applied
+    Database-->>-Backend: Similar publications by vector distance
+    Backend-->>-Frontend: All publications for searchQuery<br/>(matching and similar, filtered, sorted individually)
+    Frontend-->>-User: All publications for searchQuery<br/>(matching and similar, filtered, sorted individually)

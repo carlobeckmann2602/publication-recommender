@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-backend-config
+  namespace: publikationsempfehlung
+data:
+  PORT: "8000"
+  DATA_PATH: "./data"
+  BROKER: "amqp://guest:guest@rabbitmq-service:5672//"
+  RESULT_BACKEND: "redis://redis-service:6379/0"
+  API_PORT: "8000"
+  GRAPHQL_ENDPOINT: "http://nest-service:3000/graphql"
+  AI_BACKEND_API_HOSTNAME: ai-backend-service
+ 
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-backend-worker-config
+  namespace: publikationsempfehlung
+data:
+  BROKER: "amqp://guest:guest@rabbitmq-service:5672//"
+  RESULT_BACKEND: redis://redis-service:6379/0
+  DATA_PATH: ./data
+  API_PORT: "8000"
+  GRAPHQL_ENDPOINT: http://nest-service:3000/graphql
+  WRITE_LOGS: "True"
+  AI_BACKEND_API_HOSTNAME: ai-backend-service
+
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-backend-flower-config
+  namespace: publikationsempfehlung
+data:
+  BROKER: "amqp://guest:guest@rabbitmq-service:5672//"
+  RESULT_BACKEND: redis://redis-service:6379/0
+  DATA_PATH: ./data
+  API_PORT: "8000"
+  FLOWER_AUTH_USER: "root"
+  FLOWER_AUTH_PASSWORD: "secret"
+  GRAPHQL_ENDPOINT: http://nest-service:3000/graphql
+  AI_BACKEND_FLOWER_PORT: "5555"
+  AI_BACKEND_API_HOSTNAME: "ai-backend-service"

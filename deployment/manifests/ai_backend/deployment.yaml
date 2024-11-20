@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-backend-flower
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-backend-flower
+      version: flower
+  template:
+    metadata:
+      labels:
+        app: ai-backend-flower
+        version: flower
+    spec:
+      containers:
+        - name: ai-backend-flower
+          image: hrabar.azurecr.io/ki-publikationsempfehlung-ai-backend:1.0.2 # {"$imagepolicy": "flux-system:ai-backend-policy"}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: ai-backend-flower-config
+          command: ["/bin/sh", "-c", "celery -A app.celery.celery_worker.celery flower --port=$AI_BACKEND_FLOWER_PORT --conf=app/celery/flowerconfig.py --basic-auth=$FLOWER_AUTH_USER:$FLOWER_AUTH_PASSWORD"]
+          stdin: true
+          tty: true
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-backend-worker
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-backend-worker
+      version: worker
+  template:
+    metadata:
+      labels:
+        app: ai-backend-worker
+        version: worker
+    spec:
+      containers:
+        - name: ai-backend-worker
+          image: hrabar.azurecr.io/ki-publikationsempfehlung-ai-backend:1.0.2 # {"$imagepolicy": "flux-system:ai-backend-policy"}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: ai-backend-worker-config
+          command: ["sh", "-c", "celery -A app.celery.celery_worker.celery worker -P eventlet --loglevel=info --without-gossip --without-mingle -E"]
+          stdin: true
+          tty: true
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-backend-api
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-backend
+      version: api
+  template:
+    metadata:
+      labels:
+        app: ai-backend
+        version: api
+    spec:
+      containers:
+        - name: ai-backend-api
+          image: hrabar.azurecr.io/ki-publikationsempfehlung-ai-backend:1.0.2 # {"$imagepolicy": "flux-system:ai-backend-policy"}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: ai-backend-config
+          command: ["/bin/sh", "-c", "uvicorn app.main:rec_api --host 0.0.0.0 --port $API_PORT"]
+          stdin: true
+          tty: true
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: publikationsempfehlung
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.12.9-management-alpine
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+        volumeMounts:
+        - name: rabbit-data
+          mountPath: /var/lib/rabbitmq
+        resources:
+          limits:
+            memory: "150Mi"
+            cpu: "8m"
+      volumes:
+      - name: rabbit-data
+        emptyDir: {}

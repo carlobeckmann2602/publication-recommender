@@ -1,0 +1,10 @@
+sequenceDiagram
+    actor User
+    User->>+Frontend: Search for similar publications for a publication
+    Frontend->>+Backend: query similarPublicationsForPublicationWithId(id, sortBy)<br/>(GraphQl)
+    Backend->>+Database: findOne(id)
+    Database-->>-Backend: Publication with provided id including it's vectors
+    Backend->>+Database: for vector in vectors: getNearestNeighbors(vector)
+    Database-->>-Backend: Similar publications by vector distance
+    Backend-->>-Frontend: Similar publications for publication (sorted)
+    Frontend-->>-User: Similar publications for publication (sorted)
