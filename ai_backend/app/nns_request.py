@@ -218,34 +218,28 @@ class RemoteDatabase(VectorDatabase):
                 continue_requests = False
             else:
                 if (
-                    isinstance(perform_pca, types.FunctionType)
-                    and not temp_dataframe.empty
+                    # isinstance(perform_pca, types.FunctionType) and
+                    not temp_dataframe.empty
                 ):
                     request_logger.info(
-                        f"{index} -> Start Performed PCA for {len(temp_dataframe[self.PUBLICATION_ID_KEY].unique())} publications"
+                        f"{index} -> Get important embedding for {len(temp_dataframe[self.PUBLICATION_ID_KEY].unique())} publications"
                     )
                     temp_publication_dataframe = pd.DataFrame(
                         columns=[self.PUBLICATION_ID_KEY, self.EMBEDDING_KEY]
                     )
                     for publication in temp_dataframe[self.PUBLICATION_ID_KEY].unique():
-                        embeddings_pca = perform_pca(
-                            np.array(
-                                temp_dataframe.loc[
-                                    temp_dataframe[self.PUBLICATION_ID_KEY]
-                                    == publication
-                                ][self.EMBEDDING_KEY].tolist()
-                            ),
-                            3,
-                        )
+                        important_embedding = temp_dataframe.loc[
+                            temp_dataframe[self.PUBLICATION_ID_KEY] == publication
+                        ][self.EMBEDDING_KEY].iloc[0]
                         temp_publication_dataframe.loc[
                             len(temp_publication_dataframe)
                         ] = (
                             publication,
-                            embeddings_pca,
+                            important_embedding,
                         )
                     temp_dataframe = temp_publication_dataframe
                     request_logger.info(
-                        f"{index} -> Done PCA for {len(temp_dataframe)} publications"
+                        f"{index} -> Got embeddings for {len(temp_dataframe)} publications"
                     )
                 if dataframe is None:
                     dataframe = temp_dataframe
